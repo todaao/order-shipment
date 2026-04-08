@@ -331,7 +331,6 @@ input:read-only{color:var(--text3);background:var(--surface);}
     <div class="panel-header">
       <div class="panel-title"><span class="panel-title-dot"></span>在庫スナップショット一覧（直近在庫多い順）</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        <button class="drilldown-toggle" id="filterDefectBtn" onclick="toggleInvFilter('defect')" style="color:var(--accent3)">不良在庫あり</button>
         <button class="drilldown-toggle" id="filterRiskBtn" onclick="toggleInvFilter('risk')" style="color:var(--accent)">欠品リスク</button>
         <button class="drilldown-toggle" id="filterExcessBtn" onclick="toggleInvFilter('excess')" style="color:var(--accent2)">過剰在庫リスク</button>
       </div>
@@ -363,61 +362,87 @@ input:read-only{color:var(--text3);background:var(--surface);}
   <div id="alertList"></div>
 </div>
 
-<!-- ⑤ 発注試算ツール -->
+<!-- 発注試算ツール -->
 <div class="view" id="view-calc">
   <div class="view-title">発注試算ツール</div>
   <div class="view-subtitle">ORDER CALCULATION — 通常試算 / 簡易試算</div>
   <div class="calc-container">
 
-    <!-- STEP 0: モード選択 -->
+    <!-- ステップナビ（クリック可能） -->
+    <div class="step-indicator" id="calcStepNav" style="margin-bottom:20px;flex-wrap:wrap">
+      <div class="step active" onclick="goStep(0)" style="cursor:pointer"><span class="step-num">①</span> モード・SKU選択</div>
+      <div class="step" onclick="goStep(1)" style="cursor:pointer"><span class="step-num">②</span> 商品情報</div>
+      <div class="step" onclick="goStep(2)" style="cursor:pointer"><span class="step-num">③</span> 参照P/S設定</div>
+      <div class="step" onclick="goStep(3)" style="cursor:pointer"><span class="step-num">④</span> 数量入力</div>
+      <div class="step" onclick="goStep(4)" style="cursor:pointer"><span class="step-num">⑤</span> 確定・保存</div>
+    </div>
+
+    <!-- STEP 0: モード選択 + JAN検索（既存品）or SKU入力（新規品） -->
     <div id="calcStep0">
       <div class="panel">
-        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>試算モードを選択</div></div>
+        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>① モード・SKU選択</div>
+          <span id="calcModeBadge" class="badge badge-accent">通常試算</span>
+        </div>
         <div class="panel-body">
-          <div class="mode-selector">
-            <div class="mode-card" id="modeNormal" onclick="selectMode('normal')">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+            <div class="mode-card" id="modeNormal" onclick="selectMode('normal')" style="flex:1;min-width:200px">
               <div class="mode-badge badge badge-accent">通常試算</div>
-              <h3>通常試算テンプレート</h3>
-              <p>POSデータ（P/S × 店舗数 × 業態傾斜）から月別数量を自動計算。小売先ブロック最大10件。在庫推移シミュレーション付き。</p>
+              <h3>通常試算</h3>
+              <p>P/S × 業態傾斜 × 月別傾斜 × 店舗数で自動計算。小売先ブロック最大10件。</p>
             </div>
-            <div class="mode-card" id="modeSimple" onclick="selectMode('simple')">
+            <div class="mode-card" id="modeSimple" onclick="selectMode('simple')" style="flex:1;min-width:200px">
               <div class="mode-badge badge badge-blue">簡易試算</div>
-              <h3>簡易試算テンプレート</h3>
-              <p>月別数量を直接手入力するだけ。POS計算不要。素早く試算したいときに。</p>
+              <h3>簡易試算</h3>
+              <p>月別数量を直接手入力。POS計算不要。素早く試算したいときに。</p>
             </div>
           </div>
-          <div style="margin-top:8px">
-            <label class="filter-label" style="display:block;margin-bottom:6px">商品種別</label>
-            <div style="display:flex;gap:10px">
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
-                <input type="radio" name="itemType" value="existing" checked onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 既存品（JANで検索・在庫自動取得）
-              </label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
-                <input type="radio" name="itemType" value="new" onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 新規品（手入力）
-              </label>
-            </div>
+
+          <div style="display:flex;gap:16px;margin-bottom:16px">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
+              <input type="radio" name="itemType" value="existing" checked onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 既存品（JAN検索）
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
+              <input type="radio" name="itemType" value="new" onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 新規品（手入力）
+            </label>
           </div>
+
+          <!-- 既存品: JAN検索エリア -->
+          <div id="janSearchArea">
+            <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+              <input type="text" id="janSearchInput" placeholder="JANコードを入力（例：4571501000001）"
+                style="flex:1;min-width:180px" oninput="janSearchPreview()">
+              <button class="btn btn-primary" onclick="applyJanSearch()">追加</button>
+            </div>
+            <div id="janSearchResult"></div>
+          </div>
+
+          <!-- 新規品: 手入力SKUリスト -->
+          <div id="newSkuArea" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <span style="font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text3)">SKU一覧</span>
+              <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="addNewSku()">+ SKU追加</button>
+            </div>
+            <div id="newSkuList"></div>
+          </div>
+
+          <!-- 選択済みSKUリスト（共通） -->
+          <div id="selectedSkuSection" style="display:none;margin-top:16px">
+            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:8px">選択済み SKU（編集可）</div>
+            <div id="selectedSkuList"></div>
+          </div>
+
           <div class="btn-row" style="margin-top:20px">
-            <button class="btn btn-primary" onclick="startCalc()">試算を開始 →</button>
+            <button class="btn btn-primary" onclick="goStep(1)">次へ: 商品情報 →</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- STEP 1: 商品情報 -->
+    <!-- STEP 1: 商品情報 + 販路設定 -->
     <div id="calcStep1" style="display:none">
-      <div class="step-indicator">
-        <div class="step done" id="stepInd0"><span class="step-num">①</span> モード選択</div>
-        <div class="step active" id="stepInd1"><span class="step-num">②</span> 商品情報</div>
-        <div class="step" id="stepInd2"><span class="step-num">③</span> 販路設定</div>
-        <div class="step" id="stepInd3"><span class="step-num">④</span> 数量入力</div>
-        <div class="step" id="stepInd4"><span class="step-num">⑤</span> 確定・保存</div>
-      </div>
-
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title"><span class="panel-title-dot"></span>SECTION A — 商品情報</div>
-          <span id="calcModeBadge" class="badge badge-accent">通常試算</span>
+          <div class="panel-title"><span class="panel-title-dot"></span>② 商品情報 + 販路設定</div>
         </div>
         <div class="panel-body">
           <div class="form-grid">
@@ -430,16 +455,16 @@ input:read-only{color:var(--text3);background:var(--surface);}
               <input type="text" id="ci_brand" placeholder="例：MilleFee">
             </div>
             <div class="form-group">
-              <label class="form-label">発注予定日</label>
-              <input type="date" id="ci_orderDate">
+              <label class="form-label">発注予定日 <span class="req">*</span></label>
+              <input type="date" id="ci_orderDate" onchange="calcArrival()">
             </div>
             <div class="form-group">
               <label class="form-label">リードタイム（週）</label>
               <input type="number" id="ci_leadtime" value="8" min="1" onchange="calcArrival()">
             </div>
             <div class="form-group">
-              <label class="form-label">入庫予定日（自動）</label>
-              <input type="text" id="ci_arrivalDate" readonly>
+              <label class="form-label">入庫予定日（自動計算）</label>
+              <input type="text" id="ci_arrivalDate" readonly style="color:var(--accent)">
             </div>
             <div class="form-group">
               <label class="form-label">容器MOQ</label>
@@ -451,40 +476,9 @@ input:read-only{color:var(--text3);background:var(--surface);}
             </div>
           </div>
 
-          <!-- SKU設定 -->
-          <div style="margin-bottom:12px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-              <div class="nav-label" style="margin:0">SKU 設定</div>
-              <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="addSku()">+ SKU追加</button>
-            </div>
-            <div id="skuInputList"></div>
-          </div>
-
-          <div class="btn-row">
-            <button class="btn btn-secondary" onclick="goStep(0)">← 戻る</button>
-            <button class="btn btn-primary" onclick="goStep(2)">次へ →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STEP 2: 販路設定 -->
-    <div id="calcStep2" style="display:none">
-      <div class="step-indicator">
-        <div class="step done"><span class="step-num">①</span> モード選択</div>
-        <div class="step done"><span class="step-num">②</span> 商品情報</div>
-        <div class="step active"><span class="step-num">③</span> 販路設定</div>
-        <div class="step"><span class="step-num">④</span> 数量入力</div>
-        <div class="step"><span class="step-num">⑤</span> 確定・保存</div>
-      </div>
-      <div class="panel">
-        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>販路別発注期間設定</div></div>
-        <div class="panel-body">
-          <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
-            <div class="form-group">
-              <label class="form-label">基準開始月</label>
-              <input type="text" id="ci_baseMonth" placeholder="例：2026-03">
-            </div>
+          <hr class="section-divider">
+          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--text3);margin-bottom:12px">販路別発注期間設定（発注予定日の月を起点）</div>
+          <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
             <div class="form-group">
               <label class="form-label">toB 発注対象月数</label>
               <input type="number" id="ci_tobMonths" value="4" min="1" max="12">
@@ -497,10 +491,30 @@ input:read-only{color:var(--text3);background:var(--surface);}
               <label class="form-label">海外 発注対象月数</label>
               <input type="number" id="ci_overseasMonths" value="3" min="1" max="12">
             </div>
+            <div class="form-group">
+              <label class="form-label">発注月（自動）</label>
+              <input type="text" id="ci_baseMonthDisplay" readonly style="color:var(--accent2)">
+            </div>
           </div>
-          <div class="btn-row">
+          <div id="calcMonthPreview" style="font-size:11px;color:var(--text3);margin-top:4px;font-family:var(--font-mono)"></div>
+
+          <div class="btn-row" style="margin-top:16px">
+            <button class="btn btn-secondary" onclick="goStep(0)">← 戻る</button>
+            <button class="btn btn-primary" onclick="goStep(2)">次へ: 参照P/S →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: 参照P/S設定（通常試算のみ） -->
+    <div id="calcStep2" style="display:none">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>③ 参照P/S設定</div></div>
+        <div class="panel-body">
+          <div id="psSettingArea"></div>
+          <div class="btn-row" style="margin-top:16px">
             <button class="btn btn-secondary" onclick="goStep(1)">← 戻る</button>
-            <button class="btn btn-primary" onclick="goStep(3)">次へ →</button>
+            <button class="btn btn-primary" onclick="goStep(3)">次へ: 数量入力 →</button>
           </div>
         </div>
       </div>
@@ -508,45 +522,33 @@ input:read-only{color:var(--text3);background:var(--surface);}
 
     <!-- STEP 3: 数量入力 -->
     <div id="calcStep3" style="display:none">
-      <div class="step-indicator">
-        <div class="step done"><span class="step-num">①</span> モード選択</div>
-        <div class="step done"><span class="step-num">②</span> 商品情報</div>
-        <div class="step done"><span class="step-num">③</span> 販路設定</div>
-        <div class="step active"><span class="step-num">④</span> 数量入力</div>
-        <div class="step"><span class="step-num">⑤</span> 確定・保存</div>
-      </div>
       <div id="quantityInputArea"></div>
       <div class="btn-row" style="margin-top:16px">
         <button class="btn btn-secondary" onclick="goStep(2)">← 戻る</button>
-        <button class="btn btn-primary" onclick="goStep(4)">次へ →</button>
+        <button class="btn btn-primary" onclick="goStep(4)">次へ: 確定・保存 →</button>
       </div>
     </div>
 
     <!-- STEP 4: 確定・保存 -->
     <div id="calcStep4" style="display:none">
-      <div class="step-indicator">
-        <div class="step done"><span class="step-num">①</span> モード選択</div>
-        <div class="step done"><span class="step-num">②</span> 商品情報</div>
-        <div class="step done"><span class="step-num">③</span> 販路設定</div>
-        <div class="step done"><span class="step-num">④</span> 数量入力</div>
-        <div class="step active"><span class="step-num">⑤</span> 確定・保存</div>
-      </div>
       <div class="panel">
-        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>試算プレビュー</div></div>
+        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>⑤ 確定・保存</div></div>
         <div class="panel-body">
           <div id="calcPreviewContent"></div>
           <hr class="section-divider">
-          <div class="form-group" style="max-width:260px;margin-bottom:16px">
-            <label class="form-label">担当部署名 <span class="req">*</span></label>
-            <input type="text" id="ci_dept" placeholder="例：MD部、EC事業部">
-          </div>
-          <div class="form-group" style="max-width:400px;margin-bottom:16px">
-            <label class="form-label">備考・メモ</label>
-            <input type="text" id="ci_memo" placeholder="任意">
+          <div class="form-grid" style="grid-template-columns:1fr 1fr">
+            <div class="form-group">
+              <label class="form-label">担当部署名 <span class="req">*</span></label>
+              <input type="text" id="ci_dept" placeholder="例：MD部">
+            </div>
+            <div class="form-group">
+              <label class="form-label">備考・メモ</label>
+              <input type="text" id="ci_memo" placeholder="任意">
+            </div>
           </div>
           <div class="btn-row">
             <button class="btn btn-secondary" onclick="goStep(3)">← 戻る</button>
-            <button class="btn btn-green" onclick="saveDraft()">💾 仮保存する</button>
+            <button class="btn btn-green" onclick="saveDraft()">💾 仮保存</button>
             <button class="btn btn-blue" onclick="exportCalcDirect()">📥 Excelで出力</button>
           </div>
         </div>
@@ -555,7 +557,7 @@ input:read-only{color:var(--text3);background:var(--surface);}
   </div>
 </div>
 
-<!-- ⑥ 仮保存・出力 -->
+<!-- 仮保存・出力 -->
 <div class="view" id="view-drafts">
   <div class="view-title">仮保存・出力</div>
   <div class="view-subtitle">DRAFTS & EXPORT — 部署別入力管理・Excel出力</div>
@@ -563,8 +565,9 @@ input:read-only{color:var(--text3);background:var(--surface);}
     <div class="panel-header">
       <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent5)"></span>仮保存リスト</div>
       <div class="btn-row">
-        <button class="btn btn-green" onclick="exportAllDrafts()" id="exportAllBtn" style="display:none">📥 全件 Excel 出力 → 削除</button>
-        <button class="btn btn-secondary" style="font-size:11px" onclick="clearAllDrafts()">🗑 全件削除</button>
+        <button class="btn btn-blue" onclick="exportSelectedDrafts()" id="exportSelBtn" style="display:none">📥 選択をExcel出力</button>
+        <button class="btn btn-danger" onclick="deleteSelectedDrafts()" id="deleteSelBtn" style="display:none">🗑 選択を削除</button>
+        <button class="btn btn-secondary" style="font-size:11px" onclick="toggleSelectAll()">全選択</button>
       </div>
     </div>
     <div class="panel-body" id="draftListBody">
@@ -1104,7 +1107,7 @@ function renderShipTable(){
 
 // ════════════════════════════════════════════
 //  ④ 在庫推移
-//  スキーマ: {skus:[{sku_name,sku_code,monthly_stock:{月:数量},latest_stock,defective_stock,defective_rate}]}
+//  スキーマ: {skus:[{sku_name,sku_code,monthly_stock:{月:数量},latest_stock}]}
 // ════════════════════════════════════════════
 function renderInventory(){
   if(!dataLoaded||!DATA.inventory) return;
@@ -1121,25 +1124,34 @@ function renderInventory(){
   const latestTotal=dispSkus.reduce((a,s)=>a+(s.latest_stock||0),0);
   const prevTotal=dispSkus.reduce((a,s)=>a+((s.monthly_stock||{})[prevMonth]||0),0);
   const change=latestTotal-prevTotal;
-  const defTotal=dispSkus.reduce((a,s)=>a+(s.defective_stock||0),0);
   const updatedAt=DATA.inventory.updated_at||latestMonth;
 
   document.getElementById('inventoryKpis').innerHTML=`
     <div class="kpi-card green"><div class="kpi-label">直近在庫合計</div><div class="kpi-value">${fmt(latestTotal)}</div><div class="kpi-unit">${updatedAt} 時点</div></div>
     <div class="kpi-card ${change>=0?'green':'red'}"><div class="kpi-label">前月比</div><div class="kpi-value">${change>=0?'+':''}${fmt(change)}</div><div class="kpi-unit">${prevMonth||'—'} → ${latestMonth||'—'}</div></div>
-    <div class="kpi-card red"><div class="kpi-label">不良在庫合計</div><div class="kpi-value">${fmt(defTotal)}</div><div class="kpi-unit">pcs（表示SKU計）</div></div>
     <div class="kpi-card accent"><div class="kpi-label">管理SKU数</div><div class="kpi-value">${dispSkus.length}</div><div class="kpi-unit">SKUs</div></div>`;
 
-  // グラフ（最大10SKU、それ以上はSKUフィルターで）
+  // グラフ: フィルターなし→在庫合計のみ, フィルターあり→個別SKU
   const colors=['rgba(126,184,212,1)','rgba(200,169,110,1)','rgba(224,123,138,1)','rgba(126,212,160,1)','rgba(180,158,232,1)','rgba(240,180,80,1)','rgba(100,200,200,1)','rgba(220,140,180,1)','rgba(160,200,120,1)','rgba(200,160,100,1)'];
   const bgs=colors.map(c=>c.replace('1)','0.15)'));
-  const graphSkus=dispSkus.slice(0,10);
-  const datasets=graphSkus.map((sku,i)=>({
-    label:skuLabel(sku.sku_name),
-    data:months.map(m=>(sku.monthly_stock||{})[m]??null),
-    borderColor:colors[i%colors.length],backgroundColor:bgs[i%bgs.length],
-    borderWidth:2,pointRadius:4,pointHoverRadius:7,tension:.3,fill:false
-  }));
+
+  let datasets;
+  if(skuFilter==='all'&&filters.product==='all'){
+    // 全SKU合計
+    const totalByMonth=months.map(m=>allSkus.reduce((a,s)=>a+((s.monthly_stock||{})[m]||0),0));
+    datasets=[
+      {label:'在庫合計',data:totalByMonth,borderColor:'rgba(126,212,160,1)',backgroundColor:'rgba(126,212,160,0.15)',borderWidth:2,pointRadius:4,tension:.3,fill:true},
+    ];
+  } else {
+    // 絞り込みSKUの個別折れ線（最大10件）
+    const graphSkus=dispSkus.slice(0,10);
+    datasets=graphSkus.map((sku,i)=>({
+      label:skuLabel(sku.sku_name),
+      data:months.map(m=>(sku.monthly_stock||{})[m]??null),
+      borderColor:colors[i%colors.length],backgroundColor:bgs[i%bgs.length],
+      borderWidth:2,pointRadius:4,pointHoverRadius:7,tension:.3,fill:false
+    }));
+  }
 
   if(chartInventory) chartInventory.destroy();
   chartInventory=new Chart(document.getElementById('chartInventory').getContext('2d'),{
@@ -1219,13 +1231,13 @@ function renderInventoryTable(){
     return{...s,_digestMonths:dm,_ss:ss};
   });
 
-  // リスク判定（リードタイム=8週=約2か月で固定 ※orders.jsonから取得）
+  // リスク判定（orders.jsonからリードタイム取得、デフォルト2か月）
   const leadTimeMonths=(DATA.orders?.orders||[]).reduce((a,o)=>Math.max(a,(o.lead_time_weeks||8)/4.33),2);
   dispSkus=dispSkus.map(s=>({
     ...s,
-    _shortage: s._digestMonths!=null && s._digestMonths<=leadTimeMonths+1,
-    _excess:   s._digestMonths!=null && s._digestMonths>=12 || (s.defective_rate||0)>=0.5,
-    _defect:   (s.defective_stock||0)>0
+    _shortage: s._digestMonths!=null && s._digestMonths<=leadTimeMonths+1 && s._digestMonths<3,
+    _excess:   s._digestMonths!=null && s._digestMonths>=12,
+    _defect:   false // 不良在庫アラート無効
   }));
 
   // フィルター適用
@@ -1243,8 +1255,6 @@ function renderInventoryTable(){
     <th style="text-align:left">JAN</th>
     ${months.map(m=>`<th>${m}</th>`).join('')}
     <th>直近在庫</th>
-    <th>不良在庫</th>
-    <th>不良率</th>
     <th>消化月数</th>
     <th>リスク</th>
   </tr></thead><tbody>`;
@@ -1256,14 +1266,12 @@ function renderInventoryTable(){
     const riskTags=[];
     if(s._shortage) riskTags.push(`<span class="badge badge-accent" style="background:rgba(224,123,138,.15);color:var(--accent3);border-color:rgba(224,123,138,.3)">欠品⚠</span>`);
     if(s._excess)   riskTags.push(`<span class="badge badge-blue">過剰</span>`);
-    if(s._defect)   riskTags.push(`<span class="badge" style="background:rgba(180,158,232,.15);color:var(--accent5);border:1px solid rgba(180,158,232,.3)">不良</span>`);
     tHtml+=`<tr>
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.sku_name}">${skuLabel(s.sku_name)}</td>
       <td style="font-family:var(--font-mono);color:var(--text3)">${s.sku_code||'—'}</td>
       ${months.map(m=>{const v=(s.monthly_stock||{})[m];return`<td class="${v!=null?'num-accent':''}">${v!=null?fmt(v):'—'}</td>`;}).join('')}
       <td class="num-pos">${fmt(s.latest_stock)}</td>
-      <td class="${s.defective_stock?'num-warn':''}">${s.defective_stock?fmt(s.defective_stock):'—'}</td>
-      <td style="color:${(s.defective_rate||0)>0.3?'var(--accent3)':'var(--text3)'};font-family:var(--font-mono)">${s.defective_rate!=null?(s.defective_rate*100).toFixed(1)+'%':'—'}</td>
+
       <td style="font-family:var(--font-mono);color:${dmColor}">${dmStr}</td>
       <td style="white-space:nowrap">${riskTags.join(' ')||'—'}</td>
     </tr>`;
@@ -1373,24 +1381,15 @@ function renderAlerts(){
     const ss=shipSkus.find(s=>s.sku_code===inv.sku_code||s.sku_name===inv.sku_name);
     const dm=ss?calcDigestMonths(ss):null;
     const name=skuLabel(inv.sku_name);
-    const defRate=inv.defective_rate||0;
-
-    // 発注タイミング警告
-    if(dm!=null&&dm<=leadTimeMonths+1){
-      alerts.push({level:'danger',type:'order',label:'発注タイミング警告',name,detail:`消化月数 ${dm.toFixed(1)}ヶ月 ≤ リードタイム${leadTimeMonths.toFixed(1)}+1ヶ月`});
+    // 欠品リスク（消化月数 < 3 かつ リードタイム以下）
+    if(dm!=null&&dm<3&&dm<=leadTimeMonths+1){
+      alerts.push({level:'danger',type:'shortage',label:'欠品リスク / 発注タイミング',name,detail:`消化月数 ${dm.toFixed(1)}ヶ月 ≤ リードタイム(${leadTimeMonths.toFixed(1)})+1ヶ月`});
     }
-    // 欠品リスク
-    if(dm!=null&&dm<2){
-      alerts.push({level:'danger',type:'shortage',label:'欠品リスク',name,detail:`在庫残 ${fmt(inv.latest_stock)}個 / 消化月数 ${dm.toFixed(1)}ヶ月`});
-    }
-    // 過剰在庫リスク
+    // 過剰在庫リスク（消化月数 ≥ 12）
     if(dm!=null&&dm>=12){
       alerts.push({level:'warn',type:'excess',label:'過剰在庫リスク',name,detail:`消化月数 ${dm.toFixed(1)}ヶ月`});
     }
-    // 不良在庫率高い
-    if(defRate>=0.5){
-      alerts.push({level:'warn',type:'defect',label:'不良在庫率高',name,detail:`不良率 ${(defRate*100).toFixed(1)}% / 不良在庫 ${fmt(inv.defective_stock)}個`});
-    }
+
   });
 
   // 誤差アラート
@@ -1443,309 +1442,390 @@ function renderAlerts(){
 }
 
 // ════════════════════════════════════════════
-//  ⑤ 発注試算ツール
+//  発注試算ツール
 // ════════════════════════════════════════════
 function selectMode(m){
   calcMode=m;
   document.getElementById('modeNormal').classList.toggle('selected',m==='normal');
   document.getElementById('modeSimple').classList.toggle('selected',m==='simple');
+  const badge=document.getElementById('calcModeBadge');
+  if(badge){badge.textContent=m==='normal'?'通常試算':'簡易試算';badge.className='badge '+(m==='normal'?'badge-accent':'badge-blue');}
 }
 function onItemTypeChange(){
   itemType=document.querySelector('input[name=itemType]:checked').value;
+  document.getElementById('janSearchArea').style.display=itemType==='existing'?'block':'none';
+  document.getElementById('newSkuArea').style.display=itemType==='new'?'block':'none';
+  renderSelectedSkuSection();
 }
 selectMode('normal');
 
-function startCalc(){
-  if(!calcMode){showNotif('試算モードを選択してください','error');return;}
-  // SKUリストをリセット（新しい試算開始時）
-  calcSkus=[];
-  calcRetailers=[];
-  calcEcMonthly={};
-  calcOverseasMonthly={};
-  calcSimpleMonthly={};
-  goStep(1);
+// ステップナビ更新
+function updateStepNav(active){
+  const steps=document.querySelectorAll('#calcStepNav .step');
+  steps.forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if(i<active) s.classList.add('done');
+    else if(i===active) s.classList.add('active');
+  });
 }
 
 function goStep(n){
-  [0,1,2,3,4].forEach(i=>{document.getElementById('calcStep'+i).style.display=i===n?'block':'none';});
-  if(n===1) buildSkuInputs();
+  if(!dataLoaded){showNotif('データ読み込み中です','error');return;}
+  // バリデーション
+  if(n>=1&&calcSkus.length===0){showNotif('SKUを1件以上選択してください','error');return;}
+  if(n>=2){
+    if(!document.getElementById('ci_product').value){showNotif('商品名を入力してください','error');return;}
+    if(!document.getElementById('ci_orderDate').value){showNotif('発注予定日を入力してください','error');return;}
+    calcArrival(); updateBaseMonth();
+  }
+  [0,1,2,3,4].forEach(i=>{
+    const el=document.getElementById('calcStep'+i);
+    if(el) el.style.display=i===n?'block':'none';
+  });
+  updateStepNav(n);
+  if(n===2) buildPsSettingArea();
   if(n===3) buildQuantityInput();
   if(n===4) buildPreview();
   window.scrollTo(0,0);
 }
 
-// SKU inputs — 既存品はJAN1件入力→商品情報を自動引き出し
-function buildSkuInputs(){
-  document.getElementById('calcModeBadge').textContent=calcMode==='normal'?'通常試算':'簡易試算';
-  if(itemType==='existing'){
-    renderJanSearchUI();
-  } else {
-    if(calcSkus.length===0) calcSkus=[{name:'',jan:'',stock:0}];
-    renderSkuInputs();
+// ── 発注月の計算 ──
+function getBaseMonth(){
+  const d=document.getElementById('ci_orderDate').value;
+  if(!d) return null;
+  const dt=new Date(d);
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
+}
+function updateBaseMonth(){
+  const m=getBaseMonth();
+  const el=document.getElementById('ci_baseMonthDisplay');
+  if(el) el.value=m||'—';
+  const tobM=+document.getElementById('ci_tobMonths').value||4;
+  const ecM=+document.getElementById('ci_ecMonths').value||5;
+  const ovsM=+document.getElementById('ci_overseasMonths').value||3;
+  const preview=document.getElementById('calcMonthPreview');
+  if(preview&&m){
+    const tob=monthRange(m,tobM);
+    const ec=monthRange(m,ecM);
+    const ovs=monthRange(m,ovsM);
+    preview.textContent=`toB: ${tob.join(' ')}  |  EC: ${ec.join(' ')}  |  海外: ${ovs.join(' ')}`;
   }
 }
-
-function renderJanSearchUI(){
-  const list=document.getElementById('skuInputList');
-  // JAN検索UIを表示
-  list.innerHTML=`
-    <div class="panel" style="margin-bottom:12px">
-      <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>JANコードで検索</div></div>
-      <div class="panel-body">
-        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-          <input type="text" id="janSearchInput" placeholder="JANコードを入力（例：4571501000001）" style="flex:1;min-width:200px" oninput="janSearchPreview()">
-          <button class="btn btn-primary" onclick="applyJanSearch()">この商品で試算</button>
-        </div>
-        <div id="janSearchResult"></div>
-      </div>
-    </div>
-    ${calcSkus.length>0?`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:8px">選択済み SKU</div>`:''}
-    <div id="skuSelectedList">${renderSelectedSkus()}</div>`;
+function calcArrival(){
+  const d=document.getElementById('ci_orderDate').value;
+  const w=+document.getElementById('ci_leadtime').value||8;
+  if(d){
+    const dt=new Date(d);
+    dt.setDate(dt.getDate()+w*7);
+    document.getElementById('ci_arrivalDate').value=dt.toISOString().split('T')[0];
+  }
+  updateBaseMonth();
 }
 
+// ── SKU管理 ──
 function janSearchPreview(){
-  const jan=document.getElementById('janSearchInput').value.trim();
+  if(!dataLoaded) return;
+  const jan=(document.getElementById('janSearchInput').value||'').trim();
   const res=document.getElementById('janSearchResult');
-  if(!jan){res.innerHTML='';return;}
-
-  // inventory.jsonとshipments.jsonからJANで検索
+  if(!jan||jan.length<4){res.innerHTML='';return;}
   const invSkus=DATA.inventory.skus||[];
-  const shipSkus=DATA.shipments.skus||[];
-  const matched=invSkus.filter(s=>s.sku_code===jan||(s.sku_code||'').includes(jan)&&jan.length>=4);
-
-  if(!matched.length){res.innerHTML=`<div style="color:var(--text3);font-size:12px">一致するJANが見つかりません</div>`;return;}
-
-  // 同商品グループ（同じsku_codeプレフィックスの兄弟SKU）を探す
-  const baseJan=matched[0].sku_code;
-  // 同じ商品名プレフィックス（末尾の番号を除く）で絞り込み
+  const matched=invSkus.filter(s=>(s.sku_code||'').includes(jan));
+  if(!matched.length){res.innerHTML=`<div style="color:var(--text3);font-size:12px;padding:8px">一致するJANが見つかりません</div>`;return;}
+  // 同商品グループ（名前のプレフィックス一致）
   const firstName=matched[0].sku_name||'';
-  const namePrefix=firstName.replace(/\d+$/,'').trim();
-  const siblings=namePrefix?invSkus.filter(s=>(s.sku_name||'').startsWith(namePrefix)):matched;
-
+  // 末尾の2桁数字を除いたプレフィックス
+  const namePrefix=firstName.replace(/[\s\u3000]?\d{2}$/, '').trim();
+  const siblings=namePrefix.length>2
+    ? invSkus.filter(s=>(s.sku_name||'').startsWith(namePrefix))
+    : matched;
+  const shipSkus=DATA.shipments?DATA.shipments.skus||[]:[];
   res.innerHTML=`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px">
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-family:var(--font-mono)">商品グループ（${siblings.length}SKU）</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-family:var(--font-mono)">商品グループ （${siblings.length} SKU）— ${namePrefix||'—'}</div>
     ${siblings.map(s=>{
+      const already=calcSkus.find(x=>x.jan===s.sku_code);
       const ss=shipSkus.find(x=>x.sku_code===s.sku_code||x.sku_name===s.sku_name);
-      const months=ss?Object.keys(ss.monthly_shipments||{}).sort():[]; 
-      const latestM=months.slice(-1)[0];
-      const latestShip=latestM?(ss.monthly_shipments[latestM]?.total||0):0;
-      return`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(42,45,58,.4)">
-        <input type="checkbox" id="jan_cb_${s.sku_code}" value="${s.sku_code}" style="accent-color:var(--accent);width:14px;height:14px" checked>
-        <div style="flex:1">
-          <div style="font-size:12px;color:var(--text)">${s.sku_name}</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${s.sku_code} / 在庫: ${fmt(s.latest_stock)} / 直近出荷: ${fmt(latestShip)}</div>
+      const ms=ss?Object.keys(ss.monthly_shipments||{}).sort():[]; 
+      const latestM=ms.slice(-1)[0];
+      const latestShip=latestM?((ss.monthly_shipments||{})[latestM]?.total||0):0;
+      return`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(42,45,58,.4)">
+        <input type="checkbox" class="jan-cb" value="${s.sku_code}" ${already?'disabled checked':''} style="accent-color:var(--accent);width:14px;height:14px;flex-shrink:0" ${already?'':'checked'}>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.sku_name}</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">JAN: ${s.sku_code} / 在庫: ${fmt(s.latest_stock)} / 直近出荷: ${fmt(latestShip)}</div>
         </div>
+        ${already?'<span style="font-family:var(--font-mono);font-size:9px;color:var(--accent4)">追加済</span>':''}
       </div>`;
     }).join('')}
+    <button class="btn btn-primary" style="margin-top:10px;width:100%" onclick="applyJanSearch()">選択したSKUを追加</button>
   </div>`;
 }
 
 function applyJanSearch(){
   const res=document.getElementById('janSearchResult');
-  const checks=res.querySelectorAll('input[type=checkbox]:checked');
-  if(!checks.length){showNotif('SKUを選択してください','error');return;}
-
+  if(!res) return;
+  const checks=res.querySelectorAll('.jan-cb:checked:not(:disabled)');
+  if(!checks.length){showNotif('追加するSKUにチェックを入れてください','error');return;}
   const invSkus=DATA.inventory.skus||[];
-  const shipSkus=DATA.shipments.skus||[];
   const ordersSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
-
+  let added=0;
   checks.forEach(cb=>{
     const jan=cb.value;
-    if(calcSkus.find(s=>s.jan===jan)) return; // 重複除外
+    if(calcSkus.find(s=>s.jan===jan)) return;
     const inv=invSkus.find(s=>s.sku_code===jan);
     if(!inv) return;
-
-    // 過去の試算情報をorders.jsonから引き出し
     const prevOrder=ordersSkus.find(s=>s.jan===jan||s.sku_name===inv.sku_name);
     calcSkus.push({
-      name:inv.sku_name,
-      jan:jan,
-      stock:inv.latest_stock||0,
+      name:inv.sku_name, jan, stock:inv.latest_stock||0,
       prevConfirmedOrder:prevOrder?.confirmed_order||0,
       prevEstimated:prevOrder?.estimated_total||0,
     });
+    added++;
   });
-
   document.getElementById('janSearchInput').value='';
   document.getElementById('janSearchResult').innerHTML='';
-  document.getElementById('skuSelectedList').innerHTML=renderSelectedSkus();
-  if(!document.getElementById('skuSelectedList').parentElement.querySelector('[style*="選択済み"]')&&calcSkus.length>0){
-    const note=document.createElement('div');
-    note.style.cssText='font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:8px';
-    note.textContent='選択済み SKU';
-    document.getElementById('skuSelectedList').before(note);
-  }
-  showNotif(`${checks.length}SKUを追加しました`,'success');
+  renderSelectedSkuSection();
+  showNotif(`${added}SKUを追加しました`,'success');
 }
 
-function renderSelectedSkus(){
-  if(!calcSkus.length) return '';
-  return calcSkus.map((s,i)=>`
+function renderSelectedSkuSection(){
+  const sec=document.getElementById('selectedSkuSection');
+  const list=document.getElementById('selectedSkuList');
+  if(!sec||!list) return;
+  if(!calcSkus.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  list.innerHTML=calcSkus.map((s,i)=>`
     <div class="sku-block">
       <div class="sku-block-header">
-        <span class="sku-name-display">${s.name||`SKU ${i+1}`}</span>
+        <span class="sku-name-display" style="font-size:13px">${s.name||'SKU '+(i+1)}</span>
         <button class="btn btn-danger" style="font-size:10px;padding:3px 8px" onclick="removeCalcSku(${i})">削除</button>
       </div>
       <div class="form-grid">
         <div class="form-group"><label class="form-label">SKU名</label>
-          <input type="text" value="${s.name}" oninput="updateSku(${i},'name',this.value)"></div>
+          <input type="text" value="${escHtml(s.name)}" oninput="calcSkus[${i}].name=this.value" style="width:100%"></div>
         <div class="form-group"><label class="form-label">JAN</label>
-          <input type="text" value="${s.jan}" readonly></div>
-        <div class="form-group"><label class="form-label">現在庫（編集可）</label>
-          <input type="number" value="${s.stock}" oninput="updateSku(${i},'stock',+this.value)" min="0"></div>
+          <input type="text" value="${escHtml(s.jan)}" readonly style="color:var(--text3)"></div>
+        <div class="form-group"><label class="form-label">現在庫</label>
+          <input type="number" value="${s.stock}" min="0" step="1" onchange="calcSkus[${i}].stock=+this.value" style="width:100%"></div>
         ${s.prevConfirmedOrder?`<div class="form-group"><label class="form-label">前回確定発注数</label>
           <input type="number" value="${s.prevConfirmedOrder}" readonly style="color:var(--accent2)"></div>`:''}
-        ${s.prevEstimated?`<div class="form-group"><label class="form-label">前回推計必要数</label>
-          <input type="number" value="${s.prevEstimated}" readonly style="color:var(--text2)"></div>`:''}
       </div>
     </div>`).join('');
 }
-function removeCalcSku(i){calcSkus.splice(i,1);renderJanSearchUI();}
+function removeCalcSku(i){calcSkus.splice(i,1);renderSelectedSkuSection();}
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function renderSkuInputs(){
-  const list=document.getElementById('skuInputList');
+// 新規品SKU追加
+function addNewSku(){
+  calcSkus.push({name:'',jan:'',stock:0});
+  renderNewSkuList();
+  renderSelectedSkuSection();
+}
+function renderNewSkuList(){
+  const list=document.getElementById('newSkuList');
+  if(!list) return;
   list.innerHTML=calcSkus.map((s,i)=>`
-    <div class="sku-block">
+    <div class="sku-block" style="margin-bottom:8px">
       <div class="sku-block-header">
-        <span class="sku-name-display">${s.name||`SKU ${i+1}`}</span>
-        ${calcSkus.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:3px 8px" onclick="removeSku(${i})">削除</button>`:''}
+        <span style="font-size:12px;color:var(--text2)">SKU ${i+1}</span>
+        ${calcSkus.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:2px 8px" onclick="calcSkus.splice(${i},1);renderNewSkuList();renderSelectedSkuSection()">削除</button>`:''}
       </div>
       <div class="form-grid">
         <div class="form-group"><label class="form-label">SKU名 <span class="req">*</span></label>
-          <input type="text" value="${s.name}" oninput="updateSku(${i},'name',this.value)" placeholder="例：新商品SKU01"></div>
+          <input type="text" value="${escHtml(s.name)}" placeholder="例：新商品01" oninput="calcSkus[${i}].name=this.value;renderSelectedSkuSection()"></div>
         <div class="form-group"><label class="form-label">JAN</label>
-          <input type="text" value="${s.jan}" oninput="updateSku(${i},'jan',this.value)"></div>
+          <input type="text" value="${escHtml(s.jan)}" oninput="calcSkus[${i}].jan=this.value"></div>
         <div class="form-group"><label class="form-label">現在庫</label>
-          <input type="number" value="${s.stock}" oninput="updateSku(${i},'stock',+this.value)" min="0"></div>
+          <input type="number" value="${s.stock}" min="0" onchange="calcSkus[${i}].stock=+this.value"></div>
       </div>
     </div>`).join('');
 }
-function updateSku(i,k,v){calcSkus[i][k]=v;}
-function addSku(){calcSkus.push({name:'',jan:'',stock:0});renderSkuInputs();}
-function removeSku(i){calcSkus.splice(i,1);renderSkuInputs();}
 
-function calcArrival(){
-  const d=document.getElementById('ci_orderDate').value;
-  const w=+document.getElementById('ci_leadtime').value||8;
-  if(d){const dt=new Date(d);dt.setDate(dt.getDate()+w*7);document.getElementById('ci_arrivalDate').value=dt.toISOString().split('T')[0];}
+// ── 参照P/S設定 ──
+function buildPsSettingArea(){
+  const area=document.getElementById('psSettingArea');
+  if(!area) return;
+  if(calcMode==='simple'){
+    area.innerHTML=`<div style="color:var(--text3);font-size:12px;padding:12px;font-family:var(--font-mono)">簡易試算モードではP/S設定は不要です。④数量入力で直接入力してください。</div>`;
+    return;
+  }
+  // 小売ブロックの参照P/S（通常試算）
+  // すでに retailer ブロックがあれば維持、なければ初期1件
+  if(calcRetailers.length===0) calcRetailers=[{name:'ロフト',posTilt:1,stores:150,monthTilts:{},skuPs:{}}];
+  renderPsBlocks();
 }
-document.addEventListener('DOMContentLoaded',()=>{
-  const od=document.getElementById('ci_orderDate');
-  if(od) od.addEventListener('change',calcArrival);
-});
+function renderPsBlocks(){
+  const area=document.getElementById('psSettingArea');
+  if(!area) return;
+  const base=getBaseMonth()||'2026-01';
+  const tobM=+document.getElementById('ci_tobMonths').value||4;
+  const months=monthRange(base,tobM);
+  area.innerHTML=`
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px">小売先ごとに「参照P/S」「業態POS傾斜」「店舗数」「月別傾斜」を設定します。<br>
+    月別発注予測 = 参照P/S × 業態POS傾斜 × 月別傾斜 × 店舗数</div>
+    ${calcRetailers.map((r,ri)=>`
+    <div class="retailer-block">
+      <div class="retailer-block-header">
+        <span style="font-weight:500;font-size:13px">${r.name||('小売 '+(ri+1))}</span>
+        ${calcRetailers.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:2px 8px" onclick="calcRetailers.splice(${ri},1);renderPsBlocks()">削除</button>`:''}
+      </div>
+      <div class="pos-grid">
+        <div class="form-group"><label class="form-label">小売名</label>
+          <input type="text" value="${escHtml(r.name)}" oninput="calcRetailers[${ri}].name=this.value;this.closest('.retailer-block').querySelector('span').textContent=this.value||'小売 ${ri+1}'"></div>
+        <div class="form-group"><label class="form-label">業態POS傾斜</label>
+          <input type="number" value="${r.posTilt}" step="0.1" min="0" oninput="calcRetailers[${ri}].posTilt=parseFloat(this.value)||0;recalcPsPreview(${ri})"></div>
+        <div class="form-group"><label class="form-label">全店舗数</label>
+          <input type="number" value="${r.stores}" min="0" step="1" oninput="calcRetailers[${ri}].stores=+this.value;recalcPsPreview(${ri})"></div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div class="meta-key" style="margin-bottom:6px">SKU別 参照P/S（小数点以下1桁）</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+        ${calcSkus.map(s=>`
+          <div class="form-group">
+            <label class="form-label">${escHtml(s.name||s.jan)}</label>
+            <input type="number" value="${r.skuPs[s.name]||0}" step="0.1" min="0"
+              oninput="calcRetailers[${ri}].skuPs['${s.name}']=parseFloat(this.value)||0;recalcPsPreview(${ri})">
+          </div>`).join('')}
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div class="meta-key" style="margin-bottom:6px">月別傾斜</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${months.map(m=>`
+          <div class="monthly-input-wrap">
+            <label class="monthly-label">${m}</label>
+            <input type="number" class="monthly-input" value="${r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7}"
+              step="0.1" min="0"
+              oninput="calcRetailers[${ri}].monthTilts['${m}']=parseFloat(this.value)||0;recalcPsPreview(${ri})">
+          </div>`).join('')}
+        </div>
+      </div>
+      <div id="psPreview_${ri}" style="overflow-x:auto"></div>
+    </div>`).join('')}
+    <button class="btn btn-secondary" style="margin-top:8px;font-size:11px" onclick="calcRetailers.push({name:'',posTilt:1,stores:0,monthTilts:{},skuPs:{}});renderPsBlocks()">+ 小売追加</button>`;
+  // 初期プレビュー
+  calcRetailers.forEach((_,ri)=>recalcPsPreview(ri));
+}
+function recalcPsPreview(ri){
+  const r=calcRetailers[ri];
+  const base=getBaseMonth()||'2026-01';
+  const tobM=+document.getElementById('ci_tobMonths').value||4;
+  const months=monthRange(base,tobM);
+  const el=document.getElementById('psPreview_'+ri);
+  if(!el) return;
+  let tbl=`<table style="font-size:11px;margin-top:4px"><thead><tr>
+    <th style="text-align:left;font-family:var(--font-mono);font-size:9px;color:var(--text3)">SKU</th>
+    ${months.map(m=>`<th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${m}</th>`).join('')}
+    <th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">小計</th>
+  </tr></thead><tbody>`;
+  calcSkus.forEach(s=>{
+    const ps=r.skuPs[s.name]||0;
+    const vals=months.map(m=>{
+      const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
+      return Math.round(ps*r.posTilt*tilt*r.stores);
+    });
+    tbl+=`<tr>
+      <td style="color:var(--text2);white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis">${s.name}</td>
+      ${vals.map(v=>`<td style="text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(v)}</td>`).join('')}
+      <td style="text-align:right;font-family:var(--font-mono);color:var(--accent)">${fmt(vals.reduce((a,b)=>a+b,0))}</td>
+    </tr>`;
+  });
+  tbl+='</tbody></table>';
+  el.innerHTML=tbl;
+}
 
-// Quantity input
+// ── 数量入力 ──
 function buildQuantityInput(){
-  const base=document.getElementById('ci_baseMonth').value||'2026-03';
+  const base=getBaseMonth()||'2026-01';
   const tobM=+document.getElementById('ci_tobMonths').value||4;
   const ecM=+document.getElementById('ci_ecMonths').value||5;
   const ovsM=+document.getElementById('ci_overseasMonths').value||3;
   const tobMonths=monthRange(base,tobM);
   const ecMonths=monthRange(base,ecM);
   const ovsMonths=monthRange(base,ovsM);
-
   const area=document.getElementById('quantityInputArea');
 
   if(calcMode==='normal'){
-    // toB: retailer blocks
-    if(calcRetailers.length===0) calcRetailers=[{name:'ロフト',posTilt:1,stores:150,monthTilts:{},skuPs:{},skuInitial:{}}];
+    // toB: 小売ブロックから自動計算表示 + EC/海外を手入力
     let html=`<div class="panel"><div class="panel-header">
-      <div class="panel-title"><span class="panel-title-dot" style="background:var(--tob)"></span>SECTION C — toB 小売ブロック</div>
-      <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="addRetailer()">+ 小売追加</button>
-    </div><div class="panel-body"><div id="retailerBlocksWrap"></div></div></div>`;
+      <div class="panel-title"><span class="panel-title-dot" style="background:var(--tob)"></span>toB — 小売ブロック別月別発注予測（自動計算）</div>
+    </div><div class="panel-body">`;
+    calcRetailers.forEach((r,ri)=>{
+      html+=`<div style="margin-bottom:16px"><div style="font-weight:500;font-size:13px;margin-bottom:8px;color:var(--accent2)">${r.name||'小売 '+(ri+1)}</div>
+      <div style="overflow-x:auto"><table style="font-size:12px"><thead><tr>
+        <th style="text-align:left;font-family:var(--font-mono);font-size:9px;color:var(--text3)">SKU</th>
+        ${tobMonths.map(m=>`<th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${m}</th>`).join('')}
+        <th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">小計</th>
+      </tr></thead><tbody>`;
+      calcSkus.forEach(s=>{
+        const ps=r.skuPs[s.name]||0;
+        const vals=tobMonths.map(m=>{
+          const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
+          return Math.round(ps*r.posTilt*tilt*r.stores);
+        });
+        html+=`<tr>
+          <td style="color:var(--text);white-space:nowrap">${s.name}</td>
+          ${vals.map(v=>`<td style="text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(v)}</td>`).join('')}
+          <td style="text-align:right;font-family:var(--font-mono);color:var(--accent)">${fmt(vals.reduce((a,b)=>a+b,0))}</td>
+        </tr>`;
+      });
+      html+='</tbody></table></div></div>';
+    });
+    html+='</div></div>';
 
     // EC
-    html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--ec)"></span>SECTION D — EC 月別数量</div></div>
+    html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--ec)"></span>EC — 月別数量（手入力）</div></div>
     <div class="panel-body">${calcSkus.map(s=>`
-      <div class="sku-block"><div class="sku-name-display" style="margin-bottom:8px">${s.name}</div>
-      <div class="monthly-grid">${ecMonths.map(m=>`<div class="monthly-input-wrap">
+      <div class="sku-block"><div style="font-size:13px;font-weight:500;margin-bottom:8px">${s.name}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+      ${ecMonths.map(m=>`<div class="monthly-input-wrap">
         <label class="monthly-label">${m}</label>
-        <input type="number" class="monthly-input" min="0" value="${(calcEcMonthly[s.name]||{})[m]||0}" oninput="setMonthly('ec','${s.name}','${m}',+this.value)">
-      </div>`).join('')}</div></div>`).join('')}
+        <input type="number" class="monthly-input" min="0" step="1" style="width:72px"
+          value="${(calcEcMonthly[s.name]||{})[m]||''}"
+          placeholder="0"
+          onchange="setMonthly('ec','${s.name}','${m}',+this.value)">
+      </div>`).join('')}
+      </div></div>`).join('')}
     </div></div>`;
 
     // 海外
-    html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--overseas)"></span>SECTION D — 海外 月別数量</div></div>
+    html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--overseas)"></span>海外 — 月別数量（手入力）</div></div>
     <div class="panel-body">${calcSkus.map(s=>`
-      <div class="sku-block"><div class="sku-name-display" style="margin-bottom:8px">${s.name}</div>
-      <div class="monthly-grid">${ovsMonths.map(m=>`<div class="monthly-input-wrap">
+      <div class="sku-block"><div style="font-size:13px;font-weight:500;margin-bottom:8px">${s.name}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+      ${ovsMonths.map(m=>`<div class="monthly-input-wrap">
         <label class="monthly-label">${m}</label>
-        <input type="number" class="monthly-input" min="0" value="${(calcOverseasMonthly[s.name]||{})[m]||0}" oninput="setMonthly('overseas','${s.name}','${m}',+this.value)">
-      </div>`).join('')}</div></div>`).join('')}
+        <input type="number" class="monthly-input" min="0" step="1" style="width:72px"
+          value="${(calcOverseasMonthly[s.name]||{})[m]||''}"
+          placeholder="0"
+          onchange="setMonthly('overseas','${s.name}','${m}',+this.value)">
+      </div>`).join('')}
+      </div></div>`).join('')}
     </div></div>`;
 
     area.innerHTML=html;
-    renderRetailerBlocks(tobMonths);
 
   } else {
-    // SIMPLE: direct input per channel
+    // 簡易: 全チャネル直接入力
     let html='';
     [['toB',tobMonths,'var(--tob)'],['EC',ecMonths,'var(--ec)'],['海外',ovsMonths,'var(--overseas)']].forEach(([ch,mons,col])=>{
-      html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:${col}"></span>${ch} 月別数量（直接入力）</div></div>
+      html+=`<div class="panel"><div class="panel-header"><div class="panel-title">
+        <span class="panel-title-dot" style="background:${col}"></span>${ch} 月別数量</div></div>
       <div class="panel-body">${calcSkus.map(s=>`
-        <div class="sku-block"><div class="sku-name-display" style="margin-bottom:8px">${s.name}</div>
-        <div class="monthly-grid">${mons.map(m=>`<div class="monthly-input-wrap">
+        <div class="sku-block"><div style="font-size:13px;font-weight:500;margin-bottom:8px">${s.name}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${mons.map(m=>`<div class="monthly-input-wrap">
           <label class="monthly-label">${m}</label>
-          <input type="number" class="monthly-input" min="0" value="${((calcSimpleMonthly[ch]||{})[s.name]||{})[m]||0}" oninput="setSimpleMonthly('${ch}','${s.name}','${m}',+this.value)">
-        </div>`).join('')}</div></div>`).join('')}
+          <input type="number" class="monthly-input" min="0" step="1" style="width:72px"
+            value="${((calcSimpleMonthly[ch]||{})[s.name]||{})[m]||''}"
+            placeholder="0"
+            onchange="setSimpleMonthly('${ch}','${s.name}','${m}',+this.value)">
+        </div>`).join('')}
+        </div></div>`).join('')}
       </div></div>`;
     });
     area.innerHTML=html;
   }
 }
-
-function renderRetailerBlocks(tobMonths){
-  const wrap=document.getElementById('retailerBlocksWrap');
-  if(!wrap) return;
-  wrap.innerHTML=calcRetailers.map((r,ri)=>`
-    <div class="retailer-block">
-      <div class="retailer-block-header">
-        <span style="font-weight:500;font-size:13px">${r.name||`小売 ${ri+1}`}</span>
-        ${calcRetailers.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:2px 8px" onclick="removeRetailer(${ri})">削除</button>`:''}
-      </div>
-      <div class="pos-grid">
-        <div class="form-group"><label class="form-label">小売名</label>
-          <input type="text" value="${r.name}" oninput="updateRetailer(${ri},'name',this.value)"></div>
-        <div class="form-group"><label class="form-label">業態POS傾斜</label>
-          <input type="number" value="${r.posTilt}" step="0.1" min="0" oninput="updateRetailer(${ri},'posTilt',+this.value)"></div>
-        <div class="form-group"><label class="form-label">全店舗数</label>
-          <input type="number" value="${r.stores}" min="0" oninput="updateRetailer(${ri},'stores',+this.value)"></div>
-      </div>
-      <div style="margin-bottom:8px">
-        <div class="meta-key" style="margin-bottom:6px">SKU別 参照P/S（LOFT月換算）</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
-        ${calcSkus.map(s=>`<div class="form-group"><label class="form-label">${s.name}</label>
-          <input type="number" value="${r.skuPs[s.name]||0}" step="0.1" min="0" oninput="updateRetailerSku(${ri},'ps','${s.name}',+this.value)"></div>`).join('')}
-        </div>
-      </div>
-      <div style="margin-bottom:8px">
-        <div class="meta-key" style="margin-bottom:6px">月別傾斜</div>
-        <div class="monthly-grid">${tobMonths.map(m=>`<div class="monthly-input-wrap">
-          <label class="monthly-label">${m}</label>
-          <input type="number" class="monthly-input" value="${r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7}" step="0.1" min="0" oninput="updateRetailerMonthTilt(${ri},'${m}',+this.value)">
-        </div>`).join('')}</div>
-      </div>
-      <div>
-        <div class="meta-key" style="margin-bottom:6px">計算結果（月別出荷予測 = P/S × 傾斜 × 店舗数）</div>
-        <div style="overflow-x:auto"><table style="font-size:11px">
-          <thead><tr><th style="text-align:left">SKU</th>${tobMonths.map(m=>`<th>${m}</th>`).join('')}<th>小計</th></tr></thead>
-          <tbody>${calcSkus.map(s=>{
-            const vals=tobMonths.map(m=>{
-              const ps=r.skuPs[s.name]||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
-              return Math.round(ps*r.posTilt*tilt*r.stores);
-            });
-            return`<tr><td>${s.name}</td>${vals.map(v=>`<td class="num-blue">${fmt(v)}</td>`).join('')}<td class="num-accent">${fmt(vals.reduce((a,b)=>a+b,0))}</td></tr>`;
-          }).join('')}</tbody>
-        </table></div>
-      </div>
-    </div>`).join('');
-}
-function updateRetailer(i,k,v){calcRetailers[i][k]=v;const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
-function updateRetailerSku(i,type,sku,v){if(type==='ps') calcRetailers[i].skuPs[sku]=v;const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
-function updateRetailerMonthTilt(i,m,v){calcRetailers[i].monthTilts[m]=v;const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
-function addRetailer(){calcRetailers.push({name:'',posTilt:1,stores:0,monthTilts:{},skuPs:{},skuInitial:{}});const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
-function removeRetailer(i){calcRetailers.splice(i,1);const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
-
 function setMonthly(ch,sku,m,v){
   if(ch==='ec'){if(!calcEcMonthly[sku]) calcEcMonthly[sku]={};calcEcMonthly[sku][m]=v;}
   else{if(!calcOverseasMonthly[sku]) calcOverseasMonthly[sku]={};calcOverseasMonthly[sku][m]=v;}
@@ -1756,9 +1836,9 @@ function setSimpleMonthly(ch,sku,m,v){
   calcSimpleMonthly[ch][sku][m]=v;
 }
 
-// Collect calc data
+// ── データ収集 ──
 function collectCalcData(){
-  const base=document.getElementById('ci_baseMonth').value||'2026-03';
+  const base=getBaseMonth()||'2026-01';
   const tobM=+document.getElementById('ci_tobMonths').value||4;
   const ecM=+document.getElementById('ci_ecMonths').value||5;
   const ovsM=+document.getElementById('ci_overseasMonths').value||3;
@@ -1766,14 +1846,13 @@ function collectCalcData(){
   const ecMonths=monthRange(base,ecM);
   const ovsMonths=monthRange(base,ovsM);
 
-  // Build monthly_summary per sku
   const skusOut=calcSkus.map(s=>{
     let tob={},ec={},overseas={};
     if(calcMode==='normal'){
-      // toB from retailers
       tobMonths.forEach(m=>{
         tob[m]=calcRetailers.reduce((a,r)=>{
-          const ps=r.skuPs[s.name]||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
+          const ps=r.skuPs[s.name]||0;
+          const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
           return a+Math.round(ps*r.posTilt*tilt*r.stores);
         },0);
       });
@@ -1798,58 +1877,61 @@ function collectCalcData(){
     lead_time_weeks:+document.getElementById('ci_leadtime').value||8,
     container_moq:+document.getElementById('ci_containerMoq').value||0,
     bulk_moq:+document.getElementById('ci_bulkMoq').value||0,
-    tob_months:tobM,ec_months:ecM,overseas_months:ovsM,
+    tob_months:tobM, ec_months:ecM, overseas_months:ovsM,
     base_month:base,
     skus:skusOut,
     retailers:calcMode==='normal'?calcRetailers:[],
     dept:document.getElementById('ci_dept')?document.getElementById('ci_dept').value:'',
-    memo:document.getElementById('ci_memo')?document.getElementById('ci_memo').value:''
+    memo:document.getElementById('ci_memo')?document.getElementById('ci_memo').value:'',
   };
 }
 
+// ── プレビュー ──
 function buildPreview(){
   const d=collectCalcData();
   const totEst=d.skus.reduce((a,s)=>a+s.estimated_total,0);
   const totOrd=d.skus.reduce((a,s)=>a+s.order_quantity,0);
-  let html=`<div class="calc-preview">
-    <div class="calc-preview-title">試算サマリー</div>
-    <div class="preview-row"><span class="preview-key">商品</span><span class="preview-val">${d.product||'—'}</span></div>
-    <div class="preview-row"><span class="preview-key">ブランド</span><span class="preview-val">${d.brand||'—'}</span></div>
-    <div class="preview-row"><span class="preview-key">発注予定日</span><span class="preview-val">${d.order_date||'—'}</span></div>
-    <div class="preview-row"><span class="preview-key">入庫予定日</span><span class="preview-val">${d.arrival_date||'—'}</span></div>
-    <div class="preview-row"><span class="preview-key">試算モード</span><span class="preview-val">${d.mode==='normal'?'通常試算':'簡易試算'}</span></div>
-  </div>
-  <div class="sku-table-wrap" style="margin-top:12px"><table>
-    <thead><tr><th>SKU</th><th>現在庫</th><th>推計必要数</th><th>発注数（推計−在庫）</th></tr></thead>
-    <tbody>${d.skus.map(s=>`<tr>
-      <td>${s.name}</td><td>${fmt(s.stock)}</td>
-      <td class="num-blue">${fmt(s.estimated_total)}</td>
-      <td class="num-accent">${fmt(s.order_quantity)}</td>
-    </tr>`).join('')}
-    <tr style="border-top:1px solid var(--border)"><td>合計</td><td></td><td class="num-blue">${fmt(totEst)}</td><td class="num-accent">${fmt(totOrd)}</td></tr>
-    </tbody>
-  </table></div>`;
-  document.getElementById('calcPreviewContent').innerHTML=html;
+  document.getElementById('calcPreviewContent').innerHTML=`
+    <div class="calc-preview">
+      <div class="calc-preview-title">試算サマリー</div>
+      <div class="preview-row"><span class="preview-key">商品</span><span class="preview-val">${d.product||'—'}</span></div>
+      <div class="preview-row"><span class="preview-key">ブランド</span><span class="preview-val">${d.brand||'—'}</span></div>
+      <div class="preview-row"><span class="preview-key">発注予定日</span><span class="preview-val">${d.order_date||'—'}</span></div>
+      <div class="preview-row"><span class="preview-key">入庫予定日</span><span class="preview-val">${d.arrival_date||'—'}</span></div>
+      <div class="preview-row"><span class="preview-key">試算モード</span><span class="preview-val">${d.mode==='normal'?'通常試算':'簡易試算'}</span></div>
+    </div>
+    <div class="sku-table-wrap" style="margin-top:12px"><table>
+      <thead><tr><th>SKU</th><th>現在庫</th><th>推計必要数</th><th>発注数（推計−在庫）</th></tr></thead>
+      <tbody>${d.skus.map(s=>`<tr>
+        <td>${s.name}</td><td>${fmt(s.stock)}</td>
+        <td class="num-blue">${fmt(s.estimated_total)}</td>
+        <td class="num-accent">${fmt(s.order_quantity)}</td>
+      </tr>`).join('')}
+      <tr style="border-top:1px solid var(--border)"><td>合計</td><td></td>
+        <td class="num-blue">${fmt(totEst)}</td><td class="num-accent">${fmt(totOrd)}</td></tr>
+      </tbody>
+    </table></div>`;
 }
 
-// ════════════════════════════════════════════
-//  Excel出力（SheetJS）
-// ════════════════════════════════════════════
+// ── Excelビルド ──
 function buildWorkbook(d){
   const wb=XLSX.utils.book_new();
-  const sheetName=d.mode==='normal'?'発注試算テンプレート':'発注試算テンプレート（簡易）';
-
-  const base=d.base_month;
+  const isSimple=d.mode==='simple';
+  const sheetName=isSimple?'発注試算テンプレート（簡易）':'発注試算テンプレート';
+  const base=d.base_month||'2026-01';
   const tobMonths=monthRange(base,d.tob_months);
   const ecMonths=monthRange(base,d.ec_months);
   const ovsMonths=monthRange(base,d.overseas_months);
+  const allM=[...new Set([...tobMonths,...ecMonths,...ovsMonths])].sort();
+
+  // 月名変換（例: 2026-03 → 3月）
+  const mLabel=m=>{const [,mo]=m.split('-');return parseInt(mo)+'月';};
 
   const rows=[];
-  const push=(...cells)=>rows.push(cells);
+  const push=r=>rows.push(r);
 
-  push([`${sheetName} — ${d.mode==='normal'?'通常試算':'簡易試算版'}`]);
-  push([]);
-  push(['SECTION A　発注サマリー']);
+  // SECTION A
+  push([`SECTION A　発注サマリー（承認者確認欄）${isSimple?'【簡易版】':''}`]);
   push(['▼ 商品情報']);
   push(['商品名',d.product]);
   push(['ブランド',d.brand]);
@@ -1865,54 +1947,99 @@ function buildWorkbook(d){
   push(['EC',d.ec_months,'好調品5〜6か月、通常4か月']);
   push(['海外',d.overseas_months,'別途調整']);
   push([]);
-  push(['▼ 販路×月サマリー']);
-  push(['販路 / SKU','現在庫','',...tobMonths.concat(ecMonths.slice(tobMonths.length)).concat(ovsMonths.slice(ecMonths.length)),'合計'].filter((_,i)=>i===0||i===1||i===2||true));
+  push(['▼ 販路×月サマリー（発注対象月数分のみ表示）']);
+  // ヘッダー行
+  push(['販路 / SKU','現在庫','',...tobMonths.map(mLabel),'合計']);
 
-  // helper to pad months
-  const allMonths=[...new Set([...tobMonths,...ecMonths,...ovsMonths])].sort();
-
-  // toB rows
-  const tobTotals={};allMonths.forEach(m=>tobTotals[m]=0);
-  push(['toB合計','','', ...allMonths.map(m=>{const v=d.skus.reduce((a,s)=>a+(s.monthly_summary.tob[m]||0),0);tobTotals[m]+=v;return v;}), d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.tob).reduce((x,y)=>x+y,0),0)]);
-  d.skus.forEach(s=>{push([s.name,s.stock,'',...allMonths.map(m=>s.monthly_summary.tob[m]||0),Object.values(s.monthly_summary.tob).reduce((a,b)=>a+b,0)]);});
-  push([]);
-  // EC rows
-  push(['EC合計','','',...allMonths.map(m=>d.skus.reduce((a,s)=>a+(s.monthly_summary.ec[m]||0),0)),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.ec).reduce((x,y)=>x+y,0),0)]);
-  d.skus.forEach(s=>{push([s.name,s.stock,'',...allMonths.map(m=>s.monthly_summary.ec[m]||0),Object.values(s.monthly_summary.ec).reduce((a,b)=>a+b,0)]);});
-  push([]);
-  // 海外 rows
-  push(['海外合計','','',...allMonths.map(m=>d.skus.reduce((a,s)=>a+(s.monthly_summary.overseas[m]||0),0)),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.overseas).reduce((x,y)=>x+y,0),0)]);
-  d.skus.forEach(s=>{push([s.name,s.stock,'',...allMonths.map(m=>s.monthly_summary.overseas[m]||0),Object.values(s.monthly_summary.overseas).reduce((a,b)=>a+b,0)]);});
-  push([]);
-  // 確定発注数サマリー
-  push(['▼ 確定発注数サマリー（SKU合計）']);
-  push(['SKU名','JAN','現在庫','推計必要数','発注数（推計−現在庫）','確定発注数','備考']);
-  d.skus.forEach(s=>{push([s.name,s.jan,s.stock,s.estimated_total,s.order_quantity,s.confirmed_order||'']);});
+  // toB
+  const tobTotals={};tobMonths.forEach(m=>tobTotals[m]=0);
+  push(['toB合計','',...tobMonths.map(m=>{const v=d.skus.reduce((a,s)=>a+(s.monthly_summary.tob[m]||0),0);tobTotals[m]+=v;return v;}),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.tob).reduce((x,y)=>x+y,0),0)]);
+  d.skus.forEach(s=>push([s.name,s.stock,...tobMonths.map(m=>s.monthly_summary.tob[m]||0),Object.values(s.monthly_summary.tob).reduce((a,b)=>a+b,0)]));
+  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,0,...tobMonths.map(()=>0),0]);
   push([]);
 
-  if(d.mode==='normal'&&d.retailers.length>0){
-    push(['SECTION C　toB販路（小売ブロック）']);
+  // EC
+  push(['EC合計','',...ecMonths.map(m=>d.skus.reduce((a,s)=>a+(s.monthly_summary.ec[m]||0),0)),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.ec).reduce((x,y)=>x+y,0),0)]);
+  d.skus.forEach(s=>push([s.name,s.stock,...ecMonths.map(m=>s.monthly_summary.ec[m]||0),Object.values(s.monthly_summary.ec).reduce((a,b)=>a+b,0)]));
+  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,0,...ecMonths.map(()=>0),0]);
+  push([]);
+
+  // 海外
+  push(['海外合計','',...ovsMonths.map(m=>d.skus.reduce((a,s)=>a+(s.monthly_summary.overseas[m]||0),0)),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.overseas).reduce((x,y)=>x+y,0),0)]);
+  d.skus.forEach(s=>push([s.name,s.stock,...ovsMonths.map(m=>s.monthly_summary.overseas[m]||0),Object.values(s.monthly_summary.overseas).reduce((a,b)=>a+b,0)]));
+  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,0,...ovsMonths.map(()=>0),0]);
+  push([]);
+
+  // 確定発注数（全チャネル合計）
+  const maxM=Math.max(tobMonths.length,ecMonths.length,ovsMonths.length);
+  const unionMonths=[...new Set([...tobMonths,...ecMonths,...ovsMonths])].sort();
+  const tobEcAll=m=>(d.skus.reduce((a,s)=>a+(s.monthly_summary.tob[m]||0)+(s.monthly_summary.ec[m]||0)+(s.monthly_summary.overseas[m]||0),0));
+  push(['確定発注数（SKU合計）','',...unionMonths.map(tobEcAll),d.skus.reduce((a,s)=>a+s.estimated_total,0)]);
+  d.skus.forEach(s=>{
+    const total=m=>(s.monthly_summary.tob[m]||0)+(s.monthly_summary.ec[m]||0)+(s.monthly_summary.overseas[m]||0);
+    push([s.name,s.stock,...unionMonths.map(total),s.estimated_total]);
+  });
+  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,0,...unionMonths.map(()=>0),0]);
+  push([]);
+
+  // 在庫推移シミュレーション
+  push(['▼ 在庫推移シミュレーション（SKU別）']);
+  push(['SKU名','現在庫',...unionMonths.map(mLabel)]);
+  d.skus.forEach(s=>{
+    const total=m=>(s.monthly_summary.tob[m]||0)+(s.monthly_summary.ec[m]||0)+(s.monthly_summary.overseas[m]||0);
+    push([`出荷予測　${s.name}`,'',...unionMonths.map(total)]);
+    push(['  └入庫予定','',...unionMonths.map(()=>0)]);
+    let stock=s.stock;
+    const stockRow=[`月末在庫　${s.name}`,s.stock];
+    unionMonths.forEach(m=>{stock-=total(m);stockRow.push(stock);});
+    push(stockRow);
+    push([]);
+  });
+  push([]);
+
+  // SECTION B チェックリスト
+  push(['SECTION B　発注時チェックリスト']);
+  ['① 新色や追加SKUの発注に関しては前回発注の発注数と実際の出荷数の結果も考慮にいれているか',
+   '② 半年程度の商品の拡販スケジュールを認知した上で発注できているか（リピート発注：オフライン3〜4か月、EC6か月で試算）',
+   '③ 投票結果をもとに発注数量を変えている場合、色ごとの数量差を30%以内に抑えているか',
+   '④ 先行企業の初月のP/Sが4以下の場合は発注しない、もしくは発注数を5,000以下に抑える',
+   '⑤ 売れる見込みの高い商品（発売計画の赤字商品）、継続売上が期待できる商品は5か月分の在庫で発注',
+   '⑥ 新商品の検討の際は各SKU1万上限で検討（売れ行きの見込みある場合はその限りではない）',
+  ].forEach(c=>push([c,'','','','','','','','','','✓ OK']));
+  push([]);
+
+  // SECTION C toB小売ブロック（通常試算）
+  if(!isSimple&&d.retailers&&d.retailers.length){
+    push(['SECTION C　toB販路（小売ブロック×10、未使用は行を非表示に）']);
     d.retailers.forEach(r=>{
       push([`[RETAILER] ${r.name}`]);
-      push(['業態別POS傾斜',r.posTilt,'全店舗数',r.stores]);
+      push(['業態別POS傾斜',r.posTilt,'全店舗数',r.stores,'導入状況','導入済み']);
       push(['月別傾斜','',...tobMonths.map(m=>r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7)]);
-      push(['商品名','P/S（LOFT参照）','初回納品',...tobMonths,'合計']);
+      push(['商品名','P/S','初回納品数',...tobMonths.map(mLabel),'合計']);
       d.skus.forEach(s=>{
-        const vals=tobMonths.map(m=>{const ps=r.skuPs[s.name]||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;return Math.round(ps*r.posTilt*tilt*r.stores);});
-        push([s.name,r.skuPs[s.name]||0,0,...vals,vals.reduce((a,b)=>a+b,0)]);
+        const ps=r.skuPs[s.name]||0;
+        const vals=tobMonths.map(m=>Math.round(ps*r.posTilt*(r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7)*r.stores));
+        push([s.name,ps,0,...vals,vals.reduce((a,b)=>a+b,0)]);
       });
       push([]);
     });
   }
 
-  push(['SECTION F　備考']);
+  // 確定発注数サマリー
+  push(['▼ 確定発注数サマリー']);
+  push(['SKU名','JAN','現在庫','推計必要数','発注数（推計−現在庫）','確定発注数','備考']);
+  d.skus.forEach(s=>push([s.name,s.jan,s.stock,s.estimated_total,s.order_quantity,s.confirmed_order||'']));
+  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,'',0,0,0,'']);
+  push([]);
+
+  // SECTION F 備考
+  push(['SECTION F　備考・メモ（JSON変換対象外）']);
   push([d.memo||'']);
   push(['担当部署',d.dept]);
   push(['出力日時',new Date().toLocaleString('ja-JP')]);
 
   const ws=XLSX.utils.aoa_to_sheet(rows);
-  // column widths
-  ws['!cols']=[{wch:30},{wch:14},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10}];
+  ws['!cols']=[{wch:35},{wch:14},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:12}];
   XLSX.utils.book_append_sheet(wb,ws,sheetName);
   return wb;
 }
@@ -1921,7 +2048,7 @@ function exportCalcDirect(){
   const d=collectCalcData();
   if(!d.product){showNotif('商品名を入力してください','error');return;}
   const wb=buildWorkbook(d);
-  const fname=`発注試算_${d.brand||'brand'}_${d.product||'product'}_${new Date().toISOString().slice(0,10)}.xlsx`;
+  const fname=`発注試算_${d.brand||'brand'}_${d.product}_${d.order_date||'date'}.xlsx`;
   XLSX.writeFile(wb,fname);
   showNotif('Excelを出力しました','success');
 }
@@ -1929,16 +2056,17 @@ function exportCalcDirect(){
 // ════════════════════════════════════════════
 //  仮保存
 // ════════════════════════════════════════════
-const LS_KEY='millfee_drafts';
+const LS_KEY='millfee_drafts_v2';
 function loadDrafts(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'[]');}catch{return[];}}
 function saveDraftsToLS(drafts){localStorage.setItem(LS_KEY,JSON.stringify(drafts));}
 
 function saveDraft(){
-  const dept=document.getElementById('ci_dept').value.trim();
-  if(!dept){showNotif('部署名を入力してください','error');return;}
+  const dept=(document.getElementById('ci_dept')||{}).value||'';
+  if(!dept.trim()){showNotif('部署名を入力してください','error');return;}
   const d=collectCalcData();
   if(!d.product){showNotif('商品名を入力してください','error');return;}
   d.dept=dept;
+  d.memo=(document.getElementById('ci_memo')||{}).value||'';
   d.saved_at=new Date().toISOString();
   d.id=Date.now().toString();
   const drafts=loadDrafts();
@@ -1946,86 +2074,155 @@ function saveDraft(){
   saveDraftsToLS(drafts);
   updateDraftBadge();
   showNotif(`「${d.product}」を仮保存しました（${dept}）`,'success');
-  renderDraftList();
   showView('drafts');
+  renderDraftList();
 }
 
 function updateDraftBadge(){
   const n=loadDrafts().length;
   const b=document.getElementById('draftBadge');
-  if(n>0){b.style.display='inline';b.textContent=n;}else{b.style.display='none';}
-  const btn=document.getElementById('exportAllBtn');
-  if(btn) btn.style.display=n>0?'inline-flex':'none';
+  if(b){b.style.display=n>0?'inline':'none';b.textContent=n;}
 }
 
 function renderDraftList(){
   const drafts=loadDrafts();
   updateDraftBadge();
+  const selBtn=document.getElementById('exportSelBtn');
+  const delBtn=document.getElementById('deleteSelBtn');
   const body=document.getElementById('draftListBody');
-  if(!drafts.length){body.innerHTML='<div style="color:var(--text3);font-size:12px;text-align:center;padding:24px">仮保存データがありません</div>';return;}
+  if(!body) return;
+  if(!drafts.length){
+    body.innerHTML='<div style="color:var(--text3);font-size:12px;text-align:center;padding:24px">仮保存データがありません</div>';
+    if(selBtn) selBtn.style.display='none';
+    if(delBtn) delBtn.style.display='none';
+    return;
+  }
   body.innerHTML=`<div class="draft-list">${drafts.map(d=>`
     <div class="draft-card">
       <div class="draft-card-header">
-        <div>
-          <div class="draft-title">${d.product||'—'} <span class="badge ${d.mode==='normal'?'badge-accent':'badge-blue'}" style="margin-left:6px">${d.mode==='normal'?'通常':'簡易'}</span></div>
-          <div class="draft-meta">${d.brand} ／ ${d.order_date||'発注日未設定'}</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" class="draft-cb" value="${d.id}" style="accent-color:var(--accent);width:15px;height:15px;flex-shrink:0" onchange="updateDraftSelBtns()">
+          <div>
+            <div class="draft-title">${d.product||'—'} <span class="badge ${d.mode==='normal'?'badge-accent':'badge-blue'}" style="margin-left:6px">${d.mode==='normal'?'通常':'簡易'}</span></div>
+            <div class="draft-meta">${d.brand||''} ／ 発注: ${d.order_date||'—'} ／ 保存: ${new Date(d.saved_at).toLocaleString('ja-JP')}</div>
+          </div>
         </div>
-        <div class="dept-tag">🏢 ${d.dept}</div>
+        <span class="dept-tag">🏢 ${d.dept}</span>
       </div>
-      <div class="draft-status" style="margin-bottom:10px">
-        ${d.skus.map(s=>`<span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${s.name}: 推計 ${fmt(s.estimated_total)} / 発注 ${fmt(s.order_quantity)}</span>`).join(' &nbsp;')}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+        ${(d.skus||[]).map(s=>`<span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">
+          ${s.name}: 推計${fmt(s.estimated_total)} / 発注${fmt(s.order_quantity)}</span>`).join(' ')}
       </div>
-      <div class="draft-meta" style="margin-bottom:10px">保存: ${new Date(d.saved_at).toLocaleString('ja-JP')}${d.memo?' ／ '+d.memo:''}</div>
+      ${d.memo?`<div style="font-size:11px;color:var(--text3);margin-bottom:8px">📝 ${d.memo}</div>`:''}
       <div class="btn-row">
-        <button class="btn btn-blue" onclick="exportOneDraft('${d.id}')">📥 Excel出力</button>
-        <button class="btn btn-danger" onclick="deleteDraft('${d.id}')">削除</button>
+        <button class="btn btn-secondary" style="font-size:11px" onclick="editDraft('${d.id}')">✏️ 編集</button>
+        <button class="btn btn-blue" style="font-size:11px" onclick="exportOneDraft('${d.id}')">📥 Excel出力</button>
       </div>
     </div>`).join('')}</div>`;
+  updateDraftSelBtns();
+}
+
+function updateDraftSelBtns(){
+  const checked=document.querySelectorAll('.draft-cb:checked').length;
+  const selBtn=document.getElementById('exportSelBtn');
+  const delBtn=document.getElementById('deleteSelBtn');
+  if(selBtn) selBtn.style.display=checked?'inline-flex':'none';
+  if(delBtn) delBtn.style.display=checked?'inline-flex':'none';
+}
+
+function toggleSelectAll(){
+  const cbs=document.querySelectorAll('.draft-cb');
+  const allChecked=[...cbs].every(c=>c.checked);
+  cbs.forEach(c=>c.checked=!allChecked);
+  updateDraftSelBtns();
 }
 
 function exportOneDraft(id){
-  const drafts=loadDrafts();
-  const d=drafts.find(x=>x.id===id);
+  const d=loadDrafts().find(x=>x.id===id);
   if(!d) return;
   const wb=buildWorkbook(d);
-  const fname=`発注試算_${d.brand||'brand'}_${d.product||'product'}_${d.dept}_${d.saved_at.slice(0,10)}.xlsx`;
+  const fname=`発注試算_${d.brand||'brand'}_${d.product}_${d.dept}_${d.saved_at.slice(0,10)}.xlsx`;
   XLSX.writeFile(wb,fname);
-  // 出力済みを削除
-  const newDrafts=drafts.filter(x=>x.id!==id);
-  saveDraftsToLS(newDrafts);
-  updateDraftBadge();
-  renderDraftList();
-  showNotif('Excel出力しました（仮保存から削除）','success');
+  showNotif('Excel出力しました（仮保存は残しています）','success');
 }
 
-function exportAllDrafts(){
+function exportSelectedDrafts(){
+  const ids=[...document.querySelectorAll('.draft-cb:checked')].map(c=>c.value);
+  if(!ids.length){showNotif('選択してください','error');return;}
   const drafts=loadDrafts();
-  if(!drafts.length){showNotif('仮保存データがありません','error');return;}
-  showConfirm(
-    '全件 Excel 出力',
-    `${drafts.length}件の仮保存データをすべてExcel出力します。出力後、仮保存リストから削除されます。よろしいですか？`,
-    ()=>{
-      drafts.forEach((d,i)=>{
-        setTimeout(()=>{
-          const wb=buildWorkbook(d);
-          const fname=`発注試算_${d.brand||'brand'}_${d.product||'product'}_${d.dept}_${d.saved_at.slice(0,10)}.xlsx`;
-          XLSX.writeFile(wb,fname);
-        },i*300);
-      });
-      saveDraftsToLS([]);
-      updateDraftBadge();
-      setTimeout(()=>{renderDraftList();showNotif(`${drafts.length}件を出力しました`,'success');},drafts.length*300+200);
-      closeModal();
-    },'btn-green','出力 → 削除'
-  );
+  ids.forEach((id,i)=>{
+    const d=drafts.find(x=>x.id===id);if(!d) return;
+    setTimeout(()=>{
+      const wb=buildWorkbook(d);
+      XLSX.writeFile(wb,`発注試算_${d.brand||''}_${d.product}_${d.dept}_${d.saved_at.slice(0,10)}.xlsx`);
+    },i*300);
+  });
+  showNotif(`${ids.length}件を出力しました`,'success');
 }
 
-function deleteDraft(id){
-  showConfirm('削除確認','この仮保存データを削除しますか？',()=>{
-    const d=loadDrafts().filter(x=>x.id!==id);
-    saveDraftsToLS(d);updateDraftBadge();renderDraftList();closeModal();showNotif('削除しました','success');
+function deleteSelectedDrafts(){
+  const ids=[...document.querySelectorAll('.draft-cb:checked')].map(c=>c.value);
+  if(!ids.length){showNotif('選択してください','error');return;}
+  showConfirm('削除確認',`選択した${ids.length}件を削除しますか？`,()=>{
+    const remaining=loadDrafts().filter(d=>!ids.includes(d.id));
+    saveDraftsToLS(remaining);
+    updateDraftBadge();
+    renderDraftList();
+    closeModal();
+    showNotif(`${ids.length}件を削除しました`,'success');
   });
 }
+
+function editDraft(id){
+  const d=loadDrafts().find(x=>x.id===id);if(!d) return;
+  // 状態を復元
+  calcMode=d.mode||'normal';
+  calcSkus=d.skus?d.skus.map(s=>({name:s.name,jan:s.jan||'',stock:s.stock||0,prevConfirmedOrder:s.prevConfirmedOrder||0,prevEstimated:s.prevEstimated||0})):[];
+  calcRetailers=d.retailers||[];
+  calcEcMonthly={};
+  calcOverseasMonthly={};
+  calcSimpleMonthly={};
+  // 月別データを復元
+  (d.skus||[]).forEach(s=>{
+    if(s.monthly_summary){
+      if(s.monthly_summary.ec) calcEcMonthly[s.name]=s.monthly_summary.ec;
+      if(s.monthly_summary.overseas) calcOverseasMonthly[s.name]=s.monthly_summary.overseas;
+      if(d.mode==='simple'){
+        ['toB','EC','海外'].forEach(ch=>{
+          const key=ch==='toB'?'tob':ch==='EC'?'ec':'overseas';
+          if(s.monthly_summary[key]){
+            if(!calcSimpleMonthly[ch]) calcSimpleMonthly[ch]={};
+            calcSimpleMonthly[ch][s.name]=s.monthly_summary[key];
+          }
+        });
+      }
+    }
+  });
+  showView('calc');
+  selectMode(calcMode);
+  // STEP1に移動してフォームを復元
+  [0,1,2,3,4].forEach(i=>{const el=document.getElementById('calcStep'+i);if(el) el.style.display='none';});
+  const s0=document.getElementById('calcStep0');if(s0) s0.style.display='block';
+  updateStepNav(0);
+  renderSelectedSkuSection();
+  // 商品情報フィールドを設定してSTEP1へ
+  setTimeout(()=>{
+    document.getElementById('ci_product').value=d.product||'';
+    document.getElementById('ci_brand').value=d.brand||'';
+    document.getElementById('ci_orderDate').value=d.order_date||'';
+    document.getElementById('ci_leadtime').value=d.lead_time_weeks||8;
+    document.getElementById('ci_arrivalDate').value=d.arrival_date||'';
+    document.getElementById('ci_containerMoq').value=d.container_moq||0;
+    document.getElementById('ci_bulkMoq').value=d.bulk_moq||0;
+    document.getElementById('ci_tobMonths').value=d.tob_months||4;
+    document.getElementById('ci_ecMonths').value=d.ec_months||5;
+    document.getElementById('ci_overseasMonths').value=d.overseas_months||3;
+    updateBaseMonth();
+    goStep(1);
+    showNotif(`「${d.product}」の試算を編集中です`,'success');
+  },100);
+}
+
 function clearAllDrafts(){
   if(!loadDrafts().length){showNotif('仮保存データがありません','error');return;}
   showConfirm('全件削除','すべての仮保存データを削除します。よろしいですか？',()=>{saveDraftsToLS([]);updateDraftBadge();renderDraftList();closeModal();showNotif('全件削除しました','success');});
