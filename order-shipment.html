@@ -604,17 +604,21 @@ async function loadAllJSON(){
 // ─── 読み込みエラー表示 ───
 function showLoadError(msg){
   document.querySelector('.main').innerHTML=`
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center;padding:24px">
       <div style="font-size:32px">⚠️</div>
       <div style="font-size:15px;font-weight:500;color:var(--text)">JSONファイルの読み込みに失敗しました</div>
-      <div style="font-family:var(--font-mono);font-size:12px;color:var(--accent3);background:var(--surface2);padding:10px 18px;border-radius:var(--radius);border:1px solid var(--border)">${msg}</div>
-      <div style="font-size:12px;color:var(--text3);max-width:420px;line-height:1.8">
-        同リポジトリのルートに <code style="color:var(--accent)">orders.json</code>、
-        <code style="color:var(--accent)">shipments.json</code>、
-        <code style="color:var(--accent)">inventory.json</code> を配置してください。<br>
-        ローカル確認には <code style="color:var(--accent2)">http-server</code> 等の開発サーバーが必要です（file:// では CORS エラーになります）。
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent3);background:var(--surface2);padding:10px 18px;border-radius:var(--radius);border:1px solid var(--border);max-width:480px;word-break:break-all">${msg}</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 24px;max-width:500px;text-align:left;line-height:2">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3);margin-bottom:10px">CHECKLIST</div>
+        <div style="font-size:12px;color:var(--text2)">
+          ① リポジトリに <code style="color:var(--accent)">orders.json</code> / <code style="color:var(--accent)">shipments.json</code> / <code style="color:var(--accent)">inventory.json</code> が存在するか確認<br>
+          ② <strong style="color:var(--text)">GitHub Pages が有効か確認</strong><br>
+          &nbsp;&nbsp;→ Settings → Pages → Branch: <code style="color:var(--accent2)">main</code> / <code style="color:var(--accent2)">/（root）</code> → Save<br>
+          ③ Pages 有効後は <code style="color:var(--accent2)">https://&lt;user&gt;.github.io/order-shipment/</code> でアクセス<br>
+          ④ ローカル確認は <code style="color:var(--accent2)">npx http-server .</code> を使用（file:// 不可）
+        </div>
       </div>
-      <button class="btn btn-primary" onclick="loadAllJSON()">再読み込み</button>
+      <button class="btn btn-primary" onclick="loadAllJSON()">⟳ 再読み込み</button>
     </div>`;
 }
 
@@ -744,46 +748,51 @@ function monthRange(start,count){return Array.from({length:count},(_,i)=>addMont
 // ════════════════════════════════════════════
 function renderSummary(){
   if(!dataLoaded||!DATA.orders) return;
-  const orders=DATA.orders.orders;
-  orders.forEach(o=>{o.skus.forEach(s=>{tc+=s.confirmed_order;ts+=s.current_stock;te+=s.estimated_total;skuCount++;});});
+  const orders=DATA.orders.orders||[];
+  let tc=0,ts=0,te=0,skuCount=0;
+  orders.forEach(o=>{(o.skus||[]).forEach(s=>{tc+=(s.confirmed_order||0);ts+=(s.current_stock||0);te+=(s.estimated_total||0);skuCount++;});});
+  // 在庫KPIの日付はinventoryの最新スナップショット日を使う
+  const snaps=DATA.inventory?DATA.inventory.snapshots||[]:[];
+  const latestSnapDate=snaps.length?[...snaps].sort((a,b)=>b.snapshot_date.localeCompare(a.snapshot_date))[0].snapshot_date:'—';
   document.getElementById('summaryKpis').innerHTML=`
     <div class="kpi-card accent"><div class="kpi-label">確定発注数</div><div class="kpi-value">${fmt(tc)}</div><div class="kpi-unit">pcs 全SKU</div></div>
-    <div class="kpi-card blue"><div class="kpi-label">現在庫</div><div class="kpi-value">${fmt(ts)}</div><div class="kpi-unit">pcs 2026-03-01</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">現在庫</div><div class="kpi-value">${fmt(ts)}</div><div class="kpi-unit">pcs ${latestSnapDate} 時点</div></div>
     <div class="kpi-card red"><div class="kpi-label">推計必要数</div><div class="kpi-value">${fmt(te)}</div><div class="kpi-unit">pcs 全チャネル</div></div>
     <div class="kpi-card green"><div class="kpi-label">管理SKU数</div><div class="kpi-value">${skuCount}</div><div class="kpi-unit">SKUs</div></div>`;
   let html='';
   orders.forEach(o=>{
     const skus=filteredSkus(o);
+    const retailers=(o.retailer_blocks||[]);
     html+=`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-        <div><div style="font-size:15px;font-weight:500">${o.product}</div>
+        <div><div style="font-size:15px;font-weight:500">${o.product||'—'}</div>
           <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap">
-            <span class="badge badge-accent">${o.brand}</span>
-            <span class="badge badge-blue">発注 ${o.order_date}</span>
-            <span class="badge badge-green">入庫予定 ${o.arrival_date}</span>
+            <span class="badge badge-accent">${o.brand||''}</span>
+            <span class="badge badge-blue">発注 ${o.order_date||'—'}</span>
+            <span class="badge badge-green">入庫予定 ${o.arrival_date||'—'}</span>
           </div></div></div>
       <div class="meta-grid">
-        <div class="meta-item"><div class="meta-key">リードタイム</div><div class="meta-val">${o.lead_time_weeks} 週</div></div>
+        <div class="meta-item"><div class="meta-key">リードタイム</div><div class="meta-val">${o.lead_time_weeks||'—'} 週</div></div>
         <div class="meta-item"><div class="meta-key">容器MOQ</div><div class="meta-val">${fmt(o.container_moq)}</div></div>
         <div class="meta-item"><div class="meta-key">バルクMOQ</div><div class="meta-val">${fmt(o.bulk_moq)}</div></div>
       </div>
       <div class="channel-months">
-        <div class="channel-pill"><div class="channel-dot" style="background:var(--tob)"></div><div>toB</div><div class="channel-val">${o.tob_months}</div><div class="channel-unit">ヶ月</div></div>
-        <div class="channel-pill"><div class="channel-dot" style="background:var(--ec)"></div><div>EC</div><div class="channel-val">${o.ec_months}</div><div class="channel-unit">ヶ月</div></div>
-        <div class="channel-pill"><div class="channel-dot" style="background:var(--overseas)"></div><div>海外</div><div class="channel-val">${o.overseas_months}</div><div class="channel-unit">ヶ月</div></div>
+        <div class="channel-pill"><div class="channel-dot" style="background:var(--tob)"></div><div>toB</div><div class="channel-val">${o.tob_months||0}</div><div class="channel-unit">ヶ月</div></div>
+        <div class="channel-pill"><div class="channel-dot" style="background:var(--ec)"></div><div>EC</div><div class="channel-val">${o.ec_months||0}</div><div class="channel-unit">ヶ月</div></div>
+        <div class="channel-pill"><div class="channel-dot" style="background:var(--overseas)"></div><div>海外</div><div class="channel-val">${o.overseas_months||0}</div><div class="channel-unit">ヶ月</div></div>
       </div>
       <div class="sku-table-wrap" style="margin-top:16px"><table>
         <thead><tr><th>SKU</th><th>JAN</th><th>現在庫</th><th>推計必要数</th><th>発注数</th><th>確定発注数</th><th>過不足</th></tr></thead>
-        <tbody>${skus.map(s=>{const d=s.confirmed_order-s.estimated_total;return`<tr>
-          <td>${s.sku_name}</td><td>${s.jan}</td><td>${fmt(s.current_stock)}</td>
+        <tbody>${skus.map(s=>{const d=(s.confirmed_order||0)-(s.estimated_total||0);return`<tr>
+          <td>${s.sku_name}</td><td>${s.jan||'—'}</td><td>${fmt(s.current_stock)}</td>
           <td>${fmt(s.estimated_total)}</td><td>${fmt(s.order_quantity)}</td>
           <td class="num-accent">${fmt(s.confirmed_order)}</td>
           <td class="${d>=0?'num-pos':'num-warn'}">${d>=0?'+':''}${fmt(d)}</td>
         </tr>`;}).join('')}</tbody>
       </table></div>
-      <div style="margin-top:12px"><div class="meta-key" style="margin-bottom:6px">取引小売先</div>
-        <div class="retailer-tags">${o.retailer_blocks.map(r=>`<span class="retailer-tag">${r.retailer}</span>`).join('')}</div>
-      </div>
+      ${retailers.length?`<div style="margin-top:12px"><div class="meta-key" style="margin-bottom:6px">取引小売先</div>
+        <div class="retailer-tags">${retailers.map(r=>`<span class="retailer-tag">${r.retailer}</span>`).join('')}</div>
+      </div>`:''}
     </div>`;
   });
   document.getElementById('orderCards').innerHTML=html;
