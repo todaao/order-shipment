@@ -207,6 +207,7 @@ input:read-only{color:var(--text3);background:var(--surface);}
   <div class="logo">order-shipment <span>発注試算・出荷実績 Analytics</span></div>
   <div class="header-right">
     <div class="header-meta" id="headerDate"></div>
+    <button onclick="reloadData()" title="JSONを再読み込み" style="background:transparent;border:1px solid var(--border);color:var(--text3);padding:4px 10px;border-radius:var(--radius);font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">⟳ 再読み込み</button>
   </div>
 </header>
 
@@ -547,80 +548,122 @@ input:read-only{color:var(--text3);background:var(--surface);}
 
 <script>
 // ════════════════════════════════════════════
-//  INLINE DATA
+//  JSON 読み込み設定
+//  同リポジトリに orders.json / shipments.json / inventory.json を置く想定
+//  HTML と同階層 → パスは './orders.json' 等
 // ════════════════════════════════════════════
-const DATA = {
-  orders: { orders: [{
-    order_id:"20260303_シェイクドロップチーク", product:"シェイクドロップチーク", brand:"MilleFee",
-    order_date:"2026-03-03", arrival_date:"2026-04-28", lead_time_weeks:8,
-    container_moq:10000, bulk_moq:5000, tob_months:4, ec_months:5, overseas_months:3,
-    skus:[
-      {sku_name:"シェイクドロップチーク01",jan:"4571501000001",current_stock:5711,estimated_total:14156,order_quantity:8445,confirmed_order:14200,
-       monthly_summary:{tob:{"2026-03":2564,"2026-04":1796,"2026-05":1580,"2026-06":1420},ec:{"2026-03":2000,"2026-04":900,"2026-05":1100,"2026-06":800},overseas:{"2026-03":0,"2026-04":400,"2026-05":600,"2026-06":500}}},
-      {sku_name:"シェイクドロップチーク02",jan:"4571501000002",current_stock:4280,estimated_total:12800,order_quantity:8520,confirmed_order:12000,
-       monthly_summary:{tob:{"2026-03":2100,"2026-04":1650,"2026-05":1400,"2026-06":1200},ec:{"2026-03":1700,"2026-04":800,"2026-05":900,"2026-06":700},overseas:{"2026-03":0,"2026-04":300,"2026-05":500,"2026-06":400}}},
-      {sku_name:"シェイクドロップチーク03",jan:"4571501000003",current_stock:3890,estimated_total:11200,order_quantity:7310,confirmed_order:10500,
-       monthly_summary:{tob:{"2026-03":1850,"2026-04":1400,"2026-05":1200,"2026-06":1050},ec:{"2026-03":1500,"2026-04":700,"2026-05":800,"2026-06":600},overseas:{"2026-03":0,"2026-04":250,"2026-05":420,"2026-06":330}}},
-      {sku_name:"シェイクドロップチーク04",jan:"4571501000004",current_stock:6120,estimated_total:15400,order_quantity:9280,confirmed_order:15000,
-       monthly_summary:{tob:{"2026-03":2800,"2026-04":2100,"2026-05":1900,"2026-06":1650},ec:{"2026-03":2200,"2026-04":1000,"2026-05":1300,"2026-06":950},overseas:{"2026-03":0,"2026-04":500,"2026-05":750,"2026-06":620}}}
-    ],
-    retailer_blocks:[
-      {retailer:"ロフト",skus:{"シェイクドロップチーク01":{"2026-03":574,"2026-04":574,"2026-05":500,"2026-06":450},"シェイクドロップチーク02":{"2026-03":480,"2026-04":480,"2026-05":430,"2026-06":380},"シェイクドロップチーク03":{"2026-03":420,"2026-04":420,"2026-05":370,"2026-06":320},"シェイクドロップチーク04":{"2026-03":650,"2026-04":650,"2026-05":580,"2026-06":520}}},
-      {retailer:"プラザ",skus:{"シェイクドロップチーク01":{"2026-03":380,"2026-04":380,"2026-05":340,"2026-06":300},"シェイクドロップチーク02":{"2026-03":320,"2026-04":320,"2026-05":290,"2026-06":260},"シェイクドロップチーク03":{"2026-03":280,"2026-04":280,"2026-05":250,"2026-06":220},"シェイクドロップチーク04":{"2026-03":430,"2026-04":430,"2026-05":390,"2026-06":350}}},
-      {retailer:"東急ハンズ",skus:{"シェイクドロップチーク01":{"2026-03":450,"2026-04":450,"2026-05":400,"2026-06":360},"シェイクドロップチーク02":{"2026-03":380,"2026-04":380,"2026-05":340,"2026-06":300},"シェイクドロップチーク03":{"2026-03":330,"2026-04":330,"2026-05":295,"2026-06":260},"シェイクドロップチーク04":{"2026-03":520,"2026-04":520,"2026-05":465,"2026-06":415}}},
-      {retailer:"コスメキッチン",skus:{"シェイクドロップチーク01":{"2026-03":260,"2026-04":260,"2026-05":235,"2026-06":210},"シェイクドロップチーク02":{"2026-03":220,"2026-04":220,"2026-05":200,"2026-06":178},"シェイクドロップチーク03":{"2026-03":190,"2026-04":190,"2026-05":172,"2026-06":152},"シェイクドロップチーク04":{"2026-03":300,"2026-04":300,"2026-05":270,"2026-06":242}}}
-    ]
-  }]},
-  shipments: { shipments:[
-    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"toB",quantity:960},
-    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"EC",quantity:1850},
-    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"toB",quantity:820},
-    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"EC",quantity:1530},
-    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"toB",quantity:755},
-    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"EC",quantity:1380},
-    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"toB",quantity:1010},
-    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"EC",quantity:2100},
-    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"toB",quantity:1280},
-    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"EC",quantity:1960},
-    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"海外",quantity:280},
-    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"toB",quantity:1120},
-    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"EC",quantity:1620},
-    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"toB",quantity:950},
-    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"EC",quantity:1450},
-    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"toB",quantity:1500},
-    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"EC",quantity:2250},
-    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"toB",quantity:1634},
-    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"EC",quantity:2100},
-    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"toB",quantity:1300},
-    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"EC",quantity:1820},
-    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"toB",quantity:1140},
-    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"EC",quantity:1580},
-    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"toB",quantity:1820},
-    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"EC",quantity:2300}
-  ]},
-  inventory: { snapshots:[
-    {snapshot_date:"2026-01-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:8200},
-    {snapshot_date:"2026-01-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:6900},
-    {snapshot_date:"2026-01-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:6100},
-    {snapshot_date:"2026-01-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:9400},
-    {snapshot_date:"2026-02-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:7100},
-    {snapshot_date:"2026-02-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:5800},
-    {snapshot_date:"2026-02-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:5100},
-    {snapshot_date:"2026-02-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:8200},
-    {snapshot_date:"2026-03-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:5711},
-    {snapshot_date:"2026-03-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:4280},
-    {snapshot_date:"2026-03-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:3890},
-    {snapshot_date:"2026-03-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:6120},
-    {snapshot_date:"2026-04-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:3200},
-    {snapshot_date:"2026-04-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:2600},
-    {snapshot_date:"2026-04-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:2180},
-    {snapshot_date:"2026-04-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:3900},
-    {snapshot_date:"2026-05-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:14600},
-    {snapshot_date:"2026-05-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:12200},
-    {snapshot_date:"2026-05-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:10700},
-    {snapshot_date:"2026-05-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:15500}
-  ]}
+const JSON_FILES = {
+  orders:    './orders.json',
+  shipments: './shipments.json',
+  inventory: './inventory.json'
 };
+
+let DATA = { orders: null, shipments: null, inventory: null };
+let dataLoaded = false;
+
+// ─── ローディングオーバーレイ ───
+function showLoader(msg='データを読み込んでいます…'){
+  let el=document.getElementById('loaderOverlay');
+  if(!el){
+    el=document.createElement('div');
+    el.id='loaderOverlay';
+    el.style.cssText='position:fixed;inset:0;background:rgba(14,15,20,0.92);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;';
+    el.innerHTML=`<div style="width:36px;height:36px;border:3px solid #2a2d3a;border-top-color:#c8a96e;border-radius:50%;animation:spin .8s linear infinite"></div>
+      <div id="loaderMsg" style="font-family:'DM Mono',monospace;font-size:12px;color:#9a9590;letter-spacing:0.1em"></div>
+      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>`;
+    document.body.appendChild(el);
+  }
+  el.querySelector('#loaderMsg').textContent=msg;
+  el.style.display='flex';
+}
+function hideLoader(){ const el=document.getElementById('loaderOverlay'); if(el) el.style.display='none'; }
+
+// ─── fetch 全JSONを並列読み込み ───
+async function loadAllJSON(){
+  showLoader('orders.json / shipments.json / inventory.json を読み込み中…');
+  try {
+    const [orders, shipments, inventory] = await Promise.all([
+      fetch(JSON_FILES.orders).then(r=>{ if(!r.ok) throw new Error(`orders.json: ${r.status}`); return r.json(); }),
+      fetch(JSON_FILES.shipments).then(r=>{ if(!r.ok) throw new Error(`shipments.json: ${r.status}`); return r.json(); }),
+      fetch(JSON_FILES.inventory).then(r=>{ if(!r.ok) throw new Error(`inventory.json: ${r.status}`); return r.json(); })
+    ]);
+    DATA.orders    = orders;
+    DATA.shipments = shipments;
+    DATA.inventory = inventory;
+    dataLoaded = true;
+    hideLoader();
+    buildFiltersFromData();
+    renderSummary();
+    updateDraftBadge();
+  } catch(e) {
+    hideLoader();
+    showLoadError(e.message);
+  }
+}
+
+// ─── 読み込みエラー表示 ───
+function showLoadError(msg){
+  document.querySelector('.main').innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center">
+      <div style="font-size:32px">⚠️</div>
+      <div style="font-size:15px;font-weight:500;color:var(--text)">JSONファイルの読み込みに失敗しました</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--accent3);background:var(--surface2);padding:10px 18px;border-radius:var(--radius);border:1px solid var(--border)">${msg}</div>
+      <div style="font-size:12px;color:var(--text3);max-width:420px;line-height:1.8">
+        同リポジトリのルートに <code style="color:var(--accent)">orders.json</code>、
+        <code style="color:var(--accent)">shipments.json</code>、
+        <code style="color:var(--accent)">inventory.json</code> を配置してください。<br>
+        ローカル確認には <code style="color:var(--accent2)">http-server</code> 等の開発サーバーが必要です（file:// では CORS エラーになります）。
+      </div>
+      <button class="btn btn-primary" onclick="loadAllJSON()">再読み込み</button>
+    </div>`;
+}
+
+// ─── データからフィルターを動的構築 ───
+function buildFiltersFromData(){
+  // ブランド
+  const brands=[...new Set([
+    ...(DATA.orders.orders||[]).map(o=>o.brand),
+    ...(DATA.shipments.shipments||[]).map(s=>s.brand)
+  ])].filter(Boolean).sort();
+  // 商品
+  const products=[...new Set([
+    ...(DATA.orders.orders||[]).map(o=>o.product),
+    ...(DATA.shipments.shipments||[]).map(s=>s.product)
+  ])].filter(Boolean).sort();
+  // SKU名
+  const skuNames=[...new Set([
+    ...(DATA.orders.orders||[]).flatMap(o=>o.skus.map(s=>s.sku_name)),
+    ...(DATA.shipments.shipments||[]).map(s=>s.sku_name)
+  ])].filter(Boolean).sort();
+  // 月（出荷）
+  const months=[...new Set((DATA.shipments.shipments||[]).map(s=>s.month))].sort();
+
+  const setBrandOpts=()=>{
+    const sel=document.getElementById('filterBrand');
+    sel.innerHTML='<option value="all">すべて</option>'+brands.map(b=>`<option value="${b}">${b}</option>`).join('');
+  };
+  const setProdOpts=()=>{
+    const sel=document.getElementById('filterProduct');
+    sel.innerHTML='<option value="all">すべて</option>'+products.map(p=>`<option value="${p}">${p}</option>`).join('');
+  };
+  const setSkuOpts=()=>{
+    const sel=document.getElementById('filterSku');
+    sel.innerHTML='<option value="all">すべて</option>'+skuNames.map(s=>`<option value="${s}">${s}</option>`).join('');
+  };
+  const setMonthOpts=()=>{
+    const sel=document.getElementById('filterPeriodStart');
+    sel.innerHTML='<option value="all">すべて</option>'+months.map(m=>`<option value="${m}">${m}</option>`).join('');
+  };
+
+  setBrandOpts(); setProdOpts(); setSkuOpts(); setMonthOpts();
+}
+
+// ─── 手動リロードボタン（ヘッダー右端）───
+function reloadData(){
+  DATA={orders:null,shipments:null,inventory:null};
+  dataLoaded=false;
+  loadAllJSON();
+}
 
 // ════════════════════════════════════════════
 //  STATE
@@ -735,7 +778,7 @@ function renderSummary(){
 }
 function filteredSkus(order){
   let s=order.skus;
-  if(filters.sku!=='all') s=s.filter(x=>x.sku_name.endsWith(filters.sku));
+  if(filters.sku!=='all') s=s.filter(x=>x.sku_name===filters.sku);
   return s;
 }
 
@@ -854,7 +897,7 @@ function filteredShipments(){
   let s=DATA.shipments.shipments;
   if(filters.brand!=='all') s=s.filter(x=>x.brand===filters.brand);
   if(filters.product!=='all') s=s.filter(x=>x.product===filters.product);
-  if(filters.sku!=='all') s=s.filter(x=>x.sku_name.endsWith(filters.sku));
+  if(filters.sku!=='all') s=s.filter(x=>x.sku_name===filters.sku);
   if(filters.periodStart!=='all') s=s.filter(x=>x.month>=filters.periodStart);
   return s;
 }
@@ -1009,9 +1052,16 @@ function goStep(n){
 
 // SKU inputs
 function buildSkuInputs(){
-  const existing=DATA.orders.orders[0].skus;
   if(itemType==='existing'&&calcSkus.length===0){
-    calcSkus=existing.map(s=>({name:s.sku_name,jan:s.jan,stock:s.current_stock}));
+    // inventory.json の最新スナップショット日のデータから SKU 一覧を取得
+    const snaps = DATA.inventory.snapshots||[];
+    const latestDate = snaps.map(s=>s.snapshot_date).sort().slice(-1)[0];
+    const latestSnaps = snaps.filter(s=>s.snapshot_date===latestDate);
+    if(latestSnaps.length>0){
+      calcSkus = latestSnaps.map(s=>({name:s.sku_name, jan:s.jan||'', stock:s.quantity||0}));
+    } else {
+      calcSkus = [{name:'',jan:'',stock:0}];
+    }
   }
   if(calcSkus.length===0) calcSkus=[{name:'',jan:'',stock:0}];
   document.getElementById('calcModeBadge').textContent=calcMode==='normal'?'通常試算':'簡易試算';
@@ -1466,8 +1516,7 @@ function showNotif(msg,type='success'){
 //  INIT
 // ════════════════════════════════════════════
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'})+' 更新';
-renderSummary();
-updateDraftBadge();
+loadAllJSON();
 </script>
 </body>
 </html>
