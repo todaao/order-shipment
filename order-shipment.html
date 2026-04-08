@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>order-shipment v8</title>
+<title>order-shipment v9</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -206,7 +206,7 @@ input:read-only{color:var(--text3);background:var(--surface);}
 <header>
   <div class="logo">order-shipment <span>発注試算・出荷実績 Analytics</span></div>
   <div class="header-right">
-    <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:.1em">v8</div>
+    <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:.1em">v9</div>
     <div class="header-meta" id="headerDate"></div>
     <button onclick="reloadData()" title="JSONを再読み込み" style="background:transparent;border:1px solid var(--border);color:var(--text3);padding:4px 10px;border-radius:var(--radius);font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .15s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text3)'">⟳ 再読み込み</button>
   </div>
@@ -365,87 +365,43 @@ input:read-only{color:var(--text3);background:var(--surface);}
 <!-- 発注試算ツール -->
 <div class="view" id="view-calc">
   <div class="view-title">発注試算ツール</div>
-  <div class="view-subtitle">ORDER CALCULATION — 通常試算 / 簡易試算</div>
-  <div class="calc-container">
+  <div class="view-subtitle">ORDER CALCULATION — テンプレートフォーマット準拠</div>
+  <div class="calc-container" style="max-width:960px">
 
-    <!-- ステップナビ（クリック可能） -->
-    <div class="step-indicator" id="calcStepNav" style="margin-bottom:20px;flex-wrap:wrap">
-      <div class="step active" onclick="goStep(0)" style="cursor:pointer"><span class="step-num">①</span> モード・SKU選択</div>
-      <div class="step" onclick="goStep(1)" style="cursor:pointer"><span class="step-num">②</span> 商品情報</div>
-      <div class="step" onclick="goStep(2)" style="cursor:pointer"><span class="step-num">③</span> 参照P/S設定</div>
-      <div class="step" onclick="goStep(3)" style="cursor:pointer"><span class="step-num">④</span> 数量入力</div>
-      <div class="step" onclick="goStep(4)" style="cursor:pointer"><span class="step-num">⑤</span> 確定・保存</div>
+    <!-- ステップナビ -->
+    <div class="step-indicator" id="calcStepNav" style="margin-bottom:20px;flex-wrap:wrap;gap:6px">
+      <div class="step active" onclick="goStep(0)" style="cursor:pointer"><span class="step-num">①</span> 商品情報・発注期間</div>
+      <div class="step" onclick="goStep(1)" style="cursor:pointer"><span class="step-num">②</span> 参照POS &amp; toB販路</div>
+      <div class="step" onclick="goStep(2)" style="cursor:pointer"><span class="step-num">③</span> EC・海外販路</div>
+      <div class="step" onclick="goStep(3)" style="cursor:pointer"><span class="step-num">④</span> サマリー・在庫推移</div>
+      <div class="step" onclick="goStep(4)" style="cursor:pointer"><span class="step-num">⑤</span> 保存・出力</div>
     </div>
 
-    <!-- STEP 0: モード選択 + JAN検索（既存品）or SKU入力（新規品） -->
+    <!-- STEP 0: 商品情報 + SKU + 販路別発注期間 -->
     <div id="calcStep0">
       <div class="panel">
-        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>① モード・SKU選択</div>
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span>① 商品情報 &amp; SKU &amp; 販路別発注期間</div>
           <span id="calcModeBadge" class="badge badge-accent">通常試算</span>
         </div>
         <div class="panel-body">
-          <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px">
-            <div class="mode-card" id="modeNormal" onclick="selectMode('normal')" style="flex:1;min-width:200px">
+          <!-- モード選択 -->
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+            <div class="mode-card" id="modeNormal" onclick="selectMode('normal')" style="flex:1;min-width:180px">
               <div class="mode-badge badge badge-accent">通常試算</div>
               <h3>通常試算</h3>
               <p>P/S × 業態傾斜 × 月別傾斜 × 店舗数で自動計算。小売先ブロック最大10件。</p>
             </div>
-            <div class="mode-card" id="modeSimple" onclick="selectMode('simple')" style="flex:1;min-width:200px">
+            <div class="mode-card" id="modeSimple" onclick="selectMode('simple')" style="flex:1;min-width:180px">
               <div class="mode-badge badge badge-blue">簡易試算</div>
               <h3>簡易試算</h3>
               <p>月別数量を直接手入力。POS計算不要。素早く試算したいときに。</p>
             </div>
           </div>
 
-          <div style="display:flex;gap:16px;margin-bottom:16px">
-            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
-              <input type="radio" name="itemType" value="existing" checked onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 既存品（JAN検索）
-            </label>
-            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
-              <input type="radio" name="itemType" value="new" onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 新規品（手入力）
-            </label>
-          </div>
-
-          <!-- 既存品: JAN検索エリア -->
-          <div id="janSearchArea">
-            <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-              <input type="text" id="janSearchInput" placeholder="JANコードを入力（例：4571501000001）"
-                style="flex:1;min-width:180px" oninput="janSearchPreview()">
-              <button class="btn btn-primary" onclick="applyJanSearch()">追加</button>
-            </div>
-            <div id="janSearchResult"></div>
-          </div>
-
-          <!-- 新規品: 手入力SKUリスト -->
-          <div id="newSkuArea" style="display:none">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-              <span style="font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text3)">SKU一覧</span>
-              <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="addNewSku()">+ SKU追加</button>
-            </div>
-            <div id="newSkuList"></div>
-          </div>
-
-          <!-- 選択済みSKUリスト（共通） -->
-          <div id="selectedSkuSection" style="display:none;margin-top:16px">
-            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:8px">選択済み SKU（編集可）</div>
-            <div id="selectedSkuList"></div>
-          </div>
-
-          <div class="btn-row" style="margin-top:20px">
-            <button class="btn btn-primary" onclick="goStep(1)">次へ: 商品情報 →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STEP 1: 商品情報 + 販路設定 -->
-    <div id="calcStep1" style="display:none">
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title"><span class="panel-title-dot"></span>② 商品情報 + 販路設定</div>
-        </div>
-        <div class="panel-body">
-          <div class="form-grid">
+          <!-- SECTION A: 商品情報 -->
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3);margin-bottom:10px">▼ 商品情報</div>
+          <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
             <div class="form-group">
               <label class="form-label">商品名 <span class="req">*</span></label>
               <input type="text" id="ci_product" placeholder="例：シェイクドロップチーク">
@@ -456,7 +412,7 @@ input:read-only{color:var(--text3);background:var(--surface);}
             </div>
             <div class="form-group">
               <label class="form-label">発注予定日 <span class="req">*</span></label>
-              <input type="date" id="ci_orderDate" onchange="calcArrival()">
+              <input type="date" id="ci_orderDate" onchange="calcArrival();updateMonthPreviews()">
             </div>
             <div class="form-group">
               <label class="form-label">リードタイム（週）</label>
@@ -477,69 +433,120 @@ input:read-only{color:var(--text3);background:var(--surface);}
           </div>
 
           <hr class="section-divider">
-          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--text3);margin-bottom:12px">販路別発注期間設定（発注予定日の月を起点）</div>
-          <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+
+          <!-- SKU入力 -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3)">▼ SKU一覧（最大8件）</div>
+            <div style="display:flex;gap:8px">
+              <div style="display:flex;gap:8px">
+                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+                  <input type="radio" name="itemType" value="existing" checked onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 既存品（JAN）
+                </label>
+                <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;color:var(--text2)">
+                  <input type="radio" name="itemType" value="new" onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 新規品
+                </label>
+              </div>
+              <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="addCalcSku()">+ SKU追加</button>
+            </div>
+          </div>
+          <div id="janSearchArea" style="margin-bottom:10px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input type="text" id="janSearchInput" placeholder="JANコードを入力" style="flex:1;min-width:160px" oninput="janSearchPreview()">
+              <button class="btn btn-primary" onclick="applyJanSearch()">追加</button>
+            </div>
+            <div id="janSearchResult" style="margin-top:6px"></div>
+          </div>
+          <div id="calcSkuList"></div>
+
+          <hr class="section-divider">
+
+          <!-- 販路別発注期間 -->
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3);margin-bottom:10px">▼ 販路別発注期間設定（発注予定日の月を起点）</div>
+          <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
             <div class="form-group">
-              <label class="form-label">toB 発注対象月数</label>
-              <input type="number" id="ci_tobMonths" value="4" min="1" max="12">
+              <label class="form-label">toB（小売）発注対象月数</label>
+              <input type="number" id="ci_tobMonths" value="4" min="1" max="8" onchange="updateMonthPreviews()">
+              <span style="font-size:10px;color:var(--text3)">好調品4か月、通常3か月</span>
             </div>
             <div class="form-group">
               <label class="form-label">EC 発注対象月数</label>
-              <input type="number" id="ci_ecMonths" value="5" min="1" max="12">
+              <input type="number" id="ci_ecMonths" value="5" min="1" max="8" onchange="updateMonthPreviews()">
+              <span style="font-size:10px;color:var(--text3)">好調品5〜6か月、通常4か月</span>
             </div>
             <div class="form-group">
               <label class="form-label">海外 発注対象月数</label>
-              <input type="number" id="ci_overseasMonths" value="3" min="1" max="12">
-            </div>
-            <div class="form-group">
-              <label class="form-label">発注月（自動）</label>
-              <input type="text" id="ci_baseMonthDisplay" readonly style="color:var(--accent2)">
+              <input type="number" id="ci_overseasMonths" value="3" min="1" max="8" onchange="updateMonthPreviews()">
+              <span style="font-size:10px;color:var(--text3)">別途調整</span>
             </div>
           </div>
-          <div id="calcMonthPreview" style="font-size:11px;color:var(--text3);margin-top:4px;font-family:var(--font-mono)"></div>
+          <div id="monthPreviewRow" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;font-family:var(--font-mono);font-size:11px;color:var(--text3)"></div>
 
           <div class="btn-row" style="margin-top:16px">
-            <button class="btn btn-secondary" onclick="goStep(0)">← 戻る</button>
-            <button class="btn btn-primary" onclick="goStep(2)">次へ: 参照P/S →</button>
+            <button class="btn btn-primary" onclick="goStep(1)">次へ: 参照POS &amp; toB販路 →</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- STEP 2: 参照P/S設定（通常試算のみ） -->
-    <div id="calcStep2" style="display:none">
+    <!-- STEP 1: 参照POS & toB販路 -->
+    <div id="calcStep1" style="display:none">
       <div class="panel">
-        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>③ 参照P/S設定</div></div>
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent3)"></span>② 参照POS &amp; toB販路</div>
+        </div>
         <div class="panel-body">
+          <!-- 参照POS (Section A右側 N-R列) -->
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--accent3);margin-bottom:10px">▼ 参照POS（LOFTの実績P/S参照）— テンプレートN〜R列</div>
+          <div id="posPosArea" style="overflow-x:auto;margin-bottom:16px"></div>
+
+          <hr class="section-divider">
+
+          <div id="tobSectionHeader" style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--accent2);margin-bottom:10px">▼ SECTION C — toB小売ブロック（最大10件）</div>
           <div id="psSettingArea"></div>
           <div class="btn-row" style="margin-top:16px">
-            <button class="btn btn-secondary" onclick="goStep(1)">← 戻る</button>
-            <button class="btn btn-primary" onclick="goStep(3)">次へ: 数量入力 →</button>
+            <button class="btn btn-secondary" onclick="goStep(0)">← 戻る</button>
+            <button class="btn btn-primary" onclick="goStep(2)">次へ: EC・海外 →</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- STEP 3: 数量入力 -->
-    <div id="calcStep3" style="display:none">
-      <div id="quantityInputArea"></div>
-      <div class="btn-row" style="margin-top:16px">
-        <button class="btn btn-secondary" onclick="goStep(2)">← 戻る</button>
-        <button class="btn btn-primary" onclick="goStep(4)">次へ: 確定・保存 →</button>
+    <!-- STEP 2: EC・海外販路 (Section D) -->
+    <div id="calcStep2" style="display:none">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot" style="background:var(--ec)"></span>③ EC・海外販路 — SECTION D</div>
+        </div>
+        <div class="panel-body">
+          <div id="ecOverseasInputArea"></div>
+          <div class="btn-row" style="margin-top:16px">
+            <button class="btn btn-secondary" onclick="goStep(1)">← 戻る</button>
+            <button class="btn btn-primary" onclick="goStep(3)">次へ: サマリー確認 →</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- STEP 4: 確定・保存 -->
+    <!-- STEP 3: 販路×月サマリー・在庫推移・確定発注数 -->
+    <div id="calcStep3" style="display:none">
+      <div id="summaryPreviewArea"></div>
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn btn-secondary" onclick="goStep(2)">← 戻る</button>
+        <button class="btn btn-primary" onclick="goStep(4)">次へ: 保存・出力 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: 確定発注数・保存・出力 -->
     <div id="calcStep4" style="display:none">
       <div class="panel">
-        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>⑤ 確定・保存</div></div>
+        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>⑤ 確定発注数・保存・出力</div></div>
         <div class="panel-body">
           <div id="calcPreviewContent"></div>
           <hr class="section-divider">
           <div class="form-grid" style="grid-template-columns:1fr 1fr">
             <div class="form-group">
               <label class="form-label">担当部署名 <span class="req">*</span></label>
-              <input type="text" id="ci_dept" placeholder="例：MD部">
+              <input type="text" id="ci_dept" placeholder="例：EC部">
             </div>
             <div class="form-group">
               <label class="form-label">備考・メモ</label>
@@ -549,11 +556,12 @@ input:read-only{color:var(--text3);background:var(--surface);}
           <div class="btn-row">
             <button class="btn btn-secondary" onclick="goStep(3)">← 戻る</button>
             <button class="btn btn-green" onclick="saveDraft()">💾 仮保存</button>
-            <button class="btn btn-blue" onclick="exportCalcDirect()">📥 Excelで出力</button>
+            <button class="btn btn-blue" onclick="exportCalcDirect()">📥 テンプレートExcel出力</button>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -711,6 +719,7 @@ function reloadData(){
   loadAllJSON();
 }
 
+
 // ════════════════════════════════════════════
 //  STATE
 // ════════════════════════════════════════════
@@ -723,8 +732,9 @@ let calcMode = 'normal';
 let itemType = 'existing';
 let calcSkus = [];
 let calcRetailers = [];
-let calcEcMonthly = {};
-let calcOverseasMonthly = {};
+let calcEcMonthly = {};   // {skuName: {month: val}}
+let calcEcMonthly2 = {};  // EC②
+let calcOvsMonthly = [{}, {}, {}, {}]; // 海外①〜④
 let calcSimpleMonthly = {};
 
 function fmt(n){return (n||0).toLocaleString();}
@@ -789,11 +799,9 @@ function heatColor(val,max,ch){
   return c[ch]||c.tob;
 }
 function skuLabel(s){
-  // 共通プレフィックスがあれば省略、なければそのまま返す
   if(!s) return s;
   const all = DATA.orders ? (DATA.orders.orders||[]).flatMap(o=>o.skus.map(x=>x.sku_name)) : [];
   if(all.length < 2) return s;
-  // 最長共通プレフィックスを求める
   let prefix = all[0]||'';
   for(const n of all){ let i=0; while(i<prefix.length && i<n.length && prefix[i]===n[i]) i++; prefix=prefix.slice(0,i); }
   return prefix.length > 2 ? s.replace(prefix,'') || s : s;
@@ -804,852 +812,199 @@ function addMonths(ym, n){
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
 }
 function monthRange(start,count){return Array.from({length:count},(_,i)=>addMonths(start,i));}
-
-// ════════════════════════════════════════════
-//  ① 発注サマリー
-// ════════════════════════════════════════════
-function renderSummary(){
-  if(!dataLoaded||!DATA.orders) return;
-  const orders=DATA.orders.orders||[];
-  let tc=0,ts=0,te=0,skuCount=0;
-  orders.forEach(o=>{(o.skus||[]).forEach(s=>{tc+=(s.confirmed_order||0);ts+=(s.current_stock||0);te+=(s.estimated_total||0);skuCount++;});});
-  // 在庫KPIの日付はinventoryの最新スナップショット日を使う
-  const snaps=DATA.inventory?DATA.inventory.snapshots||[]:[];
-  const latestSnapDate=snaps.length?[...snaps].sort((a,b)=>b.snapshot_date.localeCompare(a.snapshot_date))[0].snapshot_date:'—';
-  document.getElementById('summaryKpis').innerHTML=`
-    <div class="kpi-card accent"><div class="kpi-label">確定発注数</div><div class="kpi-value">${fmt(tc)}</div><div class="kpi-unit">pcs 全SKU</div></div>
-    <div class="kpi-card blue"><div class="kpi-label">現在庫</div><div class="kpi-value">${fmt(ts)}</div><div class="kpi-unit">pcs ${latestSnapDate} 時点</div></div>
-    <div class="kpi-card red"><div class="kpi-label">推計必要数</div><div class="kpi-value">${fmt(te)}</div><div class="kpi-unit">pcs 全チャネル</div></div>
-    <div class="kpi-card green"><div class="kpi-label">管理SKU数</div><div class="kpi-value">${skuCount}</div><div class="kpi-unit">SKUs</div></div>`;
-  let html='';
-  orders.forEach(o=>{
-    const skus=filteredSkus(o);
-    const retailers=(o.retailer_blocks||[]);
-    html+=`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-        <div><div style="font-size:15px;font-weight:500">${o.product||'—'}</div>
-          <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap">
-            <span class="badge badge-accent">${o.brand||''}</span>
-            <span class="badge badge-blue">発注 ${o.order_date||'—'}</span>
-            <span class="badge badge-green">入庫予定 ${o.arrival_date||'—'}</span>
-          </div></div></div>
-      <div class="meta-grid">
-        <div class="meta-item"><div class="meta-key">リードタイム</div><div class="meta-val">${o.lead_time_weeks||'—'} 週</div></div>
-        <div class="meta-item"><div class="meta-key">容器MOQ</div><div class="meta-val">${fmt(o.container_moq)}</div></div>
-        <div class="meta-item"><div class="meta-key">バルクMOQ</div><div class="meta-val">${fmt(o.bulk_moq)}</div></div>
-      </div>
-      <div class="channel-months">
-        <div class="channel-pill"><div class="channel-dot" style="background:var(--tob)"></div><div>toB</div><div class="channel-val">${o.tob_months||0}</div><div class="channel-unit">ヶ月</div></div>
-        <div class="channel-pill"><div class="channel-dot" style="background:var(--ec)"></div><div>EC</div><div class="channel-val">${o.ec_months||0}</div><div class="channel-unit">ヶ月</div></div>
-        <div class="channel-pill"><div class="channel-dot" style="background:var(--overseas)"></div><div>海外</div><div class="channel-val">${o.overseas_months||0}</div><div class="channel-unit">ヶ月</div></div>
-      </div>
-      <div class="sku-table-wrap" style="margin-top:16px"><table>
-        <thead><tr><th>SKU</th><th>JAN</th><th>現在庫</th><th>推計必要数</th><th>発注数</th><th>確定発注数</th><th>過不足</th></tr></thead>
-        <tbody>${skus.map(s=>{const d=(s.confirmed_order||0)-(s.estimated_total||0);return`<tr>
-          <td>${s.sku_name}</td><td>${s.jan||'—'}</td><td>${fmt(s.current_stock)}</td>
-          <td>${fmt(s.estimated_total)}</td><td>${fmt(s.order_quantity)}</td>
-          <td class="num-accent">${fmt(s.confirmed_order)}</td>
-          <td class="${d>=0?'num-pos':'num-warn'}">${d>=0?'+':''}${fmt(d)}</td>
-        </tr>`;}).join('')}</tbody>
-      </table></div>
-      ${retailers.length?`<div style="margin-top:12px"><div class="meta-key" style="margin-bottom:6px">取引小売先</div>
-        <div class="retailer-tags">${retailers.map(r=>`<span class="retailer-tag">${r.retailer}</span>`).join('')}</div>
-      </div>`:''}
-    </div>`;
-  });
-  document.getElementById('orderCards').innerHTML=html;
-}
-function filteredSkus(order){
-  let s=order.skus;
-  if(filters.sku!=='all') s=s.filter(x=>x.sku_name===filters.sku);
-  return s;
+function mLabel(m){const mo=m.split('-')[1];return parseInt(mo)+'月';}
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function getBaseMonth(){
+  const d=document.getElementById('ci_orderDate');
+  if(!d||!d.value) return null;
+  return d.value.slice(0,7);
 }
 
 // ════════════════════════════════════════════
-//  ② 月別試算
+//  CALC STEPS
 // ════════════════════════════════════════════
-function switchChannel(ch,el){
-  currentChannel=ch;
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  renderHeatmap();
-}
-function toggleDrilldown(){document.getElementById('drilldownSection').classList.toggle('open');}
-
-function renderHeatmap(){
-  if(!dataLoaded||!DATA.orders) return;
-  const order=DATA.orders.orders[0];
-  if(!order) return;
-  // 月一覧をordersデータから動的に取得
-  const allMs=new Set();
-  order.skus.forEach(s=>{
-    ['tob','ec','overseas'].forEach(ch=>Object.keys(s.monthly_summary[ch]||{}).forEach(m=>allMs.add(m)));
-  });
-  const months=[...allMs].sort();
-  const skus=filteredSkus(order);
-  const chKey=currentChannel==='tob'?'tob':currentChannel==='ec'?'ec':currentChannel==='overseas'?'overseas':null;
-
-  // all channels combined
-  function getVal(s,m){
-    if(chKey) return s.monthly_summary[chKey][m]||0;
-    return (s.monthly_summary.tob[m]||0)+(s.monthly_summary.ec[m]||0)+(s.monthly_summary.overseas[m]||0);
+let currentStep = 0;
+function goStep(n){
+  if(n===1&&!validateStep0()) return;
+  if(n===2&&!validateStep1()) return;
+  if(n===3) buildEcOverseasInput();
+  if(n===3) buildSummaryPreview();
+  if(n===4) buildPreview();
+  for(let i=0;i<=4;i++){
+    const el=document.getElementById('calcStep'+i);
+    if(el) el.style.display=i===n?'':'none';
   }
-  const colorKey=chKey||'all';
-
-  let maxVal=0;
-  skus.forEach(s=>months.forEach(m=>{const v=getVal(s,m);if(v>maxVal) maxVal=v;}));
-
-  let table=`<table class="heatmap-table"><thead><tr>
-    <th style="text-align:left">SKU</th>
-    ${months.map(m=>`<th>${m}</th>`).join('')}
-    <th>合計</th>
-    ${chKey?'':''}
-  </tr></thead><tbody>`;
-
-  // toB subtotal row if all channels
-  if(!chKey){
-    const tobTotals=months.map(m=>skus.reduce((a,s)=>a+(s.monthly_summary.tob[m]||0),0));
-    table+=`<tr style="background:rgba(126,184,212,0.05)">
-      <td style="color:var(--accent2);font-size:11px;font-family:var(--font-mono)">▸ toB 合計</td>
-      ${tobTotals.map(v=>`<td><span class="heat-cell" style="background:rgba(126,184,212,0.15);color:var(--accent2)">${fmt(v)}</span></td>`).join('')}
-      <td><span style="font-family:var(--font-mono);color:var(--accent2)">${fmt(tobTotals.reduce((a,b)=>a+b,0))}</span></td>
-    </tr>`;
-    const ecTotals=months.map(m=>skus.reduce((a,s)=>a+(s.monthly_summary.ec[m]||0),0));
-    table+=`<tr style="background:rgba(200,169,110,0.05)">
-      <td style="color:var(--ec);font-size:11px;font-family:var(--font-mono)">▸ EC 合計</td>
-      ${ecTotals.map(v=>`<td><span class="heat-cell" style="background:rgba(200,169,110,0.15);color:var(--ec)">${fmt(v)}</span></td>`).join('')}
-      <td><span style="font-family:var(--font-mono);color:var(--ec)">${fmt(ecTotals.reduce((a,b)=>a+b,0))}</span></td>
-    </tr>`;
-    const ovsTotals=months.map(m=>skus.reduce((a,s)=>a+(s.monthly_summary.overseas[m]||0),0));
-    table+=`<tr style="background:rgba(126,212,160,0.05)">
-      <td style="color:var(--overseas);font-size:11px;font-family:var(--font-mono)">▸ 海外 合計</td>
-      ${ovsTotals.map(v=>`<td><span class="heat-cell" style="background:rgba(126,212,160,0.15);color:var(--overseas)">${fmt(v)}</span></td>`).join('')}
-      <td><span style="font-family:var(--font-mono);color:var(--overseas)">${fmt(ovsTotals.reduce((a,b)=>a+b,0))}</span></td>
-    </tr>
-    <tr><td colspan="${months.length+2}" style="padding:0;border:none"><hr style="border:none;border-top:1px solid var(--border);margin:4px 0"></td></tr>`;
-  }
-
-  skus.forEach(s=>{
-    const vals=months.map(m=>getVal(s,m));
-    const total=vals.reduce((a,b)=>a+b,0);
-    // per-channel sub if all
-    let subRows='';
-    if(!chKey){
-      subRows=`<tr style="opacity:0.6">
-        <td style="font-size:10px;color:var(--accent2);padding-left:20px;font-family:var(--font-mono)">  toB</td>
-        ${months.map(m=>`<td style="font-size:10px;color:var(--accent2)">${fmt(s.monthly_summary.tob[m]||0)}</td>`).join('')}
-        <td style="font-size:10px;color:var(--accent2)">${fmt(Object.values(s.monthly_summary.tob).reduce((a,b)=>a+b,0))}</td>
-      </tr><tr style="opacity:0.6">
-        <td style="font-size:10px;color:var(--ec);padding-left:20px;font-family:var(--font-mono)">  EC</td>
-        ${months.map(m=>`<td style="font-size:10px;color:var(--ec)">${fmt(s.monthly_summary.ec[m]||0)}</td>`).join('')}
-        <td style="font-size:10px;color:var(--ec)">${fmt(Object.values(s.monthly_summary.ec).reduce((a,b)=>a+b,0))}</td>
-      </tr><tr style="opacity:0.6">
-        <td style="font-size:10px;color:var(--overseas);padding-left:20px;font-family:var(--font-mono)">  海外</td>
-        ${months.map(m=>`<td style="font-size:10px;color:var(--overseas)">${fmt(s.monthly_summary.overseas[m]||0)}</td>`).join('')}
-        <td style="font-size:10px;color:var(--overseas)">${fmt(Object.values(s.monthly_summary.overseas).reduce((a,b)=>a+b,0))}</td>
-      </tr>`;
-    }
-    table+=`<tr>
-      <td style="color:var(--text)">${skuLabel(s.sku_name)}</td>
-      ${vals.map(v=>`<td><span class="heat-cell" style="background:${heatColor(v,maxVal,colorKey)};color:var(--text)">${fmt(v)}</span></td>`).join('')}
-      <td><span style="font-family:var(--font-mono);color:var(--accent)">${fmt(total)}</span></td>
-    </tr>${subRows}`;
+  const steps=document.querySelectorAll('#calcStepNav .step');
+  steps.forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if(i<n) s.classList.add('done');
+    if(i===n) s.classList.add('active');
   });
-
-  const totals=months.map(m=>skus.reduce((a,s)=>a+getVal(s,m),0));
-  table+=`<tr style="border-top:1px solid var(--border)">
-    <td style="color:var(--text2);font-family:var(--font-mono);font-size:10px;text-align:left">TOTAL</td>
-    ${totals.map(v=>`<td><span style="font-family:var(--font-mono);color:var(--text2)">${fmt(v)}</span></td>`).join('')}
-    <td><span style="font-family:var(--font-mono);color:var(--accent);font-weight:500">${fmt(totals.reduce((a,b)=>a+b,0))}</span></td>
-  </tr></tbody></table>`;
-  document.getElementById('heatmapWrap').innerHTML=table;
-
-  // retailer drilldown
-  const retailers=order.retailer_blocks;
-  let drillMax=0;
-  retailers.forEach(r=>skus.forEach(s=>months.forEach(m=>{const v=(r.skus[s.sku_name]||{})[m]||0;if(v>drillMax) drillMax=v;})));
-  let drill=`<table class="heatmap-table"><thead><tr><th style="text-align:left">小売先</th>${months.map(m=>`<th>${m}</th>`).join('')}<th>合計</th></tr></thead><tbody>`;
-  retailers.forEach(r=>{
-    const vals=months.map(m=>skus.reduce((a,s)=>a+((r.skus[s.sku_name]||{})[m]||0),0));
-    drill+=`<tr><td style="color:var(--text)">${r.retailer}</td>
-      ${vals.map(v=>`<td><span class="heat-cell" style="background:${heatColor(v,drillMax,'tob')};color:var(--text)">${fmt(v)}</span></td>`).join('')}
-      <td><span style="font-family:var(--font-mono);color:var(--accent2)">${fmt(vals.reduce((a,b)=>a+b,0))}</span></td>
-    </tr>`;
-  });
-  drill+='</tbody></table>';
-  document.getElementById('retailerDrilldown').innerHTML=drill;
+  currentStep=n;
+  if(n===1){buildPosArea();buildPsBlocks();}
+  if(n===2) buildEcOverseasInput();
+  if(n===3) buildSummaryPreview();
+  if(n===4) buildPreview();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-
-// ════════════════════════════════════════════
-//  ③ 出荷実績
-//  スキーマ: {skus:[{sku_name,sku_code,monthly_shipments:{月:{ec,tob,overseas,other,total}}}]}
-// ════════════════════════════════════════════
-function filteredShipmentSkus(){
-  let skus=DATA.shipments.skus||[];
-  if(filters.sku!=='all') skus=skus.filter(s=>s.sku_name===filters.sku);
-  return skus;
+function validateStep0(){
+  if(!document.getElementById('ci_product').value){showNotif('商品名を入力してください','error');return false;}
+  if(!document.getElementById('ci_brand').value){showNotif('ブランド名を入力してください','error');return false;}
+  if(!document.getElementById('ci_orderDate').value){showNotif('発注予定日を入力してください','error');return false;}
+  if(calcSkus.length===0){showNotif('SKUを1件以上追加してください','error');return false;}
+  return true;
 }
-function filteredMonths(){
-  const all=[...new Set((DATA.shipments.skus||[]).flatMap(s=>Object.keys(s.monthly_shipments||{})))].sort();
-  return all.filter(m=>{
-    if(filters.periodStart!=='all'&&m<filters.periodStart) return false;
-    if(filters.periodEnd!=='all'&&m>filters.periodEnd) return false;
-    return true;
-  });
-}
-function renderShipments(){
-  if(!dataLoaded||!DATA.shipments) return;
-  const skus=filteredShipmentSkus();
-  const months=filteredMonths();
+function validateStep1(){return true;}
 
-  // KPI集計
-  let tobT=0,ecT=0,ovsT=0,othT=0;
-  skus.forEach(s=>months.forEach(m=>{const ms=(s.monthly_shipments||{})[m]||{};tobT+=ms.tob||0;ecT+=ms.ec||0;ovsT+=ms.overseas||0;othT+=ms.other||0;}));
-  document.getElementById('shipmentKpis').innerHTML=`
-    <div class="kpi-card accent"><div class="kpi-label">総出荷数</div><div class="kpi-value">${fmt(tobT+ecT+ovsT+othT)}</div><div class="kpi-unit">pcs</div></div>
-    <div class="kpi-card blue"><div class="kpi-label">toB</div><div class="kpi-value">${fmt(tobT)}</div><div class="kpi-unit">pcs</div></div>
-    <div class="kpi-card accent"><div class="kpi-label">EC</div><div class="kpi-value">${fmt(ecT)}</div><div class="kpi-unit">pcs</div></div>
-    <div class="kpi-card green"><div class="kpi-label">海外</div><div class="kpi-value">${fmt(ovsT)}</div><div class="kpi-unit">pcs</div></div>`;
-
-  // 棒グラフ
-  const sum=(ch,m)=>skus.reduce((a,s)=>a+((s.monthly_shipments||{})[m]?.[ch]||0),0);
-  if(chartShipBar) chartShipBar.destroy();
-  chartShipBar=new Chart(document.getElementById('chartShipBar').getContext('2d'),{
-    type:'bar',
-    data:{labels:months,datasets:[
-      {label:'toB',  data:months.map(m=>sum('tob',m)),     backgroundColor:'rgba(126,184,212,.7)',borderColor:'rgba(126,184,212,1)',borderWidth:1},
-      {label:'EC',   data:months.map(m=>sum('ec',m)),      backgroundColor:'rgba(200,169,110,.7)',borderColor:'rgba(200,169,110,1)',borderWidth:1},
-      {label:'海外', data:months.map(m=>sum('overseas',m)),backgroundColor:'rgba(126,212,160,.7)',borderColor:'rgba(126,212,160,1)',borderWidth:1},
-      {label:'other',data:months.map(m=>sum('other',m)),   backgroundColor:'rgba(180,158,232,.7)',borderColor:'rgba(180,158,232,1)',borderWidth:1}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:11}}}},
-      scales:{x:{stacked:true,ticks:{color:'#5a5750',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}},
-              y:{stacked:true,ticks:{color:'#5a5750',font:{family:'DM Mono',size:11},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}}}
-  });
-
-  // 試算 vs 実績（JANで紐づけ）
-  const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
-  let cmp='<div class="compare-bar-wrap">',hasCompare=false;
-  orderSkus.forEach(os=>{
-    // JANで紐づける（orders.jsonのjanとshipments.jsonのsku_codeを照合）
-    const jan=os.jan||'';
-    const ss=jan
-      ? skus.find(s=>s.sku_code===jan) || skus.find(s=>s.sku_name===os.sku_name)
-      : skus.find(s=>s.sku_name===os.sku_name);
-    if(!ss) return;
-    hasCompare=true;
-    const fc=Object.values(os.monthly_summary?.tob||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.ec||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.overseas||{}).reduce((a,b)=>a+b,0);
-    const ac=months.reduce((a,m)=>a+((ss.monthly_shipments||{})[m]?.total||0),0);
-    const r=fc>0?Math.round(ac/fc*100):0;
-    const rc=r>=90?'var(--accent4)':r>=70?'var(--accent)':'var(--accent3)';
-    cmp+=`<div class="compare-row">
-      <div class="compare-label"><span>${skuLabel(os.sku_name)}</span><span style="font-family:var(--font-mono);font-size:10px">実績 ${fmt(ac)} / 試算 ${fmt(fc)} <span style="color:${rc}">(${r}%)</span></span></div>
-      <div class="compare-bars"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);width:30px">試算</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:rgba(126,184,212,.3)"></div></div><span style="font-family:var(--font-mono);font-size:10px;color:var(--accent2);width:50px;text-align:right">${fmt(fc)}</span></div>
-      <div class="compare-bars"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);width:30px">実績</span><div class="bar-track"><div class="bar-fill" style="width:${Math.min(r,100)}%;background:${rc}"></div></div><span style="font-family:var(--font-mono);font-size:10px;color:${rc};width:50px;text-align:right">${fmt(ac)}</span></div>
-    </div>`;
-  });
-  if(!hasCompare) cmp+=`<div style="color:var(--text3);font-size:12px;padding:8px">orders.jsonのJAN/SKU名と一致する出荷データがありません</div>`;
-  cmp+='</div>';
-  document.getElementById('comparePanel').innerHTML=cmp;
-
-  renderShipTable();
-}
-
-// テーブル分離（チャネルタブ切り替え対応、出荷多い順）
-function renderShipTable(){
-  if(!dataLoaded||!DATA.shipments) return;
-  const skus=filteredShipmentSkus();
-  const months=filteredMonths();
-  const ch=shipTableChannel; // 'all'|'tob'|'ec'|'overseas'
-
-  // SKUごとに期間合計を計算してソート
-  const skuTotals=skus.map(s=>{
-    const total=months.reduce((a,m)=>{
-      const ms=(s.monthly_shipments||{})[m]||{};
-      if(ch==='all') return a+(ms.total||0);
-      if(ch==='tob') return a+(ms.tob||0);
-      if(ch==='ec') return a+(ms.ec||0);
-      if(ch==='overseas') return a+(ms.overseas||0);
-      return a;
-    },0);
-    return {...s,_total:total};
-  }).filter(s=>s._total>0).sort((a,b)=>b._total-a._total);
-
-  // 月別の列ヘッダー
-  let tHtml=`<thead><tr>
-    <th style="text-align:left">SKU</th>
-    <th style="text-align:left">JAN</th>
-    ${months.map(m=>`<th>${m}</th>`).join('')}
-    <th>合計</th>
-  </tr></thead><tbody>`;
-
-  skuTotals.slice(0,200).forEach(s=>{
-    const mVals=months.map(m=>{
-      const ms=(s.monthly_shipments||{})[m]||{};
-      if(ch==='all') return ms.total||0;
-      if(ch==='tob') return ms.tob||0;
-      if(ch==='ec') return ms.ec||0;
-      if(ch==='overseas') return ms.overseas||0;
-      return 0;
-    });
-    tHtml+=`<tr>
-      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.sku_name}">${skuLabel(s.sku_name)}</td>
-      <td style="font-family:var(--font-mono);color:var(--text3)">${s.sku_code||'—'}</td>
-      ${mVals.map(v=>`<td class="${v?'num-accent':''}">${v?fmt(v):'—'}</td>`).join('')}
-      <td class="num-pos" style="font-weight:500">${fmt(s._total)}</td>
-    </tr>`;
-  });
-  if(skuTotals.length>200) tHtml+=`<tr><td colspan="${months.length+3}" style="color:var(--text3);text-align:center;font-size:11px;padding:12px">… 残り ${skuTotals.length-200} SKU（フィルターで絞り込んでください）</td></tr>`;
-  tHtml+='</tbody>';
-  document.getElementById('shipTable').innerHTML=tHtml;
-}
-
-// ════════════════════════════════════════════
-//  ④ 在庫推移
-//  スキーマ: {skus:[{sku_name,sku_code,monthly_stock:{月:数量},latest_stock}]}
-// ════════════════════════════════════════════
-function renderInventory(){
-  if(!dataLoaded||!DATA.inventory) return;
-  const allSkus=DATA.inventory.skus||[];
-  const skuFilter=filters.sku;
-  const dispSkus=skuFilter==='all'?allSkus:allSkus.filter(s=>s.sku_name===skuFilter);
-
-  // 月一覧
-  const months=[...new Set(allSkus.flatMap(s=>Object.keys(s.monthly_stock||{})))].sort();
-  const latestMonth=months[months.length-1];
-  const prevMonth=months[months.length-2];
-
-  // KPI
-  const latestTotal=dispSkus.reduce((a,s)=>a+(s.latest_stock||0),0);
-  const prevTotal=dispSkus.reduce((a,s)=>a+((s.monthly_stock||{})[prevMonth]||0),0);
-  const change=latestTotal-prevTotal;
-  const updatedAt=DATA.inventory.updated_at||latestMonth;
-
-  document.getElementById('inventoryKpis').innerHTML=`
-    <div class="kpi-card green"><div class="kpi-label">直近在庫合計</div><div class="kpi-value">${fmt(latestTotal)}</div><div class="kpi-unit">${updatedAt} 時点</div></div>
-    <div class="kpi-card ${change>=0?'green':'red'}"><div class="kpi-label">前月比</div><div class="kpi-value">${change>=0?'+':''}${fmt(change)}</div><div class="kpi-unit">${prevMonth||'—'} → ${latestMonth||'—'}</div></div>
-    <div class="kpi-card accent"><div class="kpi-label">管理SKU数</div><div class="kpi-value">${dispSkus.length}</div><div class="kpi-unit">SKUs</div></div>`;
-
-  // グラフ: フィルターなし→在庫合計のみ, フィルターあり→個別SKU
-  const colors=['rgba(126,184,212,1)','rgba(200,169,110,1)','rgba(224,123,138,1)','rgba(126,212,160,1)','rgba(180,158,232,1)','rgba(240,180,80,1)','rgba(100,200,200,1)','rgba(220,140,180,1)','rgba(160,200,120,1)','rgba(200,160,100,1)'];
-  const bgs=colors.map(c=>c.replace('1)','0.15)'));
-
-  let datasets;
-  if(skuFilter==='all'&&filters.product==='all'){
-    // 全SKU合計
-    const totalByMonth=months.map(m=>allSkus.reduce((a,s)=>a+((s.monthly_stock||{})[m]||0),0));
-    datasets=[
-      {label:'在庫合計',data:totalByMonth,borderColor:'rgba(126,212,160,1)',backgroundColor:'rgba(126,212,160,0.15)',borderWidth:2,pointRadius:4,tension:.3,fill:true},
-    ];
-  } else {
-    // 絞り込みSKUの個別折れ線（最大10件）
-    const graphSkus=dispSkus.slice(0,10);
-    datasets=graphSkus.map((sku,i)=>({
-      label:skuLabel(sku.sku_name),
-      data:months.map(m=>(sku.monthly_stock||{})[m]??null),
-      borderColor:colors[i%colors.length],backgroundColor:bgs[i%bgs.length],
-      borderWidth:2,pointRadius:4,pointHoverRadius:7,tension:.3,fill:false
-    }));
-  }
-
-  if(chartInventory) chartInventory.destroy();
-  chartInventory=new Chart(document.getElementById('chartInventory').getContext('2d'),{
-    type:'line',data:{labels:months,datasets},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:11}}},
-        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} pcs`}}
-      },
-      scales:{
-        x:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}},
-        y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:11},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}
-      }
-    },
-    plugins:[{afterDraw(chart){
-      const arrivals=(DATA.orders&&DATA.orders.orders||[]).map(o=>o.arrival_date).filter(Boolean);
-      if(!arrivals.length) return;
-      const xAxis=chart.scales.x;const c2d=chart.ctx;
-      arrivals.forEach(arrDate=>{
-        let xPos=null;
-        for(let i=0;i<months.length-1;i++){
-          if(arrDate>=months[i]&&arrDate<=months[i+1]){
-            const ratio=(arrDate.localeCompare(months[i]))/(months[i+1].localeCompare(months[i])||1);
-            xPos=xAxis.getPixelForValue(i)+(xAxis.getPixelForValue(i+1)-xAxis.getPixelForValue(i))*ratio;break;
-          }
-        }
-        if(xPos===null) return;
-        c2d.save();c2d.setLineDash([4,4]);c2d.strokeStyle='rgba(200,169,110,.6)';c2d.lineWidth=1.5;
-        c2d.beginPath();c2d.moveTo(xPos,chart.chartArea.top);c2d.lineTo(xPos,chart.chartArea.bottom);c2d.stroke();
-        c2d.setLineDash([]);c2d.font='10px DM Mono';c2d.fillStyle='rgba(200,169,110,.9)';
-        c2d.fillText(`入庫 ${arrDate} ▼`,xPos-30,chart.chartArea.top+14);c2d.restore();
-      });
-    }}]
-  });
-
-  if(dispSkus.length>10){
-    const note=document.getElementById('chartInventory').nextElementSibling;
-    if(!note||!note.dataset.note) {
-      const el=document.createElement('div');el.dataset.note='1';
-      el.style.cssText='color:var(--text3);font-size:11px;margin-top:8px;font-family:var(--font-mono)';
-      el.textContent='グラフは先頭10SKUのみ表示。フィルターで絞り込むと全SKU確認できます。';
-      document.getElementById('chartInventory').insertAdjacentElement('afterend',el);
-    }
-  }
-
-  renderInventoryTable();
-}
-
-// 在庫テーブル分離（フィルター・ソート対応）
-// 消化月数の計算: toB初回月除外3か月平均、EC3か月平均
-function calcDigestMonths(sku){
-  const ms=sku.monthly_shipments||{};
-  const months=Object.keys(ms).sort();
-  // toB: 初回出荷月を除外した直近3か月平均
-  const tobMonths=months.filter(m=>ms[m]?.tob>0);
-  const tobRecent=tobMonths.length>=2?tobMonths.slice(1).slice(-3):tobMonths.slice(-3);
-  const tobAvg=tobRecent.length?tobRecent.reduce((a,m)=>a+(ms[m]?.tob||0),0)/tobRecent.length:0;
-  // EC: 直近3か月平均
-  const ecMonths=months.filter(m=>ms[m]?.ec!=null);
-  const ecRecent=ecMonths.slice(-3);
-  const ecAvg=ecRecent.length?ecRecent.reduce((a,m)=>a+(ms[m]?.ec||0),0)/ecRecent.length:0;
-  const monthlyAvg=tobAvg+ecAvg;
-  const latest=sku.latest_stock||0;
-  return monthlyAvg>0?latest/monthlyAvg:null;
-}
-function renderInventoryTable(){
-  if(!dataLoaded||!DATA.inventory) return;
-  const allSkus=DATA.inventory.skus||[];
-  const skuFilter=filters.sku;
-  let dispSkus=skuFilter==='all'?[...allSkus]:allSkus.filter(s=>s.sku_name===skuFilter);
-  const shipSkus=DATA.shipments?DATA.shipments.skus||[]:[];
-
-  // 消化月数を付与
-  dispSkus=dispSkus.map(s=>{
-    const ss=shipSkus.find(x=>x.sku_code===s.sku_code||x.sku_name===s.sku_name)||null;
-    const dm=ss?calcDigestMonths(ss):null;
-    return{...s,_digestMonths:dm,_ss:ss};
-  });
-
-  // リスク判定（orders.jsonからリードタイム取得、デフォルト2か月）
-  const leadTimeMonths=(DATA.orders?.orders||[]).reduce((a,o)=>Math.max(a,(o.lead_time_weeks||8)/4.33),2);
-  dispSkus=dispSkus.map(s=>({
-    ...s,
-    _shortage: s._digestMonths!=null && s._digestMonths<=leadTimeMonths+1 && s._digestMonths<3,
-    _excess:   s._digestMonths!=null && s._digestMonths>=12,
-    _defect:   false // 不良在庫アラート無効
-  }));
-
-  // フィルター適用
-  if(invFilter==='defect') dispSkus=dispSkus.filter(s=>s._defect);
-  if(invFilter==='risk')   dispSkus=dispSkus.filter(s=>s._shortage);
-  if(invFilter==='excess') dispSkus=dispSkus.filter(s=>s._excess);
-
-  // 直近在庫多い順
-  dispSkus.sort((a,b)=>(b.latest_stock||0)-(a.latest_stock||0));
-
-  const months=[...new Set((DATA.inventory.skus||[]).flatMap(s=>Object.keys(s.monthly_stock||{})))].sort();
-
-  let tHtml=`<thead><tr>
-    <th style="text-align:left">SKU</th>
-    <th style="text-align:left">JAN</th>
-    ${months.map(m=>`<th>${m}</th>`).join('')}
-    <th>直近在庫</th>
-    <th>消化月数</th>
-    <th>リスク</th>
-  </tr></thead><tbody>`;
-
-  dispSkus.slice(0,300).forEach(s=>{
-    const dm=s._digestMonths;
-    const dmStr=dm!=null?dm.toFixed(1)+'ヶ月':'—';
-    const dmColor=s._shortage?'var(--accent3)':dm!=null&&dm>=12?'var(--accent2)':'var(--text2)';
-    const riskTags=[];
-    if(s._shortage) riskTags.push(`<span class="badge badge-accent" style="background:rgba(224,123,138,.15);color:var(--accent3);border-color:rgba(224,123,138,.3)">欠品⚠</span>`);
-    if(s._excess)   riskTags.push(`<span class="badge badge-blue">過剰</span>`);
-    tHtml+=`<tr>
-      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.sku_name}">${skuLabel(s.sku_name)}</td>
-      <td style="font-family:var(--font-mono);color:var(--text3)">${s.sku_code||'—'}</td>
-      ${months.map(m=>{const v=(s.monthly_stock||{})[m];return`<td class="${v!=null?'num-accent':''}">${v!=null?fmt(v):'—'}</td>`;}).join('')}
-      <td class="num-pos">${fmt(s.latest_stock)}</td>
-
-      <td style="font-family:var(--font-mono);color:${dmColor}">${dmStr}</td>
-      <td style="white-space:nowrap">${riskTags.join(' ')||'—'}</td>
-    </tr>`;
-  });
-  if(dispSkus.length>300) tHtml+=`<tr><td colspan="${months.length+8}" style="color:var(--text3);text-align:center;font-size:11px;padding:12px">… 残り ${dispSkus.length-300} SKU</td></tr>`;
-  tHtml+='</tbody>';
-  document.getElementById('inventoryTable').innerHTML=tHtml;
-}
-
-// ════════════════════════════════════════════
-//  ⑤ 振り返り
-// ════════════════════════════════════════════
-function renderReview(){
-  if(!dataLoaded||!DATA.shipments||!DATA.orders) return;
-  const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
-  const shipSkus=DATA.shipments.skus||[];
-  const months=filteredMonths();
-
-  const THRESH=0.2; // 誤差閾値20%
-
-  // SKUごとに試算vs実績を計算
-  const rows=orderSkus.map(os=>{
-    const jan=os.jan||'';
-    const ss=jan?shipSkus.find(s=>s.sku_code===jan)||shipSkus.find(s=>s.sku_name===os.sku_name):shipSkus.find(s=>s.sku_name===os.sku_name);
-    const fc={tob:0,ec:0,overseas:0};
-    ['tob','ec','overseas'].forEach(ch=>Object.entries(os.monthly_summary?.[ch]||{}).forEach(([m,v])=>{if(months.includes(m))fc[ch]+=v||0;}));
-    const fcTotal=fc.tob+fc.ec+fc.overseas;
-    const ac={tob:0,ec:0,overseas:0,other:0,total:0};
-    if(ss) months.forEach(m=>{const ms=(ss.monthly_shipments||{})[m]||{};ac.tob+=ms.tob||0;ac.ec+=ms.ec||0;ac.overseas+=ms.overseas||0;ac.other+=ms.other||0;ac.total+=ms.total||0;});
-    const diff=ac.total-fcTotal;
-    const accuracy=ac.total>0?1-Math.abs(diff)/ac.total:null;
-    const errRate=fcTotal>0?Math.abs(diff)/fcTotal:null;
-    return{name:os.sku_name,jan,fc,fcTotal,ac,diff,accuracy,errRate,over:errRate!=null&&errRate>THRESH};
-  }).filter(r=>r.fcTotal>0||r.ac.total>0);
-
-  // KPI
-  const validAcc=rows.filter(r=>r.accuracy!=null);
-  const avgAcc=validAcc.length?validAcc.reduce((a,r)=>a+r.accuracy,0)/validAcc.length:null;
-  const overCount=rows.filter(r=>r.over).length;
-  const totalDiff=rows.reduce((a,r)=>a+r.diff,0);
-  document.getElementById('reviewKpis').innerHTML=`
-    <div class="kpi-card blue"><div class="kpi-label">平均予測精度</div><div class="kpi-value">${avgAcc!=null?(avgAcc*100).toFixed(1)+'%':'—'}</div><div class="kpi-unit">全SKU平均</div></div>
-    <div class="kpi-card ${totalDiff>=0?'red':'blue'}"><div class="kpi-label">実績−試算（合計）</div><div class="kpi-value">${totalDiff>=0?'+':''}${fmt(totalDiff)}</div><div class="kpi-unit">${totalDiff>0?'欠品リスク傾向':'過剰在庫傾向'}</div></div>
-    <div class="kpi-card red"><div class="kpi-label">誤差閾値超過SKU</div><div class="kpi-value">${overCount}</div><div class="kpi-unit">±${(THRESH*100).toFixed(0)}% 超</div></div>
-    <div class="kpi-card accent"><div class="kpi-label">比較SKU数</div><div class="kpi-value">${rows.length}</div><div class="kpi-unit">SKUs</div></div>`;
-
-  // グラフ：積み上げ棒（実績toB/EC/海外/other vs 試算toB/EC/海外）
-  const labels=rows.map(r=>skuLabel(r.name));
-  if(chartReview) chartReview.destroy();
-  chartReview=new Chart(document.getElementById('chartReview').getContext('2d'),{
-    type:'bar',
-    data:{labels,datasets:[
-      {label:'実績 toB',  data:rows.map(r=>r.ac.tob),   backgroundColor:'rgba(126,184,212,.8)',stack:'actual'},
-      {label:'実績 EC',   data:rows.map(r=>r.ac.ec),    backgroundColor:'rgba(200,169,110,.8)',stack:'actual'},
-      {label:'実績 海外', data:rows.map(r=>r.ac.overseas),backgroundColor:'rgba(126,212,160,.8)',stack:'actual'},
-      {label:'実績 other',data:rows.map(r=>r.ac.other), backgroundColor:'rgba(180,158,232,.8)',stack:'actual'},
-      {label:'試算 toB',  data:rows.map(r=>r.fc.tob),   backgroundColor:'rgba(126,184,212,.3)',borderColor:'rgba(126,184,212,.8)',borderWidth:1,borderDash:[4,4],stack:'forecast'},
-      {label:'試算 EC',   data:rows.map(r=>r.fc.ec),    backgroundColor:'rgba(200,169,110,.3)',borderColor:'rgba(200,169,110,.8)',borderWidth:1,stack:'forecast'},
-      {label:'試算 海外', data:rows.map(r=>r.fc.overseas),backgroundColor:'rgba(126,212,160,.3)',borderColor:'rgba(126,212,160,.8)',borderWidth:1,stack:'forecast'},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:10}}}},
-      scales:{
-        x:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10}},grid:{color:'rgba(42,45,58,.5)'}},
-        y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}
-      }}
-  });
-
-  // ワーストTOP10テーブル
-  const worst=[...rows].sort((a,b)=>(b.errRate||0)-(a.errRate||0)).slice(0,10);
-  let tHtml=`<thead><tr>
-    <th style="text-align:left">SKU</th><th>試算合計</th><th>実績合計</th>
-    <th>差異</th><th>予測精度</th><th>誤差率</th><th>アラート</th>
-  </tr></thead><tbody>`;
-  worst.forEach(r=>{
-    const acc=r.accuracy!=null?(r.accuracy*100).toFixed(1)+'%':'—';
-    const err=r.errRate!=null?(r.errRate*100).toFixed(1)+'%':'—';
-    const diffCol=r.diff>0?'num-warn':r.diff<0?'num-blue':'';
-    tHtml+=`<tr style="${r.over?'background:rgba(224,123,138,0.05)':''}">
-      <td title="${r.name}">${skuLabel(r.name)}</td>
-      <td>${fmt(r.fcTotal)}</td>
-      <td>${fmt(r.ac.total)}</td>
-      <td class="${diffCol}">${r.diff>0?'+':''}${fmt(r.diff)}</td>
-      <td style="font-family:var(--font-mono);color:${r.accuracy!=null&&r.accuracy>=0.8?'var(--accent4)':'var(--accent3)'}">${acc}</td>
-      <td style="font-family:var(--font-mono);color:${r.over?'var(--accent3)':'var(--text2)'}">${err}</td>
-      <td>${r.over?`<span class="badge" style="background:rgba(224,123,138,.15);color:var(--accent3);border:1px solid rgba(224,123,138,.3)">誤差超過</span>`:r.diff>0?`<span class="badge badge-accent" style="background:rgba(224,123,138,.1)">欠品リスク</span>`:r.diff<0?`<span class="badge badge-blue">過剰傾向</span>`:'—'}</td>
-    </tr>`;
-  });
-  tHtml+='</tbody>';
-  document.getElementById('reviewTable').innerHTML=tHtml;
-}
-
-// ════════════════════════════════════════════
-//  ⑥ アラート
-// ════════════════════════════════════════════
-function renderAlerts(){
-  if(!dataLoaded||!DATA.inventory||!DATA.shipments) return;
-  const invSkus=DATA.inventory.skus||[];
-  const shipSkus=DATA.shipments.skus||[];
-  const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
-  const THRESH=0.2;
-  const leadTimeMonths=(DATA.orders?.orders||[]).reduce((a,o)=>Math.max(a,(o.lead_time_weeks||8)/4.33),2);
-
-  const alerts=[];
-
-  invSkus.forEach(inv=>{
-    const ss=shipSkus.find(s=>s.sku_code===inv.sku_code||s.sku_name===inv.sku_name);
-    const dm=ss?calcDigestMonths(ss):null;
-    const name=skuLabel(inv.sku_name);
-    // 欠品リスク（消化月数 < 3 かつ リードタイム以下）
-    if(dm!=null&&dm<3&&dm<=leadTimeMonths+1){
-      alerts.push({level:'danger',type:'shortage',label:'欠品リスク / 発注タイミング',name,detail:`消化月数 ${dm.toFixed(1)}ヶ月 ≤ リードタイム(${leadTimeMonths.toFixed(1)})+1ヶ月`});
-    }
-    // 過剰在庫リスク（消化月数 ≥ 12）
-    if(dm!=null&&dm>=12){
-      alerts.push({level:'warn',type:'excess',label:'過剰在庫リスク',name,detail:`消化月数 ${dm.toFixed(1)}ヶ月`});
-    }
-
-  });
-
-  // 誤差アラート
-  orderSkus.forEach(os=>{
-    const jan=os.jan||'';
-    const ss=jan?shipSkus.find(s=>s.sku_code===jan)||shipSkus.find(s=>s.sku_name===os.sku_name):shipSkus.find(s=>s.sku_name===os.sku_name);
-    if(!ss) return;
-    const fc=Object.values(os.monthly_summary?.tob||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.ec||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.overseas||{}).reduce((a,b)=>a+b,0);
-    const ac=Object.values(ss.monthly_shipments||{}).reduce((a,ms)=>a+(ms.total||0),0);
-    if(fc>0){
-      const err=Math.abs(ac-fc)/fc;
-      if(err>THRESH) alerts.push({level:err>0.5?'danger':'warn',type:'accuracy',label:'予測誤差超過',name:skuLabel(os.sku_name),detail:`誤差率 ${(err*100).toFixed(1)}% (試算${fmt(fc)} / 実績${fmt(ac)})`});
-    }
-  });
-
-  // バッジ更新
-  const badge=document.getElementById('alertBadge');
-  if(badge){badge.textContent=alerts.length;badge.style.display=alerts.length?'inline':'none';}
-
-  const dangerCount=alerts.filter(a=>a.level==='danger').length;
-  const warnCount=alerts.filter(a=>a.level==='warn').length;
-  document.getElementById('alertKpis').innerHTML=`
-    <div class="kpi-card red"><div class="kpi-label">緊急アラート</div><div class="kpi-value">${dangerCount}</div><div class="kpi-unit">件</div></div>
-    <div class="kpi-card accent"><div class="kpi-label">警告</div><div class="kpi-value">${warnCount}</div><div class="kpi-unit">件</div></div>
-    <div class="kpi-card blue"><div class="kpi-label">合計</div><div class="kpi-value">${alerts.length}</div><div class="kpi-unit">件</div></div>
-    <div class="kpi-card green"><div class="kpi-label">リードタイム</div><div class="kpi-value">${leadTimeMonths.toFixed(1)}</div><div class="kpi-unit">ヶ月</div></div>`;
-
-  const typeColors={order:'var(--accent3)',shortage:'var(--accent3)',excess:'var(--accent2)',defect:'var(--accent5)',accuracy:'var(--accent)'};
-  const typeIcons={order:'⏰',shortage:'🔴',excess:'📦',defect:'⚠️',accuracy:'📊'};
-  const grouped={danger:[],warn:[]};
-  alerts.forEach(a=>grouped[a.level].push(a));
-
-  let html='';
-  if(!alerts.length) html='<div style="color:var(--text3);font-size:13px;text-align:center;padding:32px">アラートはありません ✓</div>';
-  ['danger','warn'].forEach(level=>{
-    if(!grouped[level].length) return;
-    html+=`<div style="margin-bottom:16px">
-      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:${level==='danger'?'var(--accent3)':'var(--accent)'};margin-bottom:8px;text-transform:uppercase">${level==='danger'?'● 緊急':'◎ 警告'}</div>
-      ${grouped[level].map(a=>`
-        <div style="background:var(--surface2);border:1px solid ${level==='danger'?'rgba(224,123,138,.3)':'var(--border)'};border-left:3px solid ${typeColors[a.type]||'var(--border)'};border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px">
-          <span style="font-size:16px;flex-shrink:0">${typeIcons[a.type]||'!'}</span>
-          <div>
-            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px">${a.label} — ${a.name}</div>
-            <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono)">${a.detail}</div>
-          </div>
-        </div>`).join('')}
-    </div>`;
-  });
-  document.getElementById('alertList').innerHTML=html;
-}
-
-// ════════════════════════════════════════════
-//  発注試算ツール
-// ════════════════════════════════════════════
 function selectMode(m){
   calcMode=m;
   document.getElementById('modeNormal').classList.toggle('selected',m==='normal');
   document.getElementById('modeSimple').classList.toggle('selected',m==='simple');
-  const badge=document.getElementById('calcModeBadge');
-  if(badge){badge.textContent=m==='normal'?'通常試算':'簡易試算';badge.className='badge '+(m==='normal'?'badge-accent':'badge-blue');}
-}
-function onItemTypeChange(){
-  itemType=document.querySelector('input[name=itemType]:checked').value;
-  document.getElementById('janSearchArea').style.display=itemType==='existing'?'block':'none';
-  document.getElementById('newSkuArea').style.display=itemType==='new'?'block':'none';
-  renderSelectedSkuSection();
+  document.getElementById('calcModeBadge').textContent=m==='normal'?'通常試算':'簡易試算';
+  document.getElementById('calcModeBadge').className='badge '+(m==='normal'?'badge-accent':'badge-blue');
 }
 selectMode('normal');
 
-// ステップナビ更新
-function updateStepNav(active){
-  const steps=document.querySelectorAll('#calcStepNav .step');
-  steps.forEach((s,i)=>{
-    s.classList.remove('active','done');
-    if(i<active) s.classList.add('done');
-    else if(i===active) s.classList.add('active');
-  });
-}
-
-function goStep(n){
-  if(!dataLoaded){showNotif('データ読み込み中です','error');return;}
-  // バリデーション
-  if(n>=1&&calcSkus.length===0){showNotif('SKUを1件以上選択してください','error');return;}
-  if(n>=2){
-    if(!document.getElementById('ci_product').value){showNotif('商品名を入力してください','error');return;}
-    if(!document.getElementById('ci_orderDate').value){showNotif('発注予定日を入力してください','error');return;}
-    calcArrival(); updateBaseMonth();
-  }
-  [0,1,2,3,4].forEach(i=>{
-    const el=document.getElementById('calcStep'+i);
-    if(el) el.style.display=i===n?'block':'none';
-  });
-  updateStepNav(n);
-  if(n===2) buildPsSettingArea();
-  if(n===3) buildQuantityInput();
-  if(n===4) buildPreview();
-  window.scrollTo(0,0);
-}
-
-// ── 発注月の計算 ──
-function getBaseMonth(){
-  const d=document.getElementById('ci_orderDate').value;
-  if(!d) return null;
-  const dt=new Date(d);
-  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
-}
-function updateBaseMonth(){
-  const m=getBaseMonth();
-  const el=document.getElementById('ci_baseMonthDisplay');
-  if(el) el.value=m||'—';
-  const tobM=+document.getElementById('ci_tobMonths').value||4;
-  const ecM=+document.getElementById('ci_ecMonths').value||5;
-  const ovsM=+document.getElementById('ci_overseasMonths').value||3;
-  const preview=document.getElementById('calcMonthPreview');
-  if(preview&&m){
-    const tob=monthRange(m,tobM);
-    const ec=monthRange(m,ecM);
-    const ovs=monthRange(m,ovsM);
-    preview.textContent=`toB: ${tob.join(' ')}  |  EC: ${ec.join(' ')}  |  海外: ${ovs.join(' ')}`;
-  }
-}
 function calcArrival(){
-  const d=document.getElementById('ci_orderDate').value;
-  const w=+document.getElementById('ci_leadtime').value||8;
-  if(d){
-    const dt=new Date(d);
-    dt.setDate(dt.getDate()+w*7);
-    document.getElementById('ci_arrivalDate').value=dt.toISOString().split('T')[0];
+  const od=document.getElementById('ci_orderDate').value;
+  const lt=+document.getElementById('ci_leadtime').value||8;
+  if(od){
+    const d=new Date(od);d.setDate(d.getDate()+lt*7);
+    document.getElementById('ci_arrivalDate').value=d.toISOString().slice(0,10);
   }
-  updateBaseMonth();
+}
+
+function updateMonthPreviews(){
+  const base=getBaseMonth();
+  const el=document.getElementById('monthPreviewRow');
+  if(!el) return;
+  if(!base){el.textContent='発注予定日を入力すると月が表示されます';return;}
+  const tob=+document.getElementById('ci_tobMonths').value||4;
+  const ec=+document.getElementById('ci_ecMonths').value||5;
+  const ovs=+document.getElementById('ci_overseasMonths').value||3;
+  const maxM=Math.max(tob,ec,ovs);
+  const months=monthRange(base,maxM);
+  el.innerHTML=months.map((m,i)=>{
+    let tags=[];
+    if(i<tob) tags.push(`<span style="color:var(--tob)">toB</span>`);
+    if(i<ec) tags.push(`<span style="color:var(--ec)">EC</span>`);
+    if(i<ovs) tags.push(`<span style="color:var(--overseas)">海外</span>`);
+    return `<span style="border:1px solid var(--border);border-radius:4px;padding:3px 8px;white-space:nowrap">${mLabel(m)} ${tags.join('')}</span>`;
+  }).join('');
 }
 
 // ── SKU管理 ──
-function janSearchPreview(){
-  if(!dataLoaded) return;
-  const jan=(document.getElementById('janSearchInput').value||'').trim();
-  const res=document.getElementById('janSearchResult');
-  if(!jan||jan.length<4){res.innerHTML='';return;}
-  const invSkus=DATA.inventory.skus||[];
-  const matched=invSkus.filter(s=>(s.sku_code||'').includes(jan));
-  if(!matched.length){res.innerHTML=`<div style="color:var(--text3);font-size:12px;padding:8px">一致するJANが見つかりません</div>`;return;}
-  // 同商品グループ（名前のプレフィックス一致）
-  const firstName=matched[0].sku_name||'';
-  // 末尾の2桁数字を除いたプレフィックス
-  const namePrefix=firstName.replace(/[\s\u3000]?\d{2}$/, '').trim();
-  const siblings=namePrefix.length>2
-    ? invSkus.filter(s=>(s.sku_name||'').startsWith(namePrefix))
-    : matched;
-  const shipSkus=DATA.shipments?DATA.shipments.skus||[]:[];
-  res.innerHTML=`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px">
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-family:var(--font-mono)">商品グループ （${siblings.length} SKU）— ${namePrefix||'—'}</div>
-    ${siblings.map(s=>{
-      const already=calcSkus.find(x=>x.jan===s.sku_code);
-      const ss=shipSkus.find(x=>x.sku_code===s.sku_code||x.sku_name===s.sku_name);
-      const ms=ss?Object.keys(ss.monthly_shipments||{}).sort():[]; 
-      const latestM=ms.slice(-1)[0];
-      const latestShip=latestM?((ss.monthly_shipments||{})[latestM]?.total||0):0;
-      return`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(42,45,58,.4)">
-        <input type="checkbox" class="jan-cb" value="${s.sku_code}" ${already?'disabled checked':''} style="accent-color:var(--accent);width:14px;height:14px;flex-shrink:0" ${already?'':'checked'}>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.sku_name}</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">JAN: ${s.sku_code} / 在庫: ${fmt(s.latest_stock)} / 直近出荷: ${fmt(latestShip)}</div>
-        </div>
-        ${already?'<span style="font-family:var(--font-mono);font-size:9px;color:var(--accent4)">追加済</span>':''}
-      </div>`;
-    }).join('')}
-    <button class="btn btn-primary" style="margin-top:10px;width:100%" onclick="applyJanSearch()">選択したSKUを追加</button>
-  </div>`;
+function onItemTypeChange(){
+  itemType=document.querySelector('input[name="itemType"]:checked').value;
+  document.getElementById('janSearchArea').style.display=itemType==='existing'?'':'none';
 }
-
-function applyJanSearch(){
-  const res=document.getElementById('janSearchResult');
-  if(!res) return;
-  const checks=res.querySelectorAll('.jan-cb:checked:not(:disabled)');
-  if(!checks.length){showNotif('追加するSKUにチェックを入れてください','error');return;}
-  const invSkus=DATA.inventory.skus||[];
-  const ordersSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
-  let added=0;
-  checks.forEach(cb=>{
-    const jan=cb.value;
-    if(calcSkus.find(s=>s.jan===jan)) return;
-    const inv=invSkus.find(s=>s.sku_code===jan);
-    if(!inv) return;
-    const prevOrder=ordersSkus.find(s=>s.jan===jan||s.sku_name===inv.sku_name);
-    calcSkus.push({
-      name:inv.sku_name, jan, stock:inv.latest_stock||0,
-      prevConfirmedOrder:prevOrder?.confirmed_order||0,
-      prevEstimated:prevOrder?.estimated_total||0,
-    });
-    added++;
-  });
+function janSearchPreview(){
+  const q=document.getElementById('janSearchInput').value.trim();
+  const el=document.getElementById('janSearchResult');
+  if(!q||!dataLoaded||!DATA.orders){el.innerHTML='';return;}
+  const allSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
+  const matches=allSkus.filter(s=>s.jan&&s.jan.includes(q)||s.sku_name&&s.sku_name.toLowerCase().includes(q.toLowerCase()));
+  if(!matches.length){el.innerHTML=`<span style="color:var(--text3);font-size:11px">見つかりません</span>`;return;}
+  el.innerHTML=matches.slice(0,5).map(s=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--surface2);border-radius:4px;margin-bottom:4px;font-size:12px">
+      <span>${escHtml(s.sku_name)} <span style="color:var(--text3);font-size:10px">${s.jan||''}</span></span>
+      <button class="btn btn-secondary" style="font-size:10px;padding:2px 8px" onclick="addSkuFromSearch('${escHtml(s.sku_name)}','${s.jan||''}',${s.current_stock||0})">追加</button>
+    </div>`).join('');
+}
+function addSkuFromSearch(name,jan,stock){
+  if(calcSkus.find(s=>s.name===name)){showNotif('すでに追加済みです','error');return;}
+  if(calcSkus.length>=8){showNotif('SKUは最大8件です','error');return;}
+  calcSkus.push({name,jan,stock});
+  renderCalcSkuList();
   document.getElementById('janSearchInput').value='';
   document.getElementById('janSearchResult').innerHTML='';
-  renderSelectedSkuSection();
-  showNotif(`${added}SKUを追加しました`,'success');
 }
-
-function renderSelectedSkuSection(){
-  const sec=document.getElementById('selectedSkuSection');
-  const list=document.getElementById('selectedSkuList');
-  if(!sec||!list) return;
-  if(!calcSkus.length){sec.style.display='none';return;}
-  sec.style.display='block';
-  list.innerHTML=calcSkus.map((s,i)=>`
-    <div class="sku-block">
-      <div class="sku-block-header">
-        <span class="sku-name-display" style="font-size:13px">${s.name||'SKU '+(i+1)}</span>
-        <button class="btn btn-danger" style="font-size:10px;padding:3px 8px" onclick="removeCalcSku(${i})">削除</button>
-      </div>
-      <div class="form-grid">
-        <div class="form-group"><label class="form-label">SKU名</label>
-          <input type="text" value="${escHtml(s.name)}" oninput="calcSkus[${i}].name=this.value" style="width:100%"></div>
-        <div class="form-group"><label class="form-label">JAN</label>
-          <input type="text" value="${escHtml(s.jan)}" readonly style="color:var(--text3)"></div>
-        <div class="form-group"><label class="form-label">現在庫</label>
-          <input type="number" value="${s.stock}" min="0" step="1" onchange="calcSkus[${i}].stock=+this.value" style="width:100%"></div>
-        ${s.prevConfirmedOrder?`<div class="form-group"><label class="form-label">前回確定発注数</label>
-          <input type="number" value="${s.prevConfirmedOrder}" readonly style="color:var(--accent2)"></div>`:''}
-      </div>
-    </div>`).join('');
+function applyJanSearch(){
+  const q=document.getElementById('janSearchInput').value.trim();
+  if(!q) return;
+  const allSkus=dataLoaded&&DATA.orders?(DATA.orders.orders||[]).flatMap(o=>o.skus||[]):[];
+  const match=allSkus.find(s=>s.jan===q||s.sku_name===q);
+  if(match) addSkuFromSearch(match.sku_name,match.jan,match.current_stock||0);
+  else{
+    if(calcSkus.length>=8){showNotif('SKUは最大8件です','error');return;}
+    calcSkus.push({name:q,jan:q,stock:0});
+    renderCalcSkuList();
+  }
 }
-function removeCalcSku(i){calcSkus.splice(i,1);renderSelectedSkuSection();}
-function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-// 新規品SKU追加
-function addNewSku(){
+function addCalcSku(){
+  if(calcSkus.length>=8){showNotif('SKUは最大8件です','error');return;}
   calcSkus.push({name:'',jan:'',stock:0});
-  renderNewSkuList();
-  renderSelectedSkuSection();
+  renderCalcSkuList();
 }
-function renderNewSkuList(){
-  const list=document.getElementById('newSkuList');
-  if(!list) return;
-  list.innerHTML=calcSkus.map((s,i)=>`
-    <div class="sku-block" style="margin-bottom:8px">
-      <div class="sku-block-header">
-        <span style="font-size:12px;color:var(--text2)">SKU ${i+1}</span>
-        ${calcSkus.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:2px 8px" onclick="calcSkus.splice(${i},1);renderNewSkuList();renderSelectedSkuSection()">削除</button>`:''}
+function renderCalcSkuList(){
+  const el=document.getElementById('calcSkuList');
+  if(!el) return;
+  if(!calcSkus.length){el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">SKUが追加されていません</div>';return;}
+  el.innerHTML=calcSkus.map((s,i)=>`
+    <div class="sku-block" style="margin-bottom:8px;position:relative">
+      <div class="sku-block-header" style="margin-bottom:8px">
+        <span style="font-size:12px;color:var(--text2);font-family:var(--font-mono)">SKU ${i+1}</span>
+        <button class="btn btn-danger" style="font-size:10px;padding:2px 8px" onclick="removeCalcSku(${i})">削除</button>
       </div>
-      <div class="form-grid">
-        <div class="form-group"><label class="form-label">SKU名 <span class="req">*</span></label>
-          <input type="text" value="${escHtml(s.name)}" placeholder="例：新商品01" oninput="calcSkus[${i}].name=this.value;renderSelectedSkuSection()"></div>
-        <div class="form-group"><label class="form-label">JAN</label>
-          <input type="text" value="${escHtml(s.jan)}" oninput="calcSkus[${i}].jan=this.value"></div>
-        <div class="form-group"><label class="form-label">現在庫</label>
-          <input type="number" value="${s.stock}" min="0" onchange="calcSkus[${i}].stock=+this.value"></div>
+      <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+        <div class="form-group">
+          <label class="form-label">SKU名 <span class="req">*</span></label>
+          <input type="text" value="${escHtml(s.name)}" placeholder="例：チーク01" oninput="calcSkus[${i}].name=this.value">
+        </div>
+        <div class="form-group">
+          <label class="form-label">JAN</label>
+          <input type="text" value="${escHtml(s.jan)}" oninput="calcSkus[${i}].jan=this.value">
+        </div>
+        <div class="form-group">
+          <label class="form-label">現在庫</label>
+          <input type="number" value="${s.stock}" min="0" onchange="calcSkus[${i}].stock=+this.value">
+        </div>
       </div>
     </div>`).join('');
 }
+function removeCalcSku(i){calcSkus.splice(i,1);renderCalcSkuList();}
 
-// ── 参照P/S設定 ──
-function buildPsSettingArea(){
+// ── STEP 1: 参照POS & toB ──
+function buildPosArea(){
+  const el=document.getElementById('posPosArea');
+  if(!el) return;
+  const base=getBaseMonth()||'2026-01';
+  // POS reference table (maps to template N-R columns)
+  el.innerHTML=`
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px">SKUごとに参照P/S（LOFTの実績）・参照月・店舗数を設定します。テンプレートのN〜R列に書き込まれます。</div>
+    <div style="overflow-x:auto"><table style="font-size:12px;border-collapse:collapse;width:100%">
+      <thead><tr>
+        <th style="text-align:left;padding:6px 10px;background:var(--surface2);font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">SKU名</th>
+        <th style="padding:6px 10px;background:var(--surface2);font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">参照月</th>
+        <th style="padding:6px 10px;background:var(--surface2);font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">P/S</th>
+        <th style="padding:6px 10px;background:var(--surface2);font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">店舗数</th>
+      </tr></thead><tbody>
+      ${calcSkus.map((s,i)=>`<tr>
+        <td style="padding:6px 10px;border-bottom:1px solid rgba(42,45,58,.4);color:var(--text)">${escHtml(s.name)}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid rgba(42,45,58,.4)">
+          <input type="month" value="${s.posMonth||base}" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent2);padding:4px 8px;border-radius:4px;font-size:11px;width:130px"
+            onchange="calcSkus[${i}].posMonth=this.value">
+        </td>
+        <td style="padding:6px 10px;border-bottom:1px solid rgba(42,45,58,.4)">
+          <input type="number" value="${s.posPs||0}" step="0.1" min="0" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);padding:4px 8px;border-radius:4px;font-size:11px;width:80px;text-align:right"
+            onchange="calcSkus[${i}].posPs=parseFloat(this.value)||0">
+        </td>
+        <td style="padding:6px 10px;border-bottom:1px solid rgba(42,45,58,.4)">
+          <input type="number" value="${s.posStores||150}" min="0" style="background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:4px 8px;border-radius:4px;font-size:11px;width:80px;text-align:right"
+            onchange="calcSkus[${i}].posStores=+this.value">
+        </td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+function buildPsBlocks(){
   const area=document.getElementById('psSettingArea');
   if(!area) return;
   if(calcMode==='simple'){
-    area.innerHTML=`<div style="color:var(--text3);font-size:12px;padding:12px;font-family:var(--font-mono)">簡易試算モードではP/S設定は不要です。④数量入力で直接入力してください。</div>`;
+    area.innerHTML=`<div style="color:var(--text3);font-size:12px;padding:12px;font-family:var(--font-mono)">簡易試算モードではtoB P/S設定は不要です。③ EC・海外ステップで直接入力します。</div>`;
     return;
   }
-  // 小売ブロックの参照P/S（通常試算）
-  // すでに retailer ブロックがあれば維持、なければ初期1件
   if(calcRetailers.length===0) calcRetailers=[{name:'ロフト',posTilt:1,stores:150,monthTilts:{},skuPs:{}}];
   renderPsBlocks();
 }
@@ -1659,26 +1014,26 @@ function renderPsBlocks(){
   const base=getBaseMonth()||'2026-01';
   const tobM=+document.getElementById('ci_tobMonths').value||4;
   const months=monthRange(base,tobM);
-  area.innerHTML=`
-    <div style="font-size:12px;color:var(--text2);margin-bottom:12px">小売先ごとに「参照P/S」「業態POS傾斜」「店舗数」「月別傾斜」を設定します。<br>
-    月別発注予測 = 参照P/S × 業態POS傾斜 × 月別傾斜 × 店舗数</div>
-    ${calcRetailers.map((r,ri)=>`
-    <div class="retailer-block">
+  area.innerHTML=calcRetailers.map((r,ri)=>`
+    <div class="retailer-block" style="margin-bottom:12px">
       <div class="retailer-block-header">
-        <span style="font-weight:500;font-size:13px">${r.name||('小売 '+(ri+1))}</span>
+        <span style="font-weight:500;font-size:13px">${escHtml(r.name)||('小売 '+(ri+1))}</span>
         ${calcRetailers.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:2px 8px" onclick="calcRetailers.splice(${ri},1);renderPsBlocks()">削除</button>`:''}
       </div>
-      <div class="pos-grid">
+      <div class="pos-grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
         <div class="form-group"><label class="form-label">小売名</label>
-          <input type="text" value="${escHtml(r.name)}" oninput="calcRetailers[${ri}].name=this.value;this.closest('.retailer-block').querySelector('span').textContent=this.value||'小売 ${ri+1}'"></div>
+          <input type="text" value="${escHtml(r.name)}" oninput="calcRetailers[${ri}].name=this.value;this.closest('.retailer-block').querySelector('span').textContent=this.value||'小売 ${ri+1}'">
+        </div>
         <div class="form-group"><label class="form-label">業態POS傾斜</label>
-          <input type="number" value="${r.posTilt}" step="0.1" min="0" oninput="calcRetailers[${ri}].posTilt=parseFloat(this.value)||0;recalcPsPreview(${ri})"></div>
+          <input type="number" value="${r.posTilt}" step="0.1" min="0" oninput="calcRetailers[${ri}].posTilt=parseFloat(this.value)||0;recalcPsPreview(${ri})">
+        </div>
         <div class="form-group"><label class="form-label">全店舗数</label>
-          <input type="number" value="${r.stores}" min="0" step="1" oninput="calcRetailers[${ri}].stores=+this.value;recalcPsPreview(${ri})"></div>
+          <input type="number" value="${r.stores}" min="0" step="1" oninput="calcRetailers[${ri}].stores=+this.value;recalcPsPreview(${ri})">
+        </div>
       </div>
       <div style="margin-bottom:10px">
-        <div class="meta-key" style="margin-bottom:6px">SKU別 参照P/S（小数点以下1桁）</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+        <div class="meta-key" style="margin-bottom:6px">SKU別 参照P/S</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">
         ${calcSkus.map(s=>`
           <div class="form-group">
             <label class="form-label">${escHtml(s.name||s.jan)}</label>
@@ -1692,17 +1047,16 @@ function renderPsBlocks(){
         <div style="display:flex;flex-wrap:wrap;gap:8px">
         ${months.map(m=>`
           <div class="monthly-input-wrap">
-            <label class="monthly-label">${m}</label>
+            <label class="monthly-label">${mLabel(m)}</label>
             <input type="number" class="monthly-input" value="${r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7}"
-              step="0.1" min="0"
+              step="0.1" min="0" style="width:60px"
               oninput="calcRetailers[${ri}].monthTilts['${m}']=parseFloat(this.value)||0;recalcPsPreview(${ri})">
           </div>`).join('')}
         </div>
       </div>
-      <div id="psPreview_${ri}" style="overflow-x:auto"></div>
-    </div>`).join('')}
-    <button class="btn btn-secondary" style="margin-top:8px;font-size:11px" onclick="calcRetailers.push({name:'',posTilt:1,stores:0,monthTilts:{},skuPs:{}});renderPsBlocks()">+ 小売追加</button>`;
-  // 初期プレビュー
+      <div id="psPreview_${ri}" style="overflow-x:auto;margin-top:4px"></div>
+    </div>`).join('') +
+    `<button class="btn btn-secondary" style="margin-top:8px;font-size:11px" onclick="calcRetailers.push({name:'',posTilt:1,stores:0,monthTilts:{},skuPs:{}});renderPsBlocks()">+ 小売追加</button>`;
   calcRetailers.forEach((_,ri)=>recalcPsPreview(ri));
 }
 function recalcPsPreview(ri){
@@ -1712,9 +1066,9 @@ function recalcPsPreview(ri){
   const months=monthRange(base,tobM);
   const el=document.getElementById('psPreview_'+ri);
   if(!el) return;
-  let tbl=`<table style="font-size:11px;margin-top:4px"><thead><tr>
+  let tbl=`<table style="font-size:11px"><thead><tr>
     <th style="text-align:left;font-family:var(--font-mono);font-size:9px;color:var(--text3)">SKU</th>
-    ${months.map(m=>`<th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${m}</th>`).join('')}
+    ${months.map(m=>`<th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${mLabel(m)}</th>`).join('')}
     <th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">小計</th>
   </tr></thead><tbody>`;
   calcSkus.forEach(s=>{
@@ -1723,18 +1077,109 @@ function recalcPsPreview(ri){
       const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
       return Math.round(ps*r.posTilt*tilt*r.stores);
     });
-    tbl+=`<tr>
-      <td style="color:var(--text2);white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis">${s.name}</td>
+    tbl+=`<tr><td style="color:var(--text2);white-space:nowrap">${escHtml(s.name)}</td>
       ${vals.map(v=>`<td style="text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(v)}</td>`).join('')}
-      <td style="text-align:right;font-family:var(--font-mono);color:var(--accent)">${fmt(vals.reduce((a,b)=>a+b,0))}</td>
-    </tr>`;
+      <td style="text-align:right;font-family:var(--font-mono);color:var(--accent)">${fmt(vals.reduce((a,b)=>a+b,0))}</td></tr>`;
   });
   tbl+='</tbody></table>';
   el.innerHTML=tbl;
 }
 
-// ── 数量入力 ──
-function buildQuantityInput(){
+// ── STEP 2: EC・海外 ──
+function buildEcOverseasInput(){
+  const area=document.getElementById('ecOverseasInputArea');
+  if(!area) return;
+  const base=getBaseMonth()||'2026-01';
+  const ecM=+document.getElementById('ci_ecMonths').value||5;
+  const ovsM=+document.getElementById('ci_overseasMonths').value||3;
+  const ecMonths=monthRange(base,ecM);
+  const ovsMonths=monthRange(base,ovsM);
+
+  const mkSkuRows=(store, label, months, colorVar, idx)=>`
+    <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:${colorVar};margin-bottom:8px;padding-top:4px">${label}</div>
+    ${calcSkus.map((s,si)=>`
+      <div class="sku-block" style="margin-bottom:8px">
+        <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px">${escHtml(s.name)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+          ${idx!==null?`<div class="monthly-input-wrap">
+            <label class="monthly-label" style="color:var(--text3)">直近月間販売</label>
+            <input type="number" class="monthly-input" min="0" style="width:72px"
+              value="${(store[s.name]||{})['_recent']||''}" placeholder="0"
+              onchange="setStoreVal('${store===calcEcMonthly?'ec1':'ec2'}','${s.name}','_recent',+this.value)">
+          </div>`:''}
+          ${months.map(m=>`<div class="monthly-input-wrap">
+            <label class="monthly-label">${mLabel(m)}</label>
+            <input type="number" class="monthly-input" min="0" step="1" style="width:72px"
+              value="${(store[s.name]||{})[m]||''}" placeholder="0"
+              onchange="setStoreVal('${getStoreKey(store)}','${s.name}','${m}',+this.value)">
+          </div>`).join('')}
+        </div>
+      </div>`).join('')}`;
+
+  const getStoreKey=(store)=>{
+    if(store===calcEcMonthly) return 'ec1';
+    if(store===calcEcMonthly2) return 'ec2';
+    return 'ovs'+calcOvsMonthly.indexOf(store);
+  };
+
+  const mkOvsSection=(ovsIdx, label)=>{
+    const store=calcOvsMonthly[ovsIdx];
+    return `<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--overseas);margin:12px 0 8px;padding-top:8px;border-top:1px solid var(--border)">${label}</div>
+    ${calcSkus.map((s,si)=>`
+      <div class="sku-block" style="margin-bottom:8px">
+        <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px">${escHtml(s.name)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <div class="monthly-input-wrap">
+            <label class="monthly-label" style="color:var(--text3)">直近月間販売</label>
+            <input type="number" class="monthly-input" min="0" style="width:72px"
+              value="${(store[s.name]||{})['_recent']||''}" placeholder="0"
+              onchange="setStoreVal('ovs${ovsIdx}','${s.name}','_recent',+this.value)">
+          </div>
+          ${ovsMonths.map(m=>`<div class="monthly-input-wrap">
+            <label class="monthly-label">${mLabel(m)}</label>
+            <input type="number" class="monthly-input" min="0" step="1" style="width:72px"
+              value="${(store[s.name]||{})[m]||''}" placeholder="0"
+              onchange="setStoreVal('ovs${ovsIdx}','${s.name}','${m}',+this.value)">
+          </div>`).join('')}
+        </div>
+      </div>`).join('')}`;
+  };
+
+  area.innerHTML = `
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px">
+      ECと海外は月別の出荷予測数量を入力します。テンプレートのSection D（行247〜310）に対応します。
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:500;color:var(--ec);margin-bottom:10px">▼ EC① — 自社EC・Amazon等（Section D 行247〜）</div>
+      ${mkSkuRows(calcEcMonthly,'EC①',ecMonths,'var(--ec)',0)}
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:500;color:var(--accent2);margin-bottom:10px">▼ EC② — その他ECチャネル（Section D 行258〜）</div>
+      ${mkSkuRows(calcEcMonthly2,'EC②',ecMonths,'var(--accent2)',null)}
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px">
+      <div style="font-size:13px;font-weight:500;color:var(--overseas);margin-bottom:10px">▼ 海外販路（Section D 行270〜）</div>
+      ${mkOvsSection(0,'海外① 卸A（行270〜）')}
+      ${mkOvsSection(1,'海外② 卸B（行281〜）')}
+      ${mkOvsSection(2,'海外③ 卸C（行292〜）')}
+      ${mkOvsSection(3,'海外④ 卸D（行303〜）')}
+    </div>`;
+}
+function setStoreVal(key,sku,m,v){
+  const stores={ec1:calcEcMonthly,ec2:calcEcMonthly2,ovs0:calcOvsMonthly[0],ovs1:calcOvsMonthly[1],ovs2:calcOvsMonthly[2],ovs3:calcOvsMonthly[3]};
+  const store=stores[key];
+  if(!store) return;
+  if(!store[sku]) store[sku]={};
+  store[sku][m]=v;
+}
+
+// ── STEP 3: サマリー & 在庫推移 ──
+function buildSummaryPreview(){
+  const area=document.getElementById('summaryPreviewArea');
+  if(!area) return;
   const base=getBaseMonth()||'2026-01';
   const tobM=+document.getElementById('ci_tobMonths').value||4;
   const ecM=+document.getElementById('ci_ecMonths').value||5;
@@ -1742,98 +1187,131 @@ function buildQuantityInput(){
   const tobMonths=monthRange(base,tobM);
   const ecMonths=monthRange(base,ecM);
   const ovsMonths=monthRange(base,ovsM);
-  const area=document.getElementById('quantityInputArea');
+  const allMonths=[...new Set([...tobMonths,...ecMonths,...ovsMonths])].sort();
+  const maxM=allMonths.length;
 
-  if(calcMode==='normal'){
-    // toB: 小売ブロックから自動計算表示 + EC/海外を手入力
-    let html=`<div class="panel"><div class="panel-header">
-      <div class="panel-title"><span class="panel-title-dot" style="background:var(--tob)"></span>toB — 小売ブロック別月別発注予測（自動計算）</div>
-    </div><div class="panel-body">`;
-    calcRetailers.forEach((r,ri)=>{
-      html+=`<div style="margin-bottom:16px"><div style="font-weight:500;font-size:13px;margin-bottom:8px;color:var(--accent2)">${r.name||'小売 '+(ri+1)}</div>
-      <div style="overflow-x:auto"><table style="font-size:12px"><thead><tr>
-        <th style="text-align:left;font-family:var(--font-mono);font-size:9px;color:var(--text3)">SKU</th>
-        ${tobMonths.map(m=>`<th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${m}</th>`).join('')}
-        <th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">小計</th>
-      </tr></thead><tbody>`;
-      calcSkus.forEach(s=>{
-        const ps=r.skuPs[s.name]||0;
-        const vals=tobMonths.map(m=>{
+  // Compute values for each SKU
+  const skuData=calcSkus.map(s=>{
+    const tob={},ec={},ovs={};
+    if(calcMode==='normal'){
+      tobMonths.forEach(m=>{
+        tob[m]=calcRetailers.reduce((a,r)=>{
+          const ps=r.skuPs[s.name]||0;
           const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
-          return Math.round(ps*r.posTilt*tilt*r.stores);
-        });
-        html+=`<tr>
-          <td style="color:var(--text);white-space:nowrap">${s.name}</td>
-          ${vals.map(v=>`<td style="text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(v)}</td>`).join('')}
-          <td style="text-align:right;font-family:var(--font-mono);color:var(--accent)">${fmt(vals.reduce((a,b)=>a+b,0))}</td>
-        </tr>`;
+          return a+Math.round(ps*r.posTilt*tilt*r.stores);
+        },0);
       });
-      html+='</tbody></table></div></div>';
+    } else {
+      tobMonths.forEach(m=>{tob[m]=((calcSimpleMonthly['toB']||{})[s.name]||{})[m]||0;});
+    }
+    ecMonths.forEach(m=>{
+      ec[m]=((calcEcMonthly[s.name]||{})[m]||0)+((calcEcMonthly2[s.name]||{})[m]||0);
     });
-    html+='</div></div>';
-
-    // EC
-    html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--ec)"></span>EC — 月別数量（手入力）</div></div>
-    <div class="panel-body">${calcSkus.map(s=>`
-      <div class="sku-block"><div style="font-size:13px;font-weight:500;margin-bottom:8px">${s.name}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px">
-      ${ecMonths.map(m=>`<div class="monthly-input-wrap">
-        <label class="monthly-label">${m}</label>
-        <input type="number" class="monthly-input" min="0" step="1" style="width:72px"
-          value="${(calcEcMonthly[s.name]||{})[m]||''}"
-          placeholder="0"
-          onchange="setMonthly('ec','${s.name}','${m}',+this.value)">
-      </div>`).join('')}
-      </div></div>`).join('')}
-    </div></div>`;
-
-    // 海外
-    html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--overseas)"></span>海外 — 月別数量（手入力）</div></div>
-    <div class="panel-body">${calcSkus.map(s=>`
-      <div class="sku-block"><div style="font-size:13px;font-weight:500;margin-bottom:8px">${s.name}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px">
-      ${ovsMonths.map(m=>`<div class="monthly-input-wrap">
-        <label class="monthly-label">${m}</label>
-        <input type="number" class="monthly-input" min="0" step="1" style="width:72px"
-          value="${(calcOverseasMonthly[s.name]||{})[m]||''}"
-          placeholder="0"
-          onchange="setMonthly('overseas','${s.name}','${m}',+this.value)">
-      </div>`).join('')}
-      </div></div>`).join('')}
-    </div></div>`;
-
-    area.innerHTML=html;
-
-  } else {
-    // 簡易: 全チャネル直接入力
-    let html='';
-    [['toB',tobMonths,'var(--tob)'],['EC',ecMonths,'var(--ec)'],['海外',ovsMonths,'var(--overseas)']].forEach(([ch,mons,col])=>{
-      html+=`<div class="panel"><div class="panel-header"><div class="panel-title">
-        <span class="panel-title-dot" style="background:${col}"></span>${ch} 月別数量</div></div>
-      <div class="panel-body">${calcSkus.map(s=>`
-        <div class="sku-block"><div style="font-size:13px;font-weight:500;margin-bottom:8px">${s.name}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px">
-        ${mons.map(m=>`<div class="monthly-input-wrap">
-          <label class="monthly-label">${m}</label>
-          <input type="number" class="monthly-input" min="0" step="1" style="width:72px"
-            value="${((calcSimpleMonthly[ch]||{})[s.name]||{})[m]||''}"
-            placeholder="0"
-            onchange="setSimpleMonthly('${ch}','${s.name}','${m}',+this.value)">
-        </div>`).join('')}
-        </div></div>`).join('')}
-      </div></div>`;
+    ovsMonths.forEach(m=>{
+      ovs[m]=calcOvsMonthly.reduce((a,st)=>a+((st[s.name]||{})[m]||0),0);
     });
-    area.innerHTML=html;
-  }
+    const estTotal=Object.values(tob).reduce((a,b)=>a+b,0)+Object.values(ec).reduce((a,b)=>a+b,0)+Object.values(ovs).reduce((a,b)=>a+b,0);
+    return {s,tob,ec,ovs,estTotal,orderQty:Math.max(0,estTotal-(s.stock||0))};
+  });
+
+  const mkHdr=(months)=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">現在庫</th>${months.map(m=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">${mLabel(m)}</th>`).join('')}<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">合計</th>`;
+  const mkRow=(name,stock,vals,months,accent)=>{
+    const total=months.reduce((a,m)=>a+(vals[m]||0),0);
+    return `<tr><td style="padding:6px 8px;color:var(--text);font-size:12px">${escHtml(name)}</td>
+      <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--text2)">${fmt(stock)}</td>
+      ${months.map(m=>`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:${accent}">${fmt(vals[m]||0)}</td>`).join('')}
+      <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:${accent}">${fmt(total)}</td>
+    </tr>`;
+  };
+  const mkTotal=(vals,months,accent,bg)=>{
+    const total=months.reduce((a,m)=>a+(vals[m]||0),0);
+    return `<tr style="background:${bg}"><td style="padding:6px 8px;font-size:12px;font-weight:500">合計</td>
+      <td></td>
+      ${months.map(m=>`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:${accent}">${fmt(vals[m]||0)}</td>`).join('')}
+      <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:700;color:${accent}">${fmt(total)}</td>
+    </tr>`;
+  };
+
+  // toB totals per month
+  const tobTotals={};tobMonths.forEach(m=>{tobTotals[m]=skuData.reduce((a,d)=>a+(d.tob[m]||0),0);});
+  const ecTotals={};ecMonths.forEach(m=>{ecTotals[m]=skuData.reduce((a,d)=>a+(d.ec[m]||0),0);});
+  const ovsTotals={};ovsMonths.forEach(m=>{ovsTotals[m]=skuData.reduce((a,d)=>a+(d.ovs[m]||0),0);});
+
+  // 在庫推移
+  const invRows=skuData.map(({s,tob,ec,ovs,estTotal,orderQty})=>{
+    let stock=s.stock||0;
+    const months=allMonths;
+    const rows=months.map(m=>{
+      const ship=(tob[m]||0)+(ec[m]||0)+(ovs[m]||0);
+      stock-=ship;
+      const cls=stock<0?'num-warn':'num-pos';
+      return `<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px" class="${cls}">${fmt(stock)}</td>`;
+    });
+    return `<tr>
+      <td style="padding:6px 8px;font-size:12px;color:var(--text)">${escHtml(s.name)}</td>
+      <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--text2)">${fmt(s.stock||0)}</td>
+      ${rows.join('')}
+    </tr>`;
+  }).join('');
+
+  area.innerHTML=`
+    <div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--tob)"></span>販路×月サマリー — toB</div></div>
+    <div class="panel-body" style="overflow-x:auto"><table style="border-collapse:collapse;width:100%">
+      <thead><tr><th style="text-align:left;padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">SKU</th>${mkHdr(tobMonths)}</tr></thead>
+      <tbody>${skuData.map(({s,tob})=>mkRow(s.name,s.stock||0,tob,tobMonths,'var(--tob)')).join('')}
+      ${mkTotal(tobTotals,tobMonths,'var(--tob)','rgba(126,184,212,.05)')}</tbody>
+    </table></div></div>
+
+    <div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--ec)"></span>販路×月サマリー — EC（①+②）</div></div>
+    <div class="panel-body" style="overflow-x:auto"><table style="border-collapse:collapse;width:100%">
+      <thead><tr><th style="text-align:left;padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">SKU</th>${mkHdr(ecMonths)}</tr></thead>
+      <tbody>${skuData.map(({s,ec})=>mkRow(s.name,s.stock||0,ec,ecMonths,'var(--ec)')).join('')}
+      ${mkTotal(ecTotals,ecMonths,'var(--ec)','rgba(200,169,110,.05)')}</tbody>
+    </table></div></div>
+
+    <div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--overseas)"></span>販路×月サマリー — 海外（①〜④合計）</div></div>
+    <div class="panel-body" style="overflow-x:auto"><table style="border-collapse:collapse;width:100%">
+      <thead><tr><th style="text-align:left;padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">SKU</th>${mkHdr(ovsMonths)}</tr></thead>
+      <tbody>${skuData.map(({s,ovs})=>mkRow(s.name,s.stock||0,ovs,ovsMonths,'var(--overseas)')).join('')}
+      ${mkTotal(ovsTotals,ovsMonths,'var(--overseas)','rgba(126,212,160,.05)')}</tbody>
+    </table></div></div>
+
+    <div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>▼ 在庫推移シミュレーション（月末在庫）</div></div>
+    <div class="panel-body" style="overflow-x:auto"><table style="border-collapse:collapse;width:100%">
+      <thead><tr>
+        <th style="text-align:left;padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">SKU</th>
+        <th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">現在庫</th>
+        ${allMonths.map(m=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">${mLabel(m)}</th>`).join('')}
+      </tr></thead>
+      <tbody>${invRows}</tbody>
+    </table></div></div>`;
 }
-function setMonthly(ch,sku,m,v){
-  if(ch==='ec'){if(!calcEcMonthly[sku]) calcEcMonthly[sku]={};calcEcMonthly[sku][m]=v;}
-  else{if(!calcOverseasMonthly[sku]) calcOverseasMonthly[sku]={};calcOverseasMonthly[sku][m]=v;}
-}
-function setSimpleMonthly(ch,sku,m,v){
-  if(!calcSimpleMonthly[ch]) calcSimpleMonthly[ch]={};
-  if(!calcSimpleMonthly[ch][sku]) calcSimpleMonthly[ch][sku]={};
-  calcSimpleMonthly[ch][sku][m]=v;
+
+// ── STEP 4: プレビュー ──
+function buildPreview(){
+  const d=collectCalcData();
+  const totEst=d.skus.reduce((a,s)=>a+s.estimated_total,0);
+  const totOrd=d.skus.reduce((a,s)=>a+s.order_quantity,0);
+  document.getElementById('calcPreviewContent').innerHTML=`
+    <div class="calc-preview">
+      <div class="calc-preview-title">▼ 確定発注数サマリー</div>
+      <div class="preview-row"><span class="preview-key">商品</span><span class="preview-val">${d.product||'—'}</span></div>
+      <div class="preview-row"><span class="preview-key">ブランド</span><span class="preview-val">${d.brand||'—'}</span></div>
+      <div class="preview-row"><span class="preview-key">発注予定日</span><span class="preview-val">${d.order_date||'—'}</span></div>
+      <div class="preview-row"><span class="preview-key">入庫予定日</span><span class="preview-val">${d.arrival_date||'—'}</span></div>
+    </div>
+    <div class="sku-table-wrap" style="margin-top:12px"><table>
+      <thead><tr><th>SKU</th><th>JAN</th><th>現在庫</th><th>推計必要数</th><th>発注数（推計−在庫）</th></tr></thead>
+      <tbody>${d.skus.map(s=>`<tr>
+        <td>${escHtml(s.name)}</td><td style="font-family:var(--font-mono);color:var(--text3)">${s.jan||'—'}</td>
+        <td>${fmt(s.stock)}</td>
+        <td class="num-blue">${fmt(s.estimated_total)}</td>
+        <td class="num-accent">${fmt(s.order_quantity)}</td>
+      </tr>`).join('')}
+      <tr style="border-top:1px solid var(--border)"><td>合計</td><td></td><td></td>
+        <td class="num-blue">${fmt(totEst)}</td><td class="num-accent">${fmt(totOrd)}</td></tr>
+      </tbody>
+    </table></div>`;
 }
 
 // ── データ収集 ──
@@ -1847,7 +1325,7 @@ function collectCalcData(){
   const ovsMonths=monthRange(base,ovsM);
 
   const skusOut=calcSkus.map(s=>{
-    let tob={},ec={},overseas={};
+    const tob={},ec={},overseas={};
     if(calcMode==='normal'){
       tobMonths.forEach(m=>{
         tob[m]=calcRetailers.reduce((a,r)=>{
@@ -1856,16 +1334,22 @@ function collectCalcData(){
           return a+Math.round(ps*r.posTilt*tilt*r.stores);
         },0);
       });
-      ecMonths.forEach(m=>{ec[m]=(calcEcMonthly[s.name]||{})[m]||0;});
-      ovsMonths.forEach(m=>{overseas[m]=(calcOverseasMonthly[s.name]||{})[m]||0;});
     } else {
       tobMonths.forEach(m=>{tob[m]=((calcSimpleMonthly['toB']||{})[s.name]||{})[m]||0;});
-      ecMonths.forEach(m=>{ec[m]=((calcSimpleMonthly['EC']||{})[s.name]||{})[m]||0;});
-      ovsMonths.forEach(m=>{overseas[m]=((calcSimpleMonthly['海外']||{})[s.name]||{})[m]||0;});
     }
+    ecMonths.forEach(m=>{
+      ec[m]=((calcEcMonthly[s.name]||{})[m]||0)+((calcEcMonthly2[s.name]||{})[m]||0);
+    });
+    ovsMonths.forEach(m=>{
+      overseas[m]=calcOvsMonthly.reduce((a,st)=>a+((st[s.name]||{})[m]||0),0);
+    });
     const estimated_total=Object.values(tob).reduce((a,b)=>a+b,0)+Object.values(ec).reduce((a,b)=>a+b,0)+Object.values(overseas).reduce((a,b)=>a+b,0);
-    const order_quantity=Math.max(0,estimated_total-s.stock);
-    return {...s,monthly_summary:{tob,ec,overseas},estimated_total,order_quantity,confirmed_order:0};
+    const order_quantity=Math.max(0,estimated_total-(s.stock||0));
+    return {...s,monthly_summary:{tob,ec,overseas},
+      ec1:calcEcMonthly[s.name]||{},
+      ec2:calcEcMonthly2[s.name]||{},
+      ovs:calcOvsMonthly.map(st=>st[s.name]||{}),
+      estimated_total,order_quantity,confirmed_order:order_quantity};
   });
 
   return {
@@ -1886,171 +1370,96 @@ function collectCalcData(){
   };
 }
 
-// ── プレビュー ──
-function buildPreview(){
-  const d=collectCalcData();
-  const totEst=d.skus.reduce((a,s)=>a+s.estimated_total,0);
-  const totOrd=d.skus.reduce((a,s)=>a+s.order_quantity,0);
-  document.getElementById('calcPreviewContent').innerHTML=`
-    <div class="calc-preview">
-      <div class="calc-preview-title">試算サマリー</div>
-      <div class="preview-row"><span class="preview-key">商品</span><span class="preview-val">${d.product||'—'}</span></div>
-      <div class="preview-row"><span class="preview-key">ブランド</span><span class="preview-val">${d.brand||'—'}</span></div>
-      <div class="preview-row"><span class="preview-key">発注予定日</span><span class="preview-val">${d.order_date||'—'}</span></div>
-      <div class="preview-row"><span class="preview-key">入庫予定日</span><span class="preview-val">${d.arrival_date||'—'}</span></div>
-      <div class="preview-row"><span class="preview-key">試算モード</span><span class="preview-val">${d.mode==='normal'?'通常試算':'簡易試算'}</span></div>
-    </div>
-    <div class="sku-table-wrap" style="margin-top:12px"><table>
-      <thead><tr><th>SKU</th><th>現在庫</th><th>推計必要数</th><th>発注数（推計−在庫）</th></tr></thead>
-      <tbody>${d.skus.map(s=>`<tr>
-        <td>${s.name}</td><td>${fmt(s.stock)}</td>
-        <td class="num-blue">${fmt(s.estimated_total)}</td>
-        <td class="num-accent">${fmt(s.order_quantity)}</td>
-      </tr>`).join('')}
-      <tr style="border-top:1px solid var(--border)"><td>合計</td><td></td>
-        <td class="num-blue">${fmt(totEst)}</td><td class="num-accent">${fmt(totOrd)}</td></tr>
-      </tbody>
-    </table></div>`;
+
+
+// ── テンプレートベースExcelビルド ──
+const TEMPLATE_B64 = "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o68e7+4/e/7t9eOP19fUAw/f3/24vr97v7778XgjjAJz9e0NddTW984H8t37D4/GB7vubtSLrvt+vr15eDz6732++wui/+fP/+HZl/XH/+9//eOzf/rv//tf/sd/+qf/8h8//pf/+u//73/+n//y3/5xx2l7yGu/7n9+7Def+qvv/S+3N6K/9EanN+K/9EanN5K/9EanN9K/9EanN7J/ld7QgIfPP6UE+e7xy/e77PP99dVrSksPbXu/u7953dy8u2aQr68fD3eJfU8p9k937x6vbi8pYV7fH+8Qe0ap9fHmlfnBC1Kmjtlc3X93Q8K3129Uot1e0nq/u6Zs9x80Hp899455mf6pGnl9rwiR56Wet/KD2PdXqq7+5u7ukf9or0eN/vD+2fsrGuCvb/50vbX3QM1T/1pRen9z8/jN3d/dvH78fvvR9j8P96bRfysTX95v1V/TRPjm++t3X5KHNGPub8jBbZ/SiF69e01G35P7395evfrDy3ev/+77m8fjLHh9f6XcPdzOdn17e3n39i0ZoG5+d/eu16Pr9zfqPNvq2JVH5NXd+xs1NNsrAXbdIrY98Oz1zZs31N3vHsXN/cNRqoW/fP06/+F4Q9znn969fl1uDdAc6fyb/rmzuIPbf3fF6D9/vLv/w/aGtM//P1BLBwi355JIQkcAAESyAgBQSwMEFAAICAgAy7uHXAAAAAAAAAAAAAAAABgAAAB4bC93b3Jrc2hlZXRzL3NoZWV0MS54bWzMvf/S5LZxLvz/dxUqVSple7Wvhr/JjeVT0jsECIIjx7JyTs7330Za2apIWmV3bce5glxEri/XcdAzJIcEGuzu951hrHLJq2d7nm4QQAPoboK//l///uMPH/35zbv337/96bOPk4fDxx+9+embt99+/9MfPvv4n75WL+uPP3r/4fVP377+4e1Pbz77+K9v3n/8v37z//36L2/f/ev7P7558+EjR/DT+88+/uOHDz+/+vTT99/88c2Pr98/vP35zU/ub757++7H1x/cf777w6fvf3735vW35x/9+MOn6eFQfvrj6+9/+vjC8Oodh+Ptd999/82b49tv/vTjm58+XEjevfnh9Qdn/vs/fv/z+4nt379l8X377vVfXFMnexYmHi9/M/MlecD34/ffvHv7/u13Hx6+efvjaFrYyubTZtXOf3+XPo0pKVxT//w99FQ6kf34DaeVP75+969/+vml4/7ZPal/+f6H7z/89dzgj3/z6zP/P7776Lvvf/jw5t3p7beuk797/cP7N+7vfn79hze/f/Phn34+//2Hr9/+owM++/jDuz+9+fjT3/z60/G3v/n1t9+77gDDPnr35rvPPv48efVVltUgcxb539+/+cv7xZ8/ev/Ht39RzsA//fD6/aTuDOp33387fP/Tm/ejljP41du/PL79oXMPw43T5V/8/2/cU5uAd9//4Y/OxOHNdx9myg+v/+X3b354882HN98uf/fbP334wSn5/V9//Je3P8wE37757vWffvgAJjh1b99N+J+dxZ99/BM8zx8c5dufQcXjmx9+gIZ+/NE3IGscf5l//NF/vH374++/ef2De0rJ4bD47y/PP/dReJ7D67++/dP5sYx/C1PrX96+/VeAgPdw7omf3nz077//2fXcZx9nH3/01/GPSe1ZdEyajz96/c2H7//syGHC/svbDx/e/vgVPJzzTP4A/fvu7X+8+encPeenAx3381l65Joorq28/vfFpI/e/9vY1RGaUeOS57jBc0R5LsZjFjVbJjVxLsQsunmfziN3+edpRKvzTHNTZBxAbvD8n++//fDHzz6uH8qqKeuqmAeXG8rdGzDBdZ1D/8MN4Om/xyH79jI2hzd/fvODkz4bs8Qc+2VIfLpS/ptfu3H4/vxvGJE/vP75PYz5kfSbP713bR+tuozqP37/7bdvfkLVnnX++PrfnY3u/7//6fz/7z/89Tyq3fi80KQlPJrb6stGfSmiLzncXl+SjgpzRGFzB31TA+EP4RO9g8J8Uoi1MKnvoLGYNBZ7dWI9aSxjvfjpZXJcFvbXH17/5tfv3v7lo3dnuYvayzyaNZ0naPNQBCZcpKc5e7EyMCtom2syaANP8/48ut1v3zv0z785/PrTP4N9o8QXk8SnI/DoA0cfaH1A+YD2gc4HjA/0PmB9YPCB0wL41D3e+RmnW8/41k84PRuRLZ5w4j3hSWJ+wj5w9IHWB5QPaB/ofMD4QO8D1gcGHzgtgNUTzvZ8wtnZiHzxhFPvCV8kioVEtpZ4nCTmR34Byusj9wHlA9oHOh8wPtD7gPWBwQdOPvDlBagWjcvXjfttKFGsJf7xIlEvJMq1xO9Cjmot8VUoUc8Sq8GR7zk48mBwNN7guEg0ywnq+cDHSWQeHbk/OnxA+YD2gc4HjA/0PmB9YPCBkw98eQHcKrdonueAfjvKJEsZbwr94yhzWSl+cjLfuS3q6/lpt1niRsx357H1kJeLf7xh8ruVsp8uygrvgX81C/mOpdhz7BTB2Ek8v/HFRSRZuXdv+j3OMvPwKfzh4wPKB7QPdD5gfKD3AesDgw+cfODLAhk+nvP4bcEYPgU5fKpx+JQPeboxfArO8Cliw6fcc/iU4fDxvOoX5WJh+snzmZfBM0nMY6f0x44PKB/QPtD5gPGB3gesDww+cPKBL0tk7Hjd+duSMXZKcuzU49hpHg5NtvjHGzslZ+yUsbFT7Tl2qnDseCPji4tIkkceyxfFiy/KX02zKi+T3F/VZoJ5bFX+2PIB5QPaBzofMD7Q+4D1gcEHTj7wZYWMLW9h/23FGFsVObaaeVmrso2xVXHGVhUbW/WeY6sO98v+oe8ikiwdU3Jw/3gjaBabR1DtjyAfUD6gfaDzAeMDvQ9YHxh84OQDX9bTCJqQ39aL3rmMjgD5XYB8Vcf6tNmzT5uwT/1jZhP2aRF2aRN0aeN3qQ8oH9A+0PmA8YHeB6wPDD5w8oEvm6BLm6BLA+R3AfJVE+tS8De79emXoM1rzwQtGhRCvwuhr1bQuk2bEaebx5suMZnlfjn1T+uzzDXk5CPHAGkDRAWIDpAuQEyA9AFiA2QIkFOAfDkiq/5Mwv4MoN+F0FcraN2fu0a3kksECAKd1w71D0mokH9KwoS8Lc/xKnPt9gBSIaRDqAshE0J9CNkQGkLotILWHbRrcCy5hGWSZVwmLfwOugg1i6Uh6J6RZxkjSku/f2aha/8EkAohHUJdCJkQ6kPIhtAQQqcVtO6fXeNTSY70T+X3Tx70T+H3T470TzB/8rB/AkiFkA6hLoRMCPUhZENoCKHTClr3z64xoGSMJSzjg6kfQhyFlv3jB5gnnmX/ZAe/f4qwfwJIhZAOoS6ETAj1IWRDaAih0wpa98+uB+WkCjYUmb/znWWuGwofOQZIGyAqQHSAdAFiAqQPEBsgQ4Cclsj6ge96ekwuB550efTOgi1cHS7m/pH58Sp07YX17z68C07kX7f//PUvjp9/3f7i/7aff/WLv/vi74pffnL67Zdfd5c/vzh8kvzyk7//tz+9/fAPp//+r/+8/OmX4yE+c8jaivYGKpMtlXmgUt1AZbqlsghU6huozLZUloHK7gYq8y2VVaDS3EBlsaWyDlT2N1BZbqlsApX2BiqrLZXJIdA5oBP6ukdc+6NdIx/J5bSeLsN8WbDBnYWuS0AAHScoFg006hfJ3//w4R8+cw8xyT75/T+dfnFMD6+OaTU9TG/qZ3XzkBd5lfo+h1aUeopap6iVKlIMRZmnSDlFSqpIMxTlniLtFGmpom6tCBv8TlXhqeqcqi6myvchHAWlp8A4BYanoGcpqDwFvVPQ8xRYloLaU2CdAstTMFCd7ficBjedXjlbJkKn7u//MBFjSpKqKKqHOqnrSN1Aumf07fP0EG78/cz5F5PQMqjqR1SvMrOjGaE04zmaY5JUL9zh+uD+lWfuX0Xp/lU27l916v7VFC8cZe3+lSbuX1mOdmLd1A+HPE3wBEbLsGnpk1qwqQWbWrCpBZtasKkFm1qwqQWbWrCpfZpNimHT0n0psEmBTQpsUmCTApsU2KTAJgU2KbBJPc0mzbBp6ek02KTBJg02abBJg00abNJgkwabNNikn2ZTt7aJ4RQ7sKoDqzqwqgOrOrCqA6s6sKoDqzqwqotZ5XlOlhVLz2nACgNWGLDCgBUGrDBghQErDFhhwArDs6JnWbF0rz1Y0YMVPVjRgxU9WNGDFT1Y0YMVPVjR86ywLCuWPtiCFRassGCFBSssWGHBCgtWWLDCghWWZ8VAjdXRUZ9d/4HtqLOiSR+Ssi78wbj21rvmFdIE8db+LnAS2vTWSeitE6m3rsFbJ+Ctc/DW4LwrcN41OO+mBG/dgLdOwVsXaE8mh6J4qPJqKmjwvTVtk+eta/DWCXjrHLw1OO8KnHcNztvZ1IJNLdjUPs0mxbDJ89Y1eOsEvHUO3hqcdwXOuwbn7WxSYJMCm9TTbNIMmzxvXYO3TsBb5+CtwXlX4LxrcN7OJg02abBJP82mbm0Tz1vX4K0T8NY5eGtw3hU47xqct7OqA6s6sKqLWeV7a44VnreuwVsn4K1z8NbgvCtw3jU4b2eFASsMWGF4VvQsKzxvXYO3TsBb5+CtwXlX4LxrcN7Oih6s6MGKnmeFZVnheesavHUC3joHbw3OuwLnXYPzdlZYsMKCFZZnxUCN1clbJ85bJ2xvnTsTHpq6zqpNb71vTXyKeGs/6TEJbXrrNPTWqdRbwz46g310XoC3BuddgfOuwXk3znmnyQG8dQbeusRnfN5k7uhSjqWLle+taZs8bw376Az20c6mFmxqwaYWbGrBphZsasGm9mk2KYZNnreGfXQG+2hnkwKbFNikwCYFNimwSYFN6mk2aYZNnreGfXQG+2hnkwabNNikwSYNNmmwSYNN+mk2dWubeN4a9tEZ7KOdVR1Y1YFVHVjVgVUdWNWBVV3MKt9bc6zwvDXsozPYRzsrDFhhwAoDVhiwwoAVBqwwPCt6lhWet4Z9dAb7aGdFD1b0YEUPVvRgRQ9W9GBFz7PCsqzwvDXsozPYRzsrLFhhwQoLVliwwoIVFqywPCsGaqxO3jp13jple+uiqYqHtCyqgzcY19561xKCNEO8tZ8CnYQ2vXUWeutM6K1T2EdnsI/OIQhSgPOuwHnX4LwbCIIkEARJc/DWFdqTTZ481HlzwEvMW4ZNa2+dwj46g310DkGQApx3Bc67BufdQBAkgSCIs6l9mk2KYdPaW6ewj85gH51DEKQA512B867BeTcQBEkgCOJsUk+zSTNsWnvrFPbRGeyjcwiCFOC8K3DeNTjvBoIgCQRBnE36aTZ1a5tY3jqFfXQG++gcgiAFOO8KnHcNzruBIEgCQRBnVRezyvfWHCvW3jqFfXQG++gcgiAFOO8KnHcNzruBIEgCQRBnheFZ0bOsWHvrFPbRGeyjcwiCFOC8K3DeNTjvBoIgCQRBnBU9zwrLsmLtrVPYR2ewj84hCFKA867AedfgvBsIgiQQBHFWWJ4VAzVWJ2+dOW+d8SMhVVk9ZE2Z+oNx7a13LShKL4Uz6bIWOPPfOxmFtr11HnrrXOqtYR+dwT46hyBICc67Auddg/NuIAiSQBAkhQh2VqM9efDdM22E555h45zBxjmHqEcJ3roCb12Dt24g6pFA1COFkDXPCMUwwvPHsFPOYKecQ5ijBPdcgXuuwT03EOZIIMyRQoyaZ4RmGOE5YNgaZ7A1ziGuUYI/rsAf1+CPG4hrJBDXSCEozTOiWxvB87iwF85gL5xDIKMEB1yBA67BATcQyEggkJFCFDpihu9xOVZ4Hhf2whnshXMIZJTggCtwwDU44AYCGQkEMlKIQrOs6FlWeB4X9sIZ7IVzCGSU4IArcMA1OOAGAhkJBDJSiEKzrLAsKzyPC3vhDPbCOQQySnDAFTjgGhxwA4GMBAIZKUShWVYM1OCcPG7uPG7O9riHiIvdtSYwLRAXG4QvCoaLLUIXW0hdLGx+M9j85hC5KMHjVuBxa4hcHCBykUDkIoWwc9bwXCxthOdiYbebwW43h1BFCR63Ao9bQ6jiAKGKBEIVKcSZeUYohhGei4XtbQbb2xxiEyV43Ao8bg2xiQPEJhKITaQQWOYZoRlGeC4W9rMZ7GdzCEaU4HEr8Lg1BCMOEIxIIBiRQiSZZ0S3NoLnYmEDm8EGNofoQwketwKPW0P04QDRhwSiDymEjiNm+C6WY4XnYmEDm8EGNofoQwketwKPW0P04QDRhwSiDymEjllW9CwrPBcLG9gMNrA5RB9K8LgVeNwaog8HiD4kEH1IIXTMssKyrPBcLGxgM9jA5hB9KMHjVuBxa4g+HCD6kED0IYXQMcuKgRqck4stnIstnu1id313Oi0RF+u/ATsKbbvYMnSxpdTFwo41gx1rDuGGEjxuBR63hnDDAcINCYQbUvC4+YHnYmkjPBcLO9YMdqw5xBdK8LgVeNwa4gsHiC8kEF9IwePyjFAMIzwXCzvWDHasOQQUSvC4FXjcGgIKBwgoJBBQSMHj8ozQDCM8Fws71gx2rDlEEErwuBV43BoiCAeIICQQQUjB4/KM6NZG8Fws7Fgz2LHmEDIoweNW4HFrCBkcIGSQQMggBY8bMcN3sRwrPBcLO9YMdqw5hAxK8LgVeNwaQgYHCBkkEDJIweOyrOhZVnguFnasGexYcwgZlOBxK/C4NYQMDhAySCBkkILHZVlhWVZ4LhZ2rBnsWHMIGZTgcSvwuDWEDA4QMkggZJCCx2VZMVCDc3KxpXOx5bNd7K5vTqQV4mKDsG7FcLFV6GIrqYuFHWsGMYICYgQleNwKPG4NMYIDxAgSiBGk4HHzhOdiaSM8Fws71gxiBAXECErwuBV43BpiBAeIESQQI0jB4/KMUAwjPBcLO9YMYgQFxAhK8LgVeNwaYgQHiBEkECNIwePyjNAMIzwXCzvWDGIEBcQISvC4FXjcGmIEB4gRJBAjSMHj8ozo1kbwXCzsWDOIERQQIyjB41bgcWuIERwgRpBAjCAFjxsxw3exHCs8Fws71gxiBAXECErwuBV43BpiBAeIESQQI0jB47Ks6FlWeC4WdqwZxAgKiBGU4HEr8Lg1xAgOECNIIEaQgsdlWWFZVnguFnasGcQICogRlOBxK/C4NcQIDhAjSCBGkILHZVkxUINzcrEV1Cc/28Xu+q5UOr4rtbx5zr+G5Yur0PxuQggdJ6jkeNR8fDeheXXMSrykuwqufmgZKlJPRetUtDEVWeWrUAwVmadCORWKr0IzVOSeCu1U6JiKMvdVdAwVhaeicyq6mIqD76NW/KSPysdXEJpXJqbBdz8cBZWnoHcKep4Cy1JQewqsU2B5CgaqCyanUTunUbOdRnqoDzHHsetLTWnDefkAudEl2JuF97mMEG9vln/itltwrC3woG+KuBGaf+lGWuBvY/xN6EJo+qULUUCv2PSaQb90HxrodYw+qUPfQfMvfUcH/F2MP3AcjWhzk39igN7E6H2vwWFfeo0e2Hseu2WxL12GBXbLYx+oxz75C+eBUv4rS0UZcxfZru8qZdi7Sn71e8Z4VykL31XKJO8qnd0FHNEKPIAZToiWwe+5Czh9RfgDesWg99wFnKu49JpB77kLODHFnk4ZuAsGv+cu4CgU4ffdRSZ7YefsLuCME6H33AWL3XMXcHZhsVsWu+cu4EzCYh+oxz66i+zgNiz8F2dW162t3cWuL8tk2Msyfv4yY7wsk4Uvy2SSl2XO7gICPCUejEN2Fwx+z11A7CbCn6Shv5C8xHL2FxCWYfNrBr/nMCDiEuMP9xcMfs9hQCglwh84DNk7I2eHATGSCL3vMGTvgpwdBsQ+WOyWxe45DIhpsNgH6rFPDiNxDoP/7kaZRh3Gru9rZNj7Gn6oOGO8r5GF72tkkvc1wGFAgDgt8dBSOOFaBv/aYUDsN8aP7C8kr1GAv4CoLpteM+jX7gLitfyn0zH41+4CArEx/sBdyF5aAHcBEdYYve8uZC8jgLuAyCmP3bLY1+4CIqI89oF67JO7SJ274L88kMf3F7u+MJBljBLUjPHCwFXm6i4kLwyc3QWk58uUM2BbBrnnKyDtziNXDHLPU0A6nUeuGeSen4A0OY+8Y5B7TgKS3zxysybnOQnIakfofSchq4E/OwnIVrPYLYvdcxKQhWaxD9Rjn5xE5pwEv2Y95iF2LVLPsCL14ATCKFLPwiL1TFKkfvYQkF0uM56HkBSfnz0EZI155IpB7nkIyAbzyDWD3PMQkOXlkXcMcs9DQO6WR24yWW332UNAUjZC73sIWc322UNAspXFblnsnoeAJCqLfaAe++Qhcuchnl1jne1aY51hNdZ+AWDGqLG+ylw9hKTG+uwhoIC6xK9cCTyEpHb67CGgMJpHrhjknoeAgmceuWaQex4CCpl55B2D3PMQUJ7MIzcZpxzX8xBQdxyh9z2ErOT47CGgnpjFblnsnoeAOmEW+0A99slDFM5DPLtEONu1RDjDSoSDoASjRDgLS4QzSYnw2UNA/W+JX/MReAhJ6e/ZQ0BdL49cMcg9DwH1ujxyzSD3PATU4fLIOwa55yGgupZHbjJZZe3ZQ0DZbITe9xCyitmzh4ByWBa7ZbF7HgLKXFnsA/XYJw9RQm3Gsz3ErhWu2VhZtvo2pl9FcRWay69C6DhBNcchFJfyq6x+dcwLVslPy+BPPf7W8bdMfsXgzzx+5fgVk1+v+SNjNPc0aKdBxzT43oGjoPAUdE5Bx1NgWApKT4FxCgxPQc9SUHkKeqeg5ymwLAW1p8A6BZanYKAG0eQqKucqnl2pme1aqZnVjIKrSWhzMxF+E22EeJuJwm0m4K7AtIa4ZZO+OGYHZmiCVrN0IS2oaUFNC2paphrFULP0JArUKFCjQI1iqtFrNQyHokGRBkUaFOmYIt+vcPQs/UoHejrQ04GejqfHsPQs3YsBPQb0GNBjeHp6lp6ll+lBTw96etDT8/RYlp6ls7Ggx4IeC3osT89ADbfJ5zgvlvELPWM+Z9cizwwr8gyqthhFnllY5JlJijzPPgfcDdwmnTYZ+BxmsENS63n2OeBu4IJoUNMy1SiGGs/ngLuBO59BjWKq0RmnBNHzOeBu4CJnUKRjinyfw9Hj+RxwN3A1M+jpeHoMS4/nc8DdwOXLoMfw9PQsPZ7PAXcD1yuDnp6nx7L0eD4H3A1coAx6LE/PQA23yedAuTq/WDTic/JdK0VzrFLUT7zkjErRPKwUzSWVomefA+4G7kROmxx8Di98wlDj+RxwN3DNMahpmWoUQ43nc8DdwM3FoEYx1eicU8fo+RxwN3AdMSjSMUWez2Hp8XwOuBu4YBj0dDw9hqXH8zngbuAKYdBjeHp6lh7P54C7gUuCQU/P02NZejyfA+4GrgEGPZanZ6CG2+hz8oM7rfErTmM+Z9dy0xwrN/UDtTmj3DQPy01zSbnp2eeAu4GbfVP4akZ2wO/6DHyOpOr07HPA3cBlvaCmZapRDDWezwF3A/fvghrFVKNzTimk53PA3cCluqBIxxT5Pkd20fnZ54C7gWtyQU/H02NYejyfA+4GLsIFPYanp2fp8XwOuBu46hb09Dw9lqXH8zngbuAyW9BjeXoGarhNPidxPodftBrzObtWrOYpowQtZ1Ss5mHFai6pWD37HHA3cD9tCt9+yA74jZWBz5EUrp59DrgbuHIW1LRMNYqhxvM54G7gFllQo5hqdM6pp/R8DrgbuBoWFOmYIt/nyK7rPvsccDdw2Svo6Xh6DEuP53PA3cB1rqDH8PT0LD2ezwF3Axe2gp6ep8ey9Hg+B9wNXMkKeixPz0ANt8nnpM7n8CtfYz5n17LXHCt7Dc5WjLLXq8zV50jKXs8+B9wN3LKawhcMsgPvblWGGs/ngLuBe1RBTctUoxhqPJ8D7gZuSgU1iqlGr9XwfA64G7gNFRTpmCLf53D0eD4H3A1cdwp6Op4ew9Lj+RxwN3ChKegxPD09S4/nc8DdwJWloKfn6bEsPZ7PAXcDl5KCHsvTM1DDbfI5mfM5zy6kzXctpM2xQlq/TC5nFNLmYSFtLimkPfsccDfna0fhHv7swLtslKHG8zngbs4Xi8LV+kw1iqHG8zngbs5Xh8Jt+Uw1OucUfHo+B9zN+XpQuAI/psj3ObJrl88+B9zN+f5PuNSep8ew9Hg+B9zN+YZPuLaep6dn6fF8Drib8x2ecDE9T49l6fF8Drib8y2dcPU8T89ADbfJ5+TO5zy7NDfftTQ3x0pzg3gOozQ3D0tzc0lp7tnngLs538MJt8lnCe/2TYYaz+eAuznftAn3xTPVKIYaz+eAuznfpQk3wjPV6JxTQur5HHA35/sy4db3mCLf58juIT77HHA35wsx4Vp3nh7D0uP5HHA35ysv4eJ2np6epcfzOeBuzpdawtXsPD2WpcfzOeBuztdWwuXrPD0DNdwmn1NAxc+zfc6uxb75WKW4jCHnqe9zZqG5lC+EjiMEVzxsu5jT5//8C+iP7JNLWeW5b355qe3Lq1fHIserppIk9t13huqUUt061W1MdX2IfAieoTmjNCunWUk1a4bmnNKsnWYdfdyHKvKteIbqglLdOdVdTLVfZbxWuOm4NlQap9LEVPoujKOxojT2TmPP02hZGmtKo3UaLU/jQHXj5NZK59b4FcpZnW1/bj7ftVY5rxgFiDnjNt48vI03597GG+kws76t16j2q69++xV8N/pXySeHX7r/vfBeiLiKNLhIcRXJ6kkEHQyp9+1z36VyL/mNty1F2tau25YibWvXbUuRtrVE25Jqq22K0bZNp23WdwtPVql12zKkbWrdtgxpm3pW2zSjbZvLgllfWTxZpddty5G26XXbcqRtmhqT5VbbOkbbNtcds74HebKqW7etQNrWrdtWIG3riLYFaxr/wuR4c0qkOWbdnBJpjlk3p0SaY4jm+Osl/+LleGsqpDX9ujUV0pp+3ZoKaU0vao1ltWZzLTbrC54nO+y6NTXSGrtuTY20xopaM1DTZlrn3c4h579e0CRN+pCUdeHP1fViv+vbBjn2toFf+Zsz3jbIw7cNcu7bBtLFPiEX+yyyH1gu9g2x2BfFQ5VXhwZf7LmvOEgX+4Rc7LPIfmC52G+3Ldlsm2K07WmLfUIu9llkP7Bc7J/TNs1o29MW+4Rc7LPIfmC52BNjstxqW8do29MW+4Rc7LPIfmC52G+3LVjs+W+pSBf7hFzss8h+YLnYbzfHX+z578JIF/uEXOyzyH5gudhLWmNZrXnaYp+Qi30W2Q8sF3tJawZq2kyLPbydyH+vp0nT9KGp66zaXOx3fc0nx17zCcpCGK/55OFrPjn3NR/pYp/Si31kP7BY7PPD5ojI8iZ7qJMyT9HPsDPa9rTFPqUX+8h+YLHYE21zJ8SNtilG25622Kf0Yh/ZDywW+2e1TTPa9rTFPqUX+8h+YLHYU2My3Wpbx2jb0xb7lF7sI/uBxWJPtC1Y7Pmvh0kX+5Re7CP7gcViTzTHX+z5L6FJF/uUXuwj+4HFYi9qjWW15mmLfUov9pH9wGKxF7VmoKbNtNg3brHnv1CXpElVPLjteXVYz9XVYl/s+n5dgb1f59dGFIz364rw/bqC+36ddLHP6MU+sh9YLvbJ9qKR5MlDnTfnrgoXe0bbnrbYZ/RiH9kPLBf77bYl1VbbFKNtT1vsM3qxj+wHlov9c9qmGW172mKf0Yt9ZD+wXOyfMyY7Rtuetthn9GIf2Q8sF/vttvmLfcF/L1O62Gf0Yh/ZDywX++3meIs9qzVPW+wzerGP7AeWi72kNZbVmqct9hm92Ef2A8vFXtKagZo242JfHF65hrMX+6oqq4esKVN/rq4X+11fbC0SxktmBePF1iJ8sbXgvtgqXexzerGP7AeWi30qcT4tozFPW91zenWPbACWq7uoMYrRmKct5zm9nEdW/OVyLmqMZjTmaet3Tq/fkSV+uX6LGtMxGvO0BTunF+zImr5csEWNMQX/pWbpgp3TC3ZkTV8u2NvN8Rds/qvT0gU7pxfsyJq+XLAlrbGs1jxtwc7pBTuypi8XbElrBmraTAt24hbsZ78GXuz6GniBvQbux94LxmvgRfgaeMF9DVy6Qhf0Ch1ZxJcrdCZbobkvm0tX6IJeoSOL+HKFFjVGMRrztBW6oFfoyCK+XKFFjdGMxjxthS7oFTqyiC9XaFFjOkZjnrZCF/QKHVnElyu0qDGm4F8BIF2hC3qFjiziyxV6uzn+Cs2/aEC6Qhf0Ch1ZxJcrtKQ1ltWap63QBb1CRxbx5Qotac1ATZtphU7dCv3sSxOKXS9NKLBLE/wXmAvGpQlXmesKzb00QbpCl/QKHVnElyt0LluhuVczSFfokl6hI4v4coUWNUYxGvO0FbqkV+jIIr5coUWN0YzGPG2FLukVOrKIL1doUWM6RmOetkKX9AodWcSXK7SoMWbdmJuu0CW9QkcW8eUKvd0cf4XmX8shXaFLeoWOLOLLFVrSGstqzdNW6JJeoSOL+HKFlrRmoKbNtEJnboV+9hUjxa5XjBTYFSNBSptxxUgRXjFScK8Yka7QFb1CRxbx5QpdyFZo7kUm0hW6olfoyCK+XKFFjVGMxjxtha7oFTqyiC9XaFFjNKMxT1uhK3qFjiziyxVa1JiO0ZinrdAVvUJHFvHlCi1qjCn418tIV+iKXqEji/hyhd5ujr9C8y+xka7QFb1CRxbx5QotaY1lteZpK3RFr9CRRXy5QktaM1DTZlqhc3gv/dkr9K6XYxTjC/LLuzEyf4GeZOarMQLkGCBtgKgA0QHSBYgJkD5AbIAMAXJaIusHvuvL+sXlTcUsWT7x3H/i44v45XLflPl7olno2gvr3yHT7uv2n7/+xfHzr9tf/N/2869g4rm5dvrtl193lz+/OHySTHPi9N//9Z9eibND/J3L81UmWyrzQKW6gcp0S2URqNQ3UJltqSwDld0NVOZbKqtApbmBymJLZR2o7G+gstxS2QQq7Q1UVlsqk8NS59rV7PqqcIG8Kpz7rwpfha7ePYCOBfmm4nTuuSzPvAs4uKztmpW4+oLLqiSsmsuqvSewfd0Dl7VbswZbYSaN2aTpuTT9Jo3l0tgYzXrO7PrGXXF53SBLl3MmqMubha5zJoCORfBeXrAD/vzL4y/M77/8p9MX7dnNVL/8ZPI41S8/O/+RWqsXiPvJ5c/kb375Sddk0Q5s72958gTLE9pydX/L0ydYntKW6/tbnj3B8oy2vLu/5fkTLM9py839LS+eYHlBW97f3/LyCZaXtOX2/pZXT7C82rR8tR6Vu74UVl4q4rPVAd2vQiuJsvnHJsN74/H6y3nZmqA0Qua0vXBr20u3JxxJXxLbPIrRqXzh1pyX7ZUxL5vy4VDnQcn+xc1TjE7lC7cWvFRXxjJv8ockLb2jtqaonK4Xzjm/1Feq6LVAF39IMTqVL5zTfNlxGQ3F6FS+cM7speEy9hSjU/nCOZmXPZfRUoxO5Qs3+V9aBuN6vm29l5E9VLebcWu1uxablilyVPNLWa5C87YzhI4lWSc3HdXq9VFt8/okLmu7ZiUuLuKyKgmr5rJq7wlsX9bDZe3WrP6eg0tjNml6Lk2/SWO5NDZGs54zu5Z/lRnjqHYVus6ZADqWQZHY39RRLY8f1e5v+bOOanHL1f0tf9ZRLW65vr/lzzqqxS3v7m/5s45qccvN/S1/1lEtbnl/f8ufdVSLW27vb/mzjmqo5ev1aNdipzJHjmp+sVNJpJIfmzx2VJt/eV22cuqolr9wa9tLtye8HtW2t3kEo1P5wq05L9srY14lyYM7XCU1flQjGJ3KF24teKmujGVRVg9pnqS173gJLqfshfPOL/WVK3qr2+gQCUan8oXzmi87LqOhGJ3KF86bvTRcxp5idCpfOC/zsucyWorRqXzhZv9Ly2BcT7itjwnd8ay2a8lEWYZnteLgz/PSP5g9htBxhBhntWa5/SZuv+OytmtW4t45LquSsGouq/aewPZda1zWbs0abDqYNGaTpufS9Js0lktjYzTrObNr1UtZcc5qlX8wewyhYxl8yOJv6qxWbJzV7m75s85qccvV/S1/1lktbrm+v+XPOqvFLe/ub/mzzmpxy839LX/WWS1ueX9/y591Votbbu9v+bPOaqjl6/Vo19Kosg7PaoX/yaSSqGN5bIrYWW3+5XXZqqmzWu3OapU7q5XTnpva5hGMTqU7q1XurDYzlkldPZRZOqVcfDdPMDqV7qxWubPazFjXtTv95U14ViO4nDJ3VqvcWW3mil7KOTpEgtGpdGe1yp3VmIyGYnQq3Vmtcmc1JmNPMTqV7qxWubMak9FSjE6lO6tV7qxGM64n3FZd1f3OatWu6fMKuVO18L/9eBWa950hdKzIKx3Hs1pxWJ1/ti8v5bK2a1bi2lAuq5Kwai6rljyBjsvarVn9TQeXxmzS9FyafpPGcmlsjGY9Z3a9mrBKGGe1q9B1zgTQsQouMPybOquV8bPa/S1/1lktbrm6v+XPOqvFLdf3t/xZZ7W45d39LX/WWS1uubm/5c86q8Ut7+9v+bPOanHL7f0tf9ZZDbV8vR7tWhtVpchZzX9HsSIKWR6bMnJWu/7yumylxFmtSl+4te2l2xPOeTVim0cwOpUv3Jrzsr0yZnWdPZRNHXnLhWJ0Kl+4teClujIWZVo8IJ/ZpqicrhfOOb/UV6rolcqjPyQYncoXzmm+7LiMhmJ0Kl84Z/bScBl7itGpfOGczMuey2gpRqfyhZv8Ly2DcT3ftuqq7nhU2zV9XiF3hRT+i7FXoeu2M4COFXnNwXRUSzY28S2Xpt2kUVwatUmjuTR6k6bj0nSbNIZLYzZpei5Nv0ljuTQ2RrMe91tZ7NuP+4Jz3Cr8s9VjCB1H6G/1uFVtTLW7W/6s41bccnV/y5913Ipbru9v+bOOW3HLu/tb/qzjVtxyc3/Ln3Xcilve39/yZx234pbb+1v+rOMWavl6Pdq1vKkqkeOWf2tARdSiPDZV7Lg1//K6bJXUcat0x63CHbcitZEtxeBUuONV4Y5XEQZFMTgV7jhVuONUhEFTDE6FO0UV7hQVYegoBqfCnZoKd2qKMBiKwalwp6TCnZIiDD3F4FS4U1HhTkURBksxOBXuFFS4U1DIsB72WxVKdzz17JqIrmrk1BPs/mr/iPMYQseKe0dHkW6eeriXcmzSKC6N2qTRXBq9SdNxabpNGsOlMZs0PZem36SxXBobo1mP+13v2ag492xU4T0bIXSs/rbv2ag3ptrf9j0bccvV/S1/1qknbrm+v+XPOvXELe/ub/mzTj1xy839LX/WqSdueX9/y5916olbbu9v+bNOPajlq/Wo3rVQqEbu2Sj8ezZq8p6NOnLquf5yXrYmKHrqqQ/u1NO4U0+EtKUYnAp36mncqSfCoCgGp8Kdehp36okwaIrBqXCnnsadeiIMHcXgVLhTT+NOPREGQzE4Fe7U07hTT4ShpxicCnfqadypJ8JgKQanwp16GnfqCRnWw/5/5rqLeteUbo18W63wr7u4Cs27vxA6ThB96sm2Tj1cmnaTRnFp1CaN5tLoTZqOS9Nt0hgujdmk6bk0/SaN5dLYGM163O96ZUXNubLiKnQd9+GVFfXf9pUVzcZU+9u+siJuubq/5c869cQt1/e3/Fmnnrjl3f0tf9apJ265ub/lzzr1xC3v72/5s049ccvt/S1/1qkHtXy9Hu1ac1MjV1YU/pUVNXllRRM79YRXVtTUlRV1/sKtbS/dvi62fFBXVDgGt8a8bGMMimJwKl44X/9SxRg0xeBUvHA+96WOMXQUg1Pxwvm+l12MwVAMTsUL54NemhhDTzE4FS+cL3jZxxgsxeBUvHBz8qVFGNbD/n/m4oh618xqXYanntK/OOIqdN39BdCx5l4cUeSbpx7uTRGbNIpLozZpNJdGb9J0XJpuk8ZwacwmTc+l6TdpLJfGxmjW437Xyx9qzuUPdXj5Qwgd67/pyx+Sw2Fjrv1N3/6wZbq6v+nPOfdsma7vb/pzDj5bpnf3N/05J58t0839TX/O0WfL9P7+pj/n7LNlur2/6c85/ERMX69Lu9be1MglEKV/CURNXQLh2hU7/oS3QNTULRB17Y4/lTv+RF5XaikGp8Idfyp3/IkwKIrBqXDHn8odfyIMmmJwKtzxp3LHnwhDRzE4Fe74U7njT4TBUAxOhTv+VO74E2HoKQanwh1/Knf8iTBYisGpcMefyh1/Qob1uP+fuYuh2fW98mZ8P3w52/yrGGaZeRMYIMcAaQNEBYgOkC5ATID0AWIDZAiQ0xJZP/CtLFta3bKjx2c+vju5+bVBTKj0vzY4Cm1+kvCICflfXGhHofSwFPIKjNVV6NqDAdShVN7JwoxCy1O3l2rsZ5FrN/vIECCnJbLu5l2TSs0Y81zecZL4y9gotLjipAlCpYGDOzbEp8mH9PBiSJsXQzZltbe/EtFShPAxWKf15ePyQyzbnOrKeR0qAdQxmmtGmSxfOIAAsiE0hNBpBa1Hx64h3iZHRodfzj8KLUcH/VH2Y0MEhoc0cSPDjZBsChBv30vbUoSX0ZG70bG4+3mbUzVBDFqHUMdorhllVqMjgGwIDSF0WkHr0bHry4dNgYwOv+xpFFqOjuCVGmR0FNToSN3IcCMkn/bP2zdhtRThZXQUbnQsbpvb5lRXzuvoCKCO0VwzyqxGRwDZEBpC6LSC1qNj14B1g9x0nPjpoVFoOTpKxugg4plDmrnR4UZInow9uf3yfUsRXkZH6UbH4n6LbU7VBO8q6RDqGM01o8xqdASQDaEhhE4raD06dg3rNlWYzsj8sO4otBwdQZQCGR0VNTpyNzrcCMljWUKK4TIcKjccNt7tvZJc+z+AOkaDzCiz6v8AsiE0hNBpBa37f9fwSYO8upQFa0cd9H/N6H8i6DKkhet/NwbyyIftWorh0v+16/+NtxyaIICjQ6hjNMiMMqv+DyAbQkMInVbQuv93fYWnaZD+94s4R6Fl/weF6Uj/N1T/l67/3RjIY2+EUgyX/m9c/2/Ue11Jrv0fQB2jQWaUWfV/ANkQGkLotIJW/Z8cdq2ZP6sLRoC/P5ikFkNggjbHwMweHwSVGwRuIOSRa3hbkuI8CpzUy8fN/NeCZx4ICNZx2mUmoeVYQDCLYAOCndaYNx42AxHNw+1HxHjwXsZj/CXhKrQYED50DKE2hFQI6RDqQsiEUB9CNoSGEDqtIK8Dts769wj4nTXCaCiWXeB75YXUog8C7IhgLYIpBNMI1iGYQbAewSyCDRO2PKCUngM6zT8skf7ZOm3fp3+KsH8qvwhoIbXonwA7IliLYArBNIJ1CGYQrEcwi2DDhBH9U8T7Z+u8e5/+KZH+8aOpC6lF/wTYEcFaBFMIphGsQzCDYD2CWQQbJozonzLeP1snzvv0T4X0j59GWkgt+ifAjgjWIphCMI1gHYIZBOsRzCLYMGFE/1Tx/tk6Ed6nf2qkf/zbOhdSi/4JsCOCtQimEEwjWIdgBsF6BLMINkwY0T91vH+2Tmz36Z8G6R8/I7iQWvRPgB0RrEUwhWAawToEMwjWI5hFsGHCiP5pov2TbL4WeYcNdJIGG+jKz9Zcha6dE0DHEGpDSIWQDqEuhEwI9SFkQ2gIodMK8jpg11TqWR0MhWr5/P2Y5kJq0QEBdkSwFsEUgmkE6xDMIFiPYBbBBgQ7rTGvL3ZNXJ7VgSXLgpEqOEwmyxPA5cTt7dYeZ6Z6yVT78QaMyf+uY4tzNX7AYJRaOtnar6KaqZplFweYQbAewSyCDQh2WmNeF++afTyrc5bky/qNOthsX6UW0y3AjjOWLKMvD36iiCemeGKaJ9bxxAxPrOeJWZ7YMImtx0gRHyO75iDP6qARyyUx2O9PQqvissANIEx1GriBtdSHd0HU8Ov2n78m3wf45O//7U9vP/zD6b//6z8vf5o/XeqQYEg+X2eypTMPdKpb6Ey3dBaBTn0LndmWzjLQ2d1CZ76lswp0mlvoLLZ01oHO/hY6yy2dTaDT3kJntaUzOQRKB3QaZ7m/qR+lUAe2a5r8rO49VZ83SeV5JFXxd//4d/mv3CNzq/c0wR7ycvFPFbg7RqJ9Vht7Z+DvjqBxVPwr+I/i8h/T/a6Ff3hshZwtg1MJORWDUws5NYOzE3J2DE4j5DQMzl7I2TM4rZDTMjgHkvP3/3T6BYziV6B+Xu6KJg38wUiEHfJ3LZs4qwv8QXjGr0l/UKz9Qfkwfig05g8YhRezWrE/mAqAyyp/qAOPIGJtWaxKyKpYrFrIqlmsnZC1Y7EaIathsfZC1p7FaoWslsU6kKyjf6jBP9Tz1jRr6odwx1DHPcSuhTVndYGHCCMfDekhyrWHaB4OTbb4J/AQjNKcWa3YQ8xF4AXmIUSsLYtVCVkVi1ULWTWLtROydixWI2Q1LNZeyNqzWK2Q1bJYB5J19BANeIhmPtSVGeYhmqiHSPetvEqR7xoHldmT1JaHqPwzRZVteYiUU7g1qZV6iHR6EaA8pL5/kHG2DE4l5FQMTi3k1AzOTsjZMTiNkNMwOHshZ8/gtEJOy+AcSM6LR0gPr0D9fKaok9L3BxMR5g92fbX2rO49VYs/SW35g3rtD/xX2icKwgEkT3QACa62FTK2JKMSMiqSUQsZNcnYCRk7ktEIGQ3J2AsZe5LRChktyTiQjOOET2DCJ5Ei4NPMgs32XW9PPqsLZntwPhiltmZ7Q832lDPb0yfO9ti7O0LGlmRUQkZFMmohoyYZOyFjRzIaIaMhGXshY08yWiGjJRkHknGc7SnM9jQ+29P4bN+3JiXNkNkeVHSPUluzPTlQ051xJcCsSDzdY69qCRlbklEJGRXJqIWMmmTshIwdyWiEjIZk7IWMPclohYyWZBxIxnG6ZzDds/h0z+LTfd+ypxT5Dnb4UtUotTndE2q6M+54mBWJp3vszTwhY0syKiGjIhm1kFGTjJ2QsSMZjZDRkIy9kLEnGa2Q0ZKMA8k4Tvccpnsen+55fLpvlcDd7y6uJN23rCod6yOWla51UKd/lbqW3oXYEcFaBFMIphGsQzCDYD2CWQQbEOy0xry+2LdCJB1f4NiudB2lVt76IShym7i2a10RLr/ussWpglLXFVWs1HWiWpa6hphBsB7BLIINCHZaY14f75v1T8fs4nap61VqMd8C7DhjRKkrS0zxxDRPrOOJGZ5YzxOzPLFhEluPkTo+RvbN+6Zjfmmz1HUS2ix1xZjCUldPapdS1xvoFJe63kCnuNT1BjrFpa430Ckudb2BTnGp6w10iktdb6BTXuqKTeOw1HWUwhxYtm9aOsPS0sEil9Fp6cuRIJ0KA7OHtPZdXMZJRWeM9GFajcrg9JpeEmDZfCddkjwUtf9F9lZI3HKJlZBYcYm1kFhziTshccclNkJiwyXuhcQ9l9gKiS2XeCCJL6feDFLW2Zyyrpv0oazz2vcXWTxtne2bts4SxF8EpbAZnbYufH8RPMPHWdm2w2AkH1GHMSUf3Z8ekjpJggoWGXPLZlZCZsVm1kJmzWbuhMwdm9kImQ2buRcy92xmK2S2bOaBZB4dB6S+s+S6F8mbhzyvm6DiJYvnwLN9c+BZiriOIGaS0Tnwcu06iocccR2cPHjGyGSirmPKZCZ18VC6Rxy6DhFzy2ZWQmbFZtZCZs1m7oTMHZvZCJkNm7kXMvdsZitktmzmgWQeXQfk0bM5j57kdf7QOP8Ruo54Qj3bN6GeYRfmBxm2jE6oV2vXkT34n1Z4nHVtew5GUhT1HNm8baweDmkdVNXLiFsusRISKy6xFhJrLnEnJO64xEZIbLjEvZC45xJbIbHlEg8k8egxIBWfzan4Jisf0uwQRDWyeEY+2zcjn2EZ+aC4NqMz8vXaXwQJ+YyTkM8YKVXUWUQT8jLGlmRUQkZFMmohoyYZOyFjRzIaIaMhGXshY08yWiGjJRkHknGc9JCQz+IJ+SyekM+2EvJ3mO0FMtvDg0VBzvaGmu0FZ7YXT5zt0TuRZYwtyaiEjIpk1EJGTTJ2QsaOZDRCRkMy9kLGnmS0QkZLMg4k4zjbC5jtRXy2F/HZvm8ZTIZ8kzssrh2lGMW1G9Od8VWUWZF4usc+FylkbElGJWRUJKMWMmqSsRMydiSjETIakrEXMvYkoxUyWpJxIBnH6V7CdC/j072MT/d9K60y7Js14dGfvotnLK7dmO6c23cyxo0p6HSPqG2FjC3JqISMimTUQkZNMnZCxo5kNEJGQzL2QsaeZLRCRksyDiTjON3htp2sik/3+FU72VbR3R2La7N9C7mysSJjVVwbXLJ8lboW+4XYEcFaBFMIphGsQzCDYD2CWQQbEOy0xtZ9ke9bk5KPn0fZLq4dpYji2olru7gW4fKLdlqcKiiuXVHFimsnqmVxbYgZBOsRzCLYgGCnNeb18b51BPmYltwurr1KXedbiB1njCiuZYkpnpjmiXU8McMT63lilic2TGLrMZLEx8i+CeN8zD9tFtdOQpvFtRhTWFzrSe1SXHsDneLi2hvoFBfX3kCnuLj2BjrFxbU30Ckurr2BTnFx7Q10yotrsWkcFteOUqgD2zdtnXO+8z5J0cW182eXseLanJO2zhl5xPwwKoPTa345NM8f7czLhzrz98WtkLdl8iohr2LyaiGvZvJ2Qt6OyWuEvIbJ2wt5eyavFfJaJu9A8l5Ouzmkq/M5XZ1V+UN18L84dZrJkENvvm+6Os8RPxEU1eZ0urrw/QRSVJtzUtY5I+mIOor5Wrri4VBm/mcMWyFxyyVWQmLFJdZCYs0l7oTEHZfYCIkNl7gXEvdcYisktlzigSQeHQakuvM51Z3nh4fi0PilYaeZDfMY+6a88wLxGGGIhE55l2uPgdbSTsq2PQYjcYl6jClxWVUPTZIgHkNE3HKJlZBYcYm1kFhziTshccclNkJiwyXuhcQ9l9gKiS2XeCCJR48B6fJ8TpeXqduSNxniMeJp83zftHleIh4jyKPldNq88vcYYQltzkmc54zUJ+owptRn3jwkaRaU3st4WyavEvIqJq8W8mombyfk7Zi8RshrmLy9kLdn8lohr2XyDiTv6Cgg0Z7PifasSR+aYFN+mskwP7Fvvj3H8u1B6WxO59vrtZ8I0u05J92eMxKmqJOIpttljC3JqISMimTUQkZNMnZCxo5kNEJGQzL2QsaeZLRCRksyDiTjOOkh3Z7H0+15PN2e73vHTV4jsz08R9Bftmmo2c75lE3O+OAIOtvr6GwXMbYkoxIyKpJRCxk1ydgJGTuS0QgZDcnYCxl7ktEKGS3JOJCM42yHT9XkdXy2x79Sk+9b5JI3yGwPSmdz+is1yYGa7pzv0kyKxNO9iU53EWNLMiohoyIZtZBRk4ydkLEjGY2Q0ZCMvZCxJxmtkNGSjAPJOE53+O5M3sSne/yTM8W+dVTFAZnuwZG/oO/2GUtn49O94NzsMymSTvciorYVMrYkoxIyKpJRCxk1ydgJGTuS0QgZDcnYCxl7ktEKGS3JOJCMl+lewA09xSE63ScWbLpvldTdsXS22LdMqxjrLVals0H28ip1LeULsSOCtQimEEwjWIdgBsF6BLMINiDYaY15fbFvxUlxyWkTpbOj1Lp0NojiTlzbpbMIFxKURbmC2tkVV6x2dqJa1s6GmEGwHsEsgg0IdlpjXifvWy5QjGnI7drZq9RiwgXYccaI2lmWmOKJaZ5YxxMzPLGeJ2Z5YsMkth4jeXyM7JsgLsbE02bt7CS0WTuLMYW1s57ULrWzN9Aprp29gU5x7ewNdIprZ2+gU1w7ewOd4trZG+gU187eQKe8dhabxmHt7CiFOrB989UFlq8OFzk6X32pnS2mysL0Iam3vrlecHLXBSOnWGSjYjjKFqMVU04xydOHQ17UuBWtUEErVaCECpRUgRYq0FIFnVBBJ1VghAqMVEEvVNBLFVihAitVMJAKxiM05MCLOQeeJFn5kJVlg36x+DSTYifqfXPhRYX4oPBkS+fCC98HFdVhywdxUuMFI7mJ+qApuZmU5UPTHIpDzAeJFLRSBUqoQEkVaKECLVXQCRV0UgVGqMBIFfRCBb1UgRUqsFIFA6lg9EGQki/mlHySZcVDk+aHIuKD4hn6Yt8MfVEjPiiM6NAZ+nLtg7KHMqs2vhtfcBL2BSPlivqgKeWawlWCdZJUqBWtUEErVaCECpRUgRYq0FIFnVBBJ1VghAqMVEEvVNBLFVihAitVMJAKRh8EhQLFXCiQ1M3hIc2brMYc22kmxXzQvnUDRYP4oDCRSNcNVP4+KJ02gbgP4lQRFIw8MOqDmnmTWz80Vd7gVrRCBa1UgRIqUFIFWqhASxV0QgWdVIERKjBSBb1QQS9VYIUKrFTBQCoYfRBULxTN9SzWJA9V0+To5uo0kyI+qNy3mKHEihmCuuSSLmao1z4oqGUoObUMJSMbjTmdMlrLIGNsSUYlZFQkoxYyapKxEzJ2JKMRMhqSsRcy9iSjFTJaknEgGS+Tv4RahjJey1DGaxnKfa8HKhNktgennpL+zFBDzXbOJ4YmPeLZnkRnu4ixJRmVkFGRjFrIqEnGTsjYkYxGyGhIxl7I2JOMVshoScaBZBxnO3wiqEzisz3+ZaBy3wqiMkVme1CXXNJfBhrrkjemO+ezQJMi8XRPo9NdxNiSjErIqEhGLWTUJGMnZOxIRiNkNCRjL2TsSUYrZLQk40AyjtMdPutTpvHpHv+aT7lvkVqZIdM9CCeU9LVIY13yxnTnXIpUMi6rQad7RG0rZGxJRiVkVCSjFjJqkrETMnYkoxEyGpKxFzL2JKMVMlqScSAZx+kOlxyVWXy6x283KrfKFe9Yl1zuWwJXjrUsq7rkMGIwS13LJEPsiGAtgikE0wjWIZhBsB7BLIINCHZaY15f7FvNU15y+kRd8ii1rktOA6c+cm3XJSNcbuoFnhrjCuqSV1yxuuSJalmXHGIGwXoEswg2INhpjXmdvG+5RDkmTbfrkq9SiwkXYMcZI+qSWWKKJ6Z5Yh1PzPDEep6Y5YkNk9h6jFTxMbJvOrsck1qbdcmT0GZdMsYU1iV7UrvUJd9Ap7gu+QY6xXXJN9Aprku+gU5xXfINdIrrkm+gU1yXfAOd8rpkbBqHdcmjFOrA9s2Fl1guPFzk6Fz4eAyYSy0fDpu58JKTCy8ZScayHBXDUba8ZOTLKcmYZg9FlaaRysRWqKCVKlBCBUqqQAsVaKmCTqigkyowQgVGqqAXKuilCqxQgZUqGEgF4xEacuHlNRde1461TvAZeJpJkRN1tW8uvDogPiioS67oXHjh+6C0LjZ8UMVJjVeM5Cbmg6opuZlWD1WSVNF3I2QKWqkCJVSgpAq0UIGWKuiECjqpAiNUYKQKeqGCXqrAChVYqYKBVHDxQRWk5Ks5JZ+myUPZ5Gns3YgqnqGv9s3QVwnig4KITkVn6EvfB9XLF7SCdyMqTsK+YqRcUR80pVyz5iFNDnmBe8JWqKCVKlBCBUqqQAsVaKmCTqigkyowQgVGqqAXKuilCqxQgZUqGEgFow+CQoFqLhTIkuyhrLMyjdQEVvG6gWrfuoEqRXxQkEis6LqByvdBSV5u+SBOFUHFyAOjPmjKA6f5g9vjztvR0AeJFLRSBUqoQEkVaKECLVXQCRV0UgVGqMBIFfRCBb1UgRUqsFIFA6lg9EFQvVDN1QtJ43ZX1fySZOiD4sUM1b7FDBVWzBBkGSu6mKFe+6CglqHi1DJUjGw06nSitQwyxpZkVEJGRTJqIaMmGTshY0cyGiGjIRl7IWNPMlohoyUZB5JxnPxQy1DFaxmqeC1Dte/VS1WOzPbw1EN/qamhZjvnK02THvFsz6OzXcTYkoxKyKhIRi1k1CRjJ2TsSEYjZDQkYy9k7ElGK2S0JONAMo6zHb62VOXx2R7/ylK1bwVRVSCzPahLHqUYdckb073gTPfiidO9iE53EWNLMiohoyIZtZBRk4ydkLEjGY2Q0ZCMvZCxJxmtkNGSjAPJOE53+FRSVcSnexGf7vsWqVUlMt3DcAJ95dRYl7wx3TmXTFWM23vQ6R5R2woZW5JRCRkVyaiFjJpk7ISMHclohIyGZOyFjD3JaIWMlmQcSMZxusNlT1UZn+7x252qrXLFO9YlV9wSuIuC53qZseBlVZYcHiFmqWuVZIgdEaxFMIVgGsE6BDMI1iOYRbABwU5rzOsKbjHPbbpizOivqn/DrrhIrSqJA4c+Mi0j0WFNMsIU+miMKahInpkWvTlCh2VvBphBsB7BLIINCHZaY+verLllETfpzfqSGy2SzfLjq9R1YoXYccKo8mOWmOKJaZ5YxxMzPLGeJ2Z5YsP8LJdDZIV5Q4Sbtb7NELmkrorN6uNJaLP6GGMKq489qV2qj2+gU1x9fAOd4urjG+gUVx/fQKe4+vgGOsXVxzfQKa4+voFOefUxNo3D6uNJCvNf3Iz3bfwXlvAOlzg64X0pPq6mesriYZnvDhPeNSfhXTMyiVUzKobzan2JitXR1+ZljC3JqISMimTUQkZNMnZCxo5kNEJGQzL2QsaeZLRCRksyDiTj5bxaQ+K5jr82X8czzTU303ybuZ8hcz8o+q3pRHOxnvvlQ55uzn1O3rlmZA7RuR/NO8sYW5JRCRkVyaiFjJpk7ISMHclohIyGZOyFjD3JaIWMlmQcSMZx7kPeuY7nnet43rnm5p1vM/dzZO4HgYqaTjuX67nfEC8d1ZwsdM3II6JzP5qFljG2JKMSMiqSUQsZNcnYCRk7ktEIGQ3J2AsZe5LRChktyTiQjOPchyx0Hc9C1/EsdM3NQt9m7hfI3A+yUjWdhK78Pf/y+m9k7nNS0pNa8dyPpqRljC3JqISMimTUQkZNMnZCxo5kNEJGQzL2QsaeZLRCRksyDiTjOPchJV3HU9ITCzb3uSnp28x9LCMdFJfWdEa6Xs/9ICFdcxLSNSOliE72aEJaxtiSjErIqEhGLWTUJGMnZOxIRiNkNCRjL2TsSUYrZLQk40AyjpMdEtJ1PCFdxxPSNff+nNtM9gqZ7OEmn/7aUENNds7nhWrGd1vQyV5FJ7uIsSUZlZBRkYxayKhJxk7I2JGMRshoSMZeyNiTjFbIaEnGgWQcJzt85qeu4pM9/l2fetcqkLpGJntQWlrTn/UZS0s3ZjvnQz6TIvFsr6OzXcTYkoxKyKhIRi1k1CRjJ2TsSEYjZDQkYy9k7ElGK2S0JONAMo6zHT6oU9fx2R7/gk69a6FR3SCzPTzD05cGjZWlG7Odc01Qzbh/BZ3tEbWtkLElGZWQUZGMWsioScZOyNiRjEbIaEjGXsjYk4xWyGhJxoFkHGc7XNdTN/HZHr+fp9kqRFtXlj5vvntqdy1uasb38leFpcGW4ip1rX8LsSOCtQimEEwjWIdgBsF6BLMINiDYaY15XbFrnUYzJo23C0tHqc3C0olpu7AUYQpcNMoUFJbOTIveTBfVL1NvBphBsB7BLIINCHZaY15v7pp5by5pQKKw9Cq1mFgBdpwwqrCUJaZ4Ypon1vHEDE+s54lZntgwP8vVEMniQ2TXBG1zyRZtF5ZOQpuFpRhTWFjqSe1SWHoDneLC0hvoFBeW3kCnuLD0BjrFhaU30CkuLL2BTnFh6Q10ygtLsWkcFpZOUpj/2jXJ3GBJ5nCJo5PMl8LSZirKowpLJ72bx9VJ7daBo0lHxXBcbS7f22iiSWYZY0syKiGjIhm1kFGTjJ2QsSMZjZDRkIy9kLEnGa2Q0ZKMA8l4Oa42kGRu4knmiQU7ru6aZG5KZO4HhaUNnWQu1nOfKixtODnnhpE1ROd+NOcsY2xJRiVkVCSjFjJqkrETMnYkoxEyGpKxFzL2JKMVMlqScSAZx7kPOecmnnNu4jnnZtecc1Mhcz8MVNA553I996nC0oaTgm4YSUR07kdT0DLGlmRUQkZFMmohoyYZOyFjRzIaIaMhGXshY08yWiGjJRkHknGc+5CCbuIp6Caegm52TUE3NTL3g6RUQ6egK3/Pv11Y2nAS0g0jpYjO/WhCWsbYkoxKyKhIRi1k1CRjJ2TsSEYjZDQkYy9k7ElGK2S0JONAMo5zHxLSTTwh3cQT0s2uCekGS0gHhaUNnZCu13M/yEc3nHx0w8goopM9mo+WMbYkoxIyKpJRCxk1ydgJGTuS0QgZDcnYCxl7ktEKGS3JOJCM42SHfHQTz0c30Xx0etjzYpSztmCy+5v8SYouLI1O9olic7LPeoST3f0uMtmFjC3JqISMimTUQkZNMnZCxo5kNEJGQzL2QsaeZLRCRksyDiTjebI7qVegPDbZZxZssu9ZBXLWFkx2vwpkkmIUlm7MdsaXWGZF4tmeRGe7iLElGZWQUZGMWsioScZOyNiRjEbIaEjGXsjYk4xWyGhJxoFkHGd7ArM9ic/26CdQ0sOehUZnbcFs98/wkxSjsHRjtjOugJkViWd77AoYIWNLMiohoyIZtZBRk4ydkLEjGY2Q0ZCMvZCxJxmtkNGSjAPJOM72FGZ79AqYmQWb7VuFaHcrLE0PexY3nbW99wtLQyczS316dRoBdkSwFsEUgmkE6xDMIFiPYBbBBgQ7rTGvK/as0zhre08Vlk5SW4WlM9NmYSnGFLpojMkvLL0yLXqzWFS/TL0ZYAbBegSzCDYg2GmNeb25Z+b9rO09VVi6kFpMrAA7ThhRWMoTUzwxzRPreGKGJ9bzxCxPbJif5WqIlPEhsmeC9qztPVFYOgttFZaiTEFhqS+1R2HpLXRKC0tvoVNaWHoLndLC0lvolBaW3kKntLD0FjqlhaW30CkuLEWncVBYOkth/mvPJPNZW5BkDpc4OsmcX7b6U1EeUVg6690+rtJpQqdxVPwr+I/y8h+xJLOQsSUZlZBRkYxayKhJxk7I2JGMRshoSMZeyNiTjFbIaEnGgWQcj6s1HFejSeaZBTuu7plkPmsL5r5fWDpJkYWl17lPFJbOerfnPp01xOd+LOcsZGxJRiVkVCSjFjJqkrETMnYkoxEyGpKxFzL2JKMVMlqScSAZx7nfwNyP5pxnFmTuJ7vmnJMDMveDQEVC55zL9dwnCktnvZtzP6GTiOjcT6IpaBljSzIqIaMiGbWQUZOMnZCxIxmNkNGQjL2QsScZrZDRkowDyXiZ+wmkoJN4CjqJp6CTXVPQSYLM/SBenNAp6Mrf828Wls56t+c+nVLE5340IS1jbElGJWRUJKMWMmqSsRMydiSjETIakrEXMvYkoxUyWpJxIBnHuQ8J6SSekE7iCelk14R0giWk/cLSSYosLL3O/SAfnXDy0QmdUcQnezQfLWNsSUYlZFQkoxYyapKxEzJ2JKMRMhqSsRcy9iSjFTJaknEgGcfJDvnoJJ6PTuL56GTPi1HO2oLJHm7y6U+SNNRkZ3yDZNYjnuyxb5AIGVuSUQkZFcmohYyaZOyEjB3JaISMhmTshYw9yWiFjJZkHEjGcbJnMNmj3yCZWbDJvmsVSJIjkz0oLE3ob5BcCku3ZjvjqyOzIvFsj311RMjYkoxKyKhIRi1k1CRjJ2TsSEYjZDQkYy9k7ElGK2S0JONAMo6zPYfZHv3qyMyCzfZdC42SApnt4Rm+oGd7Qs32gjPbiyfO9tgVMELGlmRUQkZFMmohoyYZOyFjRzIaIaMhGXshY08yWiGjJRkHknGc7QXM9ugVMDMLNtu3CtHuV1ia7FrclIyvwi8LS5tD4GRmqWv9W4gdEaxFMIVgGsE6BDMI1iOYRbABwU5rzOuKXes0kjFpvF1YOkptFpZOTNuFpQhT6KIxpqCwdGZa9Ga9qH6ZejPADIL1CGYRbECw0xrzenPXzHtySQMShaVXqcXECrDjhFGFpSwxxRPTPLGOJ2Z4Yj1PzPLEhvlZroZIEx0i6a4J2vSSLdouLJ2ENgtLMaawsNST2qWw9AY6xYWlN9ApLiy9gU5xYekNdIoLS2+gU1xYegOd4sLSG+iUF5Zi0zgsLJ2kMP+1a5I5xZLMwRKX0knmS2FpMhXlUYWlKSfJnDLShEk9KobjanKJgKfRJLOMsSUZlZBRkYxayKhJxk7I2JGMRshoSMZeyNiTjFbIaEnGgWS8HFdTSDKn8SRzGk8yp7smmdMUmftBYWlKJ5mL9dynCktTTs45ZWQN0bkfzTnLGFuSUQkZFcmohYyaZOyEjB3JaISMhmTshYw9yWiFjJZkHEjGce5DzjmN55zTeM453TXnnGbI3A8CFSmdcy7Xc58qLE05KeiUkURE5340BS1jbElGJWRUJKMWMmqSsRMydiSjETIakrEXMvYkoxUyWpJxIBnHuQ8p6DSegk7jKeh01xR0miNzP0hKpXQKuvL3/NuFpSknIZ0yUoro3I8mpGWMLcmohIyKZNRCRk0ydkLGjmQ0QkZDMvZCxp5ktEJGSzIOJOM49yEhncYT0mk8IZ3umpBOsYR0UFia0gnpej33g3x0yslHT3rEkz2aj5YxtiSjEjIqklELGTXJ2AkZO5LRCBkNydgLGXuS0QoZLck4kIzjZId8dBrPR08s2GTf9WKUtEQme7jJpz9J0lCTnfENklmPeLLHvkEiZGxJRiVkVCSjFjJqkrETMnYkoxEyGpKxFzL2JKMVMlqScSAZx8lewmSPfoNkZsEm+65VIGmFTPagsDSlv0EyFpZuzHbGV0dmReLZHvvqiJCxJRmVkFGRjFrIqEnGTsjYkYxGyGhIxl7I2JOMVshoScaBZBxnewWzPfrVkZkFm+27FhqlNTLbwzM8fSHMWFi6Mds5V8CkjEs80NkevQJGxtiSjErIqEhGLWTUJGMnZOxIRiNkNCRjL2TsSUYrZLQk40AyjrMdroBJ41fApPErYNKtQrT7FZZmuxY3ZeOr8KvC0qA44Cp1rX8LsSOCtQimEEwjWIdgBsF6BLMINiDYaY15XbFrnUY2Jo23C0tHqc3C0olpu7AUYQpcNMoUFJbOTIveTBbVL1NvBphBsB7BLIINCHZaY15v7pp5zy5pQKKw9Cq1mFgBdpwwqrCUJaZ4Ypon1vHEDE+s54lZntgwP8vVEEnjQ2TXBG12yRZtF5ZOQpuFpRhTWFjqSe1SWHoDneLC0hvoFBeW3kCnuLD0BjrFhaU30CkuLL2BTnFh6Q10ygtLsWkcFpZOUpj/2jXJnGFJ5nCJo5PMl8LSbCrKowpLM06SOWOkCbNkVAzH1Sy9/Ec0ySxjbElGJWRUJKMWMmqSsRMydiSjETIakrEXMvYkoxUyWpJxIBkvx9UMksxZPMmcxZPM2a5J5qxA5n5QWJrRSeZiPfepwtJJ7/bcZ2QN0bkfzTnLGFuSUQkZFcmohYyaZOyEjB3JaISMhmTshYw9yWiFjJZkHEjGce5DzjmL55wnFmzu75pzzkpk7oeBCjrnXK7nPlVYmnFS0BkjiYjO/WgKWsbYkoxKyKhIRi1k1CRjJ2TsSEYjZDQkYy9k7ElGK2S0JONAMo5zH1LQWTwFncVT0NmuKeisQuZ+kJTK6BR05e/5twtLM05COmOkFNG5H01IyxhbklEJGRXJqIWMmmTshIwdyWiEjIZk7IWMPclohYyWZBxIxnHuQ0I6iyeks3hCOts1IZ1hCemgsDSjE9L1eu4H+eiMk4/OGBlFdLJH89EyxpZkVEJGRTJqIaMmGTshY0cyGiGjIRl7IWNPMlohoyUZB5JxnOyQj87i+egsno/Odr0YJWuQyR5u8ulPkjTUZOd8g2TSI57s0W+QyBhbklEJGRXJqIWMmmTshIwdyWiEjIZk7IWMPclohYyWZBxIxnGywzdIsvg3SCYWZLLnu1aB5AdksgeFpTn9DZKxsDQ+23POV0cmRdLZnh9is13G2JKMSsioSEYtZNQkYydk7EhGI2Q0JGMvZOxJRitktCTjQDJeZnsOXx3J418dmViw2b5roVGeILM9OMPn9IUwSULNds4VMDnjEg90tkevgJExtiSjEjIqklELGTXJ2AkZO5LRCBkNydgLGXuS0QoZLck4kIzjbIcrYPL4FTATCzbbtwrR7ldYmm8WBzQPC7XjXzzXz4z3oC9LS4P6plnoWgAXQMcQakNIhZAOoS6ETAj1IWRDaAih0wryOoCbob3R47/ki4qlm2+y4PnPUosOCLAjgrUIphBMI1iHYAbBegSzCDYg2GmNeX2xlTFLm4f09t0xfii92Kr2m4TKZZ/lwbI6Si1Lrz36XYr7bqBTXNx3A53i4r4b6BQX991Ap7i47wY6xcV9N9ApLu67gU55cR82/8PivtXU9lwWN9F3I3+FZfqC6r4cyctVWRp4rGUOY/JYyE/TwyHczSNyjS+meGIaFUtqX65D5cINMi3Uc4QsR2iYnyKxM4V8Uj7nk4rSb9xp3R3eKOOmlG40yrCv3gd1ZDmSEKrScJTVyChDfhr2d4vKBWKKJ6ZxrUFHdKhcOMpooZ4jZDlCw/wUiVEGiYx8TmQUwcQ9rbvDG2XcXMaNRhn2ffUgmZEjmYgkRbZfDTLMkN+izgzVgYwzlpzG5TB3RmdZDEeo5whZjtAwP0dioEEQPZ+D6GXwEE7rDlkPtIIbR7/NQCuwj3kHobUCCYJXdVDrWhzCcYb9NBwXLSqHuDOWmGZq7VC5YJQxhHqOkOUIDfNT3B5lBQRvizl4myPurIjHbwtu/PZGowwL4AaFGAUdfH2chNZjjP5hyxFSHCHNEeo4QoYj1HOELEdomJ8dMbIgUFjEA4VFPFBYcN9YvdGwwr5IHKySBX218+MktB5W9A9bjpDiCGmOUMcRMhyhniNkOULD/OyIYQXXEBfxa4hXPeANK+5brjcaVti3b4PkckHfGvw4Ca2HFf3DliOkOEKaI9RxhAxHqOcIWY7QMD87YljBDbdF/IbbIn7DbcF9+fBGwwr7ymq41aLfFXychNbDiv5hyxFSHCHNEeo4QoYj1HOELEdomJ8dMazgvbYi/l7bqge8YcV9t+VGw6qccgaLCHwQkLhKXbMmIXZEsBbBFIJpBOsQzCBYj2AWwQYEO60xry+2QpB3yZoUVRg1DbImk9B21mSSWmZNPPpdsiY30CnOmtxApzhrcgOd4qzJDXSKsyY30CnOmtxApzhrcgOd8qwJNv/DrMlqansua994doHFs4OsSUHHYR8nofWuhP5hyxFSHCHNEeo4QoYj1HOELEdomJ8dsSuBGHYRL8Yv4gHsYt8AdoEFsMNdCR11fZyE1sOK/mHLEVIcIc0R6jhChiPUc4QsR2iYnx0xrCBiXcTLvot4uLrcN1xdYuHqIOJT0mHWx0loNawYP2w5QoojpDlCHUfIcIR6jpDlCA3zs9seViWEqMt4fXEZj0+X+8anS+yLk8HRvOTEp0skPs34YcsRUhwhzRHqOEKGI9RzhCxHaJifHTGsID5dxuPTZTw+Xe4bny6x+HSQ9ig58ekSiU8zfthyhBRHSHOEOo6Q4Qj1HCHLERrmZ0cMK4hPl/H4dBmPT5f7xqdLLD4dLoKc+HSJxKcZP2w5QoojpDlCHUfIcIR6jpDlCA3zsyOGFcSny3h8uozHp8t949MlFp8O0h4lJz5dIvFpxg9bjpDiCGmOUMcRMhyhniNkOULD/OyIYQXx6TIeny7j8emy2HdYFciwCvdWBWdYFciwon/YcoQUR0hzhDqOkOEI9RwhyxEa5mdHDCu40quMX+m16gFvWO0btyovoY7lLcNNuLWahK5JjwA6hlAbQiqEdAh1IWRCqA8hG0JDCJ1WkPf4t+I7d8l0lJeoQLG8/j3IdExCy5NVmOkYpcrDslfW9LtkOm6gU5zpuIFOcabjBjrFmY4b6BRnOm6gU5zpuIFOcabjBjrlmQ5s/oeZjtXUXrusat/YYYXFDoNMR8WJHVZI7JDxw5YjpDhCmiPUcYQMR6jnCFmO0DA/u+2NSAWxwyoeO6ziscNq39hhhcUOg0xHxYkdVkjskPHDliOkOEKaI9RxhAxHqOcIWY7QMD87YlhB7LCKxw6reOyw2jd2WKXIsAqCPBUndlghsUPGD1uOkOIIaY5QxxEyHKGeI2Q5QsP87IhhBbHDKh47rOKxw2rf2GGVIcMqOI1XnNhhhcQOGT9sOUKKI6Q5Qh1HyHCEeo6Q5QgN87MjhhXEDqt47LCKxw6rfWOHFRY7DI7jFSd2WCGxQ8YPW46Q4ghpjlDHETIcoZ4jZDlCw/zsiGEFscMqHjus4rHDat/YYYXFDsNFkBM7rJDYIeOHLUdIcYQ0R6jjCBmOUM8RshyhYX52xLCC2GEVjx2uesAbVvuWTFfYN+iDTEdF397/OAmthxX9w5YjpDhCmiPUcYQMR6jnCFmO0DA/O2JYwU3zVfym+VUPeMNq3wsoKuxr5+Heir444XESWg8r+octR0hxhDRHqOMIGY5QzxGyHKFhfnbEsIJLJ6r4JeZV/MaJat9SyqoZY/6LCHq4Bk5C10xHAB1DqA0hFUI6hLoQMiHUh5ANoSGETito/fjrrbDhXTId9SGMdAaZjkloO9MxSq0yHR79LpmOG+gUZzpuoFOc6biBTnGm4wY6xZmOG+gUZzpuoFOc6biBTnmmA5v/YaZjNbU9l7VvSLrGQtJBpqPmhKRrJCTN+GHLEVIcIc0R6jhChiPUc4QsR2iYn932RqSGkHQdD0nX8ZB0vW9IusZC0kGmo+aEpGskJM34YcsRUhwhzRHqOEKGI9RzhCxHaJifHTGsICRdx0PSdTwkXe8bkq6xkHSwwa05IekaCUkzfthyhBRHSHOEOo6Q4Qj1HCHLERrmZ0cMKwhJ1/GQdB0PSdf7hqRr7GPPwWm85oSkayQkzfhhyxFSHCHNEeo4QoYj1HOELEdomJ8dMawgJF3HQ9J1PCRd7xuSrrGQdJDpqDkh6RoJSTN+2HKEFEdIc4Q6jpDhCPUcIcsRGuZnRwwrCEnX8ZD0qge8YbVvSLrGQtLhIsgJSddISJrxw5YjpDhCmiPUcYQMR6jnCFmO0DA/O2JYQUi6joek63hIut43JF1jIekg01FzQtI1EpJm/LDlCCmOkOYIdRwhwxHqOUKWIzTMz44YVhCSruMh6Toekq73Lb6vsQ9rhnsrzqURNXJpBOOHLUdIcYQ0R6jjCBmOUM8RshyhYX52xLCCSyPq+KURqx5YD6tm3wrd5jDG/BcR9MBZzULXTEcAHUOoDSEVQjqEuhAyIdSHkA2hIYROK8h7/Fthw7tkOpokjHQGmY5JaDvTMUqtMh0e/S6ZjhvoFGc6bqBTnOm4gU5xpuMGOsWZjhvoFGc6bqBTnOm4gU55pgOb/2GmYzW1PZe1b0i6wULSQaaj4YSkGyQkzfhhyxFSHCHNEeo4QoYj1HOELEdomJ/d9kakgZB0Ew9JN/GQdLNvSLrBQtJBpqPhhKQbJCTN+GHLEVIcIc0R6jhChiPUc4QsR2iYnx0xrCAk3cRD0k08JN3sG5JusJB0EORpOCHpBglJM37YcoQUR0hzhDqOkOEI9RwhyxEa5mdHDCsISTfxkHQTD0k3+4akmwIZVsFpfJLaHlZISJrxw5YjpDhCmiPUcYQMR6jnCFmO0DA/O2JYQUi6iYekVz3gDat9Q9INFpIOMh0NJyTdICFpxg9bjpDiCGmOUMcRMhyhniNkOULD/OyIYQUh6SYekm7iIelm35B0g4Wkw0WQE5JukJA044ctR0hxhDRHqOMIGY5QzxGyHKFhfnbEsIKQdBMPSTfxkHSzb0i6wULSYfCQE5JukJA044ctR0hxhDRHqOMIGY5QzxGyHKFhfnbEsIKQdBMPSTcbIel9i++bBhlW4d6Kc49xg9xjzPhhyxFSHCHNEeo4QoYj1HOELEdomJ8dMazgHuMmfo/xqgdWwyo77Fqhe1b33st0+KPqKjRnOkLoGEJtCKkQ0iHUhZAJoT6EbAgNIXRaQd7j3wob3iPTcdboRzr9TMcstJnpmKSWmQ6ffo9Mxy10SjMdt9ApzXTcQqc003ELndJMxy10SjMdt9ApzXTcQqc404HO/yDTsZ7ansvaNSR9VhcEefxMxyy1tRGZhJYbEc4PW46Q4ghpjlDHETIcoZ4jZDlCw/zsNjciTuoV8MU2Iuse8IbVriHps7pgWPmZjllqe1iFIWnOD1uOkOIIaY5QxxEyHKGeI2Q5QsP87IhhlcOwioak1z3gDatdQ9JndcGw8oM8s9T2sApD0pwfthwhxRHSHKGOI2Q4Qj1HyHKEhvnZEcOqgGEVDUmve8AbVruGpM/qgmEVnpsYIelJaD2sGCFpjpDiCGmOUMcRMhyhniNkOULD/OyIYVXCsIqGpNc94A2rXUPSZ3VBkMfPdExSxLAKQ9KcH7YcIcUR0hyhjiNkOEI9R8hyhIb52RHDqoJhFQ1Jr3vAG1a7hqTP6oJhFS6CjJD0JLQeVoyQNEdIcYQ0R6jjCBmOUM8RshyhYX52xLCqYVhFQ9LrHvCG1a4h6bO6YFj5mY5JihhWYUia88OWI6Q4Qpoj1HGEDEeo5whZjtAwPztiWDUwrKIh6XUPrIdVsmvx/VldMKyCvVXCuB57EloNK8YPW46Q4ghpjlDHETIcoZ4jZDlCw/zstodVcngFfNFhteoBb1htxq2ah9sPrPFzVcs9++EQDKxJ6prsCKBjCLUhpEJIh1AXQiaE+hCyITSE0GkFeT2wb4gnuUQFVh+ITw5B6PAqtuiBADsiWItgCsE0gnUIZhCsRzCLYAOCndaY1xlbgZG7ZJ6Sy3EaPlM490eeB92BSCWHNHC1F7FVhio5ZGuxY0QsD/wvKlYEHhgRKwIPjAhddyleJ+wbRkiwMEI4IZCjcFKEix0iVqeHoAcQsSxcAMczcR7x/kb9Agz7FfB9dvjk8Ano/xT+61fZ4VP4qzlx9pCXi3+qoA8vmlaPIA368CJUYk5s3yN6UiFdFsSpE+SYiXUZItaUedBliBjSZRWnyyrosmrqsgq6rBq7bD7Klg95utllFafLqniX7Xv8TbAvywfH3wQ5wmFdhollSJ8hckif1Zw+q6HP6qnPauizeuyz+ZzYPByabPFP0Gc1p8/qeJ/te7ZMsM+2h4cA5HyE9RkiVpehZ0TEkC5rOF3WQJc1U5c10GXN2GXN1TNW2WaXNZwua6Jdlu57bkvHywnn7c4XIfQYQscQakNIhZBeQV7T962iSpOw6T70GELHEGpDSIWQXkFe03d98fGszm+6Dz2G0DGE2hBSIaRXkNf0fSsh0ixsug89htAxhNoQUiGkV5DX9M206h0O02mBHKaDVMUstXgePnQMoTaEVAjpEOpCyIRQH0I2hIYQOq0grwe2jg5p8lDdvgvGTXG26oNgY3MVW3RCgB0RrEUwhWAawToEMwjWI5hFsAHBTmvM64+tc8F9+qPC+iMIiF/FFv0RYEcEaxFMIZhGsA7BDIL1CGYRbECw0xrz+mNr03+f/qix/gg2kVexRX8E2BHBWgRTCKYRrEMwg2A9glkEGxDstMa8/tj8Tu9d+qNB+iMJArBXsUV/BNgRwVoEUwimEaxDMINgPYJZBBsQ7LTG1v2RbX5N4B79kR18A79AsEcEOyJYi2AKwTSCdQhmEKxHMItgA4Kd1pj38DcvOLrLw0+wyRDE/q5ii/4IsCOCtQimEEwjWIdgBsF6BLMINiDYaY15/bH5GsZd+iNFJkOAPSLYEcFaBFMIphGsQzCDYD2CWQQbEOy0xryHv3diLgvqwL9AsEcEOyJYi2AKwTSCdQhmEKxHMItgA4Kd1pj37DdTcvd49kGx9BcI9ohgRwRrEUwhmEawDsEMgvUIZhFsQLDTGvOe/d5n6KxAnn2APSLYEcFaBFMIphGsQzCDYD2CWQQbEOy0xrxnv5l4u8ezD8puv0CwRwQ7IliLYArBNIJ1CGYQrEcwi2ADgp3WmPfsNzNo93j2QW3qFwj2iGBHBGsRTCGYRrAOwQyC9QhmEWxAsNMa8579ZirsHs8+KOD8AsEeEeyIYC2CKQTTCNYhmEGwHsEsgg0Idlpjl2f/6fs/vnnz4fj6w+vf/PrHN+/+8ObxzQ8/vHfP7E8/wUPP648X+Efv3nznnlvy6pQAg4+nr04pgn+RvXrMMDx/9ZhjePHqscDw8tVjieHVq8cKw+tXjzWGN68eG8z+BBqGtewxcU1LsLY9Jpn7G6x1j0nu/gZr32NSuL/BWvh5Urm/QduSuMYkWGs+T1xzEqw9X6SHV4/pAf2bxP0N1tIv0tT9DdqLqevGFO3H1HVkivZk6royRfsydZ2Zor2Zuu5MsWfweeqeQYr2aOqeQYo+g8w9gwx9Bpl7Bhn6DDL3DDJ8JMNQRp9B5p5Bhj6DzD2DDH0GmXsGGfYMPs/cM8jQcZC5Z5ChzyBzzyBDn0HunkGOPoPcPYMcfQa5ewY5+gxy9wxyfD7DhEafQe6eQY6O+Nw9gxwdB7l7Bjn6DHL3DHL0GeTuGeToMyjcMyjQZ1C4Z1Cgz6Bwz6BAn0HhnkGBPoPCPYMCewafF+WrU4G2tHAtLdARX7iWFuisL1xLC7SlpWtpibX089K1p8Ta83np2lOi7Slde0q0PSW4Y3T0lq49JdpzpWtPibanclZXqNWV658K7Z/KtadC21M5qyvU6sqNxAqdjZVrT4W2p3JWV7jVrhcqtBdq154abU/trK5Rq2vXCzXaC7VrT422p3ZW16jVteuFGl8XYWFE29O4FbDBnnXbpK90g1lt3N+c0L/5f+2dy27bVhCGX0XwoqsAFqkrVVuAGvEewkAdNGvapGwiDMlQ9CXZ9QGyKtBVNy2KLropui2KPkyBoN71FTpzFEtKM0EHxQzahTcydX4d8nxDmvOTHB25zgD6UDwhKAmpuM4Q+lCkISgJqbjOCPpQ+zQEJSEV1xlDHypuISgJqbjOBPpQEQ1BSUjFdabQh4p1CEpCKq7jQB/qqApBSUjFtfr9mQ8vVC/UElpbWH00MH1qX4A2nMXwQmsj1GgXg18yhBdam6BGnu0s/LoPvNCag9pHfBvaM9KfgYZ8pEMDDU4G1kecGBgUsHw0AxoRi3QiCwvSMBhCepyYbi0y3y6sETKQ2QY0+Pe36KxijdFMjmkGPBFb5JkYnOYUrSbNgCcviz57WXiKsMhzBGgDtKJkrG04lhKbPpbsPppB+nix0RLbpCcGDW0f6X0XNhi/xCadH2hockmHt7CHOE7SxYA2Qo2MtY3p3Sbz+8KGtJfYdN6zIYWY39WmNAcZHJJh0If9gHM3URoe8wP6mB/gZcmAvC7BOpaZqeogtfHMlBiQ2mRmHneT2nRmHr2SmjMzjwEpDfffgN5/gwGyk94dn13MzA19UsO4kP4d7/3OzA1RUsO4kB4e753NzA0lUsO4kD4e7z3MzAU5aIdbcQ2X6nWVFV1RV2m5uQvSFdVFb/3SdFuCsYOPrD6/KvNe96rJjw/y26bN12vocNBr2qJui+6VKUVKz+rrfHGdt+lFbu6D5C+v0nK/4azuuvqFWWzy9jzHK35YbtPquVno8ltoOehlt6sww5b50QqGdFWmcxjIJ2X36XH/6PC+6ehwMy5coBj+Ac3log2U0VxxNI+LNlRG88TRfC7aSBnNF0cLuGhjZbRAHC3kok2U0UJxtIiLNlVGi8TRYi6ao4wWi6Mtx0MeGn6FVjmxDcUTG5fNUs9s0mwem03bkHjibD6bTduR+OJsAZtN25IE4mwhm03bk4TibBGbTduUROJsMZtN25XE4mzL8ZTJpm1LYCTi+Y3Lpu1LXHE2j8tma/sST5zNZ7Np+xJfnC1gs2n7kkCcLWSzafuSUJwtYrNp+5JInC1ms2n7klicbTmxmWzavgRGIp3f2GzavsQVZ/PYbNq+xBNn89ls2r7EF2cLuGwDbV8SiLOFbDZtXxKKs0VsNm1fEomzxWw2bV8Si7MtJ2Mmm7YvgZGI5zcum7YvccXZPDabti/xxNl8Npu2L/HF2QI2m7YvCcTZQjabti8JxdkiLttQ25dE4mwxm03bl8TibMspt0JBvbBkKl5YwmZTrywRZ/PYbOqlJeJsPptNvbZEnC1gs6kXl4izhWw29eoScbaIzaZeXiLOFrPZ1OtLxNmWU+azxZG2L4GRiOc3Lpt6fYk4m8dmU68vEWfz2Wzq9SXibAGbTb2+RJwtZLOp15eIs0VsNvX6EnG2mM2mXl8izracMp8tjtTrS6bi9SVsNvX6EnE2j8s21vYlnjibz2ZTry8RZwvYbOr1JeJsIZtNvb5EnC1is6nXl4izxWw29fqSf8OWpV36RVoW8Be07Qw0eM/1famXlmV981lpBvJuHqC8bev2tHtV5vhT9XVz0Kth0GlXt8cHZ3l3k+cQgfVlfbNs62ZZ3+xmEMJGF3snECjDvieEVXPVfSBswv0Evxj9Ls5lse52/NZ880v3v3/zVe8kfvTnr296b3/67e7nb99+//Wjux++/OO7X+5+fLP5zDZC1ra7Pd/FzYZ4vU///43G6CEae9EYP0RjLxqTh2jsRWP6EI29aDj/STT+1rCeH0GCrLqTZpN9LvM0g7S03o73oi2yJ0WVEy2neXc/99wlpNjXddWl5WNImHm7m3OuB6m1K84/FA5hyxCYJG0vCthwma8w0ZpJfdvNtHabN7A/jg+sXV6GRRxk3uIHRpY1tay+PRjbdh/vq6/quqOld9uDQV81vSaFHXxavM7N+tYwPFzqQ3pfFd3T+lmRdZdGMm/v59mD97iKk9ZsPYMD4ellXp0AIRwxbQGAJqawR9Mqg5U2gH9WpufPF1X27LLodkdB1qaIez+bX16Wj+sXL2AFEOaqrt6L6LIpsJ6tvwvlruW8bgrcNWZKgE1YPBOBXlasVhDuqvOKdr3b1Lb5JMvc692MgvOjOssCswI4RvaWYXGzxk3zdnl/Y/D2pm6fmxn15n8BUEsHCGUMnGY9bwAAazUEAFBLAQIUABQACAgIAMu7h1yyzuVs6QAAADYDAAAaAAAAAAAAAAAAAAAAAAAAAAB4bC9fcmVscy93b3JrYm9vay54bWwucmVsc1BLAQIUABQACAgIAMu7h1wztEbFswIAAGMFAAAPAAAAAAAAAAAAAAAAADEBAAB4bC93b3JrYm9vay54bWxQSwECFAAUAAgICADLu4dcO6HfCvQCAAACDQAAEwAAAAAAAAAAAAAAAAAhBAAAeGwvdGhlbWUvdGhlbWUxLnhtbFBLAQIUABQACAgIAMu7h1wYeVbcJgcAAHx4AAANAAAAAAAAAAAAAAAAAFYHAAB4bC9zdHlsZXMueG1sUEsBAhQAFAAICAgAy7uHXPJihVDYCgAA6lwAABQAAAAAAAAAAAAAAAAAtw4AAHhsL3NoYXJlZFN0cmluZ3MueG1sUEsBAhQAFAAICAgAy7uHXIWaNJruAAAAzgIAAAsAAAAAAAAAAAAAAAAA0RkAAF9yZWxzLy5yZWxzUEsBAhQAFAAICAgAy7uHXAGqEEFqAQAA4wIAABEAAAAAAAAAAAAAAAAA+BoAAGRvY1Byb3BzL2NvcmUueG1sUEsBAhQAFAAICAgAy7uHXF6WAY/7AAAAnAEAABAAAAAAAAAAAAAAAAAAoRwAAGRvY1Byb3BzL2FwcC54bWxQSwECFAAUAAgICADLu4dc4dYAgJcAAADxAAAAEwAAAAAAAAAAAAAAAADaHQAAZG9jUHJvcHMvY3VzdG9tLnhtbFBLAQIUABQACAgIAMu7h1y4kJ2ieQEAAM0GAAATAAAAAAAAAAAAAAAAALIeAABbQ29udGVudF9UeXBlc10ueG1sUEsBAhQAFAAICAgAy7uHXLfnkkhCRwAARLICABgAAAAAAAAAAAAAAAAAbCAAAHhsL3dvcmtzaGVldHMvc2hlZXQyLnhtbFBLAQIUABQACAgIAMu7h1xlDJxmPW8AAGs1BAAYAAAAAAAAAAAAAAAAAPRnAAB4bC93b3Jrc2hlZXRzL3NoZWV0MS54bWxQSwUGAAAAAAwADAAHAwAAd9cAAAAA";
+
+function b64ToUint8Array(b64){
+  const binary=atob(b64);const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);return bytes;
 }
-
-// ── Excelビルド ──
-function buildWorkbook(d){
-  const wb=XLSX.utils.book_new();
-  const isSimple=d.mode==='simple';
-  const sheetName=isSimple?'発注試算テンプレート（簡易）':'発注試算テンプレート';
-  const base=d.base_month||'2026-01';
-  const tobMonths=monthRange(base,d.tob_months);
-  const ecMonths=monthRange(base,d.ec_months);
-  const ovsMonths=monthRange(base,d.overseas_months);
-  const allM=[...new Set([...tobMonths,...ecMonths,...ovsMonths])].sort();
-
-  // 月名変換（例: 2026-03 → 3月）
-  const mLabel=m=>{const [,mo]=m.split('-');return parseInt(mo)+'月';};
-
-  const rows=[];
-  const push=r=>rows.push(r);
-
-  // SECTION A
-  push([`SECTION A　発注サマリー（承認者確認欄）${isSimple?'【簡易版】':''}`]);
-  push(['▼ 商品情報']);
-  push(['商品名',d.product]);
-  push(['ブランド',d.brand]);
-  push(['発注予定日',d.order_date]);
-  push(['リードタイム（週）',d.lead_time_weeks]);
-  push(['入庫予定日（目安）',d.arrival_date]);
-  push(['容器MOQ',d.container_moq]);
-  push(['バルクMOQ',d.bulk_moq]);
-  push([]);
-  push(['▼ 販路別発注期間設定']);
-  push(['販路','発注対象月数','備考']);
-  push(['toB（小売）',d.tob_months,'好調品4か月、通常3か月']);
-  push(['EC',d.ec_months,'好調品5〜6か月、通常4か月']);
-  push(['海外',d.overseas_months,'別途調整']);
-  push([]);
-  push(['▼ 販路×月サマリー（発注対象月数分のみ表示）']);
-  // ヘッダー行
-  push(['販路 / SKU','現在庫','',...tobMonths.map(mLabel),'合計']);
-
-  // toB
-  const tobTotals={};tobMonths.forEach(m=>tobTotals[m]=0);
-  push(['toB合計','',...tobMonths.map(m=>{const v=d.skus.reduce((a,s)=>a+(s.monthly_summary.tob[m]||0),0);tobTotals[m]+=v;return v;}),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.tob).reduce((x,y)=>x+y,0),0)]);
-  d.skus.forEach(s=>push([s.name,s.stock,...tobMonths.map(m=>s.monthly_summary.tob[m]||0),Object.values(s.monthly_summary.tob).reduce((a,b)=>a+b,0)]));
-  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,0,...tobMonths.map(()=>0),0]);
-  push([]);
-
-  // EC
-  push(['EC合計','',...ecMonths.map(m=>d.skus.reduce((a,s)=>a+(s.monthly_summary.ec[m]||0),0)),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.ec).reduce((x,y)=>x+y,0),0)]);
-  d.skus.forEach(s=>push([s.name,s.stock,...ecMonths.map(m=>s.monthly_summary.ec[m]||0),Object.values(s.monthly_summary.ec).reduce((a,b)=>a+b,0)]));
-  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,0,...ecMonths.map(()=>0),0]);
-  push([]);
-
-  // 海外
-  push(['海外合計','',...ovsMonths.map(m=>d.skus.reduce((a,s)=>a+(s.monthly_summary.overseas[m]||0),0)),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.overseas).reduce((x,y)=>x+y,0),0)]);
-  d.skus.forEach(s=>push([s.name,s.stock,...ovsMonths.map(m=>s.monthly_summary.overseas[m]||0),Object.values(s.monthly_summary.overseas).reduce((a,b)=>a+b,0)]));
-  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,0,...ovsMonths.map(()=>0),0]);
-  push([]);
-
-  // 確定発注数（全チャネル合計）
-  const maxM=Math.max(tobMonths.length,ecMonths.length,ovsMonths.length);
-  const unionMonths=[...new Set([...tobMonths,...ecMonths,...ovsMonths])].sort();
-  const tobEcAll=m=>(d.skus.reduce((a,s)=>a+(s.monthly_summary.tob[m]||0)+(s.monthly_summary.ec[m]||0)+(s.monthly_summary.overseas[m]||0),0));
-  push(['確定発注数（SKU合計）','',...unionMonths.map(tobEcAll),d.skus.reduce((a,s)=>a+s.estimated_total,0)]);
-  d.skus.forEach(s=>{
-    const total=m=>(s.monthly_summary.tob[m]||0)+(s.monthly_summary.ec[m]||0)+(s.monthly_summary.overseas[m]||0);
-    push([s.name,s.stock,...unionMonths.map(total),s.estimated_total]);
-  });
-  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,0,...unionMonths.map(()=>0),0]);
-  push([]);
-
-  // 在庫推移シミュレーション
-  push(['▼ 在庫推移シミュレーション（SKU別）']);
-  push(['SKU名','現在庫',...unionMonths.map(mLabel)]);
-  d.skus.forEach(s=>{
-    const total=m=>(s.monthly_summary.tob[m]||0)+(s.monthly_summary.ec[m]||0)+(s.monthly_summary.overseas[m]||0);
-    push([`出荷予測　${s.name}`,'',...unionMonths.map(total)]);
-    push(['  └入庫予定','',...unionMonths.map(()=>0)]);
-    let stock=s.stock;
-    const stockRow=[`月末在庫　${s.name}`,s.stock];
-    unionMonths.forEach(m=>{stock-=total(m);stockRow.push(stock);});
-    push(stockRow);
-    push([]);
-  });
-  push([]);
-
-  // SECTION B チェックリスト
-  push(['SECTION B　発注時チェックリスト']);
-  ['① 新色や追加SKUの発注に関しては前回発注の発注数と実際の出荷数の結果も考慮にいれているか',
-   '② 半年程度の商品の拡販スケジュールを認知した上で発注できているか（リピート発注：オフライン3〜4か月、EC6か月で試算）',
-   '③ 投票結果をもとに発注数量を変えている場合、色ごとの数量差を30%以内に抑えているか',
-   '④ 先行企業の初月のP/Sが4以下の場合は発注しない、もしくは発注数を5,000以下に抑える',
-   '⑤ 売れる見込みの高い商品（発売計画の赤字商品）、継続売上が期待できる商品は5か月分の在庫で発注',
-   '⑥ 新商品の検討の際は各SKU1万上限で検討（売れ行きの見込みある場合はその限りではない）',
-  ].forEach(c=>push([c,'','','','','','','','','','✓ OK']));
-  push([]);
-
-  // SECTION C toB小売ブロック（通常試算）
-  if(!isSimple&&d.retailers&&d.retailers.length){
-    push(['SECTION C　toB販路（小売ブロック×10、未使用は行を非表示に）']);
-    d.retailers.forEach(r=>{
-      push([`[RETAILER] ${r.name}`]);
-      push(['業態別POS傾斜',r.posTilt,'全店舗数',r.stores,'導入状況','導入済み']);
-      push(['月別傾斜','',...tobMonths.map(m=>r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7)]);
-      push(['商品名','P/S','初回納品数',...tobMonths.map(mLabel),'合計']);
-      d.skus.forEach(s=>{
-        const ps=r.skuPs[s.name]||0;
-        const vals=tobMonths.map(m=>Math.round(ps*r.posTilt*(r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7)*r.stores));
-        push([s.name,ps,0,...vals,vals.reduce((a,b)=>a+b,0)]);
-      });
-      push([]);
+function addMonths2(ym,n){
+  if(!ym) return '';const [y,m]=ym.split('-').map(Number);
+  const d=new Date(y,m-1+n,1);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+}
+async function buildWorkbook(d){
+  if(typeof ExcelJS==='undefined'){
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+      s.onload=res;s.onerror=rej;document.head.appendChild(s);
     });
   }
-
-  // 確定発注数サマリー
-  push(['▼ 確定発注数サマリー']);
-  push(['SKU名','JAN','現在庫','推計必要数','発注数（推計−現在庫）','確定発注数','備考']);
-  d.skus.forEach(s=>push([s.name,s.jan,s.stock,s.estimated_total,s.order_quantity,s.confirmed_order||'']));
-  for(let i=d.skus.length+1;i<=8;i++) push([`（SKU${i}）`,'',0,0,0,'']);
-  push([]);
-
-  // SECTION F 備考
-  push(['SECTION F　備考・メモ（JSON変換対象外）']);
-  push([d.memo||'']);
-  push(['担当部署',d.dept]);
-  push(['出力日時',new Date().toLocaleString('ja-JP')]);
-
-  const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:35},{wch:14},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:12},{wch:12}];
-  XLSX.utils.book_append_sheet(wb,ws,sheetName);
+  const wb=new ExcelJS.Workbook();
+  await wb.xlsx.load(b64ToUint8Array(TEMPLATE_B64));
+  const ws=wb.getWorksheet('発注試算テンプレート');
+  const set=(c,v)=>{try{ws.getCell(c).value=v;}catch(e){}};
+  const setN=(c,v)=>{try{ws.getCell(c).value=Number(v)||0;}catch(e){}};
+  const base=d.base_month||'2026-01';
+  const cols8=['D','E','F','G','H','I','J','K'];
+  // Section A
+  set('B3',d.product||'');set('B4',d.brand||'');set('B5',d.order_date||'');
+  setN('B6',d.lead_time_weeks||8);setN('B8',d.container_moq||0);setN('B9',d.bulk_moq||0);
+  setN('B13',d.tob_months||4);setN('B14',d.ec_months||5);setN('B15',d.overseas_months||3);
+  // SKU rows
+  const skuRows=[[20,29,38,47],[21,30,39,48],[22,31,40,49],[23,32,41,50],[24,33,42,51],[25,34,43,52],[26,35,44,53],[27,36,45,54]];
+  d.skus.forEach((s,i)=>{
+    if(i>=8) return;
+    skuRows[i].forEach(r=>{set('A'+r,s.name);setN('B'+r,s.stock||0);});
+    const pr=4+i;set('N'+pr,s.name);
+    if(s.posMonth) set('O'+pr,s.posMonth);
+    if(s.posPs!=null) setN('P'+pr,s.posPs);
+    if(s.posStores) setN('Q'+pr,s.posStores);
+  });
+  // Section C retailers
+  const rBases=[113,126,139,152,165,178,191,204,217,230];
+  (d.retailers||[]).forEach((r,ri)=>{
+    if(ri>=10) return;
+    const b=rBases[ri];
+    set('A'+b,'[RETAILER] '+r.name);setN('B'+(b+1),r.posTilt||1);setN('D'+(b+1),r.stores||0);
+    cols8.forEach((col,mi)=>{
+      const key=addMonths2(base,mi);
+      setN(col+(b+2),r.monthTilts&&r.monthTilts[key]!=null?r.monthTilts[key]:0.7);
+    });
+  });
+  // Section D EC①
+  d.skus.forEach((s,i)=>{
+    if(i>=8) return;const r=247+i;set('A'+r,s.name);
+    const ec1=s.ec1||s.monthly_summary?.ec||{};setN('B'+r,ec1['_recent']||0);
+    cols8.forEach((col,mi)=>{setN(col+r,ec1[addMonths2(base,mi)]||0);});
+  });
+  // Section D EC②
+  d.skus.forEach((s,i)=>{
+    if(i>=8) return;const r=258+i;set('A'+r,s.name);
+    const ec2=s.ec2||{};setN('B'+r,ec2['_recent']||0);
+    cols8.forEach((col,mi)=>{setN(col+r,ec2[addMonths2(base,mi)]||0);});
+  });
+  // Section D 海外①〜④
+  [270,281,292,303].forEach((ob,oi)=>{
+    d.skus.forEach((s,i)=>{
+      if(i>=8) return;const r=ob+i;set('A'+r,s.name);
+      const od=(s.ovs&&s.ovs[oi])||{};setN('B'+r,od['_recent']||0);
+      cols8.forEach((col,mi)=>{setN(col+r,od[addMonths2(base,mi)]||0);});
+    });
+  });
+  set('B326',d.memo||'');set('B327',d.dept||'');
+  set('B328',new Date().toLocaleString('ja-JP'));
   return wb;
 }
-
-function exportCalcDirect(){
+async function exportCalcDirect(){
   const d=collectCalcData();
   if(!d.product){showNotif('商品名を入力してください','error');return;}
-  const wb=buildWorkbook(d);
-  const fname=`発注試算_${d.brand||'brand'}_${d.product}_${d.order_date||'date'}.xlsx`;
-  XLSX.writeFile(wb,fname);
-  showNotif('Excelを出力しました','success');
+  showNotif('Excelを生成中...','success');
+  try{
+    const wb=await buildWorkbook(d);const buf=await wb.xlsx.writeBuffer();
+    const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');
+    a.href=url;a.download=`発注試算_${d.brand||'brand'}_${d.product}_${d.order_date||'date'}.xlsx`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    showNotif('テンプレートExcelを出力しました ✓','success');
+  }catch(e){console.error(e);showNotif('Excel出力エラー: '+e.message,'error');}
 }
 
 // ════════════════════════════════════════════
@@ -2137,26 +1546,30 @@ function toggleSelectAll(){
   updateDraftSelBtns();
 }
 
-function exportOneDraft(id){
-  const d=loadDrafts().find(x=>x.id===id);
-  if(!d) return;
-  const wb=buildWorkbook(d);
-  const fname=`発注試算_${d.brand||'brand'}_${d.product}_${d.dept}_${d.saved_at.slice(0,10)}.xlsx`;
-  XLSX.writeFile(wb,fname);
-  showNotif('Excel出力しました（仮保存は残しています）','success');
+async function exportOneDraft(id){
+  const d=loadDrafts().find(x=>x.id===id);if(!d) return;
+  try{const wb=await buildWorkbook(d);const buf=await wb.xlsx.writeBuffer();
+    const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');
+    a.href=url;a.download=`発注試算_${d.brand||'brand'}_${d.product}_${d.dept||''}_${(d.saved_at||'').slice(0,10)}.xlsx`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    showNotif('Excelを出力しました ✓','success');
+  }catch(e){showNotif('エラー: '+e.message,'error');}
 }
 
-function exportSelectedDrafts(){
+async function exportSelectedDrafts(){
   const ids=[...document.querySelectorAll('.draft-cb:checked')].map(c=>c.value);
   if(!ids.length){showNotif('選択してください','error');return;}
   const drafts=loadDrafts();
-  ids.forEach((id,i)=>{
-    const d=drafts.find(x=>x.id===id);if(!d) return;
-    setTimeout(()=>{
-      const wb=buildWorkbook(d);
-      XLSX.writeFile(wb,`発注試算_${d.brand||''}_${d.product}_${d.dept}_${d.saved_at.slice(0,10)}.xlsx`);
-    },i*300);
-  });
+  for(let i=0;i<ids.length;i++){
+    const d=drafts.find(x=>x.id===ids[i]);if(!d) continue;
+    try{const wb=await buildWorkbook(d);const buf=await wb.xlsx.writeBuffer();
+      const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      const url=URL.createObjectURL(blob);const a=document.createElement('a');
+      a.href=url;a.download=`発注試算_${d.brand||''}_${d.product}_${d.dept||''}_${(d.saved_at||'').slice(0,10)}.xlsx`;
+      document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    }catch(e){console.error(e);}
+  }
   showNotif(`${ids.length}件を出力しました`,'success');
 }
 
