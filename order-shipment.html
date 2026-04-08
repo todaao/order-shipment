@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>order-shipment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root {
+  --bg:#0e0f14;--surface:#161820;--surface2:#1e2028;--surface3:#252733;
+  --border:#2a2d3a;--border2:#353848;
+  --accent:#c8a96e;--accent2:#7eb8d4;--accent3:#e07b8a;--accent4:#7ed4a0;--accent5:#b49ee8;
+  --text:#e8e6e0;--text2:#9a9590;--text3:#5a5750;
+  --tob:#7eb8d4;--ec:#c8a96e;--overseas:#7ed4a0;
+  --font-body:'Noto Sans JP',sans-serif;--font-mono:'DM Mono',monospace;--font-display:'Playfair Display',serif;
+  --radius:6px;--radius2:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;line-height:1.6;}
+/* Header */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:200;}
+.logo{font-family:var(--font-display);font-size:20px;color:var(--accent);letter-spacing:.05em;}
+.logo span{font-family:var(--font-mono);font-size:10px;color:var(--text3);font-weight:400;display:block;letter-spacing:.15em;text-transform:uppercase;margin-top:-2px;}
+.header-right{display:flex;align-items:center;gap:16px;}
+.header-meta{font-family:var(--font-mono);font-size:11px;color:var(--text3);}
+/* Layout */
+.layout{display:flex;min-height:calc(100vh - 56px);}
+/* Sidebar */
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0;padding:20px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;}
+.nav-section{padding:0 16px;margin-bottom:24px;}
+.nav-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;padding:0 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius);cursor:pointer;color:var(--text2);font-size:13px;transition:all .15s;margin-bottom:2px;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(200,169,110,.12);color:var(--accent);}
+.nav-icon{width:16px;text-align:center;font-size:14px;flex-shrink:0;}
+/* Filters */
+.filter-section{padding:12px 16px;border-top:1px solid var(--border);margin-top:8px;}
+.filter-group{margin-bottom:12px;}
+.filter-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:block;}
+select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--radius);font-family:var(--font-body);font-size:12px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235a5750'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+select:focus{border-color:var(--accent);}
+/* Main */
+.main{flex:1;padding:24px;overflow-x:hidden;}
+.view{display:none;} .view.active{display:block;}
+.view-title{font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:4px;}
+.view-subtitle{font-size:12px;color:var(--text3);margin-bottom:20px;font-family:var(--font-mono);}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi-card.accent::before{background:var(--accent);}
+.kpi-card.blue::before{background:var(--accent2);}
+.kpi-card.red::before{background:var(--accent3);}
+.kpi-card.green::before{background:var(--accent4);}
+.kpi-card.purple::before{background:var(--accent5);}
+.kpi-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.kpi-value{font-family:var(--font-mono);font-size:24px;font-weight:500;color:var(--text);line-height:1;}
+.kpi-unit{font-size:11px;color:var(--text2);margin-top:4px;}
+/* Panel */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;}
+.panel-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.panel-title{font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:8px;}
+.panel-title-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+.panel-body{padding:18px;}
+/* Table */
+.sku-table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:8px 12px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;}
+th:first-child{text-align:left;}
+td{padding:9px 12px;text-align:right;border-bottom:1px solid rgba(42,45,58,.6);color:var(--text2);font-family:var(--font-mono);white-space:nowrap;}
+td:first-child{text-align:left;color:var(--text);font-family:var(--font-body);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.num-pos{color:var(--accent4);} .num-warn{color:var(--accent3);} .num-accent{color:var(--accent);} .num-blue{color:var(--accent2);}
+/* Tabs */
+.tab-bar{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:0;}
+.tab-btn{padding:8px 16px;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:var(--font-body);font-size:13px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+/* Heatmap */
+.heatmap-table th{padding:8px 6px;font-size:9px;min-width:60px;}
+.heatmap-table td{padding:7px 6px;font-size:11px;min-width:60px;}
+.heat-cell{border-radius:3px;padding:4px 6px;text-align:center;font-family:var(--font-mono);font-size:11px;display:inline-block;width:100%;box-sizing:border-box;}
+/* Chart */
+.chart-wrap{position:relative;height:260px;}
+/* Drilldown */
+.drilldown-toggle{font-family:var(--font-mono);font-size:10px;color:var(--accent2);cursor:pointer;border:1px solid var(--border);background:transparent;padding:4px 10px;border-radius:var(--radius);transition:all .15s;}
+.drilldown-toggle:hover{background:var(--surface2);}
+.drilldown-section{display:none;margin-top:12px;padding:12px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);}
+.drilldown-section.open{display:block;}
+/* Badge */
+.badge{font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:3px;letter-spacing:.05em;}
+.badge-accent{background:rgba(200,169,110,.15);color:var(--accent);border:1px solid rgba(200,169,110,.3);}
+.badge-blue{background:rgba(126,184,212,.15);color:var(--accent2);border:1px solid rgba(126,184,212,.3);}
+.badge-green{background:rgba(126,212,160,.15);color:var(--accent4);border:1px solid rgba(126,212,160,.3);}
+.badge-purple{background:rgba(180,158,232,.15);color:var(--accent5);border:1px solid rgba(180,158,232,.3);}
+/* Compare bars */
+.compare-bar-wrap{display:flex;flex-direction:column;gap:8px;}
+.compare-row{display:flex;flex-direction:column;gap:4px;}
+.compare-label{font-size:11px;color:var(--text2);display:flex;justify-content:space-between;}
+.compare-bars{display:flex;gap:4px;align-items:center;height:20px;}
+.bar-track{flex:1;background:var(--surface2);border-radius:2px;height:8px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:2px;transition:width .4s ease;}
+/* Misc */
+.meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px;}
+.meta-key{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:2px;}
+.meta-val{font-family:var(--font-mono);font-size:12px;color:var(--text2);}
+.channel-months{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;}
+.channel-pill{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);}
+.channel-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.channel-val{font-family:var(--font-mono);font-size:16px;font-weight:500;color:var(--text);margin-left:4px;}
+.channel-unit{font-size:10px;color:var(--text3);}
+.retailer-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.retailer-tag{font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:3px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text3);}
+/* ─── 発注試算ツール ─── */
+.calc-container{max-width:900px;}
+.step-indicator{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap;gap:6px;}
+.step{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;font-size:12px;color:var(--text3);border:1px solid var(--border);transition:all .2s;}
+.step.active{background:rgba(200,169,110,.15);color:var(--accent);border-color:rgba(200,169,110,.4);}
+.step.done{background:rgba(126,212,160,.1);color:var(--accent4);border-color:rgba(126,212,160,.3);}
+.step-num{font-family:var(--font-mono);font-size:10px;font-weight:500;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);}
+.form-label .req{color:var(--accent3);}
+input[type=text],input[type=number],input[type=date]{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:var(--radius);font-family:var(--font-body);font-size:12px;width:100%;outline:none;transition:border .15s;}
+input:focus{border-color:var(--accent);}
+input:read-only{color:var(--text3);background:var(--surface);}
+.btn{padding:8px 18px;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500;}
+.btn-primary{background:var(--accent);color:#1a1208;}
+.btn-primary:hover{background:#d4b87a;}
+.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-secondary:hover{background:var(--surface2);color:var(--text);}
+.btn-green{background:var(--accent4);color:#0a1f14;}
+.btn-green:hover{background:#8ee8b0;}
+.btn-blue{background:var(--accent2);color:#0a1a24;}
+.btn-blue:hover{background:#8ec4db;}
+.btn-danger{background:rgba(224,123,138,.2);color:var(--accent3);border:1px solid rgba(224,123,138,.3);}
+.btn-danger:hover{background:rgba(224,123,138,.3);}
+.btn-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.mode-selector{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.mode-card{padding:18px;border:2px solid var(--border);border-radius:var(--radius2);cursor:pointer;transition:all .2s;}
+.mode-card:hover{border-color:var(--border2);}
+.mode-card.selected{border-color:var(--accent);background:rgba(200,169,110,.08);}
+.mode-card h3{font-size:14px;font-weight:500;margin-bottom:4px;}
+.mode-card p{font-size:11px;color:var(--text3);line-height:1.5;}
+.mode-badge{display:inline-block;font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;margin-bottom:8px;}
+.sku-block{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+.sku-block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.sku-name-display{font-size:13px;font-weight:500;color:var(--text);}
+.monthly-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:8px;}
+.monthly-input-wrap{display:flex;flex-direction:column;gap:3px;}
+.monthly-label{font-family:var(--font-mono);font-size:9px;color:var(--text3);text-align:center;}
+.monthly-input{text-align:right;}
+.retailer-block{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px;}
+.retailer-block-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.pos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:10px;padding:10px;background:rgba(255,255,255,.02);border-radius:var(--radius);}
+.section-divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.channel-section{margin-bottom:20px;}
+.channel-section-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.channel-label-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.channel-section-title{font-size:13px;font-weight:500;}
+/* 発注試算プレビュー */
+.calc-preview{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:16px;}
+.calc-preview-title{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;}
+.preview-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(42,45,58,.4);}
+.preview-row:last-child{border-bottom:none;padding-top:8px;font-weight:500;}
+.preview-key{font-size:12px;color:var(--text2);}
+.preview-val{font-family:var(--font-mono);font-size:12px;color:var(--text);}
+/* 仮保存 */
+.draft-list{display:flex;flex-direction:column;gap:10px;}
+.draft-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.draft-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap;}
+.draft-title{font-size:13px;font-weight:500;color:var(--text);}
+.draft-meta{font-family:var(--font-mono);font-size:10px;color:var(--text3);}
+.dept-tag{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:3px;background:rgba(180,158,232,.15);color:var(--accent5);border:1px solid rgba(180,158,232,.3);}
+.draft-status{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.status-waiting{background:var(--accent3);}
+.status-done{background:var(--accent4);}
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius2);padding:24px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;}
+.modal h2{font-size:16px;font-weight:500;margin-bottom:16px;color:var(--text);}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+/* Notification */
+.notification{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 18px;font-size:12px;color:var(--text);z-index:600;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:320px;}
+.notification.show{opacity:1;transform:translateY(0);}
+.notification.success{border-left:3px solid var(--accent4);}
+.notification.error{border-left:3px solid var(--accent3);}
+/* Mobile */
+.mobile-nav{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 16px;gap:6px;overflow-x:auto;}
+.mobile-nav-btn{padding:6px 14px;border:1px solid var(--border);background:transparent;color:var(--text2);border-radius:20px;font-size:12px;font-family:var(--font-body);cursor:pointer;white-space:nowrap;}
+.mobile-nav-btn.active{background:rgba(200,169,110,.15);color:var(--accent);border-color:rgba(200,169,110,.4);}
+@media(max-width:768px){.sidebar{display:none;}.layout{flex-direction:column;}.main{padding:16px;}.kpi-row{grid-template-columns:repeat(2,1fr);}.chart-wrap{height:200px;}.mobile-nav{display:flex;}.form-grid{grid-template-columns:1fr;}.mode-selector{grid-template-columns:1fr;}}
+::-webkit-scrollbar{width:5px;height:5px;} ::-webkit-scrollbar-track{background:var(--bg);} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.row-total-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">order-shipment <span>発注試算・出荷実績 Analytics</span></div>
+  <div class="header-right">
+    <div class="header-meta" id="headerDate"></div>
+  </div>
+</header>
+
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-btn active" onclick="showView('summary',this)">① 発注サマリー</button>
+  <button class="mobile-nav-btn" onclick="showView('monthly',this)">② 月別試算</button>
+  <button class="mobile-nav-btn" onclick="showView('shipments',this)">③ 出荷実績</button>
+  <button class="mobile-nav-btn" onclick="showView('inventory',this)">④ 在庫推移</button>
+  <button class="mobile-nav-btn" onclick="showView('calc',this)">⑤ 発注試算</button>
+  <button class="mobile-nav-btn" onclick="showView('drafts',this)">⑥ 仮保存</button>
+</div>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="nav-section">
+    <div class="nav-label">Views</div>
+    <div class="nav-item active" onclick="showView('summary',this)"><span class="nav-icon">📋</span> 発注サマリー</div>
+    <div class="nav-item" onclick="showView('monthly',this)"><span class="nav-icon">📅</span> 月別試算</div>
+    <div class="nav-item" onclick="showView('shipments',this)"><span class="nav-icon">📦</span> 出荷実績</div>
+    <div class="nav-item" onclick="showView('inventory',this)"><span class="nav-icon">📊</span> 在庫推移</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Tools</div>
+    <div class="nav-item" onclick="showView('calc',this)"><span class="nav-icon">🧮</span> 発注試算ツール</div>
+    <div class="nav-item" onclick="showView('drafts',this)"><span class="nav-icon">💾</span> 仮保存・出力 <span id="draftBadge" style="display:none;background:var(--accent3);color:#fff;font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:8px;margin-left:auto"></span></div>
+  </div>
+  <div class="filter-section">
+    <div class="nav-label">Filters</div>
+    <div class="filter-group"><label class="filter-label">ブランド</label>
+      <select id="filterBrand" onchange="applyFilters()"><option value="all">すべて</option><option value="MilleFee">MilleFee</option></select></div>
+    <div class="filter-group"><label class="filter-label">商品</label>
+      <select id="filterProduct" onchange="applyFilters()"><option value="all">すべて</option><option value="シェイクドロップチーク">シェイクドロップチーク</option></select></div>
+    <div class="filter-group"><label class="filter-label">SKU</label>
+      <select id="filterSku" onchange="applyFilters()"><option value="all">すべて</option><option value="01">SKU 01</option><option value="02">SKU 02</option><option value="03">SKU 03</option><option value="04">SKU 04</option></select></div>
+    <div class="filter-group"><label class="filter-label">期間（開始月）</label>
+      <select id="filterPeriodStart" onchange="applyFilters()"><option value="all">すべて</option><option value="2026-01">2026-01</option><option value="2026-02">2026-02</option><option value="2026-03">2026-03</option><option value="2026-04">2026-04</option><option value="2026-05">2026-05</option></select></div>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- ① 発注サマリー -->
+<div class="view active" id="view-summary">
+  <div class="view-title">発注サマリー</div>
+  <div class="view-subtitle">ORDER SUMMARY — MilleFee / シェイクドロップチーク</div>
+  <div class="kpi-row" id="summaryKpis"></div>
+  <div id="orderCards"></div>
+</div>
+
+<!-- ② 月別試算 -->
+<div class="view" id="view-monthly">
+  <div class="view-title">月別試算</div>
+  <div class="view-subtitle">MONTHLY FORECAST — SKU × 月別チャネル試算</div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchChannel('tob',this)">toB</button>
+    <button class="tab-btn" onclick="switchChannel('ec',this)">EC</button>
+    <button class="tab-btn" onclick="switchChannel('overseas',this)">海外</button>
+    <button class="tab-btn" onclick="switchChannel('all',this)">全チャネル合計</button>
+  </div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title"><span class="panel-title-dot"></span>SKU × 月別ヒートマップ</div>
+      <button class="drilldown-toggle" onclick="toggleDrilldown()">小売別 ▾</button>
+    </div>
+    <div class="panel-body">
+      <div class="heatmap-wrap" id="heatmapWrap" style="overflow-x:auto"></div>
+      <div class="drilldown-section" id="drilldownSection">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:var(--font-mono);letter-spacing:.08em">RETAILER DRILLDOWN — toB チャネル</div>
+        <div style="overflow-x:auto" id="retailerDrilldown"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 出荷実績 -->
+<div class="view" id="view-shipments">
+  <div class="view-title">出荷実績</div>
+  <div class="view-subtitle">SHIPMENT ACTUALS — 月別・チャネル別</div>
+  <div class="kpi-row" id="shipmentKpis"></div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--accent2)"></span>月別出荷数量（チャネル別積み上げ）</div></div>
+    <div class="panel-body"><div class="chart-wrap"><canvas id="chartShipBar"></canvas></div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--accent3)"></span>試算 vs 実績（SKU別）</div></div>
+    <div class="panel-body" id="comparePanel"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--accent4)"></span>出荷実績テーブル（チャネル・月別）</div></div>
+    <div class="panel-body">
+      <p style="font-size:11px;color:var(--text3);margin-bottom:12px;font-family:var(--font-mono)">※ shipments.json には小売先情報が含まれないため、チャネル・SKU・月の集計表示のみ</p>
+      <div class="sku-table-wrap"><table id="shipTable"></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ 在庫推移 -->
+<div class="view" id="view-inventory">
+  <div class="view-title">在庫推移</div>
+  <div class="view-subtitle">INVENTORY TIMELINE — SKU別スナップショット + 入庫予定</div>
+  <div class="kpi-row" id="inventoryKpis"></div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--accent4)"></span>在庫推移グラフ</div></div>
+    <div class="panel-body"><div class="chart-wrap" style="height:300px"><canvas id="chartInventory"></canvas></div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>在庫スナップショット一覧</div></div>
+    <div class="panel-body"><div class="sku-table-wrap"><table id="inventoryTable"></table></div></div>
+  </div>
+</div>
+
+<!-- ⑤ 発注試算ツール -->
+<div class="view" id="view-calc">
+  <div class="view-title">発注試算ツール</div>
+  <div class="view-subtitle">ORDER CALCULATION — 通常試算 / 簡易試算</div>
+  <div class="calc-container">
+
+    <!-- STEP 0: モード選択 -->
+    <div id="calcStep0">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>試算モードを選択</div></div>
+        <div class="panel-body">
+          <div class="mode-selector">
+            <div class="mode-card" id="modeNormal" onclick="selectMode('normal')">
+              <div class="mode-badge badge badge-accent">通常試算</div>
+              <h3>通常試算テンプレート</h3>
+              <p>POSデータ（P/S × 店舗数 × 業態傾斜）から月別数量を自動計算。小売先ブロック最大10件。在庫推移シミュレーション付き。</p>
+            </div>
+            <div class="mode-card" id="modeSimple" onclick="selectMode('simple')">
+              <div class="mode-badge badge badge-blue">簡易試算</div>
+              <h3>簡易試算テンプレート</h3>
+              <p>月別数量を直接手入力するだけ。POS計算不要。素早く試算したいときに。</p>
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <label class="filter-label" style="display:block;margin-bottom:6px">商品種別</label>
+            <div style="display:flex;gap:10px">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
+                <input type="radio" name="itemType" value="existing" checked onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 既存品（在庫データから取得）
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
+                <input type="radio" name="itemType" value="new" onchange="onItemTypeChange()" style="accent-color:var(--accent);width:auto"> 新規品（手入力）
+              </label>
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:20px">
+            <button class="btn btn-primary" onclick="startCalc()">試算を開始 →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1: 商品情報 -->
+    <div id="calcStep1" style="display:none">
+      <div class="step-indicator">
+        <div class="step done" id="stepInd0"><span class="step-num">①</span> モード選択</div>
+        <div class="step active" id="stepInd1"><span class="step-num">②</span> 商品情報</div>
+        <div class="step" id="stepInd2"><span class="step-num">③</span> 販路設定</div>
+        <div class="step" id="stepInd3"><span class="step-num">④</span> 数量入力</div>
+        <div class="step" id="stepInd4"><span class="step-num">⑤</span> 確定・保存</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot"></span>SECTION A — 商品情報</div>
+          <span id="calcModeBadge" class="badge badge-accent">通常試算</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">商品名 <span class="req">*</span></label>
+              <input type="text" id="ci_product" placeholder="例：シェイクドロップチーク">
+            </div>
+            <div class="form-group">
+              <label class="form-label">ブランド <span class="req">*</span></label>
+              <input type="text" id="ci_brand" placeholder="例：MilleFee">
+            </div>
+            <div class="form-group">
+              <label class="form-label">発注予定日</label>
+              <input type="date" id="ci_orderDate">
+            </div>
+            <div class="form-group">
+              <label class="form-label">リードタイム（週）</label>
+              <input type="number" id="ci_leadtime" value="8" min="1" onchange="calcArrival()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">入庫予定日（自動）</label>
+              <input type="text" id="ci_arrivalDate" readonly>
+            </div>
+            <div class="form-group">
+              <label class="form-label">容器MOQ</label>
+              <input type="number" id="ci_containerMoq" value="10000" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">バルクMOQ</label>
+              <input type="number" id="ci_bulkMoq" value="5000" min="0">
+            </div>
+          </div>
+
+          <!-- SKU設定 -->
+          <div style="margin-bottom:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div class="nav-label" style="margin:0">SKU 設定</div>
+              <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="addSku()">+ SKU追加</button>
+            </div>
+            <div id="skuInputList"></div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="goStep(0)">← 戻る</button>
+            <button class="btn btn-primary" onclick="goStep(2)">次へ →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: 販路設定 -->
+    <div id="calcStep2" style="display:none">
+      <div class="step-indicator">
+        <div class="step done"><span class="step-num">①</span> モード選択</div>
+        <div class="step done"><span class="step-num">②</span> 商品情報</div>
+        <div class="step active"><span class="step-num">③</span> 販路設定</div>
+        <div class="step"><span class="step-num">④</span> 数量入力</div>
+        <div class="step"><span class="step-num">⑤</span> 確定・保存</div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>販路別発注期間設定</div></div>
+        <div class="panel-body">
+          <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+            <div class="form-group">
+              <label class="form-label">基準開始月</label>
+              <input type="text" id="ci_baseMonth" placeholder="例：2026-03">
+            </div>
+            <div class="form-group">
+              <label class="form-label">toB 発注対象月数</label>
+              <input type="number" id="ci_tobMonths" value="4" min="1" max="12">
+            </div>
+            <div class="form-group">
+              <label class="form-label">EC 発注対象月数</label>
+              <input type="number" id="ci_ecMonths" value="5" min="1" max="12">
+            </div>
+            <div class="form-group">
+              <label class="form-label">海外 発注対象月数</label>
+              <input type="number" id="ci_overseasMonths" value="3" min="1" max="12">
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="goStep(1)">← 戻る</button>
+            <button class="btn btn-primary" onclick="goStep(3)">次へ →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: 数量入力 -->
+    <div id="calcStep3" style="display:none">
+      <div class="step-indicator">
+        <div class="step done"><span class="step-num">①</span> モード選択</div>
+        <div class="step done"><span class="step-num">②</span> 商品情報</div>
+        <div class="step done"><span class="step-num">③</span> 販路設定</div>
+        <div class="step active"><span class="step-num">④</span> 数量入力</div>
+        <div class="step"><span class="step-num">⑤</span> 確定・保存</div>
+      </div>
+      <div id="quantityInputArea"></div>
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn btn-secondary" onclick="goStep(2)">← 戻る</button>
+        <button class="btn btn-primary" onclick="goStep(4)">次へ →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: 確定・保存 -->
+    <div id="calcStep4" style="display:none">
+      <div class="step-indicator">
+        <div class="step done"><span class="step-num">①</span> モード選択</div>
+        <div class="step done"><span class="step-num">②</span> 商品情報</div>
+        <div class="step done"><span class="step-num">③</span> 販路設定</div>
+        <div class="step done"><span class="step-num">④</span> 数量入力</div>
+        <div class="step active"><span class="step-num">⑤</span> 確定・保存</div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title"><span class="panel-title-dot"></span>試算プレビュー</div></div>
+        <div class="panel-body">
+          <div id="calcPreviewContent"></div>
+          <hr class="section-divider">
+          <div class="form-group" style="max-width:260px;margin-bottom:16px">
+            <label class="form-label">担当部署名 <span class="req">*</span></label>
+            <input type="text" id="ci_dept" placeholder="例：MD部、EC事業部">
+          </div>
+          <div class="form-group" style="max-width:400px;margin-bottom:16px">
+            <label class="form-label">備考・メモ</label>
+            <input type="text" id="ci_memo" placeholder="任意">
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="goStep(3)">← 戻る</button>
+            <button class="btn btn-green" onclick="saveDraft()">💾 仮保存する</button>
+            <button class="btn btn-blue" onclick="exportCalcDirect()">📥 Excelで出力</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ 仮保存・出力 -->
+<div class="view" id="view-drafts">
+  <div class="view-title">仮保存・出力</div>
+  <div class="view-subtitle">DRAFTS & EXPORT — 部署別入力管理・Excel出力</div>
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent5)"></span>仮保存リスト</div>
+      <div class="btn-row">
+        <button class="btn btn-green" onclick="exportAllDrafts()" id="exportAllBtn" style="display:none">📥 全件 Excel 出力 → 削除</button>
+        <button class="btn btn-secondary" style="font-size:11px" onclick="clearAllDrafts()">🗑 全件削除</button>
+      </div>
+    </div>
+    <div class="panel-body" id="draftListBody">
+      <div style="color:var(--text3);font-size:12px;text-align:center;padding:24px">仮保存データがありません</div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- Modal: 確認 -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h2 id="confirmModalTitle">確認</h2>
+    <p id="confirmModalMsg" style="font-size:13px;color:var(--text2);line-height:1.7"></p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+      <button class="btn btn-danger" id="confirmModalBtn" onclick="">実行</button>
+    </div>
+  </div>
+</div>
+
+<div class="notification" id="notification"></div>
+
+<script>
+// ════════════════════════════════════════════
+//  INLINE DATA
+// ════════════════════════════════════════════
+const DATA = {
+  orders: { orders: [{
+    order_id:"20260303_シェイクドロップチーク", product:"シェイクドロップチーク", brand:"MilleFee",
+    order_date:"2026-03-03", arrival_date:"2026-04-28", lead_time_weeks:8,
+    container_moq:10000, bulk_moq:5000, tob_months:4, ec_months:5, overseas_months:3,
+    skus:[
+      {sku_name:"シェイクドロップチーク01",jan:"4571501000001",current_stock:5711,estimated_total:14156,order_quantity:8445,confirmed_order:14200,
+       monthly_summary:{tob:{"2026-03":2564,"2026-04":1796,"2026-05":1580,"2026-06":1420},ec:{"2026-03":2000,"2026-04":900,"2026-05":1100,"2026-06":800},overseas:{"2026-03":0,"2026-04":400,"2026-05":600,"2026-06":500}}},
+      {sku_name:"シェイクドロップチーク02",jan:"4571501000002",current_stock:4280,estimated_total:12800,order_quantity:8520,confirmed_order:12000,
+       monthly_summary:{tob:{"2026-03":2100,"2026-04":1650,"2026-05":1400,"2026-06":1200},ec:{"2026-03":1700,"2026-04":800,"2026-05":900,"2026-06":700},overseas:{"2026-03":0,"2026-04":300,"2026-05":500,"2026-06":400}}},
+      {sku_name:"シェイクドロップチーク03",jan:"4571501000003",current_stock:3890,estimated_total:11200,order_quantity:7310,confirmed_order:10500,
+       monthly_summary:{tob:{"2026-03":1850,"2026-04":1400,"2026-05":1200,"2026-06":1050},ec:{"2026-03":1500,"2026-04":700,"2026-05":800,"2026-06":600},overseas:{"2026-03":0,"2026-04":250,"2026-05":420,"2026-06":330}}},
+      {sku_name:"シェイクドロップチーク04",jan:"4571501000004",current_stock:6120,estimated_total:15400,order_quantity:9280,confirmed_order:15000,
+       monthly_summary:{tob:{"2026-03":2800,"2026-04":2100,"2026-05":1900,"2026-06":1650},ec:{"2026-03":2200,"2026-04":1000,"2026-05":1300,"2026-06":950},overseas:{"2026-03":0,"2026-04":500,"2026-05":750,"2026-06":620}}}
+    ],
+    retailer_blocks:[
+      {retailer:"ロフト",skus:{"シェイクドロップチーク01":{"2026-03":574,"2026-04":574,"2026-05":500,"2026-06":450},"シェイクドロップチーク02":{"2026-03":480,"2026-04":480,"2026-05":430,"2026-06":380},"シェイクドロップチーク03":{"2026-03":420,"2026-04":420,"2026-05":370,"2026-06":320},"シェイクドロップチーク04":{"2026-03":650,"2026-04":650,"2026-05":580,"2026-06":520}}},
+      {retailer:"プラザ",skus:{"シェイクドロップチーク01":{"2026-03":380,"2026-04":380,"2026-05":340,"2026-06":300},"シェイクドロップチーク02":{"2026-03":320,"2026-04":320,"2026-05":290,"2026-06":260},"シェイクドロップチーク03":{"2026-03":280,"2026-04":280,"2026-05":250,"2026-06":220},"シェイクドロップチーク04":{"2026-03":430,"2026-04":430,"2026-05":390,"2026-06":350}}},
+      {retailer:"東急ハンズ",skus:{"シェイクドロップチーク01":{"2026-03":450,"2026-04":450,"2026-05":400,"2026-06":360},"シェイクドロップチーク02":{"2026-03":380,"2026-04":380,"2026-05":340,"2026-06":300},"シェイクドロップチーク03":{"2026-03":330,"2026-04":330,"2026-05":295,"2026-06":260},"シェイクドロップチーク04":{"2026-03":520,"2026-04":520,"2026-05":465,"2026-06":415}}},
+      {retailer:"コスメキッチン",skus:{"シェイクドロップチーク01":{"2026-03":260,"2026-04":260,"2026-05":235,"2026-06":210},"シェイクドロップチーク02":{"2026-03":220,"2026-04":220,"2026-05":200,"2026-06":178},"シェイクドロップチーク03":{"2026-03":190,"2026-04":190,"2026-05":172,"2026-06":152},"シェイクドロップチーク04":{"2026-03":300,"2026-04":300,"2026-05":270,"2026-06":242}}}
+    ]
+  }]},
+  shipments: { shipments:[
+    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"toB",quantity:960},
+    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"EC",quantity:1850},
+    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"toB",quantity:820},
+    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"EC",quantity:1530},
+    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"toB",quantity:755},
+    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"EC",quantity:1380},
+    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"toB",quantity:1010},
+    {month:"2026-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"EC",quantity:2100},
+    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"toB",quantity:1280},
+    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"EC",quantity:1960},
+    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"海外",quantity:280},
+    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"toB",quantity:1120},
+    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"EC",quantity:1620},
+    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"toB",quantity:950},
+    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"EC",quantity:1450},
+    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"toB",quantity:1500},
+    {month:"2026-02",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"EC",quantity:2250},
+    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"toB",quantity:1634},
+    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",channel:"EC",quantity:2100},
+    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"toB",quantity:1300},
+    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",channel:"EC",quantity:1820},
+    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"toB",quantity:1140},
+    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",channel:"EC",quantity:1580},
+    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"toB",quantity:1820},
+    {month:"2026-03",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",channel:"EC",quantity:2300}
+  ]},
+  inventory: { snapshots:[
+    {snapshot_date:"2026-01-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:8200},
+    {snapshot_date:"2026-01-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:6900},
+    {snapshot_date:"2026-01-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:6100},
+    {snapshot_date:"2026-01-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:9400},
+    {snapshot_date:"2026-02-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:7100},
+    {snapshot_date:"2026-02-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:5800},
+    {snapshot_date:"2026-02-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:5100},
+    {snapshot_date:"2026-02-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:8200},
+    {snapshot_date:"2026-03-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:5711},
+    {snapshot_date:"2026-03-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:4280},
+    {snapshot_date:"2026-03-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:3890},
+    {snapshot_date:"2026-03-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:6120},
+    {snapshot_date:"2026-04-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:3200},
+    {snapshot_date:"2026-04-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:2600},
+    {snapshot_date:"2026-04-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:2180},
+    {snapshot_date:"2026-04-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:3900},
+    {snapshot_date:"2026-05-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク01",jan:"4571501000001",quantity:14600},
+    {snapshot_date:"2026-05-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク02",jan:"4571501000002",quantity:12200},
+    {snapshot_date:"2026-05-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク03",jan:"4571501000003",quantity:10700},
+    {snapshot_date:"2026-05-01",brand:"MilleFee",product:"シェイクドロップチーク",sku_name:"シェイクドロップチーク04",jan:"4571501000004",quantity:15500}
+  ]}
+};
+
+// ════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════
+let currentChannel = 'tob';
+let chartShipBar = null, chartInventory = null;
+let filters = {brand:'all',product:'all',sku:'all',periodStart:'all'};
+let calcMode = 'normal'; // normal | simple
+let itemType = 'existing'; // existing | new
+let calcSkus = []; // [{name,jan,stock}]
+// retailer blocks for normal mode
+let calcRetailers = []; // [{name,posTilt,stores,monthTilts:{m:v},skuPs:{name:ps},skuInitial:{name:qty}}]
+let calcEcMonthly = {}; // {skuName:{month:qty}}
+let calcOverseasMonthly = {}; // same
+let calcSimpleMonthly = {}; // for simple mode: {ch:{skuName:{month:qty}}}
+
+function fmt(n){return (n||0).toLocaleString();}
+function round1(n){return Math.round(n*10)/10;}
+
+// ════════════════════════════════════════════
+//  NAV
+// ════════════════════════════════════════════
+function showView(id, el) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item,.mobile-nav-btn').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='shipments') renderShipments();
+  if(id==='inventory') renderInventory();
+  if(id==='monthly') renderHeatmap();
+  if(id==='drafts') renderDraftList();
+}
+function applyFilters(){
+  filters.brand=document.getElementById('filterBrand').value;
+  filters.product=document.getElementById('filterProduct').value;
+  filters.sku=document.getElementById('filterSku').value;
+  filters.periodStart=document.getElementById('filterPeriodStart').value;
+  const a=document.querySelector('.view.active');
+  if(!a) return;
+  const id=a.id.replace('view-','');
+  if(id==='summary') renderSummary();
+  if(id==='monthly') renderHeatmap();
+  if(id==='shipments') renderShipments();
+  if(id==='inventory') renderInventory();
+}
+
+// ════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════
+function heatColor(val,max,ch){
+  if(!val) return 'rgba(255,255,255,0.03)';
+  const r=val/max;
+  const c={tob:`rgba(126,184,212,${0.1+r*0.7})`,ec:`rgba(200,169,110,${0.1+r*0.7})`,overseas:`rgba(126,212,160,${0.1+r*0.7})`,all:`rgba(180,158,232,${0.1+r*0.7})`};
+  return c[ch]||c.tob;
+}
+function skuLabel(s){return s.replace('シェイクドロップチーク','チーク');}
+function addMonths(ym, n){
+  const [y,m]=ym.split('-').map(Number);
+  const d=new Date(y,m-1+n,1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+function monthRange(start,count){return Array.from({length:count},(_,i)=>addMonths(start,i));}
+
+// ════════════════════════════════════════════
+//  ① 発注サマリー
+// ════════════════════════════════════════════
+function renderSummary(){
+  const orders=DATA.orders.orders;
+  let tc=0,ts=0,te=0,skuCount=0;
+  orders.forEach(o=>{o.skus.forEach(s=>{tc+=s.confirmed_order;ts+=s.current_stock;te+=s.estimated_total;skuCount++;});});
+  document.getElementById('summaryKpis').innerHTML=`
+    <div class="kpi-card accent"><div class="kpi-label">確定発注数</div><div class="kpi-value">${fmt(tc)}</div><div class="kpi-unit">pcs 全SKU</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">現在庫</div><div class="kpi-value">${fmt(ts)}</div><div class="kpi-unit">pcs 2026-03-01</div></div>
+    <div class="kpi-card red"><div class="kpi-label">推計必要数</div><div class="kpi-value">${fmt(te)}</div><div class="kpi-unit">pcs 全チャネル</div></div>
+    <div class="kpi-card green"><div class="kpi-label">管理SKU数</div><div class="kpi-value">${skuCount}</div><div class="kpi-unit">SKUs</div></div>`;
+  let html='';
+  orders.forEach(o=>{
+    const skus=filteredSkus(o);
+    html+=`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div><div style="font-size:15px;font-weight:500">${o.product}</div>
+          <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap">
+            <span class="badge badge-accent">${o.brand}</span>
+            <span class="badge badge-blue">発注 ${o.order_date}</span>
+            <span class="badge badge-green">入庫予定 ${o.arrival_date}</span>
+          </div></div></div>
+      <div class="meta-grid">
+        <div class="meta-item"><div class="meta-key">リードタイム</div><div class="meta-val">${o.lead_time_weeks} 週</div></div>
+        <div class="meta-item"><div class="meta-key">容器MOQ</div><div class="meta-val">${fmt(o.container_moq)}</div></div>
+        <div class="meta-item"><div class="meta-key">バルクMOQ</div><div class="meta-val">${fmt(o.bulk_moq)}</div></div>
+      </div>
+      <div class="channel-months">
+        <div class="channel-pill"><div class="channel-dot" style="background:var(--tob)"></div><div>toB</div><div class="channel-val">${o.tob_months}</div><div class="channel-unit">ヶ月</div></div>
+        <div class="channel-pill"><div class="channel-dot" style="background:var(--ec)"></div><div>EC</div><div class="channel-val">${o.ec_months}</div><div class="channel-unit">ヶ月</div></div>
+        <div class="channel-pill"><div class="channel-dot" style="background:var(--overseas)"></div><div>海外</div><div class="channel-val">${o.overseas_months}</div><div class="channel-unit">ヶ月</div></div>
+      </div>
+      <div class="sku-table-wrap" style="margin-top:16px"><table>
+        <thead><tr><th>SKU</th><th>JAN</th><th>現在庫</th><th>推計必要数</th><th>発注数</th><th>確定発注数</th><th>過不足</th></tr></thead>
+        <tbody>${skus.map(s=>{const d=s.confirmed_order-s.estimated_total;return`<tr>
+          <td>${s.sku_name}</td><td>${s.jan}</td><td>${fmt(s.current_stock)}</td>
+          <td>${fmt(s.estimated_total)}</td><td>${fmt(s.order_quantity)}</td>
+          <td class="num-accent">${fmt(s.confirmed_order)}</td>
+          <td class="${d>=0?'num-pos':'num-warn'}">${d>=0?'+':''}${fmt(d)}</td>
+        </tr>`;}).join('')}</tbody>
+      </table></div>
+      <div style="margin-top:12px"><div class="meta-key" style="margin-bottom:6px">取引小売先</div>
+        <div class="retailer-tags">${o.retailer_blocks.map(r=>`<span class="retailer-tag">${r.retailer}</span>`).join('')}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('orderCards').innerHTML=html;
+}
+function filteredSkus(order){
+  let s=order.skus;
+  if(filters.sku!=='all') s=s.filter(x=>x.sku_name.endsWith(filters.sku));
+  return s;
+}
+
+// ════════════════════════════════════════════
+//  ② 月別試算
+// ════════════════════════════════════════════
+function switchChannel(ch,el){
+  currentChannel=ch;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderHeatmap();
+}
+function toggleDrilldown(){document.getElementById('drilldownSection').classList.toggle('open');}
+
+function renderHeatmap(){
+  const order=DATA.orders.orders[0];
+  const months=["2026-03","2026-04","2026-05","2026-06"];
+  const skus=filteredSkus(order);
+  const chKey=currentChannel==='tob'?'tob':currentChannel==='ec'?'ec':currentChannel==='overseas'?'overseas':null;
+
+  // all channels combined
+  function getVal(s,m){
+    if(chKey) return s.monthly_summary[chKey][m]||0;
+    return (s.monthly_summary.tob[m]||0)+(s.monthly_summary.ec[m]||0)+(s.monthly_summary.overseas[m]||0);
+  }
+  const colorKey=chKey||'all';
+
+  let maxVal=0;
+  skus.forEach(s=>months.forEach(m=>{const v=getVal(s,m);if(v>maxVal) maxVal=v;}));
+
+  let table=`<table class="heatmap-table"><thead><tr>
+    <th style="text-align:left">SKU</th>
+    ${months.map(m=>`<th>${m}</th>`).join('')}
+    <th>合計</th>
+    ${chKey?'':''}
+  </tr></thead><tbody>`;
+
+  // toB subtotal row if all channels
+  if(!chKey){
+    const tobTotals=months.map(m=>skus.reduce((a,s)=>a+(s.monthly_summary.tob[m]||0),0));
+    table+=`<tr style="background:rgba(126,184,212,0.05)">
+      <td style="color:var(--accent2);font-size:11px;font-family:var(--font-mono)">▸ toB 合計</td>
+      ${tobTotals.map(v=>`<td><span class="heat-cell" style="background:rgba(126,184,212,0.15);color:var(--accent2)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--accent2)">${fmt(tobTotals.reduce((a,b)=>a+b,0))}</span></td>
+    </tr>`;
+    const ecTotals=months.map(m=>skus.reduce((a,s)=>a+(s.monthly_summary.ec[m]||0),0));
+    table+=`<tr style="background:rgba(200,169,110,0.05)">
+      <td style="color:var(--ec);font-size:11px;font-family:var(--font-mono)">▸ EC 合計</td>
+      ${ecTotals.map(v=>`<td><span class="heat-cell" style="background:rgba(200,169,110,0.15);color:var(--ec)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--ec)">${fmt(ecTotals.reduce((a,b)=>a+b,0))}</span></td>
+    </tr>`;
+    const ovsTotals=months.map(m=>skus.reduce((a,s)=>a+(s.monthly_summary.overseas[m]||0),0));
+    table+=`<tr style="background:rgba(126,212,160,0.05)">
+      <td style="color:var(--overseas);font-size:11px;font-family:var(--font-mono)">▸ 海外 合計</td>
+      ${ovsTotals.map(v=>`<td><span class="heat-cell" style="background:rgba(126,212,160,0.15);color:var(--overseas)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--overseas)">${fmt(ovsTotals.reduce((a,b)=>a+b,0))}</span></td>
+    </tr>
+    <tr><td colspan="${months.length+2}" style="padding:0;border:none"><hr style="border:none;border-top:1px solid var(--border);margin:4px 0"></td></tr>`;
+  }
+
+  skus.forEach(s=>{
+    const vals=months.map(m=>getVal(s,m));
+    const total=vals.reduce((a,b)=>a+b,0);
+    // per-channel sub if all
+    let subRows='';
+    if(!chKey){
+      subRows=`<tr style="opacity:0.6">
+        <td style="font-size:10px;color:var(--accent2);padding-left:20px;font-family:var(--font-mono)">  toB</td>
+        ${months.map(m=>`<td style="font-size:10px;color:var(--accent2)">${fmt(s.monthly_summary.tob[m]||0)}</td>`).join('')}
+        <td style="font-size:10px;color:var(--accent2)">${fmt(Object.values(s.monthly_summary.tob).reduce((a,b)=>a+b,0))}</td>
+      </tr><tr style="opacity:0.6">
+        <td style="font-size:10px;color:var(--ec);padding-left:20px;font-family:var(--font-mono)">  EC</td>
+        ${months.map(m=>`<td style="font-size:10px;color:var(--ec)">${fmt(s.monthly_summary.ec[m]||0)}</td>`).join('')}
+        <td style="font-size:10px;color:var(--ec)">${fmt(Object.values(s.monthly_summary.ec).reduce((a,b)=>a+b,0))}</td>
+      </tr><tr style="opacity:0.6">
+        <td style="font-size:10px;color:var(--overseas);padding-left:20px;font-family:var(--font-mono)">  海外</td>
+        ${months.map(m=>`<td style="font-size:10px;color:var(--overseas)">${fmt(s.monthly_summary.overseas[m]||0)}</td>`).join('')}
+        <td style="font-size:10px;color:var(--overseas)">${fmt(Object.values(s.monthly_summary.overseas).reduce((a,b)=>a+b,0))}</td>
+      </tr>`;
+    }
+    table+=`<tr>
+      <td style="color:var(--text)">${skuLabel(s.sku_name)}</td>
+      ${vals.map(v=>`<td><span class="heat-cell" style="background:${heatColor(v,maxVal,colorKey)};color:var(--text)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--accent)">${fmt(total)}</span></td>
+    </tr>${subRows}`;
+  });
+
+  const totals=months.map(m=>skus.reduce((a,s)=>a+getVal(s,m),0));
+  table+=`<tr style="border-top:1px solid var(--border)">
+    <td style="color:var(--text2);font-family:var(--font-mono);font-size:10px;text-align:left">TOTAL</td>
+    ${totals.map(v=>`<td><span style="font-family:var(--font-mono);color:var(--text2)">${fmt(v)}</span></td>`).join('')}
+    <td><span style="font-family:var(--font-mono);color:var(--accent);font-weight:500">${fmt(totals.reduce((a,b)=>a+b,0))}</span></td>
+  </tr></tbody></table>`;
+  document.getElementById('heatmapWrap').innerHTML=table;
+
+  // retailer drilldown
+  const retailers=order.retailer_blocks;
+  let drillMax=0;
+  retailers.forEach(r=>skus.forEach(s=>months.forEach(m=>{const v=(r.skus[s.sku_name]||{})[m]||0;if(v>drillMax) drillMax=v;})));
+  let drill=`<table class="heatmap-table"><thead><tr><th style="text-align:left">小売先</th>${months.map(m=>`<th>${m}</th>`).join('')}<th>合計</th></tr></thead><tbody>`;
+  retailers.forEach(r=>{
+    const vals=months.map(m=>skus.reduce((a,s)=>a+((r.skus[s.sku_name]||{})[m]||0),0));
+    drill+=`<tr><td style="color:var(--text)">${r.retailer}</td>
+      ${vals.map(v=>`<td><span class="heat-cell" style="background:${heatColor(v,drillMax,'tob')};color:var(--text)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--accent2)">${fmt(vals.reduce((a,b)=>a+b,0))}</span></td>
+    </tr>`;
+  });
+  drill+='</tbody></table>';
+  document.getElementById('retailerDrilldown').innerHTML=drill;
+}
+
+// ════════════════════════════════════════════
+//  ③ 出荷実績
+// ════════════════════════════════════════════
+function filteredShipments(){
+  let s=DATA.shipments.shipments;
+  if(filters.brand!=='all') s=s.filter(x=>x.brand===filters.brand);
+  if(filters.product!=='all') s=s.filter(x=>x.product===filters.product);
+  if(filters.sku!=='all') s=s.filter(x=>x.sku_name.endsWith(filters.sku));
+  if(filters.periodStart!=='all') s=s.filter(x=>x.month>=filters.periodStart);
+  return s;
+}
+function renderShipments(){
+  const shipments=filteredShipments();
+  const months=[...new Set(DATA.shipments.shipments.map(s=>s.month))].sort();
+  const tobT=shipments.filter(s=>s.channel==='toB').reduce((a,s)=>a+s.quantity,0);
+  const ecT=shipments.filter(s=>s.channel==='EC').reduce((a,s)=>a+s.quantity,0);
+  const ovsT=shipments.filter(s=>s.channel==='海外').reduce((a,s)=>a+s.quantity,0);
+  document.getElementById('shipmentKpis').innerHTML=`
+    <div class="kpi-card accent"><div class="kpi-label">総出荷数</div><div class="kpi-value">${fmt(tobT+ecT+ovsT)}</div><div class="kpi-unit">pcs</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">toB</div><div class="kpi-value">${fmt(tobT)}</div><div class="kpi-unit">pcs</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">EC</div><div class="kpi-value">${fmt(ecT)}</div><div class="kpi-unit">pcs</div></div>
+    <div class="kpi-card green"><div class="kpi-label">海外</div><div class="kpi-value">${fmt(ovsT)}</div><div class="kpi-unit">pcs</div></div>`;
+
+  const tobD=months.map(m=>shipments.filter(s=>s.month===m&&s.channel==='toB').reduce((a,x)=>a+x.quantity,0));
+  const ecD=months.map(m=>shipments.filter(s=>s.month===m&&s.channel==='EC').reduce((a,x)=>a+x.quantity,0));
+  const ovsD=months.map(m=>shipments.filter(s=>s.month===m&&s.channel==='海外').reduce((a,x)=>a+x.quantity,0));
+  if(chartShipBar) chartShipBar.destroy();
+  chartShipBar=new Chart(document.getElementById('chartShipBar').getContext('2d'),{
+    type:'bar',
+    data:{labels:months,datasets:[
+      {label:'toB',data:tobD,backgroundColor:'rgba(126,184,212,.7)',borderColor:'rgba(126,184,212,1)',borderWidth:1},
+      {label:'EC',data:ecD,backgroundColor:'rgba(200,169,110,.7)',borderColor:'rgba(200,169,110,1)',borderWidth:1},
+      {label:'海外',data:ovsD,backgroundColor:'rgba(126,212,160,.7)',borderColor:'rgba(126,212,160,1)',borderWidth:1}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:11}}}},
+      scales:{x:{stacked:true,ticks:{color:'#5a5750',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}},
+              y:{stacked:true,ticks:{color:'#5a5750',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}}}}
+  });
+
+  // Compare
+  const order=DATA.orders.orders[0];
+  const fskus=filteredSkus(order);
+  let cmp='<div class="compare-bar-wrap">';
+  fskus.forEach(s=>{
+    const fc=Object.values(s.monthly_summary.tob).reduce((a,b)=>a+b,0)+Object.values(s.monthly_summary.ec).reduce((a,b)=>a+b,0)+Object.values(s.monthly_summary.overseas).reduce((a,b)=>a+b,0);
+    const ac=shipments.filter(x=>x.sku_name===s.sku_name).reduce((a,x)=>a+x.quantity,0);
+    const r=fc>0?Math.round(ac/fc*100):0;
+    const rc=r>=90?'var(--accent4)':r>=70?'var(--accent)':'var(--accent3)';
+    cmp+=`<div class="compare-row">
+      <div class="compare-label"><span>${skuLabel(s.sku_name)}</span><span style="font-family:var(--font-mono);font-size:10px">実績 ${fmt(ac)} / 試算 ${fmt(fc)} <span style="color:${rc}">(${r}%)</span></span></div>
+      <div class="compare-bars"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);width:30px">試算</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:rgba(126,184,212,.3)"></div></div><span style="font-family:var(--font-mono);font-size:10px;color:var(--accent2);width:50px;text-align:right">${fmt(fc)}</span></div>
+      <div class="compare-bars"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);width:30px">実績</span><div class="bar-track"><div class="bar-fill" style="width:${Math.min(r,100)}%;background:${rc}"></div></div><span style="font-family:var(--font-mono);font-size:10px;color:${rc};width:50px;text-align:right">${fmt(ac)}</span></div>
+    </div>`;
+  });
+  cmp+='</div>';
+  document.getElementById('comparePanel').innerHTML=cmp;
+
+  // Table — channel/sku aggregate (no retailer in json)
+  const skuNames=["シェイクドロップチーク01","シェイクドロップチーク02","シェイクドロップチーク03","シェイクドロップチーク04"];
+  const channels=['toB','EC','海外'];
+  let tHtml=`<thead><tr><th style="text-align:left">月</th><th style="text-align:left">SKU</th>${channels.map(c=>`<th>${c}</th>`).join('')}<th>合計</th></tr></thead><tbody>`;
+  months.forEach(mo=>{
+    skuNames.forEach(sn=>{
+      if(filters.sku!=='all'&&!sn.endsWith(filters.sku)) return;
+      const vals=channels.map(ch=>shipments.filter(x=>x.month===mo&&x.sku_name===sn&&x.channel===ch).reduce((a,x)=>a+x.quantity,0));
+      const total=vals.reduce((a,b)=>a+b,0);
+      if(!total) return;
+      tHtml+=`<tr><td style="font-family:var(--font-mono)">${mo}</td><td>${skuLabel(sn)}</td>${vals.map(v=>`<td class="${v?'num-accent':''}">${v?fmt(v):'—'}</td>`).join('')}<td class="num-pos">${fmt(total)}</td></tr>`;
+    });
+  });
+  tHtml+='</tbody>';
+  document.getElementById('shipTable').innerHTML=tHtml;
+}
+
+// ════════════════════════════════════════════
+//  ④ 在庫推移
+// ════════════════════════════════════════════
+function renderInventory(){
+  const snaps=DATA.inventory.snapshots;
+  const skuFilter=filters.sku;
+  const skuNames=["シェイクドロップチーク01","シェイクドロップチーク02","シェイクドロップチーク03","シェイクドロップチーク04"];
+  const filtered=skuFilter==='all'?skuNames:skuNames.filter(s=>s.endsWith(skuFilter));
+  const dates=[...new Set(snaps.map(s=>s.snapshot_date))].sort();
+
+  const latestDate=dates[dates.length-1];
+  const prevDate=dates[dates.length-2];
+  const latestTotal=snaps.filter(s=>s.snapshot_date===latestDate&&filtered.includes(s.sku_name)).reduce((a,s)=>a+s.quantity,0);
+  const prevTotal=snaps.filter(s=>s.snapshot_date===prevDate&&filtered.includes(s.sku_name)).reduce((a,s)=>a+s.quantity,0);
+  const change=latestTotal-prevTotal;
+
+  document.getElementById('inventoryKpis').innerHTML=`
+    <div class="kpi-card green"><div class="kpi-label">直近在庫合計</div><div class="kpi-value">${fmt(latestTotal)}</div><div class="kpi-unit">${latestDate}</div></div>
+    <div class="kpi-card ${change>=0?'green':'red'}"><div class="kpi-label">前月比</div><div class="kpi-value">${change>=0?'+':''}${fmt(change)}</div><div class="kpi-unit">${prevDate} → ${latestDate}</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">入庫予定日</div><div class="kpi-value" style="font-size:16px">2026-04-28</div><div class="kpi-unit">シェイクドロップチーク</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">スナップショット数</div><div class="kpi-value">${snaps.length}</div><div class="kpi-unit">件</div></div>`;
+
+  const colors=['rgba(126,184,212,1)','rgba(200,169,110,1)','rgba(224,123,138,1)','rgba(126,212,160,1)'];
+  const bgs=['rgba(126,184,212,.15)','rgba(200,169,110,.15)','rgba(224,123,138,.15)','rgba(126,212,160,.15)'];
+  const datasets=filtered.map((sku,i)=>({
+    label:skuLabel(sku),
+    data:dates.map(d=>{const s=snaps.find(x=>x.snapshot_date===d&&x.sku_name===sku);return s?s.quantity:null;}),
+    borderColor:colors[skuNames.indexOf(sku)],backgroundColor:bgs[skuNames.indexOf(sku)],
+    borderWidth:2,pointRadius:5,pointHoverRadius:8,tension:.3,fill:false
+  }));
+  if(chartInventory) chartInventory.destroy();
+  chartInventory=new Chart(document.getElementById('chartInventory').getContext('2d'),{
+    type:'line',data:{labels:dates,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:11}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} pcs`}}},
+      scales:{x:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}},
+              y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:11},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}}},
+    plugins:[{afterDraw(chart){
+      const xAxis=chart.scales.x;
+      const i41=dates.indexOf('2026-04-01'),i51=dates.indexOf('2026-05-01');
+      if(i41<0||i51<0) return;
+      const x=(xAxis.getPixelForValue(i41)+xAxis.getPixelForValue(i51))/2;
+      const c2d=chart.ctx;
+      c2d.save();c2d.setLineDash([4,4]);c2d.strokeStyle='rgba(200,169,110,.6)';c2d.lineWidth=1.5;
+      c2d.beginPath();c2d.moveTo(x,chart.chartArea.top);c2d.lineTo(x,chart.chartArea.bottom);c2d.stroke();
+      c2d.setLineDash([]);c2d.font='10px DM Mono';c2d.fillStyle='rgba(200,169,110,.9)';
+      c2d.fillText('入庫 ▼',x-20,chart.chartArea.top+14);c2d.restore();
+    }}]
+  });
+
+  let tHtml=`<thead><tr><th style="text-align:left">日付</th><th style="text-align:left">SKU</th><th>在庫数</th><th>備考</th></tr></thead><tbody>`;
+  [...snaps].filter(s=>filtered.includes(s.sku_name)).sort((a,b)=>a.snapshot_date.localeCompare(b.snapshot_date)||a.sku_name.localeCompare(b.sku_name)).forEach(s=>{
+    const post=s.snapshot_date>='2026-05-01';
+    tHtml+=`<tr><td style="font-family:var(--font-mono)">${s.snapshot_date}</td><td>${skuLabel(s.sku_name)}</td><td class="${post?'num-pos':'num-accent'}">${fmt(s.quantity)}</td><td style="color:var(--text3);font-size:11px">${post?'入庫後':'—'}</td></tr>`;
+  });
+  tHtml+='</tbody>';
+  document.getElementById('inventoryTable').innerHTML=tHtml;
+}
+
+// ════════════════════════════════════════════
+//  ⑤ 発注試算ツール
+// ════════════════════════════════════════════
+function selectMode(m){
+  calcMode=m;
+  document.getElementById('modeNormal').classList.toggle('selected',m==='normal');
+  document.getElementById('modeSimple').classList.toggle('selected',m==='simple');
+}
+function onItemTypeChange(){
+  itemType=document.querySelector('input[name=itemType]:checked').value;
+}
+selectMode('normal');
+
+function startCalc(){
+  if(!calcMode){showNotif('試算モードを選択してください','error');return;}
+  goStep(1);
+}
+
+function goStep(n){
+  [0,1,2,3,4].forEach(i=>{document.getElementById('calcStep'+i).style.display=i===n?'block':'none';});
+  if(n===1) buildSkuInputs();
+  if(n===3) buildQuantityInput();
+  if(n===4) buildPreview();
+  window.scrollTo(0,0);
+}
+
+// SKU inputs
+function buildSkuInputs(){
+  const existing=DATA.orders.orders[0].skus;
+  if(itemType==='existing'&&calcSkus.length===0){
+    calcSkus=existing.map(s=>({name:s.sku_name,jan:s.jan,stock:s.current_stock}));
+  }
+  if(calcSkus.length===0) calcSkus=[{name:'',jan:'',stock:0}];
+  document.getElementById('calcModeBadge').textContent=calcMode==='normal'?'通常試算':'簡易試算';
+  renderSkuInputs();
+}
+function renderSkuInputs(){
+  const list=document.getElementById('skuInputList');
+  list.innerHTML=calcSkus.map((s,i)=>`
+    <div class="sku-block">
+      <div class="sku-block-header">
+        <span class="sku-name-display">${s.name||`SKU ${i+1}`}</span>
+        ${calcSkus.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:3px 8px" onclick="removeSku(${i})">削除</button>`:''}
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">SKU名 <span class="req">*</span></label>
+          <input type="text" value="${s.name}" ${itemType==='existing'?'readonly':''} oninput="updateSku(${i},'name',this.value)" placeholder="例：シェイクドロップチーク01"></div>
+        <div class="form-group"><label class="form-label">JAN</label>
+          <input type="text" value="${s.jan}" ${itemType==='existing'?'readonly':''} oninput="updateSku(${i},'jan',this.value)"></div>
+        <div class="form-group"><label class="form-label">現在庫</label>
+          <input type="number" value="${s.stock}" oninput="updateSku(${i},'stock',+this.value)" min="0"></div>
+      </div>
+    </div>`).join('');
+}
+function updateSku(i,k,v){calcSkus[i][k]=v;if(k==='name') document.querySelectorAll('.sku-name-display')[i].textContent=v||`SKU ${i+1}`;}
+function addSku(){calcSkus.push({name:'',jan:'',stock:0});renderSkuInputs();}
+function removeSku(i){calcSkus.splice(i,1);renderSkuInputs();}
+
+function calcArrival(){
+  const d=document.getElementById('ci_orderDate').value;
+  const w=+document.getElementById('ci_leadtime').value||8;
+  if(d){const dt=new Date(d);dt.setDate(dt.getDate()+w*7);document.getElementById('ci_arrivalDate').value=dt.toISOString().split('T')[0];}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const od=document.getElementById('ci_orderDate');
+  if(od) od.addEventListener('change',calcArrival);
+});
+
+// Quantity input
+function buildQuantityInput(){
+  const base=document.getElementById('ci_baseMonth').value||'2026-03';
+  const tobM=+document.getElementById('ci_tobMonths').value||4;
+  const ecM=+document.getElementById('ci_ecMonths').value||5;
+  const ovsM=+document.getElementById('ci_overseasMonths').value||3;
+  const tobMonths=monthRange(base,tobM);
+  const ecMonths=monthRange(base,ecM);
+  const ovsMonths=monthRange(base,ovsM);
+
+  const area=document.getElementById('quantityInputArea');
+
+  if(calcMode==='normal'){
+    // toB: retailer blocks
+    if(calcRetailers.length===0) calcRetailers=[{name:'ロフト',posTilt:1,stores:150,monthTilts:{},skuPs:{},skuInitial:{}}];
+    let html=`<div class="panel"><div class="panel-header">
+      <div class="panel-title"><span class="panel-title-dot" style="background:var(--tob)"></span>SECTION C — toB 小売ブロック</div>
+      <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="addRetailer()">+ 小売追加</button>
+    </div><div class="panel-body"><div id="retailerBlocksWrap"></div></div></div>`;
+
+    // EC
+    html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--ec)"></span>SECTION D — EC 月別数量</div></div>
+    <div class="panel-body">${calcSkus.map(s=>`
+      <div class="sku-block"><div class="sku-name-display" style="margin-bottom:8px">${s.name}</div>
+      <div class="monthly-grid">${ecMonths.map(m=>`<div class="monthly-input-wrap">
+        <label class="monthly-label">${m}</label>
+        <input type="number" class="monthly-input" min="0" value="${(calcEcMonthly[s.name]||{})[m]||0}" oninput="setMonthly('ec','${s.name}','${m}',+this.value)">
+      </div>`).join('')}</div></div>`).join('')}
+    </div></div>`;
+
+    // 海外
+    html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--overseas)"></span>SECTION D — 海外 月別数量</div></div>
+    <div class="panel-body">${calcSkus.map(s=>`
+      <div class="sku-block"><div class="sku-name-display" style="margin-bottom:8px">${s.name}</div>
+      <div class="monthly-grid">${ovsMonths.map(m=>`<div class="monthly-input-wrap">
+        <label class="monthly-label">${m}</label>
+        <input type="number" class="monthly-input" min="0" value="${(calcOverseasMonthly[s.name]||{})[m]||0}" oninput="setMonthly('overseas','${s.name}','${m}',+this.value)">
+      </div>`).join('')}</div></div>`).join('')}
+    </div></div>`;
+
+    area.innerHTML=html;
+    renderRetailerBlocks(tobMonths);
+
+  } else {
+    // SIMPLE: direct input per channel
+    let html='';
+    [['toB',tobMonths,'var(--tob)'],['EC',ecMonths,'var(--ec)'],['海外',ovsMonths,'var(--overseas)']].forEach(([ch,mons,col])=>{
+      html+=`<div class="panel"><div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:${col}"></span>${ch} 月別数量（直接入力）</div></div>
+      <div class="panel-body">${calcSkus.map(s=>`
+        <div class="sku-block"><div class="sku-name-display" style="margin-bottom:8px">${s.name}</div>
+        <div class="monthly-grid">${mons.map(m=>`<div class="monthly-input-wrap">
+          <label class="monthly-label">${m}</label>
+          <input type="number" class="monthly-input" min="0" value="${((calcSimpleMonthly[ch]||{})[s.name]||{})[m]||0}" oninput="setSimpleMonthly('${ch}','${s.name}','${m}',+this.value)">
+        </div>`).join('')}</div></div>`).join('')}
+      </div></div>`;
+    });
+    area.innerHTML=html;
+  }
+}
+
+function renderRetailerBlocks(tobMonths){
+  const wrap=document.getElementById('retailerBlocksWrap');
+  if(!wrap) return;
+  wrap.innerHTML=calcRetailers.map((r,ri)=>`
+    <div class="retailer-block">
+      <div class="retailer-block-header">
+        <span style="font-weight:500;font-size:13px">${r.name||`小売 ${ri+1}`}</span>
+        ${calcRetailers.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:2px 8px" onclick="removeRetailer(${ri})">削除</button>`:''}
+      </div>
+      <div class="pos-grid">
+        <div class="form-group"><label class="form-label">小売名</label>
+          <input type="text" value="${r.name}" oninput="updateRetailer(${ri},'name',this.value)"></div>
+        <div class="form-group"><label class="form-label">業態POS傾斜</label>
+          <input type="number" value="${r.posTilt}" step="0.1" min="0" oninput="updateRetailer(${ri},'posTilt',+this.value)"></div>
+        <div class="form-group"><label class="form-label">全店舗数</label>
+          <input type="number" value="${r.stores}" min="0" oninput="updateRetailer(${ri},'stores',+this.value)"></div>
+      </div>
+      <div style="margin-bottom:8px">
+        <div class="meta-key" style="margin-bottom:6px">SKU別 参照P/S（LOFT月換算）</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px">
+        ${calcSkus.map(s=>`<div class="form-group"><label class="form-label">${s.name}</label>
+          <input type="number" value="${r.skuPs[s.name]||0}" step="0.1" min="0" oninput="updateRetailerSku(${ri},'ps','${s.name}',+this.value)"></div>`).join('')}
+        </div>
+      </div>
+      <div style="margin-bottom:8px">
+        <div class="meta-key" style="margin-bottom:6px">月別傾斜</div>
+        <div class="monthly-grid">${tobMonths.map(m=>`<div class="monthly-input-wrap">
+          <label class="monthly-label">${m}</label>
+          <input type="number" class="monthly-input" value="${r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7}" step="0.1" min="0" oninput="updateRetailerMonthTilt(${ri},'${m}',+this.value)">
+        </div>`).join('')}</div>
+      </div>
+      <div>
+        <div class="meta-key" style="margin-bottom:6px">計算結果（月別出荷予測 = P/S × 傾斜 × 店舗数）</div>
+        <div style="overflow-x:auto"><table style="font-size:11px">
+          <thead><tr><th style="text-align:left">SKU</th>${tobMonths.map(m=>`<th>${m}</th>`).join('')}<th>小計</th></tr></thead>
+          <tbody>${calcSkus.map(s=>{
+            const vals=tobMonths.map(m=>{
+              const ps=r.skuPs[s.name]||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
+              return Math.round(ps*r.posTilt*tilt*r.stores);
+            });
+            return`<tr><td>${s.name}</td>${vals.map(v=>`<td class="num-blue">${fmt(v)}</td>`).join('')}<td class="num-accent">${fmt(vals.reduce((a,b)=>a+b,0))}</td></tr>`;
+          }).join('')}</tbody>
+        </table></div>
+      </div>
+    </div>`).join('');
+}
+function updateRetailer(i,k,v){calcRetailers[i][k]=v;const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
+function updateRetailerSku(i,type,sku,v){if(type==='ps') calcRetailers[i].skuPs[sku]=v;const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
+function updateRetailerMonthTilt(i,m,v){calcRetailers[i].monthTilts[m]=v;const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
+function addRetailer(){calcRetailers.push({name:'',posTilt:1,stores:0,monthTilts:{},skuPs:{},skuInitial:{}});const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
+function removeRetailer(i){calcRetailers.splice(i,1);const base=document.getElementById('ci_baseMonth').value||'2026-03';const tobM=+document.getElementById('ci_tobMonths').value||4;renderRetailerBlocks(monthRange(base,tobM));}
+
+function setMonthly(ch,sku,m,v){
+  if(ch==='ec'){if(!calcEcMonthly[sku]) calcEcMonthly[sku]={};calcEcMonthly[sku][m]=v;}
+  else{if(!calcOverseasMonthly[sku]) calcOverseasMonthly[sku]={};calcOverseasMonthly[sku][m]=v;}
+}
+function setSimpleMonthly(ch,sku,m,v){
+  if(!calcSimpleMonthly[ch]) calcSimpleMonthly[ch]={};
+  if(!calcSimpleMonthly[ch][sku]) calcSimpleMonthly[ch][sku]={};
+  calcSimpleMonthly[ch][sku][m]=v;
+}
+
+// Collect calc data
+function collectCalcData(){
+  const base=document.getElementById('ci_baseMonth').value||'2026-03';
+  const tobM=+document.getElementById('ci_tobMonths').value||4;
+  const ecM=+document.getElementById('ci_ecMonths').value||5;
+  const ovsM=+document.getElementById('ci_overseasMonths').value||3;
+  const tobMonths=monthRange(base,tobM);
+  const ecMonths=monthRange(base,ecM);
+  const ovsMonths=monthRange(base,ovsM);
+
+  // Build monthly_summary per sku
+  const skusOut=calcSkus.map(s=>{
+    let tob={},ec={},overseas={};
+    if(calcMode==='normal'){
+      // toB from retailers
+      tobMonths.forEach(m=>{
+        tob[m]=calcRetailers.reduce((a,r)=>{
+          const ps=r.skuPs[s.name]||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
+          return a+Math.round(ps*r.posTilt*tilt*r.stores);
+        },0);
+      });
+      ecMonths.forEach(m=>{ec[m]=(calcEcMonthly[s.name]||{})[m]||0;});
+      ovsMonths.forEach(m=>{overseas[m]=(calcOverseasMonthly[s.name]||{})[m]||0;});
+    } else {
+      tobMonths.forEach(m=>{tob[m]=((calcSimpleMonthly['toB']||{})[s.name]||{})[m]||0;});
+      ecMonths.forEach(m=>{ec[m]=((calcSimpleMonthly['EC']||{})[s.name]||{})[m]||0;});
+      ovsMonths.forEach(m=>{overseas[m]=((calcSimpleMonthly['海外']||{})[s.name]||{})[m]||0;});
+    }
+    const estimated_total=Object.values(tob).reduce((a,b)=>a+b,0)+Object.values(ec).reduce((a,b)=>a+b,0)+Object.values(overseas).reduce((a,b)=>a+b,0);
+    const order_quantity=Math.max(0,estimated_total-s.stock);
+    return {...s,monthly_summary:{tob,ec,overseas},estimated_total,order_quantity,confirmed_order:0};
+  });
+
+  return {
+    mode:calcMode,
+    product:document.getElementById('ci_product').value,
+    brand:document.getElementById('ci_brand').value,
+    order_date:document.getElementById('ci_orderDate').value,
+    arrival_date:document.getElementById('ci_arrivalDate').value,
+    lead_time_weeks:+document.getElementById('ci_leadtime').value||8,
+    container_moq:+document.getElementById('ci_containerMoq').value||0,
+    bulk_moq:+document.getElementById('ci_bulkMoq').value||0,
+    tob_months:tobM,ec_months:ecM,overseas_months:ovsM,
+    base_month:base,
+    skus:skusOut,
+    retailers:calcMode==='normal'?calcRetailers:[],
+    dept:document.getElementById('ci_dept')?document.getElementById('ci_dept').value:'',
+    memo:document.getElementById('ci_memo')?document.getElementById('ci_memo').value:''
+  };
+}
+
+function buildPreview(){
+  const d=collectCalcData();
+  const totEst=d.skus.reduce((a,s)=>a+s.estimated_total,0);
+  const totOrd=d.skus.reduce((a,s)=>a+s.order_quantity,0);
+  let html=`<div class="calc-preview">
+    <div class="calc-preview-title">試算サマリー</div>
+    <div class="preview-row"><span class="preview-key">商品</span><span class="preview-val">${d.product||'—'}</span></div>
+    <div class="preview-row"><span class="preview-key">ブランド</span><span class="preview-val">${d.brand||'—'}</span></div>
+    <div class="preview-row"><span class="preview-key">発注予定日</span><span class="preview-val">${d.order_date||'—'}</span></div>
+    <div class="preview-row"><span class="preview-key">入庫予定日</span><span class="preview-val">${d.arrival_date||'—'}</span></div>
+    <div class="preview-row"><span class="preview-key">試算モード</span><span class="preview-val">${d.mode==='normal'?'通常試算':'簡易試算'}</span></div>
+  </div>
+  <div class="sku-table-wrap" style="margin-top:12px"><table>
+    <thead><tr><th>SKU</th><th>現在庫</th><th>推計必要数</th><th>発注数（推計−在庫）</th></tr></thead>
+    <tbody>${d.skus.map(s=>`<tr>
+      <td>${s.name}</td><td>${fmt(s.stock)}</td>
+      <td class="num-blue">${fmt(s.estimated_total)}</td>
+      <td class="num-accent">${fmt(s.order_quantity)}</td>
+    </tr>`).join('')}
+    <tr style="border-top:1px solid var(--border)"><td>合計</td><td></td><td class="num-blue">${fmt(totEst)}</td><td class="num-accent">${fmt(totOrd)}</td></tr>
+    </tbody>
+  </table></div>`;
+  document.getElementById('calcPreviewContent').innerHTML=html;
+}
+
+// ════════════════════════════════════════════
+//  Excel出力（SheetJS）
+// ════════════════════════════════════════════
+function buildWorkbook(d){
+  const wb=XLSX.utils.book_new();
+  const sheetName=d.mode==='normal'?'発注試算テンプレート':'発注試算テンプレート（簡易）';
+
+  const base=d.base_month;
+  const tobMonths=monthRange(base,d.tob_months);
+  const ecMonths=monthRange(base,d.ec_months);
+  const ovsMonths=monthRange(base,d.overseas_months);
+
+  const rows=[];
+  const push=(...cells)=>rows.push(cells);
+
+  push([`${sheetName} — ${d.mode==='normal'?'通常試算':'簡易試算版'}`]);
+  push([]);
+  push(['SECTION A　発注サマリー']);
+  push(['▼ 商品情報']);
+  push(['商品名',d.product]);
+  push(['ブランド',d.brand]);
+  push(['発注予定日',d.order_date]);
+  push(['リードタイム（週）',d.lead_time_weeks]);
+  push(['入庫予定日（目安）',d.arrival_date]);
+  push(['容器MOQ',d.container_moq]);
+  push(['バルクMOQ',d.bulk_moq]);
+  push([]);
+  push(['▼ 販路別発注期間設定']);
+  push(['販路','発注対象月数','備考']);
+  push(['toB（小売）',d.tob_months,'好調品4か月、通常3か月']);
+  push(['EC',d.ec_months,'好調品5〜6か月、通常4か月']);
+  push(['海外',d.overseas_months,'別途調整']);
+  push([]);
+  push(['▼ 販路×月サマリー']);
+  push(['販路 / SKU','現在庫','',...tobMonths.concat(ecMonths.slice(tobMonths.length)).concat(ovsMonths.slice(ecMonths.length)),'合計'].filter((_,i)=>i===0||i===1||i===2||true));
+
+  // helper to pad months
+  const allMonths=[...new Set([...tobMonths,...ecMonths,...ovsMonths])].sort();
+
+  // toB rows
+  const tobTotals={};allMonths.forEach(m=>tobTotals[m]=0);
+  push(['toB合計','','', ...allMonths.map(m=>{const v=d.skus.reduce((a,s)=>a+(s.monthly_summary.tob[m]||0),0);tobTotals[m]+=v;return v;}), d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.tob).reduce((x,y)=>x+y,0),0)]);
+  d.skus.forEach(s=>{push([s.name,s.stock,'',...allMonths.map(m=>s.monthly_summary.tob[m]||0),Object.values(s.monthly_summary.tob).reduce((a,b)=>a+b,0)]);});
+  push([]);
+  // EC rows
+  push(['EC合計','','',...allMonths.map(m=>d.skus.reduce((a,s)=>a+(s.monthly_summary.ec[m]||0),0)),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.ec).reduce((x,y)=>x+y,0),0)]);
+  d.skus.forEach(s=>{push([s.name,s.stock,'',...allMonths.map(m=>s.monthly_summary.ec[m]||0),Object.values(s.monthly_summary.ec).reduce((a,b)=>a+b,0)]);});
+  push([]);
+  // 海外 rows
+  push(['海外合計','','',...allMonths.map(m=>d.skus.reduce((a,s)=>a+(s.monthly_summary.overseas[m]||0),0)),d.skus.reduce((a,s)=>a+Object.values(s.monthly_summary.overseas).reduce((x,y)=>x+y,0),0)]);
+  d.skus.forEach(s=>{push([s.name,s.stock,'',...allMonths.map(m=>s.monthly_summary.overseas[m]||0),Object.values(s.monthly_summary.overseas).reduce((a,b)=>a+b,0)]);});
+  push([]);
+  // 確定発注数サマリー
+  push(['▼ 確定発注数サマリー（SKU合計）']);
+  push(['SKU名','JAN','現在庫','推計必要数','発注数（推計−現在庫）','確定発注数','備考']);
+  d.skus.forEach(s=>{push([s.name,s.jan,s.stock,s.estimated_total,s.order_quantity,s.confirmed_order||'']);});
+  push([]);
+
+  if(d.mode==='normal'&&d.retailers.length>0){
+    push(['SECTION C　toB販路（小売ブロック）']);
+    d.retailers.forEach(r=>{
+      push([`[RETAILER] ${r.name}`]);
+      push(['業態別POS傾斜',r.posTilt,'全店舗数',r.stores]);
+      push(['月別傾斜','',...tobMonths.map(m=>r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7)]);
+      push(['商品名','P/S（LOFT参照）','初回納品',...tobMonths,'合計']);
+      d.skus.forEach(s=>{
+        const vals=tobMonths.map(m=>{const ps=r.skuPs[s.name]||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;return Math.round(ps*r.posTilt*tilt*r.stores);});
+        push([s.name,r.skuPs[s.name]||0,0,...vals,vals.reduce((a,b)=>a+b,0)]);
+      });
+      push([]);
+    });
+  }
+
+  push(['SECTION F　備考']);
+  push([d.memo||'']);
+  push(['担当部署',d.dept]);
+  push(['出力日時',new Date().toLocaleString('ja-JP')]);
+
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  // column widths
+  ws['!cols']=[{wch:30},{wch:14},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10}];
+  XLSX.utils.book_append_sheet(wb,ws,sheetName);
+  return wb;
+}
+
+function exportCalcDirect(){
+  const d=collectCalcData();
+  if(!d.product){showNotif('商品名を入力してください','error');return;}
+  const wb=buildWorkbook(d);
+  const fname=`発注試算_${d.brand||'brand'}_${d.product||'product'}_${new Date().toISOString().slice(0,10)}.xlsx`;
+  XLSX.writeFile(wb,fname);
+  showNotif('Excelを出力しました','success');
+}
+
+// ════════════════════════════════════════════
+//  仮保存
+// ════════════════════════════════════════════
+const LS_KEY='millfee_drafts';
+function loadDrafts(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'[]');}catch{return[];}}
+function saveDraftsToLS(drafts){localStorage.setItem(LS_KEY,JSON.stringify(drafts));}
+
+function saveDraft(){
+  const dept=document.getElementById('ci_dept').value.trim();
+  if(!dept){showNotif('部署名を入力してください','error');return;}
+  const d=collectCalcData();
+  if(!d.product){showNotif('商品名を入力してください','error');return;}
+  d.dept=dept;
+  d.saved_at=new Date().toISOString();
+  d.id=Date.now().toString();
+  const drafts=loadDrafts();
+  drafts.push(d);
+  saveDraftsToLS(drafts);
+  updateDraftBadge();
+  showNotif(`「${d.product}」を仮保存しました（${dept}）`,'success');
+  renderDraftList();
+  showView('drafts');
+}
+
+function updateDraftBadge(){
+  const n=loadDrafts().length;
+  const b=document.getElementById('draftBadge');
+  if(n>0){b.style.display='inline';b.textContent=n;}else{b.style.display='none';}
+  const btn=document.getElementById('exportAllBtn');
+  if(btn) btn.style.display=n>0?'inline-flex':'none';
+}
+
+function renderDraftList(){
+  const drafts=loadDrafts();
+  updateDraftBadge();
+  const body=document.getElementById('draftListBody');
+  if(!drafts.length){body.innerHTML='<div style="color:var(--text3);font-size:12px;text-align:center;padding:24px">仮保存データがありません</div>';return;}
+  body.innerHTML=`<div class="draft-list">${drafts.map(d=>`
+    <div class="draft-card">
+      <div class="draft-card-header">
+        <div>
+          <div class="draft-title">${d.product||'—'} <span class="badge ${d.mode==='normal'?'badge-accent':'badge-blue'}" style="margin-left:6px">${d.mode==='normal'?'通常':'簡易'}</span></div>
+          <div class="draft-meta">${d.brand} ／ ${d.order_date||'発注日未設定'}</div>
+        </div>
+        <div class="dept-tag">🏢 ${d.dept}</div>
+      </div>
+      <div class="draft-status" style="margin-bottom:10px">
+        ${d.skus.map(s=>`<span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${s.name}: 推計 ${fmt(s.estimated_total)} / 発注 ${fmt(s.order_quantity)}</span>`).join(' &nbsp;')}
+      </div>
+      <div class="draft-meta" style="margin-bottom:10px">保存: ${new Date(d.saved_at).toLocaleString('ja-JP')}${d.memo?' ／ '+d.memo:''}</div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="exportOneDraft('${d.id}')">📥 Excel出力</button>
+        <button class="btn btn-danger" onclick="deleteDraft('${d.id}')">削除</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function exportOneDraft(id){
+  const drafts=loadDrafts();
+  const d=drafts.find(x=>x.id===id);
+  if(!d) return;
+  const wb=buildWorkbook(d);
+  const fname=`発注試算_${d.brand||'brand'}_${d.product||'product'}_${d.dept}_${d.saved_at.slice(0,10)}.xlsx`;
+  XLSX.writeFile(wb,fname);
+  // 出力済みを削除
+  const newDrafts=drafts.filter(x=>x.id!==id);
+  saveDraftsToLS(newDrafts);
+  updateDraftBadge();
+  renderDraftList();
+  showNotif('Excel出力しました（仮保存から削除）','success');
+}
+
+function exportAllDrafts(){
+  const drafts=loadDrafts();
+  if(!drafts.length){showNotif('仮保存データがありません','error');return;}
+  showConfirm(
+    '全件 Excel 出力',
+    `${drafts.length}件の仮保存データをすべてExcel出力します。出力後、仮保存リストから削除されます。よろしいですか？`,
+    ()=>{
+      drafts.forEach((d,i)=>{
+        setTimeout(()=>{
+          const wb=buildWorkbook(d);
+          const fname=`発注試算_${d.brand||'brand'}_${d.product||'product'}_${d.dept}_${d.saved_at.slice(0,10)}.xlsx`;
+          XLSX.writeFile(wb,fname);
+        },i*300);
+      });
+      saveDraftsToLS([]);
+      updateDraftBadge();
+      setTimeout(()=>{renderDraftList();showNotif(`${drafts.length}件を出力しました`,'success');},drafts.length*300+200);
+      closeModal();
+    },'btn-green','出力 → 削除'
+  );
+}
+
+function deleteDraft(id){
+  showConfirm('削除確認','この仮保存データを削除しますか？',()=>{
+    const d=loadDrafts().filter(x=>x.id!==id);
+    saveDraftsToLS(d);updateDraftBadge();renderDraftList();closeModal();showNotif('削除しました','success');
+  });
+}
+function clearAllDrafts(){
+  if(!loadDrafts().length){showNotif('仮保存データがありません','error');return;}
+  showConfirm('全件削除','すべての仮保存データを削除します。よろしいですか？',()=>{saveDraftsToLS([]);updateDraftBadge();renderDraftList();closeModal();showNotif('全件削除しました','success');});
+}
+
+// Modal / Notification
+function showConfirm(title,msg,fn,btnClass='btn-danger',btnLabel='削除'){
+  document.getElementById('confirmModalTitle').textContent=title;
+  document.getElementById('confirmModalMsg').textContent=msg;
+  const b=document.getElementById('confirmModalBtn');
+  b.className=`btn ${btnClass}`;b.textContent=btnLabel;b.onclick=fn;
+  document.getElementById('confirmModal').classList.add('open');
+}
+function closeModal(){document.getElementById('confirmModal').classList.remove('open');}
+let notifTimer;
+function showNotif(msg,type='success'){
+  const n=document.getElementById('notification');
+  n.textContent=msg;n.className=`notification ${type} show`;
+  clearTimeout(notifTimer);notifTimer=setTimeout(()=>n.classList.remove('show'),3000);
+}
+
+// ════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════
+document.getElementById('headerDate').textContent=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'})+' 更新';
+renderSummary();
+updateDraftBadge();
+</script>
+</body>
+</html>
