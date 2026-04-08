@@ -1,19 +1,177 @@
 {
   "orders": [
     {
-      "order_id": "発注試算テンプレート",
-      "product": "シェイクドロップチーク",
+      "order_id": "発注試算_ブランド名",
       "brand": "MilleFee",
+      "product": "シェイクドロップチーク",
       "order_date": "2026-03-03",
-      "arrival_date": "2026-04-28",
+      "arrival_date": null,
       "lead_time_weeks": 8,
       "container_moq": 10000,
       "bulk_moq": 5000,
       "tob_months": 4,
       "ec_months": 5,
       "overseas_months": 3,
-      "skus": [],
-      "retailer_blocks": []
+      "skus": [
+        {
+          "sku_name": "シェイクドロップチーク01",
+          "jan": null,
+          "current_stock": 0,
+          "estimated_total": 0,
+          "order_quantity": 0,
+          "confirmed_order": 0,
+          "monthly_summary": {
+            "tob": {},
+            "ec": {},
+            "overseas": {}
+          }
+        },
+        {
+          "sku_name": "シェイクドロップチーク02",
+          "jan": null,
+          "current_stock": 0,
+          "estimated_total": 0,
+          "order_quantity": 0,
+          "confirmed_order": 0,
+          "monthly_summary": {
+            "tob": {},
+            "ec": {},
+            "overseas": {}
+          }
+        },
+        {
+          "sku_name": "シェイクドロップチーク03",
+          "jan": null,
+          "current_stock": 0,
+          "estimated_total": 0,
+          "order_quantity": 0,
+          "confirmed_order": 0,
+          "monthly_summary": {
+            "tob": {},
+            "ec": {},
+            "overseas": {}
+          }
+        },
+        {
+          "sku_name": "シェイクドロップチーク04",
+          "jan": null,
+          "current_stock": 0,
+          "estimated_total": 0,
+          "order_quantity": 0,
+          "confirmed_order": 0,
+          "monthly_summary": {
+            "tob": {},
+            "ec": {},
+            "overseas": {}
+          }
+        }
+      ],
+      "retailer_blocks": [
+        {
+          "retailer": "ロフト",
+          "status": "導入済み",
+          "posTilt": 1.0,
+          "stores": 150,
+          "monthTilts": {},
+          "skuPs": {},
+          "skus": {}
+        },
+        {
+          "retailer": "（小売6　※小売名を入力）",
+          "status": "導入済み",
+          "posTilt": 1.0,
+          "stores": 0,
+          "monthTilts": {},
+          "skuPs": {
+            "シェイクドロップチーク01": 0.0,
+            "シェイクドロップチーク02": 0.0,
+            "シェイクドロップチーク03": 0.0,
+            "シェイクドロップチーク04": 0.0
+          },
+          "skus": {
+            "シェイクドロップチーク01": {},
+            "シェイクドロップチーク02": {},
+            "シェイクドロップチーク03": {},
+            "シェイクドロップチーク04": {}
+          }
+        },
+        {
+          "retailer": "（小売7　※小売名を入力）",
+          "status": "導入済み",
+          "posTilt": 1.0,
+          "stores": 0,
+          "monthTilts": {},
+          "skuPs": {
+            "シェイクドロップチーク01": 0.0,
+            "シェイクドロップチーク02": 0.0,
+            "シェイクドロップチーク03": 0.0,
+            "シェイクドロップチーク04": 0.0
+          },
+          "skus": {
+            "シェイクドロップチーク01": {},
+            "シェイクドロップチーク02": {},
+            "シェイクドロップチーク03": {},
+            "シェイクドロップチーク04": {}
+          }
+        },
+        {
+          "retailer": "（小売8　※小売名を入力）",
+          "status": "導入済み",
+          "posTilt": 1.0,
+          "stores": 0,
+          "monthTilts": {},
+          "skuPs": {
+            "シェイクドロップチーク01": 0.0,
+            "シェイクドロップチーク02": 0.0,
+            "シェイクドロップチーク03": 0.0,
+            "シェイクドロップチーク04": 0.0
+          },
+          "skus": {
+            "シェイクドロップチーク01": {},
+            "シェイクドロップチーク02": {},
+            "シェイクドロップチーク03": {},
+            "シェイクドロップチーク04": {}
+          }
+        },
+        {
+          "retailer": "（小売9　※小売名を入力）",
+          "status": "導入済み",
+          "posTilt": 1.0,
+          "stores": 0,
+          "monthTilts": {},
+          "skuPs": {
+            "シェイクドロップチーク01": 0.0,
+            "シェイクドロップチーク02": 0.0,
+            "シェイクドロップチーク03": 0.0,
+            "シェイクドロップチーク04": 0.0
+          },
+          "skus": {
+            "シェイクドロップチーク01": {},
+            "シェイクドロップチーク02": {},
+            "シェイクドロップチーク03": {},
+            "シェイクドロップチーク04": {}
+          }
+        },
+        {
+          "retailer": "（小売10　※小売名を入力）",
+          "status": "導入済み",
+          "posTilt": 1.0,
+          "stores": 0,
+          "monthTilts": {},
+          "skuPs": {
+            "シェイクドロップチーク01": 0.0,
+            "シェイクドロップチーク02": 0.0,
+            "シェイクドロップチーク03": 0.0,
+            "シェイクドロップチーク04": 0.0
+          },
+          "skus": {
+            "シェイクドロップチーク01": {},
+            "シェイクドロップチーク02": {},
+            "シェイクドロップチーク03": {},
+            "シェイクドロップチーク04": {}
+          }
+        }
+      ]
     }
   ]
 }
