@@ -4,33 +4,123 @@
       "sku_name": "MilleFee シェイクドロップチーク 01 ピーチスフレ",
       "sku_code": "4571501178223",
       "monthly_shipments": {
-        "2026-01": { "tob": 980,  "ec": 430,  "overseas": 30,  "other": 0, "total": 1440 },
-        "2026-02": { "tob": 1020, "ec": 510,  "overseas": 55,  "other": 0, "total": 1585 },
-        "2026-03": { "tob": 1050, "ec": 555,  "overseas": 55,  "other": 0, "total": 1660 },
-        "2026-04": { "tob": 1050, "ec": 555,  "overseas": 55,  "other": 0, "total": 1660 },
-        "2026-05": { "tob": 1050, "ec": 0,    "overseas": 55,  "other": 0, "total": 1105 }
+        "2026-01": {
+          "tob": 980,
+          "ec": 430,
+          "overseas": 30,
+          "other": 0,
+          "total": 1440
+        },
+        "2026-02": {
+          "tob": 1020,
+          "ec": 510,
+          "overseas": 55,
+          "other": 0,
+          "total": 1585
+        },
+        "2026-03": {
+          "tob": 1050,
+          "ec": 555,
+          "overseas": 55,
+          "other": 0,
+          "total": 1660
+        },
+        "2026-04": {
+          "tob": 1050,
+          "ec": 555,
+          "overseas": 55,
+          "other": 0,
+          "total": 1660
+        },
+        "2026-05": {
+          "tob": 1050,
+          "ec": 0,
+          "overseas": 55,
+          "other": 0,
+          "total": 1105
+        }
       }
     },
     {
       "sku_name": "MilleFee シェイクドロップチーク 03 フィグラテ",
       "sku_code": "4571501178247",
       "monthly_shipments": {
-        "2026-01": { "tob": 1100, "ec": 0,    "overseas": 50,  "other": 0, "total": 1150 },
-        "2026-02": { "tob": 1200, "ec": 0,    "overseas": 55,  "other": 0, "total": 1255 },
-        "2026-03": { "tob": 1260, "ec": 0,    "overseas": 55,  "other": 0, "total": 1315 },
-        "2026-04": { "tob": 1260, "ec": 555,  "overseas": 55,  "other": 0, "total": 1870 },
-        "2026-05": { "tob": 1260, "ec": 555,  "overseas": 0,   "other": 0, "total": 1815 }
+        "2026-01": {
+          "tob": 1100,
+          "ec": 0,
+          "overseas": 50,
+          "other": 0,
+          "total": 1150
+        },
+        "2026-02": {
+          "tob": 1200,
+          "ec": 0,
+          "overseas": 55,
+          "other": 0,
+          "total": 1255
+        },
+        "2026-03": {
+          "tob": 1260,
+          "ec": 0,
+          "overseas": 55,
+          "other": 0,
+          "total": 1315
+        },
+        "2026-04": {
+          "tob": 1260,
+          "ec": 555,
+          "overseas": 55,
+          "other": 0,
+          "total": 1870
+        },
+        "2026-05": {
+          "tob": 1260,
+          "ec": 555,
+          "overseas": 0,
+          "other": 0,
+          "total": 1815
+        }
       }
     },
     {
       "sku_name": "MilleFee シェイクドロップチーク 04 ブルーベリーミルク",
       "sku_code": "4571501178254",
       "monthly_shipments": {
-        "2026-01": { "tob": 400,  "ec": 1200, "overseas": 55,  "other": 0, "total": 1655 },
-        "2026-02": { "tob": 450,  "ec": 1400, "overseas": 55,  "other": 0, "total": 1905 },
-        "2026-03": { "tob": 529,  "ec": 1500, "overseas": 555, "other": 0, "total": 2584 },
-        "2026-04": { "tob": 529,  "ec": 55,   "overseas": 55,  "other": 0, "total": 639  },
-        "2026-05": { "tob": 529,  "ec": 555,  "overseas": 0,   "other": 0, "total": 1084 }
+        "2026-01": {
+          "tob": 400,
+          "ec": 1200,
+          "overseas": 55,
+          "other": 0,
+          "total": 1655
+        },
+        "2026-02": {
+          "tob": 450,
+          "ec": 1400,
+          "overseas": 55,
+          "other": 0,
+          "total": 1905
+        },
+        "2026-03": {
+          "tob": 529,
+          "ec": 1500,
+          "overseas": 555,
+          "other": 0,
+          "total": 2584
+        },
+        "2026-04": {
+          "tob": 529,
+          "ec": 55,
+          "overseas": 55,
+          "other": 0,
+          "total": 639
+        },
+        "2026-05": {
+          "tob": 529,
+          "ec": 555,
+          "overseas": 0,
+          "other": 0,
+          "total": 1084
+        }
       }
     }
   ]

@@ -1,8 +1,12 @@
 {
   "updated_at": "2026-04-08",
   "snapshots": [
-    { "snapshot_date": "2026-04-08" },
-    { "snapshot_date": "2026-03-01" }
+    {
+      "snapshot_date": "2026-04-08"
+    },
+    {
+      "snapshot_date": "2026-03-01"
+    }
   ],
   "skus": [
     {
