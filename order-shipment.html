@@ -814,6 +814,644 @@ function addMonths(ym, n){
 function monthRange(start,count){return Array.from({length:count},(_,i)=>addMonths(start,i));}
 function mLabel(m){const mo=m.split('-')[1];return parseInt(mo)+'月';}
 function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ════════════════════════════════════════════
+//  ① 発注サマリー
+// ════════════════════════════════════════════
+function renderSummary(){
+  if(!dataLoaded||!DATA.orders) return;
+  const orders=DATA.orders.orders||[];
+  let tc=0,ts=0,te=0,skuCount=0;
+  orders.forEach(o=>{(o.skus||[]).forEach(s=>{tc+=(s.confirmed_order||0);ts+=(s.current_stock||0);te+=(s.estimated_total||0);skuCount++;});});
+  // 在庫KPIの日付はinventoryの最新スナップショット日を使う
+  const snaps=DATA.inventory?DATA.inventory.snapshots||[]:[];
+  const latestSnapDate=snaps.length?[...snaps].sort((a,b)=>b.snapshot_date.localeCompare(a.snapshot_date))[0].snapshot_date:'—';
+  document.getElementById('summaryKpis').innerHTML=`
+    <div class="kpi-card accent"><div class="kpi-label">確定発注数</div><div class="kpi-value">${fmt(tc)}</div><div class="kpi-unit">pcs 全SKU</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">現在庫</div><div class="kpi-value">${fmt(ts)}</div><div class="kpi-unit">pcs ${latestSnapDate} 時点</div></div>
+    <div class="kpi-card red"><div class="kpi-label">推計必要数</div><div class="kpi-value">${fmt(te)}</div><div class="kpi-unit">pcs 全チャネル</div></div>
+    <div class="kpi-card green"><div class="kpi-label">管理SKU数</div><div class="kpi-value">${skuCount}</div><div class="kpi-unit">SKUs</div></div>`;
+  let html='';
+  orders.forEach(o=>{
+    const skus=filteredSkus(o);
+    const retailers=(o.retailer_blocks||[]);
+    html+=`<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div><div style="font-size:15px;font-weight:500">${o.product||'—'}</div>
+          <div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap">
+            <span class="badge badge-accent">${o.brand||''}</span>
+            <span class="badge badge-blue">発注 ${o.order_date||'—'}</span>
+            <span class="badge badge-green">入庫予定 ${o.arrival_date||'—'}</span>
+          </div></div></div>
+      <div class="meta-grid">
+        <div class="meta-item"><div class="meta-key">リードタイム</div><div class="meta-val">${o.lead_time_weeks||'—'} 週</div></div>
+        <div class="meta-item"><div class="meta-key">容器MOQ</div><div class="meta-val">${fmt(o.container_moq)}</div></div>
+        <div class="meta-item"><div class="meta-key">バルクMOQ</div><div class="meta-val">${fmt(o.bulk_moq)}</div></div>
+      </div>
+      <div class="channel-months">
+        <div class="channel-pill"><div class="channel-dot" style="background:var(--tob)"></div><div>toB</div><div class="channel-val">${o.tob_months||0}</div><div class="channel-unit">ヶ月</div></div>
+        <div class="channel-pill"><div class="channel-dot" style="background:var(--ec)"></div><div>EC</div><div class="channel-val">${o.ec_months||0}</div><div class="channel-unit">ヶ月</div></div>
+        <div class="channel-pill"><div class="channel-dot" style="background:var(--overseas)"></div><div>海外</div><div class="channel-val">${o.overseas_months||0}</div><div class="channel-unit">ヶ月</div></div>
+      </div>
+      <div class="sku-table-wrap" style="margin-top:16px"><table>
+        <thead><tr><th>SKU</th><th>JAN</th><th>現在庫</th><th>推計必要数</th><th>発注数</th><th>確定発注数</th><th>過不足</th></tr></thead>
+        <tbody>${skus.map(s=>{const d=(s.confirmed_order||0)-(s.estimated_total||0);return`<tr>
+          <td>${s.sku_name}</td><td>${s.jan||'—'}</td><td>${fmt(s.current_stock)}</td>
+          <td>${fmt(s.estimated_total)}</td><td>${fmt(s.order_quantity)}</td>
+          <td class="num-accent">${fmt(s.confirmed_order)}</td>
+          <td class="${d>=0?'num-pos':'num-warn'}">${d>=0?'+':''}${fmt(d)}</td>
+        </tr>`;}).join('')}</tbody>
+      </table></div>
+      ${retailers.length?`<div style="margin-top:12px"><div class="meta-key" style="margin-bottom:6px">取引小売先</div>
+        <div class="retailer-tags">${retailers.map(r=>`<span class="retailer-tag">${r.retailer}</span>`).join('')}</div>
+      </div>`:''}
+    </div>`;
+  });
+  document.getElementById('orderCards').innerHTML=html;
+}
+function filteredSkus(order){
+  let s=order.skus;
+  if(filters.sku!=='all') s=s.filter(x=>x.sku_name===filters.sku);
+  return s;
+}
+
+// ════════════════════════════════════════════
+//  ② 月別試算
+// ════════════════════════════════════════════
+function switchChannel(ch,el){
+  currentChannel=ch;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderHeatmap();
+}
+function toggleDrilldown(){document.getElementById('drilldownSection').classList.toggle('open');}
+
+function renderHeatmap(){
+  if(!dataLoaded||!DATA.orders) return;
+  const order=DATA.orders.orders[0];
+  if(!order) return;
+  // 月一覧をordersデータから動的に取得
+  const allMs=new Set();
+  order.skus.forEach(s=>{
+    ['tob','ec','overseas'].forEach(ch=>Object.keys(s.monthly_summary[ch]||{}).forEach(m=>allMs.add(m)));
+  });
+  const months=[...allMs].sort();
+  const skus=filteredSkus(order);
+  const chKey=currentChannel==='tob'?'tob':currentChannel==='ec'?'ec':currentChannel==='overseas'?'overseas':null;
+
+  // all channels combined
+  function getVal(s,m){
+    if(chKey) return s.monthly_summary[chKey][m]||0;
+    return (s.monthly_summary.tob[m]||0)+(s.monthly_summary.ec[m]||0)+(s.monthly_summary.overseas[m]||0);
+  }
+  const colorKey=chKey||'all';
+
+  let maxVal=0;
+  skus.forEach(s=>months.forEach(m=>{const v=getVal(s,m);if(v>maxVal) maxVal=v;}));
+
+  let table=`<table class="heatmap-table"><thead><tr>
+    <th style="text-align:left">SKU</th>
+    ${months.map(m=>`<th>${m}</th>`).join('')}
+    <th>合計</th>
+    ${chKey?'':''}
+  </tr></thead><tbody>`;
+
+  // toB subtotal row if all channels
+  if(!chKey){
+    const tobTotals=months.map(m=>skus.reduce((a,s)=>a+(s.monthly_summary.tob[m]||0),0));
+    table+=`<tr style="background:rgba(126,184,212,0.05)">
+      <td style="color:var(--accent2);font-size:11px;font-family:var(--font-mono)">▸ toB 合計</td>
+      ${tobTotals.map(v=>`<td><span class="heat-cell" style="background:rgba(126,184,212,0.15);color:var(--accent2)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--accent2)">${fmt(tobTotals.reduce((a,b)=>a+b,0))}</span></td>
+    </tr>`;
+    const ecTotals=months.map(m=>skus.reduce((a,s)=>a+(s.monthly_summary.ec[m]||0),0));
+    table+=`<tr style="background:rgba(200,169,110,0.05)">
+      <td style="color:var(--ec);font-size:11px;font-family:var(--font-mono)">▸ EC 合計</td>
+      ${ecTotals.map(v=>`<td><span class="heat-cell" style="background:rgba(200,169,110,0.15);color:var(--ec)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--ec)">${fmt(ecTotals.reduce((a,b)=>a+b,0))}</span></td>
+    </tr>`;
+    const ovsTotals=months.map(m=>skus.reduce((a,s)=>a+(s.monthly_summary.overseas[m]||0),0));
+    table+=`<tr style="background:rgba(126,212,160,0.05)">
+      <td style="color:var(--overseas);font-size:11px;font-family:var(--font-mono)">▸ 海外 合計</td>
+      ${ovsTotals.map(v=>`<td><span class="heat-cell" style="background:rgba(126,212,160,0.15);color:var(--overseas)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--overseas)">${fmt(ovsTotals.reduce((a,b)=>a+b,0))}</span></td>
+    </tr>
+    <tr><td colspan="${months.length+2}" style="padding:0;border:none"><hr style="border:none;border-top:1px solid var(--border);margin:4px 0"></td></tr>`;
+  }
+
+  skus.forEach(s=>{
+    const vals=months.map(m=>getVal(s,m));
+    const total=vals.reduce((a,b)=>a+b,0);
+    // per-channel sub if all
+    let subRows='';
+    if(!chKey){
+      subRows=`<tr style="opacity:0.6">
+        <td style="font-size:10px;color:var(--accent2);padding-left:20px;font-family:var(--font-mono)">  toB</td>
+        ${months.map(m=>`<td style="font-size:10px;color:var(--accent2)">${fmt(s.monthly_summary.tob[m]||0)}</td>`).join('')}
+        <td style="font-size:10px;color:var(--accent2)">${fmt(Object.values(s.monthly_summary.tob).reduce((a,b)=>a+b,0))}</td>
+      </tr><tr style="opacity:0.6">
+        <td style="font-size:10px;color:var(--ec);padding-left:20px;font-family:var(--font-mono)">  EC</td>
+        ${months.map(m=>`<td style="font-size:10px;color:var(--ec)">${fmt(s.monthly_summary.ec[m]||0)}</td>`).join('')}
+        <td style="font-size:10px;color:var(--ec)">${fmt(Object.values(s.monthly_summary.ec).reduce((a,b)=>a+b,0))}</td>
+      </tr><tr style="opacity:0.6">
+        <td style="font-size:10px;color:var(--overseas);padding-left:20px;font-family:var(--font-mono)">  海外</td>
+        ${months.map(m=>`<td style="font-size:10px;color:var(--overseas)">${fmt(s.monthly_summary.overseas[m]||0)}</td>`).join('')}
+        <td style="font-size:10px;color:var(--overseas)">${fmt(Object.values(s.monthly_summary.overseas).reduce((a,b)=>a+b,0))}</td>
+      </tr>`;
+    }
+    table+=`<tr>
+      <td style="color:var(--text)">${skuLabel(s.sku_name)}</td>
+      ${vals.map(v=>`<td><span class="heat-cell" style="background:${heatColor(v,maxVal,colorKey)};color:var(--text)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--accent)">${fmt(total)}</span></td>
+    </tr>${subRows}`;
+  });
+
+  const totals=months.map(m=>skus.reduce((a,s)=>a+getVal(s,m),0));
+  table+=`<tr style="border-top:1px solid var(--border)">
+    <td style="color:var(--text2);font-family:var(--font-mono);font-size:10px;text-align:left">TOTAL</td>
+    ${totals.map(v=>`<td><span style="font-family:var(--font-mono);color:var(--text2)">${fmt(v)}</span></td>`).join('')}
+    <td><span style="font-family:var(--font-mono);color:var(--accent);font-weight:500">${fmt(totals.reduce((a,b)=>a+b,0))}</span></td>
+  </tr></tbody></table>`;
+  document.getElementById('heatmapWrap').innerHTML=table;
+
+  // retailer drilldown
+  const retailers=order.retailer_blocks;
+  let drillMax=0;
+  retailers.forEach(r=>skus.forEach(s=>months.forEach(m=>{const v=(r.skus[s.sku_name]||{})[m]||0;if(v>drillMax) drillMax=v;})));
+  let drill=`<table class="heatmap-table"><thead><tr><th style="text-align:left">小売先</th>${months.map(m=>`<th>${m}</th>`).join('')}<th>合計</th></tr></thead><tbody>`;
+  retailers.forEach(r=>{
+    const vals=months.map(m=>skus.reduce((a,s)=>a+((r.skus[s.sku_name]||{})[m]||0),0));
+    drill+=`<tr><td style="color:var(--text)">${r.retailer}</td>
+      ${vals.map(v=>`<td><span class="heat-cell" style="background:${heatColor(v,drillMax,'tob')};color:var(--text)">${fmt(v)}</span></td>`).join('')}
+      <td><span style="font-family:var(--font-mono);color:var(--accent2)">${fmt(vals.reduce((a,b)=>a+b,0))}</span></td>
+    </tr>`;
+  });
+  drill+='</tbody></table>';
+  document.getElementById('retailerDrilldown').innerHTML=drill;
+}
+
+// ════════════════════════════════════════════
+//  ③ 出荷実績
+//  スキーマ: {skus:[{sku_name,sku_code,monthly_shipments:{月:{ec,tob,overseas,other,total}}}]}
+// ════════════════════════════════════════════
+function filteredShipmentSkus(){
+  let skus=DATA.shipments.skus||[];
+  if(filters.sku!=='all') skus=skus.filter(s=>s.sku_name===filters.sku);
+  return skus;
+}
+function filteredMonths(){
+  const all=[...new Set((DATA.shipments.skus||[]).flatMap(s=>Object.keys(s.monthly_shipments||{})))].sort();
+  return all.filter(m=>{
+    if(filters.periodStart!=='all'&&m<filters.periodStart) return false;
+    if(filters.periodEnd!=='all'&&m>filters.periodEnd) return false;
+    return true;
+  });
+}
+function renderShipments(){
+  if(!dataLoaded||!DATA.shipments) return;
+  const skus=filteredShipmentSkus();
+  const months=filteredMonths();
+
+  // KPI集計
+  let tobT=0,ecT=0,ovsT=0,othT=0;
+  skus.forEach(s=>months.forEach(m=>{const ms=(s.monthly_shipments||{})[m]||{};tobT+=ms.tob||0;ecT+=ms.ec||0;ovsT+=ms.overseas||0;othT+=ms.other||0;}));
+  document.getElementById('shipmentKpis').innerHTML=`
+    <div class="kpi-card accent"><div class="kpi-label">総出荷数</div><div class="kpi-value">${fmt(tobT+ecT+ovsT+othT)}</div><div class="kpi-unit">pcs</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">toB</div><div class="kpi-value">${fmt(tobT)}</div><div class="kpi-unit">pcs</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">EC</div><div class="kpi-value">${fmt(ecT)}</div><div class="kpi-unit">pcs</div></div>
+    <div class="kpi-card green"><div class="kpi-label">海外</div><div class="kpi-value">${fmt(ovsT)}</div><div class="kpi-unit">pcs</div></div>`;
+
+  // 棒グラフ
+  const sum=(ch,m)=>skus.reduce((a,s)=>a+((s.monthly_shipments||{})[m]?.[ch]||0),0);
+  if(chartShipBar) chartShipBar.destroy();
+  chartShipBar=new Chart(document.getElementById('chartShipBar').getContext('2d'),{
+    type:'bar',
+    data:{labels:months,datasets:[
+      {label:'toB',  data:months.map(m=>sum('tob',m)),     backgroundColor:'rgba(126,184,212,.7)',borderColor:'rgba(126,184,212,1)',borderWidth:1},
+      {label:'EC',   data:months.map(m=>sum('ec',m)),      backgroundColor:'rgba(200,169,110,.7)',borderColor:'rgba(200,169,110,1)',borderWidth:1},
+      {label:'海外', data:months.map(m=>sum('overseas',m)),backgroundColor:'rgba(126,212,160,.7)',borderColor:'rgba(126,212,160,1)',borderWidth:1},
+      {label:'other',data:months.map(m=>sum('other',m)),   backgroundColor:'rgba(180,158,232,.7)',borderColor:'rgba(180,158,232,1)',borderWidth:1}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:11}}}},
+      scales:{x:{stacked:true,ticks:{color:'#5a5750',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}},
+              y:{stacked:true,ticks:{color:'#5a5750',font:{family:'DM Mono',size:11},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}}}
+  });
+
+  // 試算 vs 実績（JANで紐づけ）
+  const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
+  let cmp='<div class="compare-bar-wrap">',hasCompare=false;
+  orderSkus.forEach(os=>{
+    // JANで紐づける（orders.jsonのjanとshipments.jsonのsku_codeを照合）
+    const jan=os.jan||'';
+    const ss=jan
+      ? skus.find(s=>s.sku_code===jan) || skus.find(s=>s.sku_name===os.sku_name)
+      : skus.find(s=>s.sku_name===os.sku_name);
+    if(!ss) return;
+    hasCompare=true;
+    const fc=Object.values(os.monthly_summary?.tob||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.ec||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.overseas||{}).reduce((a,b)=>a+b,0);
+    const ac=months.reduce((a,m)=>a+((ss.monthly_shipments||{})[m]?.total||0),0);
+    const r=fc>0?Math.round(ac/fc*100):0;
+    const rc=r>=90?'var(--accent4)':r>=70?'var(--accent)':'var(--accent3)';
+    cmp+=`<div class="compare-row">
+      <div class="compare-label"><span>${skuLabel(os.sku_name)}</span><span style="font-family:var(--font-mono);font-size:10px">実績 ${fmt(ac)} / 試算 ${fmt(fc)} <span style="color:${rc}">(${r}%)</span></span></div>
+      <div class="compare-bars"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);width:30px">試算</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:rgba(126,184,212,.3)"></div></div><span style="font-family:var(--font-mono);font-size:10px;color:var(--accent2);width:50px;text-align:right">${fmt(fc)}</span></div>
+      <div class="compare-bars"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);width:30px">実績</span><div class="bar-track"><div class="bar-fill" style="width:${Math.min(r,100)}%;background:${rc}"></div></div><span style="font-family:var(--font-mono);font-size:10px;color:${rc};width:50px;text-align:right">${fmt(ac)}</span></div>
+    </div>`;
+  });
+  if(!hasCompare) cmp+=`<div style="color:var(--text3);font-size:12px;padding:8px">orders.jsonのJAN/SKU名と一致する出荷データがありません</div>`;
+  cmp+='</div>';
+  document.getElementById('comparePanel').innerHTML=cmp;
+
+  renderShipTable();
+}
+
+// テーブル分離（チャネルタブ切り替え対応、出荷多い順）
+function renderShipTable(){
+  if(!dataLoaded||!DATA.shipments) return;
+  const skus=filteredShipmentSkus();
+  const months=filteredMonths();
+  const ch=shipTableChannel; // 'all'|'tob'|'ec'|'overseas'
+
+  // SKUごとに期間合計を計算してソート
+  const skuTotals=skus.map(s=>{
+    const total=months.reduce((a,m)=>{
+      const ms=(s.monthly_shipments||{})[m]||{};
+      if(ch==='all') return a+(ms.total||0);
+      if(ch==='tob') return a+(ms.tob||0);
+      if(ch==='ec') return a+(ms.ec||0);
+      if(ch==='overseas') return a+(ms.overseas||0);
+      return a;
+    },0);
+    return {...s,_total:total};
+  }).filter(s=>s._total>0).sort((a,b)=>b._total-a._total);
+
+  // 月別の列ヘッダー
+  let tHtml=`<thead><tr>
+    <th style="text-align:left">SKU</th>
+    <th style="text-align:left">JAN</th>
+    ${months.map(m=>`<th>${m}</th>`).join('')}
+    <th>合計</th>
+  </tr></thead><tbody>`;
+
+  skuTotals.slice(0,200).forEach(s=>{
+    const mVals=months.map(m=>{
+      const ms=(s.monthly_shipments||{})[m]||{};
+      if(ch==='all') return ms.total||0;
+      if(ch==='tob') return ms.tob||0;
+      if(ch==='ec') return ms.ec||0;
+      if(ch==='overseas') return ms.overseas||0;
+      return 0;
+    });
+    tHtml+=`<tr>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.sku_name}">${skuLabel(s.sku_name)}</td>
+      <td style="font-family:var(--font-mono);color:var(--text3)">${s.sku_code||'—'}</td>
+      ${mVals.map(v=>`<td class="${v?'num-accent':''}">${v?fmt(v):'—'}</td>`).join('')}
+      <td class="num-pos" style="font-weight:500">${fmt(s._total)}</td>
+    </tr>`;
+  });
+  if(skuTotals.length>200) tHtml+=`<tr><td colspan="${months.length+3}" style="color:var(--text3);text-align:center;font-size:11px;padding:12px">… 残り ${skuTotals.length-200} SKU（フィルターで絞り込んでください）</td></tr>`;
+  tHtml+='</tbody>';
+  document.getElementById('shipTable').innerHTML=tHtml;
+}
+
+// ════════════════════════════════════════════
+//  ④ 在庫推移
+//  スキーマ: {skus:[{sku_name,sku_code,monthly_stock:{月:数量},latest_stock}]}
+// ════════════════════════════════════════════
+function renderInventory(){
+  if(!dataLoaded||!DATA.inventory) return;
+  const allSkus=DATA.inventory.skus||[];
+  const skuFilter=filters.sku;
+  const dispSkus=skuFilter==='all'?allSkus:allSkus.filter(s=>s.sku_name===skuFilter);
+
+  // 月一覧
+  const months=[...new Set(allSkus.flatMap(s=>Object.keys(s.monthly_stock||{})))].sort();
+  const latestMonth=months[months.length-1];
+  const prevMonth=months[months.length-2];
+
+  // KPI
+  const latestTotal=dispSkus.reduce((a,s)=>a+(s.latest_stock||0),0);
+  const prevTotal=dispSkus.reduce((a,s)=>a+((s.monthly_stock||{})[prevMonth]||0),0);
+  const change=latestTotal-prevTotal;
+  const updatedAt=DATA.inventory.updated_at||latestMonth;
+
+  document.getElementById('inventoryKpis').innerHTML=`
+    <div class="kpi-card green"><div class="kpi-label">直近在庫合計</div><div class="kpi-value">${fmt(latestTotal)}</div><div class="kpi-unit">${updatedAt} 時点</div></div>
+    <div class="kpi-card ${change>=0?'green':'red'}"><div class="kpi-label">前月比</div><div class="kpi-value">${change>=0?'+':''}${fmt(change)}</div><div class="kpi-unit">${prevMonth||'—'} → ${latestMonth||'—'}</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">管理SKU数</div><div class="kpi-value">${dispSkus.length}</div><div class="kpi-unit">SKUs</div></div>`;
+
+  // グラフ: フィルターなし→在庫合計のみ, フィルターあり→個別SKU
+  const colors=['rgba(126,184,212,1)','rgba(200,169,110,1)','rgba(224,123,138,1)','rgba(126,212,160,1)','rgba(180,158,232,1)','rgba(240,180,80,1)','rgba(100,200,200,1)','rgba(220,140,180,1)','rgba(160,200,120,1)','rgba(200,160,100,1)'];
+  const bgs=colors.map(c=>c.replace('1)','0.15)'));
+
+  let datasets;
+  if(skuFilter==='all'&&filters.product==='all'){
+    // 全SKU合計
+    const totalByMonth=months.map(m=>allSkus.reduce((a,s)=>a+((s.monthly_stock||{})[m]||0),0));
+    datasets=[
+      {label:'在庫合計',data:totalByMonth,borderColor:'rgba(126,212,160,1)',backgroundColor:'rgba(126,212,160,0.15)',borderWidth:2,pointRadius:4,tension:.3,fill:true},
+    ];
+  } else {
+    // 絞り込みSKUの個別折れ線（最大10件）
+    const graphSkus=dispSkus.slice(0,10);
+    datasets=graphSkus.map((sku,i)=>({
+      label:skuLabel(sku.sku_name),
+      data:months.map(m=>(sku.monthly_stock||{})[m]??null),
+      borderColor:colors[i%colors.length],backgroundColor:bgs[i%bgs.length],
+      borderWidth:2,pointRadius:4,pointHoverRadius:7,tension:.3,fill:false
+    }));
+  }
+
+  if(chartInventory) chartInventory.destroy();
+  chartInventory=new Chart(document.getElementById('chartInventory').getContext('2d'),{
+    type:'line',data:{labels:months,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:11}}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.raw)} pcs`}}
+      },
+      scales:{
+        x:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}},
+        y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:11},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}
+      }
+    },
+    plugins:[{afterDraw(chart){
+      const arrivals=(DATA.orders&&DATA.orders.orders||[]).map(o=>o.arrival_date).filter(Boolean);
+      if(!arrivals.length) return;
+      const xAxis=chart.scales.x;const c2d=chart.ctx;
+      arrivals.forEach(arrDate=>{
+        let xPos=null;
+        for(let i=0;i<months.length-1;i++){
+          if(arrDate>=months[i]&&arrDate<=months[i+1]){
+            const ratio=(arrDate.localeCompare(months[i]))/(months[i+1].localeCompare(months[i])||1);
+            xPos=xAxis.getPixelForValue(i)+(xAxis.getPixelForValue(i+1)-xAxis.getPixelForValue(i))*ratio;break;
+          }
+        }
+        if(xPos===null) return;
+        c2d.save();c2d.setLineDash([4,4]);c2d.strokeStyle='rgba(200,169,110,.6)';c2d.lineWidth=1.5;
+        c2d.beginPath();c2d.moveTo(xPos,chart.chartArea.top);c2d.lineTo(xPos,chart.chartArea.bottom);c2d.stroke();
+        c2d.setLineDash([]);c2d.font='10px DM Mono';c2d.fillStyle='rgba(200,169,110,.9)';
+        c2d.fillText(`入庫 ${arrDate} ▼`,xPos-30,chart.chartArea.top+14);c2d.restore();
+      });
+    }}]
+  });
+
+  if(dispSkus.length>10){
+    const note=document.getElementById('chartInventory').nextElementSibling;
+    if(!note||!note.dataset.note) {
+      const el=document.createElement('div');el.dataset.note='1';
+      el.style.cssText='color:var(--text3);font-size:11px;margin-top:8px;font-family:var(--font-mono)';
+      el.textContent='グラフは先頭10SKUのみ表示。フィルターで絞り込むと全SKU確認できます。';
+      document.getElementById('chartInventory').insertAdjacentElement('afterend',el);
+    }
+  }
+
+  renderInventoryTable();
+}
+
+// 在庫テーブル分離（フィルター・ソート対応）
+// 消化月数の計算: toB初回月除外3か月平均、EC3か月平均
+function calcDigestMonths(sku){
+  const ms=sku.monthly_shipments||{};
+  const months=Object.keys(ms).sort();
+  // toB: 初回出荷月を除外した直近3か月平均
+  const tobMonths=months.filter(m=>ms[m]?.tob>0);
+  const tobRecent=tobMonths.length>=2?tobMonths.slice(1).slice(-3):tobMonths.slice(-3);
+  const tobAvg=tobRecent.length?tobRecent.reduce((a,m)=>a+(ms[m]?.tob||0),0)/tobRecent.length:0;
+  // EC: 直近3か月平均
+  const ecMonths=months.filter(m=>ms[m]?.ec!=null);
+  const ecRecent=ecMonths.slice(-3);
+  const ecAvg=ecRecent.length?ecRecent.reduce((a,m)=>a+(ms[m]?.ec||0),0)/ecRecent.length:0;
+  const monthlyAvg=tobAvg+ecAvg;
+  const latest=sku.latest_stock||0;
+  return monthlyAvg>0?latest/monthlyAvg:null;
+}
+function renderInventoryTable(){
+  if(!dataLoaded||!DATA.inventory) return;
+  const allSkus=DATA.inventory.skus||[];
+  const skuFilter=filters.sku;
+  let dispSkus=skuFilter==='all'?[...allSkus]:allSkus.filter(s=>s.sku_name===skuFilter);
+  const shipSkus=DATA.shipments?DATA.shipments.skus||[]:[];
+
+  // 消化月数を付与
+  dispSkus=dispSkus.map(s=>{
+    const ss=shipSkus.find(x=>x.sku_code===s.sku_code||x.sku_name===s.sku_name)||null;
+    const dm=ss?calcDigestMonths(ss):null;
+    return{...s,_digestMonths:dm,_ss:ss};
+  });
+
+  // リスク判定（orders.jsonからリードタイム取得、デフォルト2か月）
+  const leadTimeMonths=(DATA.orders?.orders||[]).reduce((a,o)=>Math.max(a,(o.lead_time_weeks||8)/4.33),2);
+  dispSkus=dispSkus.map(s=>({
+    ...s,
+    _shortage: s._digestMonths!=null && s._digestMonths<=leadTimeMonths+1 && s._digestMonths<3,
+    _excess:   s._digestMonths!=null && s._digestMonths>=12,
+    _defect:   false // 不良在庫アラート無効
+  }));
+
+  // フィルター適用
+  if(invFilter==='defect') dispSkus=dispSkus.filter(s=>s._defect);
+  if(invFilter==='risk')   dispSkus=dispSkus.filter(s=>s._shortage);
+  if(invFilter==='excess') dispSkus=dispSkus.filter(s=>s._excess);
+
+  // 直近在庫多い順
+  dispSkus.sort((a,b)=>(b.latest_stock||0)-(a.latest_stock||0));
+
+  const months=[...new Set((DATA.inventory.skus||[]).flatMap(s=>Object.keys(s.monthly_stock||{})))].sort();
+
+  let tHtml=`<thead><tr>
+    <th style="text-align:left">SKU</th>
+    <th style="text-align:left">JAN</th>
+    ${months.map(m=>`<th>${m}</th>`).join('')}
+    <th>直近在庫</th>
+    <th>消化月数</th>
+    <th>リスク</th>
+  </tr></thead><tbody>`;
+
+  dispSkus.slice(0,300).forEach(s=>{
+    const dm=s._digestMonths;
+    const dmStr=dm!=null?dm.toFixed(1)+'ヶ月':'—';
+    const dmColor=s._shortage?'var(--accent3)':dm!=null&&dm>=12?'var(--accent2)':'var(--text2)';
+    const riskTags=[];
+    if(s._shortage) riskTags.push(`<span class="badge badge-accent" style="background:rgba(224,123,138,.15);color:var(--accent3);border-color:rgba(224,123,138,.3)">欠品⚠</span>`);
+    if(s._excess)   riskTags.push(`<span class="badge badge-blue">過剰</span>`);
+    tHtml+=`<tr>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.sku_name}">${skuLabel(s.sku_name)}</td>
+      <td style="font-family:var(--font-mono);color:var(--text3)">${s.sku_code||'—'}</td>
+      ${months.map(m=>{const v=(s.monthly_stock||{})[m];return`<td class="${v!=null?'num-accent':''}">${v!=null?fmt(v):'—'}</td>`;}).join('')}
+      <td class="num-pos">${fmt(s.latest_stock)}</td>
+
+      <td style="font-family:var(--font-mono);color:${dmColor}">${dmStr}</td>
+      <td style="white-space:nowrap">${riskTags.join(' ')||'—'}</td>
+    </tr>`;
+  });
+  if(dispSkus.length>300) tHtml+=`<tr><td colspan="${months.length+8}" style="color:var(--text3);text-align:center;font-size:11px;padding:12px">… 残り ${dispSkus.length-300} SKU</td></tr>`;
+  tHtml+='</tbody>';
+  document.getElementById('inventoryTable').innerHTML=tHtml;
+}
+
+// ════════════════════════════════════════════
+//  ⑤ 振り返り
+// ════════════════════════════════════════════
+function renderReview(){
+  if(!dataLoaded||!DATA.shipments||!DATA.orders) return;
+  const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
+  const shipSkus=DATA.shipments.skus||[];
+  const months=filteredMonths();
+
+  const THRESH=0.2; // 誤差閾値20%
+
+  // SKUごとに試算vs実績を計算
+  const rows=orderSkus.map(os=>{
+    const jan=os.jan||'';
+    const ss=jan?shipSkus.find(s=>s.sku_code===jan)||shipSkus.find(s=>s.sku_name===os.sku_name):shipSkus.find(s=>s.sku_name===os.sku_name);
+    const fc={tob:0,ec:0,overseas:0};
+    ['tob','ec','overseas'].forEach(ch=>Object.entries(os.monthly_summary?.[ch]||{}).forEach(([m,v])=>{if(months.includes(m))fc[ch]+=v||0;}));
+    const fcTotal=fc.tob+fc.ec+fc.overseas;
+    const ac={tob:0,ec:0,overseas:0,other:0,total:0};
+    if(ss) months.forEach(m=>{const ms=(ss.monthly_shipments||{})[m]||{};ac.tob+=ms.tob||0;ac.ec+=ms.ec||0;ac.overseas+=ms.overseas||0;ac.other+=ms.other||0;ac.total+=ms.total||0;});
+    const diff=ac.total-fcTotal;
+    const accuracy=ac.total>0?1-Math.abs(diff)/ac.total:null;
+    const errRate=fcTotal>0?Math.abs(diff)/fcTotal:null;
+    return{name:os.sku_name,jan,fc,fcTotal,ac,diff,accuracy,errRate,over:errRate!=null&&errRate>THRESH};
+  }).filter(r=>r.fcTotal>0||r.ac.total>0);
+
+  // KPI
+  const validAcc=rows.filter(r=>r.accuracy!=null);
+  const avgAcc=validAcc.length?validAcc.reduce((a,r)=>a+r.accuracy,0)/validAcc.length:null;
+  const overCount=rows.filter(r=>r.over).length;
+  const totalDiff=rows.reduce((a,r)=>a+r.diff,0);
+  document.getElementById('reviewKpis').innerHTML=`
+    <div class="kpi-card blue"><div class="kpi-label">平均予測精度</div><div class="kpi-value">${avgAcc!=null?(avgAcc*100).toFixed(1)+'%':'—'}</div><div class="kpi-unit">全SKU平均</div></div>
+    <div class="kpi-card ${totalDiff>=0?'red':'blue'}"><div class="kpi-label">実績−試算（合計）</div><div class="kpi-value">${totalDiff>=0?'+':''}${fmt(totalDiff)}</div><div class="kpi-unit">${totalDiff>0?'欠品リスク傾向':'過剰在庫傾向'}</div></div>
+    <div class="kpi-card red"><div class="kpi-label">誤差閾値超過SKU</div><div class="kpi-value">${overCount}</div><div class="kpi-unit">±${(THRESH*100).toFixed(0)}% 超</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">比較SKU数</div><div class="kpi-value">${rows.length}</div><div class="kpi-unit">SKUs</div></div>`;
+
+  // グラフ：積み上げ棒（実績toB/EC/海外/other vs 試算toB/EC/海外）
+  const labels=rows.map(r=>skuLabel(r.name));
+  if(chartReview) chartReview.destroy();
+  chartReview=new Chart(document.getElementById('chartReview').getContext('2d'),{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'実績 toB',  data:rows.map(r=>r.ac.tob),   backgroundColor:'rgba(126,184,212,.8)',stack:'actual'},
+      {label:'実績 EC',   data:rows.map(r=>r.ac.ec),    backgroundColor:'rgba(200,169,110,.8)',stack:'actual'},
+      {label:'実績 海外', data:rows.map(r=>r.ac.overseas),backgroundColor:'rgba(126,212,160,.8)',stack:'actual'},
+      {label:'実績 other',data:rows.map(r=>r.ac.other), backgroundColor:'rgba(180,158,232,.8)',stack:'actual'},
+      {label:'試算 toB',  data:rows.map(r=>r.fc.tob),   backgroundColor:'rgba(126,184,212,.3)',borderColor:'rgba(126,184,212,.8)',borderWidth:1,borderDash:[4,4],stack:'forecast'},
+      {label:'試算 EC',   data:rows.map(r=>r.fc.ec),    backgroundColor:'rgba(200,169,110,.3)',borderColor:'rgba(200,169,110,.8)',borderWidth:1,stack:'forecast'},
+      {label:'試算 海外', data:rows.map(r=>r.fc.overseas),backgroundColor:'rgba(126,212,160,.3)',borderColor:'rgba(126,212,160,.8)',borderWidth:1,stack:'forecast'},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:10}}}},
+      scales:{
+        x:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10}},grid:{color:'rgba(42,45,58,.5)'}},
+        y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}
+      }}
+  });
+
+  // ワーストTOP10テーブル
+  const worst=[...rows].sort((a,b)=>(b.errRate||0)-(a.errRate||0)).slice(0,10);
+  let tHtml=`<thead><tr>
+    <th style="text-align:left">SKU</th><th>試算合計</th><th>実績合計</th>
+    <th>差異</th><th>予測精度</th><th>誤差率</th><th>アラート</th>
+  </tr></thead><tbody>`;
+  worst.forEach(r=>{
+    const acc=r.accuracy!=null?(r.accuracy*100).toFixed(1)+'%':'—';
+    const err=r.errRate!=null?(r.errRate*100).toFixed(1)+'%':'—';
+    const diffCol=r.diff>0?'num-warn':r.diff<0?'num-blue':'';
+    tHtml+=`<tr style="${r.over?'background:rgba(224,123,138,0.05)':''}">
+      <td title="${r.name}">${skuLabel(r.name)}</td>
+      <td>${fmt(r.fcTotal)}</td>
+      <td>${fmt(r.ac.total)}</td>
+      <td class="${diffCol}">${r.diff>0?'+':''}${fmt(r.diff)}</td>
+      <td style="font-family:var(--font-mono);color:${r.accuracy!=null&&r.accuracy>=0.8?'var(--accent4)':'var(--accent3)'}">${acc}</td>
+      <td style="font-family:var(--font-mono);color:${r.over?'var(--accent3)':'var(--text2)'}">${err}</td>
+      <td>${r.over?`<span class="badge" style="background:rgba(224,123,138,.15);color:var(--accent3);border:1px solid rgba(224,123,138,.3)">誤差超過</span>`:r.diff>0?`<span class="badge badge-accent" style="background:rgba(224,123,138,.1)">欠品リスク</span>`:r.diff<0?`<span class="badge badge-blue">過剰傾向</span>`:'—'}</td>
+    </tr>`;
+  });
+  tHtml+='</tbody>';
+  document.getElementById('reviewTable').innerHTML=tHtml;
+}
+
+// ════════════════════════════════════════════
+//  ⑥ アラート
+// ════════════════════════════════════════════
+function renderAlerts(){
+  if(!dataLoaded||!DATA.inventory||!DATA.shipments) return;
+  const invSkus=DATA.inventory.skus||[];
+  const shipSkus=DATA.shipments.skus||[];
+  const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
+  const THRESH=0.2;
+  const leadTimeMonths=(DATA.orders?.orders||[]).reduce((a,o)=>Math.max(a,(o.lead_time_weeks||8)/4.33),2);
+
+  const alerts=[];
+
+  invSkus.forEach(inv=>{
+    const ss=shipSkus.find(s=>s.sku_code===inv.sku_code||s.sku_name===inv.sku_name);
+    const dm=ss?calcDigestMonths(ss):null;
+    const name=skuLabel(inv.sku_name);
+    // 欠品リスク（消化月数 < 3 かつ リードタイム以下）
+    if(dm!=null&&dm<3&&dm<=leadTimeMonths+1){
+      alerts.push({level:'danger',type:'shortage',label:'欠品リスク / 発注タイミング',name,detail:`消化月数 ${dm.toFixed(1)}ヶ月 ≤ リードタイム(${leadTimeMonths.toFixed(1)})+1ヶ月`});
+    }
+    // 過剰在庫リスク（消化月数 ≥ 12）
+    if(dm!=null&&dm>=12){
+      alerts.push({level:'warn',type:'excess',label:'過剰在庫リスク',name,detail:`消化月数 ${dm.toFixed(1)}ヶ月`});
+    }
+
+  });
+
+  // 誤差アラート
+  orderSkus.forEach(os=>{
+    const jan=os.jan||'';
+    const ss=jan?shipSkus.find(s=>s.sku_code===jan)||shipSkus.find(s=>s.sku_name===os.sku_name):shipSkus.find(s=>s.sku_name===os.sku_name);
+    if(!ss) return;
+    const fc=Object.values(os.monthly_summary?.tob||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.ec||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.overseas||{}).reduce((a,b)=>a+b,0);
+    const ac=Object.values(ss.monthly_shipments||{}).reduce((a,ms)=>a+(ms.total||0),0);
+    if(fc>0){
+      const err=Math.abs(ac-fc)/fc;
+      if(err>THRESH) alerts.push({level:err>0.5?'danger':'warn',type:'accuracy',label:'予測誤差超過',name:skuLabel(os.sku_name),detail:`誤差率 ${(err*100).toFixed(1)}% (試算${fmt(fc)} / 実績${fmt(ac)})`});
+    }
+  });
+
+  // バッジ更新
+  const badge=document.getElementById('alertBadge');
+  if(badge){badge.textContent=alerts.length;badge.style.display=alerts.length?'inline':'none';}
+
+  const dangerCount=alerts.filter(a=>a.level==='danger').length;
+  const warnCount=alerts.filter(a=>a.level==='warn').length;
+  document.getElementById('alertKpis').innerHTML=`
+    <div class="kpi-card red"><div class="kpi-label">緊急アラート</div><div class="kpi-value">${dangerCount}</div><div class="kpi-unit">件</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">警告</div><div class="kpi-value">${warnCount}</div><div class="kpi-unit">件</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">合計</div><div class="kpi-value">${alerts.length}</div><div class="kpi-unit">件</div></div>
+    <div class="kpi-card green"><div class="kpi-label">リードタイム</div><div class="kpi-value">${leadTimeMonths.toFixed(1)}</div><div class="kpi-unit">ヶ月</div></div>`;
+
+  const typeColors={order:'var(--accent3)',shortage:'var(--accent3)',excess:'var(--accent2)',defect:'var(--accent5)',accuracy:'var(--accent)'};
+  const typeIcons={order:'⏰',shortage:'🔴',excess:'📦',defect:'⚠️',accuracy:'📊'};
+  const grouped={danger:[],warn:[]};
+  alerts.forEach(a=>grouped[a.level].push(a));
+
+  let html='';
+  if(!alerts.length) html='<div style="color:var(--text3);font-size:13px;text-align:center;padding:32px">アラートはありません ✓</div>';
+  ['danger','warn'].forEach(level=>{
+    if(!grouped[level].length) return;
+    html+=`<div style="margin-bottom:16px">
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:${level==='danger'?'var(--accent3)':'var(--accent)'};margin-bottom:8px;text-transform:uppercase">${level==='danger'?'● 緊急':'◎ 警告'}</div>
+      ${grouped[level].map(a=>`
+        <div style="background:var(--surface2);border:1px solid ${level==='danger'?'rgba(224,123,138,.3)':'var(--border)'};border-left:3px solid ${typeColors[a.type]||'var(--border)'};border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px">
+          <span style="font-size:16px;flex-shrink:0">${typeIcons[a.type]||'!'}</span>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px">${a.label} — ${a.name}</div>
+            <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono)">${a.detail}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  });
+  document.getElementById('alertList').innerHTML=html;
+}
+
+
 function getBaseMonth(){
   const d=document.getElementById('ci_orderDate');
   if(!d||!d.value) return null;
