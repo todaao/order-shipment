@@ -1024,21 +1024,6 @@ function renderShipments(){
               y:{stacked:true,ticks:{color:'#5a5750',font:{family:'DM Mono',size:11},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}}}
   });
 
-  // 試算 vs 実績（orders.jsonと一致するSKUのみ）
-  const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
-  let cmp='<div class="compare-bar-wrap">',hasCompare=false;
-  orderSkus.forEach(os=>{
-    const ss=skus.find(s=>s.sku_name===os.sku_name);if(!ss) return;hasCompare=true;
-    const fc=Object.values(os.monthly_summary?.tob||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.ec||{}).reduce((a,b)=>a+b,0)+Object.values(os.monthly_summary?.overseas||{}).reduce((a,b)=>a+b,0);
-    const ac=months.reduce((a,m)=>a+((ss.monthly_shipments||{})[m]?.total||0),0);
-    const r=fc>0?Math.round(ac/fc*100):0;
-    const rc=r>=90?'var(--accent4)':r>=70?'var(--accent)':'var(--accent3)';
-    cmp+=`<div class="compare-row">
-      <div class="compare-label"><span>${skuLabel(os.sku_name)}</span><span style="font-family:var(--font-mono);font-size:10px">実績 ${fmt(ac)} / 試算 ${fmt(fc)} <span style="color:${rc}">(${r}%)</span></span></div>
-      <div class="compare-bars"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);width:30px">試算</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:rgba(126,184,212,.3)"></div></div><span style="font-family:var(--font-mono);font-size:10px;color:var(--accent2);width:50px;text-align:right">${fmt(fc)}</span></div>
-      <div class="compare-bars"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);width:30px">実績</span><div class="bar-track"><div class="bar-fill" style="width:${Math.min(r,100)}%;background:${rc}"></div></div><span style="font-family:var(--font-mono);font-size:10px;color:${rc};width:50px;text-align:right">${fmt(ac)}</span></div>
-    </div>`;
-  });
   // 試算 vs 実績（JANで紐づけ）
   const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
   let cmp='<div class="compare-bar-wrap">',hasCompare=false;
