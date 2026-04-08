@@ -581,11 +581,19 @@ function hideLoader(){ const el=document.getElementById('loaderOverlay'); if(el)
 // ─── fetch 全JSONを並列読み込み ───
 async function loadAllJSON(){
   showLoader('orders.json / shipments.json / inventory.json を読み込み中…');
+  // キャッシュ回避のタイムスタンプ付与
+  const ts = `?t=${Date.now()}`;
+  const baseUrl = location.href.replace(/\/[^/]*$/, '/');
   try {
+    const urls = {
+      orders:    baseUrl + 'orders.json' + ts,
+      shipments: baseUrl + 'shipments.json' + ts,
+      inventory: baseUrl + 'inventory.json' + ts,
+    };
     const [orders, shipments, inventory] = await Promise.all([
-      fetch(JSON_FILES.orders).then(r=>{ if(!r.ok) throw new Error(`orders.json: ${r.status}`); return r.json(); }),
-      fetch(JSON_FILES.shipments).then(r=>{ if(!r.ok) throw new Error(`shipments.json: ${r.status}`); return r.json(); }),
-      fetch(JSON_FILES.inventory).then(r=>{ if(!r.ok) throw new Error(`inventory.json: ${r.status}`); return r.json(); })
+      fetch(urls.orders).then(r=>{ if(!r.ok) throw new Error(`orders.json の取得失敗 (HTTP ${r.status})\n→ ${urls.orders}`); return r.json(); }),
+      fetch(urls.shipments).then(r=>{ if(!r.ok) throw new Error(`shipments.json の取得失敗 (HTTP ${r.status})\n→ ${urls.shipments}`); return r.json(); }),
+      fetch(urls.inventory).then(r=>{ if(!r.ok) throw new Error(`inventory.json の取得失敗 (HTTP ${r.status})\n→ ${urls.inventory}`); return r.json(); })
     ]);
     DATA.orders    = orders;
     DATA.shipments = shipments;
