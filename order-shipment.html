@@ -3072,7 +3072,9 @@ async function exportCalcDirect(){
     const wb=await buildWorkbook(d);if(!wb){showNotif('ワークブック生成失敗','error');return;}const buf=XLSX.write(wb,{type:'array',bookType:'xlsx'});
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
-    a.href=url;a.download=`発注試算_${d.brand||'brand'}_${d.product}_${d.order_date||'date'}.xlsx`;
+    a.href=url;const _calcDate=document.getElementById('ci_calcDate')?.value||d.order_date||'';
+    const _directTitle=(_calcDate?_calcDate.replace(/-/g,'').slice(0,8)+'_':'')+(d.product||'発注試算');
+    a.download=`${_directTitle}.xlsx`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
     showNotif('テンプレートExcelを出力しました ✓','success');
   }catch(e){console.error(e);showNotif('Excel出力エラー: '+e.message,'error');}
@@ -3091,6 +3093,9 @@ function saveDraft(){
   const d=collectCalcData();
   if(!d.product){showNotif('商品名を入力してください','error');return;}
   d.dept=dept;d.memo=(document.getElementById('ci_memo')||{}).value||'';
+  const calcDateVal=document.getElementById('ci_calcDate')?.value||d.order_date||'';
+  const draftTitle=(calcDateVal?calcDateVal.replace(/-/g,'').slice(0,8)+'_':'')+(d.product||'無題');
+  d.draft_title=draftTitle;
   d.saved_at=new Date().toISOString();d.id=Date.now().toString();
   const drafts=loadDrafts();drafts.push(d);saveDraftsToLS(drafts);
   updateDraftBadge();showNotif(`「${d.product}」を仮保存しました（${dept}）`,'success');
@@ -3140,7 +3145,7 @@ function renderDraftList(){
         <div style="display:flex;align-items:center;gap:10px">
           <input type="checkbox" class="draft-cb" value="${d.id}" style="accent-color:var(--accent);width:15px;height:15px;flex-shrink:0" onchange="updateDraftSelBtns()">
           <div>
-            <div class="draft-title">${escHtml(d.product||'—')} <span class="badge ${d.mode==='normal'?'badge-accent':'badge-blue'}" style="margin-left:6px">${d.mode==='normal'?'通常':'簡易'}</span></div>
+            <div class="draft-title">${escHtml(d.draft_title||d.product||'—')} <span class="badge ${d.mode==='normal'?'badge-accent':'badge-blue'}" style="margin-left:6px">${d.mode==='normal'?'通常':'簡易'}</span></div>
             <div class="draft-meta">${escHtml(d.brand||'')} ／ 発注: ${d.order_date||'—'} ／ 保存: ${new Date(d.saved_at).toLocaleString('ja-JP')}</div>
           </div>
         </div>
@@ -3200,8 +3205,20 @@ function reEditDraft(id){
   if(calcView) calcView.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>{if(n.textContent.includes('発注試算')) n.classList.add('active');});
   renderCalcSkuList();
-  goStep(1);// ② 参照POS & toBに直接移動
-  showNotif(`「${d.product}」を再編集モードで読み込みました（② 参照POS & toBから編集できます）`,'success');
+  // validateStep0をスキップしてStep1へ直接遷移
+  for(let i=0;i<=4;i++){const el=document.getElementById('calcStep'+i);if(el)el.style.display=i===1?'':'none';}
+  const steps=document.querySelectorAll('#calcStepNav .step');
+  steps.forEach((s,si)=>{s.classList.remove('active','done');if(si<1)s.classList.add('done');if(si===1)s.classList.add('active');});
+  // ② の内容を構築
+  if(calcMode==='simple'){
+    const posArea=document.getElementById('posPosArea');
+    if(posArea) posArea.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">（簡易試算モードでは参照POSの設定は不要です）</div>';
+  } else {
+    buildPosArea();
+  }
+  buildPsBlocks();
+  window.scrollTo({top:0,behavior:'smooth'});
+  showNotif(`「${d.product}」を再編集モードで読み込みました（② 参照POS & toBを確認してください）`,'success');
 }
 
 async function exportOneDraft(id){
@@ -3209,7 +3226,7 @@ async function exportOneDraft(id){
   try{const wb=await buildWorkbook(d);if(!wb){showNotif('ワークブック生成失敗','error');return;}const buf=XLSX.write(wb,{type:'array',bookType:'xlsx'});
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
-    a.href=url;a.download=`発注試算_${d.brand||''}_${d.product}_${d.dept||''}_${(d.saved_at||'').slice(0,10)}.xlsx`;
+    a.href=url;a.download=`${d.draft_title||d.product||'発注試算'}_${d.dept||''}.xlsx`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
     showNotif('Excelを出力しました ✓','success');
   }catch(e){showNotif('エラー: '+e.message,'error');}
@@ -3223,7 +3240,7 @@ async function exportSelectedDrafts(){
     try{const wb=await buildWorkbook(d);if(!wb){showNotif('ワークブック生成失敗','error');return;}const buf=XLSX.write(wb,{type:'array',bookType:'xlsx'});
       const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       const url=URL.createObjectURL(blob);const a=document.createElement('a');
-      a.href=url;a.download=`発注試算_${d.brand||''}_${d.product}_${d.dept||''}_${(d.saved_at||'').slice(0,10)}.xlsx`;
+      a.href=url;a.download=`${d.draft_title||d.product||'発注試算'}_${d.dept||''}.xlsx`;
       document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
     }catch(e){console.error(e);}
   }
