@@ -1577,30 +1577,42 @@ function janSearchPreview(){
   const matches=masterSearch(q).slice(0,20);
   if(!matches.length){el.innerHTML='<span style="color:var(--text3);font-size:11px">マスタに見つかりません</span>';return;}
   const alreadyJans=new Set(calcSkus.map(s=>String(s.jan)));
-  el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;margin-bottom:6px">
-    <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${matches.length}件ヒット — チェックして「選択追加」</span>
-    <div style="display:flex;gap:6px">
-      <button class="btn btn-secondary" style="font-size:10px;padding:3px 8px" onclick="janSelectAll(${JSON.stringify(matches.map(m=>String(m.jan)))})">全選択</button>
-      <button class="btn btn-primary" style="font-size:10px;padding:3px 8px" onclick="addSelectedJans()">✓ 選択追加</button>
-    </div>
-  </div>`+matches.map(m=>{
+  let html='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;margin-bottom:6px">'
+    +'<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">'+matches.length+'件ヒット — チェックして「選択追加」</span>'
+    +'<div style="display:flex;gap:6px">'
+    +'<button class="btn btn-secondary" style="font-size:10px;padding:3px 8px" onclick="janSelectAll('+JSON.stringify(matches.map(m=>String(m.jan)))+')" >全選択</button>'
+    +'<button class="btn btn-primary" style="font-size:10px;padding:3px 8px" onclick="addSelectedJans()">✓ 選択追加</button>'
+    +'</div></div>';
+  matches.forEach(function(m){
     const jan=String(m.jan);
     const ss=SHIP_BY_JAN[jan];
     const inv=INV_BY_JAN[jan];
     const latestStock=inv?inv.latest_stock:0;
-    const recent1=ss?recentShip(jan,'tob',1)+recentShip(jan,'ec',1):0;
+    const recent1=ss?(recentShip(jan,'tob',1)+recentShip(jan,'ec',1)):0;
     const already=alreadyJans.has(jan);
     const checked=_janSelected.has(jan);
-    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:${already?'rgba(90,87,80,0.2)':'var(--surface2)'};border-radius:4px;margin-bottom:3px;border:1px solid ${checked?'var(--accent)':'var(--border)'};cursor:${already?'default':'pointer'}" onclick="${already?'':'janToggle(event,''+jan+'')'}">
-      <input type="checkbox" ${checked?'checked':''} ${already?'disabled':''} style="accent-color:var(--accent);width:14px;height:14px;flex-shrink:0;pointer-events:none">
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12px;color:${already?'var(--text3)':'var(--text)'}">${escHtml(m.product_name)} <span style="color:var(--accent2)">${escHtml(m.sku_name)}</span>${already?' <span style="font-size:9px;color:var(--text3)">(追加済)</span>':''}</div>
-        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${jan} | ${m.brand}${latestStock?` | 在庫${fmt(latestStock)}`:''}${recent1?` | 直近${fmt(recent1)}/月`:'(出荷データなし)'}</div>
-      </div>
-    </div>`;
-  }).join('');
+    const bg=already?'rgba(90,87,80,0.2)':'var(--surface2)';
+    const border=checked?'var(--accent)':'var(--border)';
+    const cursor=already?'default':'pointer';
+    const onclick=already?'':'janToggle(event,"'+jan+'")';
+    const nameColor=already?'var(--text3)':'var(--text)';
+    const stockInfo=latestStock?' | 在庫'+fmt(latestStock):'';
+    const recentInfo=recent1?' | 直近'+fmt(recent1)+'/月':'(出荷データなし)';
+    const addedTag=already?' <span style="font-size:9px;color:var(--text3)">(追加済)</span>':'';
+    html+='<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;'
+      +'background:'+bg+';border-radius:4px;margin-bottom:3px;border:1px solid '+border
+      +';cursor:'+cursor+'" onclick="'+onclick+'">'
+      +'<input type="checkbox"'+(checked?' checked':'')+(already?' disabled':'')
+      +' style="accent-color:var(--accent);width:14px;height:14px;flex-shrink:0;pointer-events:none">'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-size:12px;color:'+nameColor+'">'
+      +escHtml(m.product_name)+' <span style="color:var(--accent2)">'+escHtml(m.sku_name)+'</span>'+addedTag+'</div>'
+      +'<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">'
+      +jan+' | '+m.brand+stockInfo+recentInfo+'</div>'
+      +'</div></div>';
+  });
+  el.innerHTML=html;
 }
-
 function janToggle(e,jan){
   e.stopPropagation();
   if(_janSelected.has(jan)) _janSelected.delete(jan); else _janSelected.add(jan);
