@@ -902,10 +902,10 @@ function renderSummary(){
       <div class="sku-table-wrap" style="margin-top:16px"><table>
         <thead><tr><th>SKU / JAN</th><th>現在庫</th><th>推計必要数</th><th>発注数</th><th>確定発注数</th><th>過不足</th></tr></thead>
         <tbody>${skus.map(s=>{const d=(s.confirmed_order||0)-(s.estimated_total||0);return`<tr>
-          `<td style="max-width:220px">${masterName(s.jan)||s.sku_name}<br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${s.jan||'—'}</span></td><td>${fmt(s.current_stock)}</td>
+          <td style="max-width:220px">${masterName(s.jan)||s.sku_name}<br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${s.jan||'—'}</span></td><td>${fmt(s.current_stock)}</td>
           <td>${fmt(s.estimated_total)}</td><td>${fmt(s.order_quantity)}</td>
           <td class="num-accent">${fmt(s.confirmed_order)}</td>
-          <td class="${d>=0?'num-pos':'num-warn'}">${d>=0?'+':''}${fmt(d)}</td>`
+          <td class="${d>=0?'num-pos':'num-warn'}">${d>=0?'+':''}${fmt(d)}</td>
         </tr>`;}).join('')}</tbody>
       </table></div>
       ${retailers.length?`<div style="margin-top:12px"><div class="meta-key" style="margin-bottom:6px">取引小売先</div>
