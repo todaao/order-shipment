@@ -53,7 +53,7 @@ select:focus{border-color:var(--accent);}
 .kpi-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
 .kpi-value{font-family:var(--font-mono);font-size:24px;font-weight:500;color:var(--text);line-height:1;}
 .kpi-unit{font-size:11px;color:var(--text2);margin-top:4px;}
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:visible;}
 .panel-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
 .panel-title{font-size:13px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:8px;}
 .panel-title-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;}
@@ -499,7 +499,7 @@ textarea:focus{border-color:var(--accent);}
           <div id="calcSkuList"></div>
           <div class="btn-row" style="margin-top:16px">
             <button class="btn btn-primary" onclick="goStep(1)">次へ: 参照POS &amp; toB →</button>
-            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(0)" title="商品情報・SKUをクラウドに保存">☁️ セッション作成 / クラウドに保存</button>
+            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(0)">☁️ セッション作成 / クラウドに保存</button>
           </div>
         </div>
       </div>
@@ -3733,8 +3733,7 @@ async function _doCloudSaveStep(step){
   if(!currentSessionId){ showNotif('セッションIDがありません','error'); return; }
   const d=collectCalcData();
   if(step===0){
-    try{
-      await cloudFetch('sessions','POST',{session_id:currentSessionId,product:d.product,brand:d.brand,calc_date:d.calc_date,order_date:d.order_date,lead_time_weeks:d.lead_time_weeks,container_moq:d.container_moq,bulk_moq:d.bulk_moq,skus:d.skus,mode:d.mode,created_by:currentDept||'案件担当'});
+    try{ await cloudFetch('sessions','POST',{session_id:currentSessionId,product:d.product,brand:d.brand,calc_date:d.calc_date,order_date:d.order_date,lead_time_weeks:d.lead_time_weeks,container_moq:d.container_moq,bulk_moq:d.bulk_moq,skus:d.skus,mode:d.mode,created_by:currentDept||'案件担当'});
       showNotif(`商品情報・SKU をクラウドに保存しました（${currentSessionId}）`,'success');
     }catch(e){ showNotif('保存エラー: '+e.message,'error'); }
     return;
