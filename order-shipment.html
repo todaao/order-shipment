@@ -386,7 +386,27 @@ textarea:focus{border-color:var(--accent);}
 <div class="view" id="view-calc">
   <div class="view-title">発注試算ツール</div>
   <div class="view-subtitle">ORDER CALCULATION — テンプレートフォーマット準拠</div>
-  <div class="calc-container">
+
+  <!-- 初期選択画面 -->
+  <div id="calcStartScreen" style="display:none;padding:24px 0">
+    <div style="font-size:14px;color:var(--text2);margin-bottom:20px">何をしますか？</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div onclick="startNewCalc()" style="flex:1;min-width:200px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:24px;margin-bottom:8px">✏️</div>
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">新規試算を開始</div>
+        <div style="font-size:11px;color:var(--text3)">商品情報・SKUを入力して新しい発注試算を作成</div>
+      </div>
+      <div onclick="showReEditList()" style="flex:1;min-width:200px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='var(--accent2)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:24px;margin-bottom:8px">📂</div>
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">保存済みを再編集</div>
+        <div style="font-size:11px;color:var(--text3)">ローカル仮保存・クラウドセッションから再開</div>
+      </div>
+    </div>
+    <!-- 再編集リスト（クリック後に表示） -->
+    <div id="reEditListArea" style="display:none;margin-top:20px"></div>
+  </div>
+
+  <div class="calc-container" id="calcMainArea" style="display:none">
     <div class="step-indicator" id="calcStepNav">
       <div class="step active" onclick="goStep(0)"><span class="step-num">①</span> 商品情報・SKU</div>
       <div class="step" onclick="goStep(1)"><span class="step-num">②</span> 参照POS &amp; toB</div>
@@ -551,7 +571,8 @@ textarea:focus{border-color:var(--accent);}
       </div>
     </div>
   </div>
-</div>
+  </div><!-- end calcMainArea -->
+</div><!-- end view-calc -->
 
 <!-- ⑧ 仮保存 -->
 <div class="view" id="view-drafts">
@@ -561,41 +582,35 @@ textarea:focus{border-color:var(--accent);}
   <!-- ☁️ クラウド共有パネル -->
   <div class="panel" style="border-color:rgba(126,184,212,.4)">
     <div class="panel-header" style="background:rgba(126,184,212,.06)">
-      <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent2)"></span>☁️ クラウド共有（部署間リアルタイム連携）</div>
-      <span style="font-size:10px;color:var(--text3)">Cloudflare Workers で複数部署が同じ案件を編集</span>
+      <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent2)"></span>☁️ クラウド共有設定</div>
     </div>
     <div class="panel-body">
-      <!-- 設定 -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
         <div class="form-group">
-          <label class="form-label">Worker URL <span style="color:var(--accent3)">*</span></label>
-          <input type="text" id="workerUrlInput" placeholder="https://order-shipment-api.YOUR_NAME.workers.dev"
-            value="" oninput="setWorkerUrl(this.value)"
-            style="font-family:var(--font-mono);font-size:11px">
-          <span style="font-size:10px;color:var(--text3)">セットアップ後にWorker URLを入力</span>
+          <label class="form-label">Worker URL</label>
+          <input type="text" id="workerUrlInput" placeholder="https://order-shipment-api.xxxx.workers.dev"
+            oninput="setWorkerUrl(this.value)" style="font-family:var(--font-mono);font-size:11px">
         </div>
         <div class="form-group">
-          <label class="form-label">担当部署（自分の役割）</label>
+          <label class="form-label">担当部署</label>
           <select id="deptSelect" onchange="setCurrentDept(this.value);updateDeptUI()" style="font-size:12px">
             <option value="">選択してください</option>
-            <option value="案件担当">📋 案件担当（商品情報・確定発注）</option>
-            <option value="tob">🏪 toB担当（小売試算）</option>
-            <option value="ec">🛒 EC担当（EC試算）</option>
-            <option value="ovs">🌏 海外担当（海外試算）</option>
+            <option value="案件担当">📋 案件担当</option>
+            <option value="tob">🏪 toB担当</option>
+            <option value="ec">🛒 EC担当</option>
+            <option value="ovs">🌏 海外担当</option>
           </select>
         </div>
       </div>
-      <!-- アクションボタン -->
-      <div id="deptActionArea" style="margin-bottom:14px;padding:12px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
-        <div style="color:var(--text3);font-size:12px">担当部署を選択するとアクションが表示されます</div>
+      <div id="deptActionArea" style="margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
+        <div style="color:var(--text3);font-size:12px">担当部署を選択してください</div>
       </div>
-      <!-- クラウドセッション一覧 -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--text3)">CLOUD SESSIONS</div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--text3)">クラウドセッション一覧</div>
         <button class="drilldown-toggle" onclick="renderCloudDraftList()" style="font-size:10px">⟳ 更新</button>
       </div>
       <div id="cloudDraftListBody">
-        <div style="color:var(--text3);font-size:12px;padding:12px">Worker URLを設定してください</div>
+        <div style="color:var(--text3);font-size:12px;padding:8px">Worker URLを設定してください</div>
       </div>
     </div>
   </div>
@@ -966,50 +981,76 @@ async function loadMergedSession(sid){
 }
 
 // ── クラウドドラフト一覧をレンダリング ──
+window._cloudSessions = [];// session_idを安全に参照するためのグローバル配列
+
 async function renderCloudDraftList(){
   const area = document.getElementById('cloudDraftListBody');
   if(!area) return;
   if(!WORKER_URL){
-    area.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:16px">Worker URLが設定されていません。上の設定欄に入力してください。</div>';
+    area.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:16px">Worker URLを設定してください</div>';
     return;
   }
   area.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px">読み込み中…</div>';
   const sessions = await loadCloudSessions();
+  window._cloudSessions = sessions;// インデックスアクセス用に保存
   if(!sessions.length){
     area.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px">クラウドにセッションがありません</div>';
     return;
   }
-  const deptColors = {tob:'var(--tob)',ec:'var(--ec)',ovs:'var(--overseas)',summary:'var(--accent)'};
-  const deptLabels = {tob:'toB',ec:'EC',ovs:'海外',summary:'サマリー'};
-  area.innerHTML = sessions.map(s => {
+  const deptColors = {tob:'var(--tob)',ec:'var(--ec)',ovs:'var(--overseas)'};
+  const deptLabels = {tob:'toB',ec:'EC',ovs:'海外'};
+  area.innerHTML = sessions.map((s,idx) => {
     const badges = ['tob','ec','ovs'].map(d => {
-      if(!s[`${d}_saved_at`]) return `<span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(90,87,80,.2);color:var(--text3)">${deptLabels[d]}: 未</span>`;
-      return `<span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(${d==='tob'?'126,184,212':d==='ec'?'200,169,110':'126,212,160'},.2);color:${deptColors[d]}">${deptLabels[d]}: ${s[`${d}_saved_by`]||'済'}</span>`;
+      const color = deptColors[d];
+      const label = deptLabels[d];
+      const rgb = d==='tob'?'126,184,212':d==='ec'?'200,169,110':'126,212,160';
+      if(!s[d+'_saved_at']) return '<span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(90,87,80,.2);color:var(--text3)">'+label+': 未</span>';
+      return '<span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba('+rgb+',.2);color:'+color+'">'+label+': '+(s[d+'_saved_by']||'済')+'</span>';
     }).join(' ');
-    return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <div>
-          <div style="font-size:13px;font-weight:500;color:var(--text)">${escHtml(s.product||s.session_id)}</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:2px">${escHtml(s.session_id)} / 発注試算日: ${s.calc_date||'—'}</div>
-          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">${badges}</div>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadMergedSession('${s.session_id}')">✏️ 開いて編集</button>
-          <button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteCloudSession('${s.session_id}')">🗑</button>
-        </div>
-      </div>
-    </div>`;
+    const product = escHtml(s.product||s.session_id);
+    const sid = escHtml(s.session_id);
+    const calcDate = s.calc_date||'—';
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px">'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+      +'<div>'
+      +'<div style="font-size:13px;font-weight:500;color:var(--text)">'+product+'</div>'
+      +'<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:2px">'+sid+' / 試算日: '+calcDate+'</div>'
+      +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">'+badges+'</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+      +'<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadMergedSessionByIdx('+idx+')">✏️ 開いて編集</button>'
+      +'<button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteCloudSessionByIdx('+idx+')">🗑</button>'
+      +'</div></div></div>';
   }).join('');
 }
 
-async function deleteCloudSession(sid){
-  showConfirm('削除確認', `「${sid}」を削除しますか？`, async ()=>{
+// インデックス経由でsession_idを安全に取得
+function loadMergedSessionByIdx(idx){
+  const s = window._cloudSessions[idx];
+  if(!s){ showNotif('セッションが見つかりません','error'); return; }
+  loadMergedSession(s.session_id);
+}
+
+function deleteCloudSessionByIdx(idx){
+  const s = window._cloudSessions[idx];
+  if(!s){ showNotif('セッションが見つかりません','error'); return; }
+  showConfirm('削除確認', '「'+s.session_id+'」を削除しますか？', async function(){
     try {
-      await cloudFetch(`sessions/${sid}`, 'DELETE');
+      await cloudFetch('sessions/'+encodeURIComponent(s.session_id), 'DELETE');
       closeModal();
       showNotif('削除しました', 'success');
       renderCloudDraftList();
-    } catch(e) { showNotif('削除エラー: '+e.message,'error'); }
+    } catch(e){ showNotif('削除エラー: '+e.message,'error'); }
+  });
+}
+
+async function deleteCloudSession(sid){
+  showConfirm('削除確認', '「'+sid+'」を削除しますか？', async function(){
+    try {
+      await cloudFetch('sessions/'+encodeURIComponent(sid), 'DELETE');
+      closeModal(); showNotif('削除しました', 'success');
+      renderCloudDraftList();
+    } catch(e){ showNotif('削除エラー: '+e.message,'error'); }
   });
 }
 
@@ -1134,6 +1175,18 @@ function showView(id,el){
   const target=document.getElementById('view-'+id);
   if(target) target.classList.add('active');
   if(el) el.classList.add('active');
+  // 発注試算ツールの初期選択画面制御
+  if(id==='calc'){
+    const startScreen=document.getElementById('calcStartScreen');
+    const mainArea=document.getElementById('calcMainArea');
+    if(calcSkus.length>0){
+      if(startScreen) startScreen.style.display='none';
+      if(mainArea) mainArea.style.display='';
+    } else {
+      if(startScreen) startScreen.style.display='';
+      if(mainArea) mainArea.style.display='none';
+    }
+  }
   if(!dataLoaded) return;
   if(id==='shipments') renderShipments();
   if(id==='inventory') renderInventory();
@@ -3384,6 +3437,71 @@ function saveDraft(){
   );
 }
 
+function startNewCalc(){
+  resetCalcSession();
+  const startScreen=document.getElementById('calcStartScreen');
+  const mainArea=document.getElementById('calcMainArea');
+  if(startScreen) startScreen.style.display='none';
+  if(mainArea) mainArea.style.display='';
+  goStep(0);
+}
+
+function showReEditList(){
+  const area=document.getElementById('reEditListArea');
+  if(!area) return;
+  area.style.display='';
+  const drafts=loadDrafts();
+  if(!drafts.length && !WORKER_URL){
+    area.innerHTML='<div style="color:var(--text3);font-size:12px;padding:12px">保存済み試算がありません</div>';
+    return;
+  }
+  let html='<div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:10px">保存済み試算を選択</div>';
+  // ローカル仮保存
+  if(drafts.length){
+    html+='<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:6px;letter-spacing:.1em">💾 ローカル仮保存</div>';
+    html+=drafts.map((d,i)=>'<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
+      +'<div>'
+      +'<div style="font-size:13px;color:var(--text)">'+escHtml(d.draft_title||d.product||'—')+'</div>'
+      +'<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">'+new Date(d.saved_at).toLocaleString('ja-JP')+'</div>'
+      +'</div>'
+      +'<button class="btn btn-secondary" style="font-size:11px" onclick="reEditDraftFromStart('+i+')">再編集</button>'
+      +'</div>'
+    ).join('');
+  }
+  // クラウドセッション
+  if(WORKER_URL){
+    html+='<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin:12px 0 6px;letter-spacing:.1em">☁️ クラウドセッション</div>';
+    html+='<div id="reEditCloudList"><div style="color:var(--text3);font-size:11px">読み込み中…</div></div>';
+    loadCloudSessions().then(sessions=>{
+      window._cloudSessions=sessions;
+      const cl=document.getElementById('reEditCloudList');
+      if(!cl) return;
+      if(!sessions.length){ cl.innerHTML='<div style="color:var(--text3);font-size:11px;padding:8px">セッションがありません</div>'; return; }
+      cl.innerHTML=sessions.map((s,idx)=>'<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
+        +'<div>'
+        +'<div style="font-size:13px;color:var(--text)">'+escHtml(s.product||s.session_id)+'</div>'
+        +'<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">'+escHtml(s.session_id)+' / 試算日: '+(s.calc_date||'—')+'</div>'
+        +'</div>'
+        +'<button class="btn btn-secondary" style="font-size:11px" onclick="loadMergedSessionByIdx('+idx+')">開いて編集</button>'
+        +'</div>'
+      ).join('');
+    }).catch(()=>{});
+  }
+  area.innerHTML=html;
+}
+
+function reEditDraftFromStart(idx){
+  const drafts=loadDrafts();
+  const d=drafts[idx];
+  if(!d) return;
+  // 初期選択画面を閉じてメイン画面を開く
+  const startScreen=document.getElementById('calcStartScreen');
+  const mainArea=document.getElementById('calcMainArea');
+  if(startScreen) startScreen.style.display='none';
+  if(mainArea) mainArea.style.display='';
+  reEditDraft(d.id);
+}
+
 function resetCalcSession(){
   // 発注試算の状態を完全リセット
   calcSkus=[];calcRetailers=[];
@@ -3460,6 +3578,12 @@ function reEditDraft(id){
   if(d.ec_detail&&d.ec_detail[0]) Object.entries(d.ec_detail[0]).forEach(([k,v])=>{calcEcMonthly[k]=v.monthly||{};});
   if(d.ec_detail&&d.ec_detail[1]) Object.entries(d.ec_detail[1]).forEach(([k,v])=>{calcEcMonthly2[k]=v.monthly||{};});
   if(d.ovs_detail) d.ovs_detail.forEach((blk,i)=>{if(i<4) Object.entries(blk).forEach(([k,v])=>{calcOvsMonthly[i][k]=v.monthly||{};});});
+
+  // 初期選択画面を閉じてメイン画面を開く
+  const _ss=document.getElementById('calcStartScreen');
+  const _ma=document.getElementById('calcMainArea');
+  if(_ss) _ss.style.display='none';
+  if(_ma) _ma.style.display='';
 
   // フォーム値復元
   const setV=(id,v)=>{const el=document.getElementById(id);if(el) el.value=v||'';};
