@@ -38,7 +38,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .filter-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;display:block;}
 select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--radius);font-family:var(--font-body);font-size:12px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235a5750'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
 select:focus{border-color:var(--accent);}
-.main{flex:1;padding:24px;overflow-x:hidden;min-width:0;}
+.main{flex:1;padding:24px;overflow-x:hidden;}
 .view{display:none;} .view.active{display:block;}
 .view-title{font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:4px;}
 .view-subtitle{font-size:12px;color:var(--text3);margin-bottom:20px;font-family:var(--font-mono);}
@@ -499,7 +499,7 @@ textarea:focus{border-color:var(--accent);}
           <div id="calcSkuList"></div>
           <div class="btn-row" style="margin-top:16px">
             <button class="btn btn-primary" onclick="goStep(1)">次へ: 参照POS &amp; toB →</button>
-            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(0)" id="btnCloudSaveStep0" title="商品情報・SKUをクラウドに保存（初回はセッション作成）">☁️ セッション作成 / クラウドに保存</button>
+            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(0)" title="商品情報・SKUをクラウドに保存（初回はセッション作成）">☁️ セッション作成 / クラウドに保存</button>
           </div>
         </div>
       </div>
@@ -576,7 +576,7 @@ textarea:focus{border-color:var(--accent);}
 </div><!-- end view-calc -->
 
 <!-- ⑧ 仮保存 -->
-<div class="view" id="view-drafts" style="max-width:100%;box-sizing:border-box">
+<div class="view" id="view-drafts">
   <div class="view-title">仮保存・出力</div>
   <div class="view-subtitle">DRAFTS &amp; EXPORT — 部署別入力管理・Excel出力</div>
 
@@ -904,6 +904,12 @@ async function saveDeptSection(){
 }
 
 // ── クラウドからセッションをマージして読み込み ──
+function loadMergedSessionFromBtn(btn){
+  const sid=decodeURIComponent(escape(atob(btn.getAttribute('data-sid')||'')));
+  if(!sid){showNotif('セッションIDが取得できません','error');return;}
+  loadMergedSession(sid);
+}
+
 async function loadMergedSession(sid){
   if(!WORKER_URL){ showNotif('Worker URLを設定してください', 'error'); return; }
   try {
@@ -1003,7 +1009,7 @@ async function renderCloudDraftList(){
     const product = escHtml(s.product||s.session_id);
     const sid = escHtml(s.session_id);
     const calcDate = s.calc_date||'—';
-    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;overflow:hidden;word-break:break-all">'
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">'
       +'<div>'
       +'<div style="font-size:13px;font-weight:500;color:var(--text)">'+product+'</div>'
@@ -2397,6 +2403,10 @@ function updateMonthPreviews(){
   const el=document.getElementById('monthPreviewRow');
   if(!el) return;
   if(!base){el.textContent='発注予定日を入力すると月が表示されます';return;}
+  const _getM=id=>{const e=document.getElementById(id);return e?parseInt(e.value)||8:8;};
+  const tob=_getM('ci_tobMonths');
+  const ec=_getM('ci_ecMonths');
+  const ovs=_getM('ci_overseasMonths');
   const months=monthRange(base,8);
   el.innerHTML=months.map((m,i)=>{
     const tags=[];
@@ -3465,18 +3475,21 @@ function showReEditList(){
     html+='<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin:12px 0 6px;letter-spacing:.1em">☁️ クラウドセッション</div>';
     html+='<div id="reEditCloudList"><div style="color:var(--text3);font-size:11px">読み込み中…</div></div>';
     loadCloudSessions().then(sessions=>{
+      window._reEditSessions=sessions;
       window._cloudSessions=sessions;
       const cl=document.getElementById('reEditCloudList');
       if(!cl) return;
       if(!sessions.length){ cl.innerHTML='<div style="color:var(--text3);font-size:11px;padding:8px">セッションがありません</div>'; return; }
-      cl.innerHTML=sessions.map((s,idx)=>'<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
+      cl.innerHTML=sessions.map((s,idx)=>{
+        const sidEncoded=btoa(unescape(encodeURIComponent(s.session_id)));
+        return '<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
         +'<div>'
         +'<div style="font-size:13px;color:var(--text)">'+escHtml(s.product||s.session_id)+'</div>'
         +'<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">'+escHtml(s.session_id)+' / 試算日: '+(s.calc_date||'—')+'</div>'
         +'</div>'
-        +'<button class="btn btn-secondary" style="font-size:11px" onclick="loadMergedSessionByIdx('+idx+')">開いて編集</button>'
-        +'</div>'
-      ).join('');
+        +'<button class="btn btn-secondary" style="font-size:11px" data-sid="'+sidEncoded+'" onclick="loadMergedSessionFromBtn(this)">開いて編集</button>'
+        +'</div>';
+      }).join('');
     }).catch(()=>{});
   }
   area.innerHTML=html;
