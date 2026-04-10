@@ -911,6 +911,12 @@ async function saveDeptSection(){
 }
 
 // ── クラウドからセッションをマージして読み込み ──
+function loadMergedSessionFromBtn(btn){
+  const sid=decodeURIComponent(escape(atob(btn.getAttribute('data-sid')||'')));
+  if(!sid){showNotif('セッションIDが取得できません','error');return;}
+  loadMergedSession(sid);
+}
+
 async function loadMergedSession(sid){
   if(!WORKER_URL){ showNotif('Worker URLを設定してください', 'error'); return; }
   try {
@@ -957,6 +963,11 @@ async function loadMergedSession(sid){
     const calcView = document.getElementById('view-calc');
     if(calcView) calcView.classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n=>{ if(n.textContent.includes('発注試算')) n.classList.add('active'); });
+    // calcStartScreen を隠して calcMainArea を表示（これがないと画面が見えない）
+    const _ss=document.getElementById('calcStartScreen');
+    const _ma=document.getElementById('calcMainArea');
+    if(_ss) _ss.style.display='none';
+    if(_ma) _ma.style.display='';
     renderCalcSkuList();
 
     showNotif(`「${m.product}」を読み込みました\n${statusParts.length ? '記入済み: ' + statusParts.join(' / ') : '各セクション未記入'}`, 'success');
@@ -2404,6 +2415,11 @@ function updateMonthPreviews(){
   const el=document.getElementById('monthPreviewRow');
   if(!el) return;
   if(!base){el.textContent='発注予定日を入力すると月が表示されます';return;}
+  // ci_tobMonths等のhidden inputから月数を取得（未定義変数エラー防止）
+  const _getM=id=>{const e=document.getElementById(id);return e?parseInt(e.value)||8:8;};
+  const tob=_getM('ci_tobMonths');
+  const ec=_getM('ci_ecMonths');
+  const ovs=_getM('ci_overseasMonths');
   const months=monthRange(base,8);
   el.innerHTML=months.map((m,i)=>{
     const tags=[];
@@ -3473,18 +3489,22 @@ function showReEditList(){
     html+='<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin:12px 0 6px;letter-spacing:.1em">☁️ クラウドセッション</div>';
     html+='<div id="reEditCloudList"><div style="color:var(--text3);font-size:11px">読み込み中…</div></div>';
     loadCloudSessions().then(sessions=>{
+      // showReEditList専用の配列に保存（renderCloudDraftListの_cloudSessionsと分離）
+      window._reEditSessions=sessions;
       window._cloudSessions=sessions;
       const cl=document.getElementById('reEditCloudList');
       if(!cl) return;
       if(!sessions.length){ cl.innerHTML='<div style="color:var(--text3);font-size:11px;padding:8px">セッションがありません</div>'; return; }
-      cl.innerHTML=sessions.map((s,idx)=>'<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
+      cl.innerHTML=sessions.map((s,idx)=>{
+        const sidEncoded=btoa(unescape(encodeURIComponent(s.session_id)));
+        return '<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
         +'<div>'
         +'<div style="font-size:13px;color:var(--text)">'+escHtml(s.product||s.session_id)+'</div>'
         +'<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">'+escHtml(s.session_id)+' / 試算日: '+(s.calc_date||'—')+'</div>'
         +'</div>'
-        +'<button class="btn btn-secondary" style="font-size:11px" onclick="loadMergedSessionByIdx('+idx+')">開いて編集</button>'
-        +'</div>'
-      ).join('');
+        +'<button class="btn btn-secondary" style="font-size:11px" data-sid="'+sidEncoded+'" onclick="loadMergedSessionFromBtn(this)">開いて編集</button>'
+        +'</div>';
+      }).join('');
     }).catch(()=>{});
   }
   area.innerHTML=html;
