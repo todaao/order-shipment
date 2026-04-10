@@ -571,7 +571,6 @@ textarea:focus{border-color:var(--accent);}
         </div>
       </div>
     </div>
-  </div>
   </div><!-- end calcMainArea -->
 </div><!-- end view-calc -->
 
@@ -3722,7 +3721,7 @@ async function cloudSaveDeptSection(){
 async function cloudSaveCurrentStep(step){
   if(!WORKER_URL){ showNotif('Worker URLを設定してください（仮保存・出力画面）','error'); return; }
   if(!currentSessionId){
-    showConfirm('セッションがありません','クラウドに保存するには先にセッションを作成する必要があります。\n今すぐセッションを作成しますか？',
+    showConfirm('セッションがありません','クラウドに保存するには先にセッションを作成する必要があります。\n今すぐ作成しますか？',
       async ()=>{ closeModal(); const sid=await saveSessionHeader(); if(sid){ currentSessionId=sid; showNotif(`セッション「${sid}」を作成しました`,'success'); await _doCloudSaveStep(step); } },
       'セッション作成 & 保存',null,null);
     return;
