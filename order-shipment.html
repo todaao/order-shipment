@@ -946,18 +946,19 @@ async function loadMergedSession(sid){
 
     showNotif(`「${m.product}」を読み込みました\n${statusParts.length ? '記入済み: ' + statusParts.join(' / ') : '各セクション未記入'}`, 'success');
 
-    // 担当部署に応じてステップを決定
-    if(currentDept === 'tob' || currentDept === 'ec' || currentDept === 'ovs') {
-      // Step1(toB)またはStep2(EC・海外)に遷移
-      const targetStep = currentDept === 'tob' ? 1 : 2;
-      for(let i=0;i<=4;i++){const el=document.getElementById('calcStep'+i);if(el)el.style.display=i===targetStep?'':'none';}
-      const steps=document.querySelectorAll('#calcStepNav .step');
-      steps.forEach((s,si)=>{s.classList.remove('active','done');if(si<targetStep)s.classList.add('done');if(si===targetStep)s.classList.add('active');});
-      if(targetStep===1){ buildPosArea(); buildPsBlocks(); }
-      if(targetStep===2) buildEcOverseasInput();
-    } else {
-      goStep(3); // 案件担当者はサマリーへ
-    }
+    // 担当部署に応じてステップを決定（validateをスキップして直接遷移）
+    const _dept = currentDept;
+    const _targetStep = (_dept==='tob') ? 1 : (_dept==='ec'||_dept==='ovs') ? 2 : 0;
+    // 全ステップ非表示にしてから対象ステップを表示
+    for(let i=0;i<=4;i++){const el=document.getElementById('calcStep'+i);if(el)el.style.display=i===_targetStep?'':'none';}
+    const _steps=document.querySelectorAll('#calcStepNav .step');
+    _steps.forEach((s,si)=>{s.classList.remove('active','done');if(si<_targetStep)s.classList.add('done');if(si===_targetStep)s.classList.add('active');});
+    if(_targetStep===0){
+      // 案件担当者はStep0（商品情報確認）
+      // 何もしない（renderCalcSkuListで既に表示済み）
+    } else if(_targetStep===1){ buildPosArea(); buildPsBlocks(); }
+    else if(_targetStep===2) buildEcOverseasInput();
+    window.scrollTo({top:0,behavior:'smooth'});
   } catch(e) {
     hideLoader();
     showNotif('読み込みエラー: ' + e.message, 'error');
