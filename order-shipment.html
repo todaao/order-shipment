@@ -3262,6 +3262,23 @@ async function buildWorkbook(d){
   const ws = wb.getWorksheet(sheetName);
   if(!ws){ console.error('シートが見つかりません:', sheetName); return null; }
 
+  // ── Shared Formulaを展開（値書き込み前に必須）──
+  // ExcelJSはShared Formula masterに値を書き込むとcloneが孤児になりエラーになる
+  ws.eachRow((row) => {
+    row.eachCell({includeEmpty:false}, (cell) => {
+      const v = cell.value;
+      if(v && typeof v === 'object') {
+        if(v.shareType === 'shared' && v.formula) {
+          // masterのshared指定を外して通常数式に変換
+          cell.value = { formula: v.formula };
+        } else if(v.sharedFormula) {
+          // cloneはnullに（テンプレートの計算結果はExcelが再計算する）
+          cell.value = null;
+        }
+      }
+    });
+  });
+
   // ── ヘルパー: 値のみ上書き（スタイルは一切触らない）──
   const setS = (addr, v) => { ws.getCell(addr).value = v == null ? null : String(v); };
   const setN = (addr, v) => { ws.getCell(addr).value = Number(v) || 0; };
