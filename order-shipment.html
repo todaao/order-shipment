@@ -38,7 +38,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .filter-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;display:block;}
 select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--radius);font-family:var(--font-body);font-size:12px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235a5750'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
 select:focus{border-color:var(--accent);}
-.main{flex:1;padding:24px;overflow-x:hidden;}
+.main{flex:1;padding:24px;overflow-x:hidden;min-width:0;}
 .view{display:none;} .view.active{display:block;}
 .view-title{font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:4px;}
 .view-subtitle{font-size:12px;color:var(--text3);margin-bottom:20px;font-family:var(--font-mono);}
@@ -499,6 +499,7 @@ textarea:focus{border-color:var(--accent);}
           <div id="calcSkuList"></div>
           <div class="btn-row" style="margin-top:16px">
             <button class="btn btn-primary" onclick="goStep(1)">次へ: 参照POS &amp; toB →</button>
+            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(0)" id="btnCloudSaveStep0" title="商品情報・SKUをクラウドに保存（初回はセッション作成）">☁️ セッション作成 / クラウドに保存</button>
           </div>
         </div>
       </div>
@@ -518,6 +519,7 @@ textarea:focus{border-color:var(--accent);}
           <div class="btn-row" style="margin-top:16px">
             <button class="btn btn-secondary" onclick="goStep(0)">← 戻る</button>
             <button class="btn btn-primary" onclick="goStep(2)">次へ: EC・海外 →</button>
+            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(1)" title="toB担当セクションをクラウドに保存">☁️ クラウドに保存</button>
           </div>
         </div>
       </div>
@@ -533,6 +535,7 @@ textarea:focus{border-color:var(--accent);}
           <div class="btn-row" style="margin-top:16px">
             <button class="btn btn-secondary" onclick="goStep(1)">← 戻る</button>
             <button class="btn btn-primary" onclick="goStep(3)">次へ: サマリー確認 →</button>
+            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(2)" title="EC・海外担当セクションをクラウドに保存">☁️ クラウドに保存</button>
           </div>
         </div>
       </div>
@@ -543,6 +546,7 @@ textarea:focus{border-color:var(--accent);}
       <div class="btn-row" style="margin-top:16px">
         <button class="btn btn-secondary" onclick="goStep(2)">← 戻る</button>
         <button class="btn btn-primary" onclick="goStep(4)">次へ: 確定・保存 →</button>
+        <button class="btn btn-blue" onclick="cloudSaveCurrentStep(3)" title="サマリー情報をクラウドに保存">☁️ クラウドに保存</button>
       </div>
     </div>
     <!-- STEP 4: 確定・保存 -->
@@ -552,11 +556,7 @@ textarea:focus{border-color:var(--accent);}
         <div class="panel-body">
           <div id="calcPreviewContent"></div>
           <hr class="section-divider">
-          <div class="form-grid" style="grid-template-columns:1fr 1fr">
-            <div class="form-group">
-              <label class="form-label">担当部署名 <span class="req">*</span></label>
-              <input type="text" id="ci_dept" placeholder="例：EC部">
-            </div>
+          <div class="form-grid" style="grid-template-columns:1fr">
             <div class="form-group">
               <label class="form-label">備考・メモ</label>
               <input type="text" id="ci_memo" placeholder="任意">
@@ -564,8 +564,9 @@ textarea:focus{border-color:var(--accent);}
           </div>
           <div class="btn-row">
             <button class="btn btn-secondary" onclick="goStep(3)">← 戻る</button>
-            <button class="btn btn-green" onclick="saveDraft()">💾 仮保存</button>
-            <button class="btn btn-blue" onclick="exportCalcDirect()">📥 テンプレートExcel出力</button>
+            <button class="btn btn-green" onclick="saveDraft()">💾 ブラウザに仮保存</button>
+            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(4)">☁️ クラウドに保存</button>
+            <button class="btn btn-primary" onclick="exportCalcDirect()">📥 テンプレートExcel出力</button>
           </div>
         </div>
       </div>
@@ -575,7 +576,7 @@ textarea:focus{border-color:var(--accent);}
 </div><!-- end view-calc -->
 
 <!-- ⑧ 仮保存 -->
-<div class="view" id="view-drafts">
+<div class="view" id="view-drafts" style="max-width:100%;box-sizing:border-box">
   <div class="view-title">仮保存・出力</div>
   <div class="view-subtitle">DRAFTS &amp; EXPORT — 部署別入力管理・Excel出力</div>
 
@@ -585,25 +586,17 @@ textarea:focus{border-color:var(--accent);}
       <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent2)"></span>☁️ クラウド共有設定</div>
     </div>
     <div class="panel-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-        <div class="form-group">
-          <label class="form-label">Worker URL</label>
-          <input type="text" id="workerUrlInput" placeholder="https://order-shipment-api.xxxx.workers.dev"
-            oninput="setWorkerUrl(this.value)" style="font-family:var(--font-mono);font-size:11px">
-        </div>
-        <div class="form-group">
-          <label class="form-label">担当部署</label>
-          <select id="deptSelect" onchange="setCurrentDept(this.value);updateDeptUI()" style="font-size:12px">
-            <option value="">選択してください</option>
-            <option value="案件担当">📋 案件担当</option>
-            <option value="tob">🏪 toB担当</option>
-            <option value="ec">🛒 EC担当</option>
-            <option value="ovs">🌏 海外担当</option>
-          </select>
-        </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Worker URL</label>
+        <input type="text" id="workerUrlInput" placeholder="https://order-shipment-api.xxxx.workers.dev"
+          oninput="setWorkerUrl(this.value)" style="font-family:var(--font-mono);font-size:11px;width:100%;box-sizing:border-box">
       </div>
-      <div id="deptActionArea" style="margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
-        <div style="color:var(--text3);font-size:12px">担当部署を選択してください</div>
+      <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--radius);border:1px solid rgba(126,184,212,.3);margin-bottom:12px;font-size:11px;color:var(--text3);line-height:2">
+        ① 発注試算ツール で商品情報・SKUを記入<br>
+        ② 「☁️ セッション作成」でクラウドに保存<br>
+        ③ 各部署にセクション名を共有、各部署が編集&amp;保存<br>
+        ④ 全員記入後、サマリー・確定発注数を決定<br>
+        ⑤ エクセル出力して共有フォルダに保存
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--text3)">クラウドセッション一覧</div>
@@ -880,7 +873,7 @@ async function saveSessionHeader(){
 async function saveDeptSection(){
   if(!WORKER_URL){ showNotif('Worker URLを設定してください', 'error'); return; }
   if(!currentSessionId){ showNotif('セッションIDを選択してください', 'error'); return; }
-  if(!currentDept){ showNotif('担当部署を設定してください', 'error'); return; }
+  // 担当部署は任意（誰でも保存可能）
 
   const d = collectCalcData();
   let sectionData = { saved_by: currentDept };
@@ -911,12 +904,6 @@ async function saveDeptSection(){
 }
 
 // ── クラウドからセッションをマージして読み込み ──
-function loadMergedSessionFromBtn(btn){
-  const sid=decodeURIComponent(escape(atob(btn.getAttribute('data-sid')||'')));
-  if(!sid){showNotif('セッションIDが取得できません','error');return;}
-  loadMergedSession(sid);
-}
-
 async function loadMergedSession(sid){
   if(!WORKER_URL){ showNotif('Worker URLを設定してください', 'error'); return; }
   try {
@@ -963,11 +950,6 @@ async function loadMergedSession(sid){
     const calcView = document.getElementById('view-calc');
     if(calcView) calcView.classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n=>{ if(n.textContent.includes('発注試算')) n.classList.add('active'); });
-    // calcStartScreen を隠して calcMainArea を表示（これがないと画面が見えない）
-    const _ss=document.getElementById('calcStartScreen');
-    const _ma=document.getElementById('calcMainArea');
-    if(_ss) _ss.style.display='none';
-    if(_ma) _ma.style.display='';
     renderCalcSkuList();
 
     showNotif(`「${m.product}」を読み込みました\n${statusParts.length ? '記入済み: ' + statusParts.join(' / ') : '各セクション未記入'}`, 'success');
@@ -1021,7 +1003,7 @@ async function renderCloudDraftList(){
     const product = escHtml(s.product||s.session_id);
     const sid = escHtml(s.session_id);
     const calcDate = s.calc_date||'—';
-    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px">'
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;overflow:hidden;word-break:break-all">'
       +'<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">'
       +'<div>'
       +'<div style="font-size:13px;font-weight:500;color:var(--text)">'+product+'</div>'
@@ -2415,11 +2397,6 @@ function updateMonthPreviews(){
   const el=document.getElementById('monthPreviewRow');
   if(!el) return;
   if(!base){el.textContent='発注予定日を入力すると月が表示されます';return;}
-  // ci_tobMonths等のhidden inputから月数を取得（未定義変数エラー防止）
-  const _getM=id=>{const e=document.getElementById(id);return e?parseInt(e.value)||8:8;};
-  const tob=_getM('ci_tobMonths');
-  const ec=_getM('ci_ecMonths');
-  const ovs=_getM('ci_overseasMonths');
   const months=monthRange(base,8);
   el.innerHTML=months.map((m,i)=>{
     const tags=[];
@@ -3242,7 +3219,7 @@ function collectCalcData(){
     ],
     ovs_detail:calcOvsMonthly.map(st=>Object.fromEntries(calcSkus.map(s=>[s.jan||s.name,{recent:0,monthly:st[s.name]||{}}]))),
     calc_date:document.getElementById('ci_calcDate')?.value||'',
-    dept:document.getElementById('ci_dept')?document.getElementById('ci_dept').value:'',
+    dept:currentDept||'',
     memo:document.getElementById('ci_memo')?document.getElementById('ci_memo').value:'',
   };
 }
@@ -3430,8 +3407,7 @@ function loadDrafts(){try{return JSON.parse(localStorage.getItem(LS_KEY)||'[]');
 function saveDraftsToLS(drafts){localStorage.setItem(LS_KEY,JSON.stringify(drafts));}
 
 function saveDraft(){
-  const dept=(document.getElementById('ci_dept')||{}).value||'';
-  if(!dept.trim()){showNotif('部署名を入力してください','error');return;}
+  const dept=currentDept||'案件担当';
   const d=collectCalcData();
   if(!d.product){showNotif('商品名を入力してください','error');return;}
   d.dept=dept;d.memo=(document.getElementById('ci_memo')||{}).value||'';
@@ -3489,22 +3465,18 @@ function showReEditList(){
     html+='<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin:12px 0 6px;letter-spacing:.1em">☁️ クラウドセッション</div>';
     html+='<div id="reEditCloudList"><div style="color:var(--text3);font-size:11px">読み込み中…</div></div>';
     loadCloudSessions().then(sessions=>{
-      // showReEditList専用の配列に保存（renderCloudDraftListの_cloudSessionsと分離）
-      window._reEditSessions=sessions;
       window._cloudSessions=sessions;
       const cl=document.getElementById('reEditCloudList');
       if(!cl) return;
       if(!sessions.length){ cl.innerHTML='<div style="color:var(--text3);font-size:11px;padding:8px">セッションがありません</div>'; return; }
-      cl.innerHTML=sessions.map((s,idx)=>{
-        const sidEncoded=btoa(unescape(encodeURIComponent(s.session_id)));
-        return '<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
+      cl.innerHTML=sessions.map((s,idx)=>'<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
         +'<div>'
         +'<div style="font-size:13px;color:var(--text)">'+escHtml(s.product||s.session_id)+'</div>'
         +'<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">'+escHtml(s.session_id)+' / 試算日: '+(s.calc_date||'—')+'</div>'
         +'</div>'
-        +'<button class="btn btn-secondary" style="font-size:11px" data-sid="'+sidEncoded+'" onclick="loadMergedSessionFromBtn(this)">開いて編集</button>'
-        +'</div>';
-      }).join('');
+        +'<button class="btn btn-secondary" style="font-size:11px" onclick="loadMergedSessionByIdx('+idx+')">開いて編集</button>'
+        +'</div>'
+      ).join('');
     }).catch(()=>{});
   }
   area.innerHTML=html;
@@ -3706,49 +3678,9 @@ function showNotif(msg,type='success'){
 
 
 function updateDeptUI(){
-  const area = document.getElementById('deptActionArea');
-  if(!area) return;
-  const dept = currentDept;
-  const deptLabels = {'案件担当':'📋 案件担当','tob':'🏪 toB担当','ec':'🛒 EC担当','ovs':'🌏 海外担当'};
-  const label = deptLabels[dept] || dept;
-
-  // Worker URL入力欄に保存値を反映
+  // 担当部署選択は廃止。Worker URL入力欄に保存値を反映するのみ。
   const urlInput = document.getElementById('workerUrlInput');
   if(urlInput && WORKER_URL) urlInput.value = WORKER_URL;
-  // deptSelectに保存値を反映
-  const deptSel = document.getElementById('deptSelect');
-  if(deptSel && dept) deptSel.value = dept;
-
-  if(!dept){
-    area.innerHTML = '<div style="color:var(--text3);font-size:12px">担当部署を選択するとアクションが表示されます</div>';
-    return;
-  }
-
-  if(dept === '案件担当'){
-    area.innerHTML = `<div style="font-size:12px;font-weight:500;color:var(--accent2);margin-bottom:10px">${label} のアクション</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.8">
-        ① 発注試算ツール で商品情報・SKUを記入<br>
-        ② 「☁️ セッション作成」でクラウドに保存<br>
-        ③ 各部署に Worker URL + セッションIDを共有<br>
-        ④ 全員記入後「開いて編集」でサマリー・確定発注数を決定
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-blue" onclick="cloudCreateSession()">☁️ セッション作成（Step①完了後）</button>
-        <button class="btn btn-primary" onclick="renderCloudDraftList()">⟳ セッション一覧を更新</button>
-      </div>`;
-  } else {
-    const stepLabel = dept === 'tob' ? '② 参照POS & toB' : dept === 'ec' ? '③ EC・海外' : '③ EC・海外';
-    area.innerHTML = `<div style="font-size:12px;font-weight:500;color:var(--accent2);margin-bottom:10px">${label} のアクション</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.8">
-        ① 上のセッション一覧から案件を「開いて編集」<br>
-        ② ${stepLabel} を記入<br>
-        ③ 「☁️ 担当セクションを保存」でクラウドに保存
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-blue" onclick="cloudSaveDeptSection()">☁️ 担当セクションを保存（${label}）</button>
-        <button class="btn btn-secondary" onclick="renderCloudDraftList()">⟳ セッション一覧を更新</button>
-      </div>`;
-  }
 }
 
 async function cloudCreateSession(){
@@ -3775,6 +3707,66 @@ async function cloudSaveDeptSection(){
   await saveDeptSection();
   renderCloudDraftList();
 }
+// ── Stepごとのクラウド保存（担当部署問わず）──
+async function cloudSaveCurrentStep(step){
+  if(!WORKER_URL){ showNotif('Worker URLを設定してください（仮保存・出力画面）','error'); return; }
+  if(!currentSessionId){
+    showConfirm(
+      'セッションがありません',
+      'クラウドに保存するには先にセッションを作成する必要があります。\n今すぐセッションを作成しますか？',
+      async ()=>{
+        closeModal();
+        const sid = await saveSessionHeader();
+        if(sid){ currentSessionId = sid; showNotif(`セッション「${sid}」を作成しました`,'success'); await _doCloudSaveStep(step); }
+      },
+      'セッション作成 & 保存', null, null
+    );
+    return;
+  }
+  await _doCloudSaveStep(step);
+}
+
+async function _doCloudSaveStep(step){
+  if(!currentSessionId){ showNotif('セッションIDがありません','error'); return; }
+  const d = collectCalcData();
+  let sectionKey = '';
+  let sectionData = {};
+  if(step === 0){
+    try {
+      await cloudFetch('sessions', 'POST', {
+        session_id: currentSessionId, product: d.product, brand: d.brand,
+        calc_date: d.calc_date, order_date: d.order_date,
+        lead_time_weeks: d.lead_time_weeks, container_moq: d.container_moq,
+        bulk_moq: d.bulk_moq, skus: d.skus, mode: d.mode,
+        created_by: currentDept || '案件担当',
+      });
+      showNotif(`商品情報・SKU をクラウドに保存しました（${currentSessionId}）`,'success');
+    } catch(e){ showNotif('保存エラー: '+e.message,'error'); }
+    return;
+  } else if(step === 1){
+    sectionKey = 'tob';
+    sectionData = { saved_by: currentDept||'案件担当', retailers: d.retailers };
+  } else if(step === 2){
+    sectionKey = 'ec';
+    sectionData = { saved_by: currentDept||'案件担当', ec_detail: d.ec_detail, ovs_detail: d.ovs_detail };
+  } else if(step === 3 || step === 4){
+    sectionKey = 'summary';
+    const sumTob = document.getElementById('sum_tobEnd')?.value || '';
+    const sumEc  = document.getElementById('sum_ecEnd')?.value  || '';
+    const sumOvs = document.getElementById('sum_ovsEnd')?.value || '';
+    const confirmed = {};
+    d.skus.forEach(s=>{ if(s.confirmedOrder!=null) confirmed[s.jan||s.name]=s.confirmedOrder; });
+    sectionData = { saved_by: currentDept||'案件担当', sum_tobEnd:sumTob, sum_ecEnd:sumEc, sum_ovsEnd:sumOvs, confirmed_orders:confirmed, skus:d.skus };
+  }
+  if(!sectionKey){ showNotif('保存対象がありません','error'); return; }
+  const stepLabel = {0:'商品情報',1:'toB担当',2:'EC・海外',3:'サマリー',4:'確定発注数'}[step]||'';
+  try {
+    await cloudFetch(`sessions/${currentSessionId}/sections/${sectionKey}`, 'PUT', sectionData);
+    showNotif(`${stepLabel} をクラウドに保存しました（${currentSessionId}）`,'success');
+  } catch(e){ showNotif('保存エラー: '+e.message,'error'); }
+}
+
+
 
 // ════════════════════════════════════════════
 //  INIT
@@ -3784,7 +3776,7 @@ document.getElementById('headerDate').textContent=new Date().toLocaleDateString(
 const _wUrl=localStorage.getItem('orderShipmentWorkerUrl')||'';
 const _wDept=localStorage.getItem('orderShipmentDept')||'';
 if(_wUrl){const el=document.getElementById('workerUrlInput');if(el)el.value=_wUrl;WORKER_URL=_wUrl;}
-if(_wDept){const el=document.getElementById('deptSelect');if(el)el.value=_wDept;currentDept=_wDept;}
+if(_wDept){currentDept=_wDept;}
 loadAllJSON();
 
 </script>
