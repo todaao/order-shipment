@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <style>
 :root {
   --bg:#0e0f14;--surface:#161820;--surface2:#1e2028;--surface3:#252733;
@@ -3255,203 +3256,176 @@ async function buildWorkbook(d){
   const isSimple = d.mode === 'simple';
   const sheetName = isSimple ? '発注試算テンプレート（簡易）' : '発注試算テンプレート';
 
-  const binStr=atob(TEMPLATE_B64);
-  const bytes=new Uint8Array(binStr.length);
-  for(let i=0;i<binStr.length;i++) bytes[i]=binStr.charCodeAt(i);
-  const wb=XLSX.read(bytes,{type:'array',cellFormula:true,cellStyles:true,bookVBA:false});
+  // ExcelJSでテンプレートを読み込む（書式・色・マージを完全保持）
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.load(b64ToUint8Array(TEMPLATE_B64));
+  const ws = wb.getWorksheet(sheetName);
+  if(!ws){ console.error('シートが見つかりません:', sheetName); return null; }
 
-  const ws=wb.Sheets[sheetName];
-  if(!ws){console.error('シートが見つかりません:',sheetName);return null;}
-
-  // ── ヘルパー関数 ──
-  const setS=(col,row,v)=>{ ws[col+row]={t:'s',v:String(v==null?'':v)}; };
-  const setN=(col,row,v)=>{ ws[col+row]={t:'n',v:Number(v)||0}; };
-  const setD=(col,row,v)=>{
-    // 日付をシリアル値に変換 (Excel日付: 1900-01-01を1とする)
-    if(!v) return;
-    const d2=new Date(v);
-    if(isNaN(d2.getTime())) { ws[col+row]={t:'s',v:String(v)}; return; }
-    const epoch=new Date(1899,11,30);
-    const serial=Math.round((d2-epoch)/(1000*60*60*24));
-    ws[col+row]={t:'n',v:serial,z:'yyyy/m/d'};
+  // ── ヘルパー: 値のみ上書き（スタイルは一切触らない）──
+  const setS = (addr, v) => { ws.getCell(addr).value = v == null ? null : String(v); };
+  const setN = (addr, v) => { ws.getCell(addr).value = Number(v) || 0; };
+  const setD = (addr, v) => {
+    if(!v){ return; }
+    const dt = new Date(v);
+    if(isNaN(dt.getTime())){ ws.getCell(addr).value = String(v); return; }
+    ws.getCell(addr).value = dt;
   };
 
+  const MONTH_COLS = ['D','E','F','G','H','I','J','K'];
+  const base = d.base_month || d.order_date?.slice(0,7) || '';
+  function addM(ym,n){ if(!ym)return''; const[y,m]=ym.split('-').map(Number); const dt=new Date(y,m-1+n,1); return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0'); }
+  function mLabel2(ym){ if(!ym)return''; return parseInt(ym.split('-')[1])+'月'; }
+  function buildMonthRange(n){ return Array.from({length:n},(_,i)=>addM(base,i)); }
+
+  const tobMs = buildMonthRange(d.tob_months||0);
+  const ecMs  = buildMonthRange(d.ec_months||0);
+  const ovsMs = buildMonthRange(d.overseas_months||0);
+
   // ── SECTION A: 商品情報 ──
-  setS('B',3,d.product||'');
-  setS('B',4,d.brand||'');
-  setD('B',5,d.order_date);
-  setN('B',6,d.lead_time_weeks||8);
+  setS('B3', d.product||'');
+  setS('B4', d.brand||'');
+  setD('B5', d.order_date);
+  setN('B6', d.lead_time_weeks||8);
   // B7: 入庫予定日は数式 =B5+B6*7 のまま保持
-  setN('B',8,d.container_moq||0);
-  setN('B',9,d.bulk_moq||0);
+  setN('B8', d.container_moq||0);
+  setN('B9', d.bulk_moq||0);
 
   // 発注対象月数・対象月テキスト
-  const base=d.base_month||d.order_date?.slice(0,7)||'';
-  function addM(ym,n){if(!ym)return '';const[y,m]=ym.split('-').map(Number);const dt=new Date(y,m-1+n,1);return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0');}
-  function mLabel2(ym){if(!ym)return'';const m=parseInt(ym.split('-')[1]);return m+'月';}
-  function buildMonthRange(n){return Array.from({length:n},(_,i)=>addM(base,i));}
-
-  const tobMs=buildMonthRange(d.tob_months||0);
-  const ecMs=buildMonthRange(d.ec_months||0);
-  const ovsMs=buildMonthRange(d.overseas_months||0);
-
-  setN('B',13,d.tob_months||0);
-  setN('B',14,d.ec_months||0);
-  setN('B',15,d.overseas_months||0);
-  if(tobMs.length) setS('C',13,tobMs.map(mLabel2).join(' → '));
-  if(ecMs.length)  setS('C',14,ecMs.map(mLabel2).join(' → '));
-  if(ovsMs.length) setS('C',15,ovsMs.map(mLabel2).join(' → '));
+  setN('B13', d.tob_months||0);
+  setN('B14', d.ec_months||0);
+  setN('B15', d.overseas_months||0);
+  if(tobMs.length) setS('C13', tobMs.map(mLabel2).join(' → '));
+  if(ecMs.length)  setS('C14', ecMs.map(mLabel2).join(' → '));
+  if(ovsMs.length) setS('C15', ovsMs.map(mLabel2).join(' → '));
 
   // ── 確定発注数サマリー (行18〜25) ──
   d.skus.forEach((s,i)=>{
     if(i>=8) return;
-    const r=18+i;
-    setS('A',r,s.name||'');
-    setS('B',r,s.jan?String(s.jan):'');
-    setN('C',r,s.stock||0);
-    // D,E列は数式で計算されるためスキップ
-    setN('H',r,s.confirmed_order!=null?s.confirmed_order:(s.order_quantity||0));
-    setS('I',r,s.note||'');
+    const r = 18+i;
+    setS('A'+r, s.name||'');
+    setS('B'+r, s.jan ? String(s.jan) : '');
+    setN('C'+r, s.stock||0);
+    setN('H'+r, s.confirmed_order!=null ? s.confirmed_order : (s.order_quantity||0));
+    setS('I'+r, s.note||'');
   });
 
-  // ── 月列のインデックスマッピング ──
-  const MONTH_COLS=['D','E','F','G','H','I','J','K']; // D=0月目, E=1月目...
-
   // ── 販路×月サマリー ──
-  // 通常試算: toB行33-40, EC行42-49, 海外行51-58
-  // 簡易試算: toB行33-40, EC行42-49, 海外行51-58 (同じ)
+  const _bm = d.base_month || d.order_date?.slice(0,7) || null;
   d.skus.forEach((s,i)=>{
     if(i>=8) return;
-    const jan=s.jan||'';
-    const _bm=d.base_month||d.order_date?.slice(0,7)||null;
+    const jan = s.jan||'';
 
     // toB (行33+i)
-    const tobR=33+i;
-    setN('B',tobR,recentShipForCalc(jan,'tob',1,_bm));
-    setN('C',tobR,recentShipForCalc(jan,'tob',3,_bm));
-    tobMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi],tobR,s.monthly_summary?.tob?.[m]||0); });
+    const tobR = 33+i;
+    setN('B'+tobR, recentShipForCalc(jan,'tob',1,_bm));
+    setN('C'+tobR, recentShipForCalc(jan,'tob',3,_bm));
+    tobMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+tobR, s.monthly_summary?.tob?.[m]||0); });
 
     // EC (行42+i)
-    const ecR=42+i;
-    setN('B',ecR,recentShipForCalc(jan,'ec',1,_bm));
-    setN('C',ecR,recentShipForCalc(jan,'ec',3,_bm));
-    ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi],ecR,s.monthly_summary?.ec?.[m]||0); });
+    const ecR = 42+i;
+    setN('B'+ecR, recentShipForCalc(jan,'ec',1,_bm));
+    setN('C'+ecR, recentShipForCalc(jan,'ec',3,_bm));
+    ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+ecR, s.monthly_summary?.ec?.[m]||0); });
 
     // 海外 (行51+i)
-    const ovsR=51+i;
-    setN('B',ovsR,recentShipForCalc(jan,'overseas',1,_bm));
-    setN('C',ovsR,recentShipForCalc(jan,'overseas',3,_bm));
-    ovsMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi],ovsR,s.monthly_summary?.overseas?.[m]||0); });
+    const ovsR = 51+i;
+    setN('B'+ovsR, recentShipForCalc(jan,'overseas',1,_bm));
+    setN('C'+ovsR, recentShipForCalc(jan,'overseas',3,_bm));
+    ovsMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+ovsR, s.monthly_summary?.overseas?.[m]||0); });
 
-    // 参照POS (N〜Q列, 行33+i)
-    setS('N',tobR,s.name||'');
-    setS('O',tobR,s.posMonth||base);
-    setN('P',tobR,s.posPs||0);
+    // 参照POS (N〜P列, 行33+i) ※通常試算のみ
+    if(!isSimple){
+      setS('N'+tobR, s.name||'');
+      setS('O'+tobR, s.posMonth||base);
+      setN('P'+tobR, s.posPs||0);
+    }
   });
 
   if(!isSimple){
     // ── 通常試算: SECTION C toB小売ブロック ──
-    // 小売ブロック行番号: 114, 127, 140, 153, 166, 179, 192, 205, 218, 231
-    const RETAILER_STARTS=[114,127,140,153,166,179,192,205,218,231];
+    // 小売ブロック: 114, 127, 140, 153, 166, 179, 192, 205, 218, 231
+    const RETAILER_STARTS = [114,127,140,153,166,179,192,205,218,231];
     (d.retailers||[]).forEach((r,ri)=>{
       if(ri>=RETAILER_STARTS.length) return;
-      const hRow=RETAILER_STARTS[ri];
-      // ヘッダー行: 小売名
-      setS('A',hRow,'[RETAILER] '+(r.name||''));
-      // 業態POS傾斜, 全店舗数, 導入状況 (hRow+1行目: B,D,F列)
-      setN('B',hRow+1,r.posTilt||1);
-      setN('D',hRow+1,r.stores||0);
-      setS('F',hRow+1,r.status||'導入済み');
-      // 月別傾斜 (hRow+2行目: D〜K列)
+      const h = RETAILER_STARTS[ri];
+      setS('A'+h, '[RETAILER] '+(r.name||''));
+      setN('B'+(h+1), r.posTilt||1);
+      setN('D'+(h+1), r.stores||0);
+      setS('F'+(h+1), r.status||'導入済み');
       tobMs.forEach((m,mi)=>{
-        if(mi<8){
-          const tilt=r.monthTilts?.[m]!=null?r.monthTilts[m]:0.7;
-          setN(MONTH_COLS[mi],hRow+2,tilt);
-        }
+        if(mi<8) setN(MONTH_COLS[mi]+(h+2), r.monthTilts?.[m]!=null ? r.monthTilts[m] : 0.7);
       });
-      // P/S (hRow+4行目以降: B列, SKUごと)
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
-        setN('B',hRow+4+si,s.posPs||0);
+        setN('B'+(h+4+si), s.posPs||0);
       });
     });
-  } else {
-    // ── 簡易試算: SECTION C 小売ブロック ──
-    // 小売①: 行113, 小売②: 行126, 小売③: 行137
-    // SKUデータは行118-125(小売1), 129-136(小売2), 140-147(小売3)
-    const SIMPLE_RETAILER_STARTS=[113,126,137];
-    // 簡易試算では calcSimpleMonthly['toB'][sku_name][month]に直接入力値が入っている
-    // しかし collectCalcDataを通るとmonthly_summary.tobに格納される
-    d.skus.forEach((s,si)=>{
-      if(si>=8) return;
-      // 簡易版では小売1の行にtoB月別を書き込む
-      // 行118〜125 (SKU1〜8)
-      const row=118+si;
-      setS('A',row,s.name||'');
-      setN('B',row,recentShipForCalc(s.jan,'tob',1,d.base_month));
-      setN('C',row,recentShipForCalc(s.jan,'tob',3,d.base_month));
-      tobMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi],row,s.monthly_summary?.tob?.[m]||0); });
-    });
-  }
 
-  // ── EC・海外 SECTION D ──
-  if(isSimple){
-    // 簡易版: EC①行153-160, EC②なし (簡易では1ブロック)
-    const EC1_START=153;
-    d.skus.forEach((s,si)=>{
-      if(si>=8) return;
-      const row=EC1_START+si;
-      const jan=s.jan||'';
-      setS('A',row,s.name||'');
-      setN('B',row,recentShipForCalc(jan,'ec',1,d.base_month));
-      setN('C',row,recentShipForCalc(jan,'ec',3,d.base_month));
-      ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi],row,s.monthly_summary?.ec?.[m]||0); });
-    });
-    // 海外①行163-170, ②行174-181, ③行185-192 (簡易版のレイアウト)
-    const OVS_STARTS_SIMPLE=[163,174,185];
-    (d.ovs_detail||[]).slice(0,3).forEach((blk,bi)=>{
-      const sr=OVS_STARTS_SIMPLE[bi];
+    // ── 通常試算: SECTION D EC・海外 ──
+    const EC_STARTS = [248,259];
+    (d.ec_detail||[]).slice(0,2).forEach((blk,bi)=>{
+      const sr = EC_STARTS[bi];
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
-        const row=sr+si;
-        const jan=s.jan||'';
-        const key=jan||s.name;
-        const monthly=(blk[key]||{}).monthly||{};
-        setS('A',row,s.name||'');
-        ovsMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi],row,monthly[m]||0); });
+        const row = sr+si;
+        const jan = s.jan||'';
+        const key = jan||s.name;
+        const monthly = (blk[key]||{}).monthly || blk[s.name]?.monthly || {};
+        setS('A'+row, s.name||'');
+        setN('B'+row, recentShipForCalc(jan,'ec',1,_bm));
+        setN('C'+row, recentShipForCalc(jan,'ec',3,_bm));
+        ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, monthly[m]||0); });
+      });
+    });
+    const OVS_STARTS = [271,282,293,304];
+    (d.ovs_detail||[]).slice(0,4).forEach((blk,bi)=>{
+      const sr = OVS_STARTS[bi];
+      d.skus.forEach((s,si)=>{
+        if(si>=8) return;
+        const row = sr+si;
+        const jan = s.jan||'';
+        const key = jan||s.name;
+        const monthly = (blk[key]||{}).monthly || blk[s.name]?.monthly || {};
+        setS('A'+row, s.name||'');
+        setN('B'+row, recentShipForCalc(jan,'overseas',1,_bm));
+        setN('C'+row, recentShipForCalc(jan,'overseas',3,_bm));
+        ovsMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, monthly[m]||0); });
       });
     });
   } else {
-    // 通常版: EC①行248〜255, EC②行259〜266
-    const EC_STARTS=[248,259];
-    (d.ec_detail||[]).slice(0,2).forEach((blk,bi)=>{
-      const sr=EC_STARTS[bi];
-      d.skus.forEach((s,si)=>{
-        if(si>=8) return;
-        const row=sr+si;
-        const jan=s.jan||'';
-        const key=jan||s.name;
-        const monthly=(blk[key]||{}).monthly||blk[s.name]?.monthly||{};
-        setS('A',row,s.name||'');
-        setN('B',row,recentShipForCalc(jan,'ec',1,d.base_month));
-        setN('C',row,recentShipForCalc(jan,'ec',3,d.base_month));
-        ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi],row,monthly[m]||0); });
-      });
+    // ── 簡易試算: SECTION C 小売直接入力 ──
+    // 小売①行118-125
+    d.skus.forEach((s,si)=>{
+      if(si>=8) return;
+      const row = 118+si;
+      setS('A'+row, s.name||'');
+      setN('B'+row, recentShipForCalc(s.jan,'tob',1,_bm));
+      setN('C'+row, recentShipForCalc(s.jan,'tob',3,_bm));
+      tobMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, s.monthly_summary?.tob?.[m]||0); });
     });
-    // 海外: 行271〜278(①), 282〜289(②), 293〜300(③), 304〜311(④)
-    const OVS_STARTS=[271,282,293,304];
-    (d.ovs_detail||[]).slice(0,4).forEach((blk,bi)=>{
-      const sr=OVS_STARTS[bi];
+
+    // ── 簡易試算: SECTION D EC・海外 ──
+    // EC①行153-160
+    d.skus.forEach((s,si)=>{
+      if(si>=8) return;
+      const row = 153+si;
+      setS('A'+row, s.name||'');
+      setN('B'+row, recentShipForCalc(s.jan,'ec',1,_bm));
+      setN('C'+row, recentShipForCalc(s.jan,'ec',3,_bm));
+      ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, s.monthly_summary?.ec?.[m]||0); });
+    });
+    // 海外①②③: 行163, 174, 185
+    const OVS_STARTS_S = [163,174,185];
+    (d.ovs_detail||[]).slice(0,3).forEach((blk,bi)=>{
+      const sr = OVS_STARTS_S[bi];
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
-        const row=sr+si;
-        const jan=s.jan||'';
-        const key=jan||s.name;
-        const monthly=(blk[key]||{}).monthly||blk[s.name]?.monthly||{};
-        setS('A',row,s.name||'');
-        setN('B',row,recentShipForCalc(jan,'overseas',1,d.base_month));
-        setN('C',row,recentShipForCalc(jan,'overseas',3,d.base_month));
-        ovsMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi],row,monthly[m]||0); });
+        const row = sr+si;
+        const key = (s.jan||'')||s.name;
+        const monthly = (blk[key]||{}).monthly || {};
+        setS('A'+row, s.name||'');
+        ovsMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, monthly[m]||0); });
       });
     });
   }
@@ -3470,17 +3444,12 @@ async function exportCalcDirect(){
     const isSimple = d.mode === 'simple';
     const srcSheet = isSimple ? '発注試算テンプレート（簡易）' : '発注試算テンプレート';
     const calcDateVal = document.getElementById('ci_calcDate')?.value||d.order_date||'';
-    const dateStr = calcDateVal ? calcDateVal.replace(/-/g,'').slice(2,8) : '';  // YYMMDD
-    const newSheetName = (dateStr+'_'+(d.product||'発注試算')).slice(0,31); // Excel最大31文字
-    // シート名変更
-    const sheetIdx = wb.SheetNames.indexOf(srcSheet);
-    if(sheetIdx>=0){
-      wb.SheetNames[sheetIdx]=newSheetName;
-      wb.Sheets[newSheetName]=wb.Sheets[srcSheet];
-      delete wb.Sheets[srcSheet];
-    }
+    const dateStr = calcDateVal ? calcDateVal.replace(/-/g,'').slice(2,8) : '';
+    const newSheetName = (dateStr+'_'+(d.product||'発注試算')).slice(0,31);
+    const ws = wb.getWorksheet(srcSheet);
+    if(ws) ws.name = newSheetName;
 
-    const buf=XLSX.write(wb,{type:'array',bookType:'xlsx'});
+    const buf = await wb.xlsx.writeBuffer();
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
     a.href=url;
@@ -3709,15 +3678,14 @@ async function exportOneDraft(id){
   const d=loadDrafts().find(x=>x.id===id);if(!d)return;
   try{
     const wb=await buildWorkbook(d);if(!wb){showNotif('ワークブック生成失敗','error');return;}
-    // シート名を変更
     const isSimple=d.mode==='simple';
     const srcSheet=isSimple?'発注試算テンプレート（簡易）':'発注試算テンプレート';
     const calcDateVal=d.calc_date||d.order_date||'';
     const dateStr=calcDateVal?calcDateVal.replace(/-/g,'').slice(2,8):'';
     const newSheetName=(dateStr+'_'+(d.product||'発注試算')).slice(0,31);
-    const sheetIdx=wb.SheetNames.indexOf(srcSheet);
-    if(sheetIdx>=0){wb.SheetNames[sheetIdx]=newSheetName;wb.Sheets[newSheetName]=wb.Sheets[srcSheet];delete wb.Sheets[srcSheet];}
-    const buf=XLSX.write(wb,{type:'array',bookType:'xlsx'});
+    const ws=wb.getWorksheet(srcSheet);
+    if(ws) ws.name=newSheetName;
+    const buf=await wb.xlsx.writeBuffer();
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
     a.href=url;a.download=`${newSheetName}.xlsx`;
@@ -3738,9 +3706,9 @@ async function exportSelectedDrafts(){
       const calcDateVal=d.calc_date||d.order_date||'';
       const dateStr=calcDateVal?calcDateVal.replace(/-/g,'').slice(2,8):'';
       const newSheetName=(dateStr+'_'+(d.product||'発注試算')).slice(0,31);
-      const sheetIdx=wb.SheetNames.indexOf(srcSheet);
-      if(sheetIdx>=0){wb.SheetNames[sheetIdx]=newSheetName;wb.Sheets[newSheetName]=wb.Sheets[srcSheet];delete wb.Sheets[srcSheet];}
-      const buf=XLSX.write(wb,{type:'array',bookType:'xlsx'});
+      const ws=wb.getWorksheet(srcSheet);
+      if(ws) ws.name=newSheetName;
+      const buf=await wb.xlsx.writeBuffer();
       const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       const url=URL.createObjectURL(blob);const a=document.createElement('a');
       a.href=url;a.download=`${newSheetName}.xlsx`;
