@@ -804,9 +804,11 @@ function setCurrentDept(dept){
 
 async function cloudFetch(path, method='GET', body=null){
   if(!WORKER_URL) throw new Error('Worker URLが設定されていません');
+  // スラッシュを保持しつつ各セグメントをエンコード
+  const encodedPath = path.split('/').map(seg => encodeURIComponent(seg)).join('/');
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
   if(body) opts.body = JSON.stringify(body);
-  const r = await fetch(WORKER_URL + '/' + path, opts);
+  const r = await fetch(WORKER_URL + '/' + encodedPath, opts);
   const data = await r.json();
   if(!data.ok) throw new Error(data.error || 'API error');
   return data;
@@ -832,7 +834,10 @@ async function saveSessionHeader(){
   const d = collectCalcData();
   if(!d.product){ showNotif('商品名を入力してください', 'error'); return null; }
   const calcDateVal = document.getElementById('ci_calcDate')?.value || d.order_date || '';
-  const sid = (calcDateVal ? calcDateVal.replace(/-/g,'').slice(0,8) + '_' : '') + d.product.replace(/[\s　]/g,'_');
+  // session_idは日付+タイムスタンプのみ（日本語を避けてURLエンコード問題を回避）
+  const productSlug = d.product.replace(/[^a-zA-Z0-9]/g,'').slice(0,10) || Date.now().toString().slice(-6);
+  const dateSlug = calcDateVal ? calcDateVal.replace(/-/g,'').slice(0,8) : Date.now().toString().slice(0,8);
+  const sid = dateSlug + '_' + productSlug + '_' + Date.now().toString().slice(-4);
   currentSessionId = sid;
   try {
     await cloudFetch('sessions', 'POST', {
