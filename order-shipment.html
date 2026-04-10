@@ -613,7 +613,8 @@ textarea:focus{border-color:var(--accent);}
     <div class="panel-header">
       <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent5)"></span>💾 ローカル仮保存（このブラウザのみ）</div>
       <div class="btn-row">
-        <button class="btn btn-blue" onclick="exportSelectedDrafts()" id="exportSelBtn" style="display:none">📥 選択をExcel出力</button>
+        <button class="btn btn-green" onclick="exportMergedDrafts()" id="exportMergeBtn" style="display:none">📥 1ファイルにまとめて出力</button>
+        <button class="btn btn-blue" onclick="exportSelectedDrafts()" id="exportSelBtn" style="display:none">📄 個別ファイルで出力</button>
         <button class="btn btn-danger" onclick="deleteSelectedDrafts()" id="deleteSelBtn" style="display:none">🗑 選択を削除</button>
         <button class="btn btn-secondary" style="font-size:11px" onclick="toggleSelectAll()">全選択</button>
       </div>
@@ -3447,6 +3448,13 @@ async function buildWorkbook(d){
     });
   }
 
+  // 使用しなかったテンプレートシートを削除
+  wb.worksheets
+    .filter(ws => ws.name === '発注試算テンプレート' ||
+                  ws.name === '発注試算テンプレート（簡易）' ||
+                  ws.name.startsWith('（記入例）'))
+    .forEach(ws => wb.removeWorksheet(ws.id));
+
   return wb;
 }
 
@@ -3627,7 +3635,9 @@ function renderDraftList(){
 
 function updateDraftSelBtns(){
   const checked=document.querySelectorAll('.draft-cb:checked').length;
+  const mergeBtn=document.getElementById('exportMergeBtn');
   const selBtn=document.getElementById('exportSelBtn'),delBtn=document.getElementById('deleteSelBtn');
+  if(mergeBtn)mergeBtn.style.display=checked>=2?'inline-flex':'none';
   if(selBtn)selBtn.style.display=checked?'inline-flex':'none';
   if(delBtn)delBtn.style.display=checked?'inline-flex':'none';
 }
@@ -3709,6 +3719,192 @@ async function exportOneDraft(id){
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
     showNotif('Excelを出力しました ✓','success');
   }catch(e){showNotif('エラー: '+e.message,'error');}
+}
+
+// ── 複数商品を1ファイル・シート別に統合 ──
+async function buildMergedWorkbook(drafts){
+  function expandSharedFormulas(ws){
+    ws.eachRow((row)=>{
+      row.eachCell({includeEmpty:false},(cell)=>{
+        const v=cell.value;
+        if(v&&typeof v==='object'){
+          if(v.shareType==='shared'&&v.formula) cell.value={formula:v.formula};
+          else if(v.sharedFormula) cell.value=null;
+        }
+      });
+    });
+  }
+
+  function makeSheetName(d){
+    const isSimple=d.mode==='simple';
+    const calcDateVal=d.calc_date||d.order_date||'';
+    const dateStr=calcDateVal?calcDateVal.replace(/-/g,'').slice(2,8):'';
+    const suffix=isSimple?'（簡易）':'';
+    return (dateStr+'_'+(d.product||'発注試算')+suffix).slice(0,31);
+  }
+
+  async function buildFilledWb(d){
+    const isSimple=d.mode==='simple';
+    const srcName=isSimple?'発注試算テンプレート（簡易）':'発注試算テンプレート';
+    const wb=new ExcelJS.Workbook();
+    await wb.xlsx.load(b64ToUint8Array(TEMPLATE_B64));
+    const ws=wb.getWorksheet(srcName);
+    if(!ws) throw new Error('シートが見つかりません: '+srcName);
+    expandSharedFormulas(ws);
+
+    const setS=(a,v)=>{ ws.getCell(a).value=v==null?null:String(v); };
+    const setN=(a,v)=>{ ws.getCell(a).value=Number(v)||0; };
+    const setD=(a,v)=>{ if(!v)return; const dt=new Date(v); if(!isNaN(dt.getTime()))ws.getCell(a).value=dt; else ws.getCell(a).value=String(v); };
+    const MONTH_COLS=['D','E','F','G','H','I','J','K'];
+    const base=d.base_month||d.order_date?.slice(0,7)||'';
+    function addM(ym,n){if(!ym)return'';const[y,m]=ym.split('-').map(Number);const dt=new Date(y,m-1+n,1);return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0');}
+    function mLabel2(ym){if(!ym)return'';return parseInt(ym.split('-')[1])+'月';}
+    function buildMonthRange(n){return Array.from({length:n},(_,i)=>addM(base,i));}
+    const tobMs=buildMonthRange(d.tob_months||0);
+    const ecMs=buildMonthRange(d.ec_months||0);
+    const ovsMs=buildMonthRange(d.overseas_months||0);
+    const _bm=d.base_month||d.order_date?.slice(0,7)||null;
+
+    setS('B3',d.product||''); setS('B4',d.brand||'');
+    setD('B5',d.order_date);
+    setN('B6',d.lead_time_weeks||8); setN('B8',d.container_moq||0); setN('B9',d.bulk_moq||0);
+    setN('B13',d.tob_months||0); setN('B14',d.ec_months||0); setN('B15',d.overseas_months||0);
+    if(tobMs.length) setS('C13',tobMs.map(mLabel2).join(' → '));
+    if(ecMs.length)  setS('C14',ecMs.map(mLabel2).join(' → '));
+    if(ovsMs.length) setS('C15',ovsMs.map(mLabel2).join(' → '));
+
+    (d.skus||[]).forEach((s,i)=>{
+      if(i>=8)return;
+      const r=18+i;
+      setS('A'+r,s.name||''); setS('B'+r,s.jan?String(s.jan):'');
+      setN('C'+r,s.stock||0);
+      setN('H'+r,s.confirmed_order!=null?s.confirmed_order:(s.order_quantity||0));
+      setS('I'+r,s.note||'');
+    });
+
+    (d.skus||[]).forEach((s,i)=>{
+      if(i>=8)return;
+      const jan=s.jan||'';
+      const tobR=33+i,ecR=42+i,ovsR=51+i;
+      setN('B'+tobR,recentShipForCalc(jan,'tob',1,_bm)); setN('C'+tobR,recentShipForCalc(jan,'tob',3,_bm));
+      tobMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+tobR,s.monthly_summary?.tob?.[m]||0);});
+      setN('B'+ecR,recentShipForCalc(jan,'ec',1,_bm)); setN('C'+ecR,recentShipForCalc(jan,'ec',3,_bm));
+      ecMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+ecR,s.monthly_summary?.ec?.[m]||0);});
+      setN('B'+ovsR,recentShipForCalc(jan,'overseas',1,_bm)); setN('C'+ovsR,recentShipForCalc(jan,'overseas',3,_bm));
+      ovsMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+ovsR,s.monthly_summary?.overseas?.[m]||0);});
+      if(!isSimple){setS('N'+tobR,s.name||''); setS('O'+tobR,s.posMonth||base); setN('P'+tobR,s.posPs||0);}
+    });
+
+    if(!isSimple){
+      const RETAILER_STARTS=[114,127,140,153,166,179,192,205,218,231];
+      (d.retailers||[]).forEach((r,ri)=>{
+        if(ri>=RETAILER_STARTS.length)return;
+        const h=RETAILER_STARTS[ri];
+        setS('A'+h,'[RETAILER] '+(r.name||''));
+        setN('B'+(h+1),r.posTilt||1); setN('D'+(h+1),r.stores||0); setS('F'+(h+1),r.status||'導入済み');
+        tobMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+(h+2),r.monthTilts?.[m]!=null?r.monthTilts[m]:0.7);});
+        (d.skus||[]).forEach((s,si)=>{if(si<8)setN('B'+(h+4+si),s.posPs||0);});
+      });
+      const EC_STARTS=[248,259];
+      (d.ec_detail||[]).slice(0,2).forEach((blk,bi)=>{
+        const sr=EC_STARTS[bi];
+        (d.skus||[]).forEach((s,si)=>{
+          if(si>=8)return;
+          const row=sr+si,jan=s.jan||'',key=jan||s.name;
+          const monthly=(blk[key]||{}).monthly||blk[s.name]?.monthly||{};
+          setS('A'+row,s.name||''); setN('B'+row,recentShipForCalc(jan,'ec',1,_bm)); setN('C'+row,recentShipForCalc(jan,'ec',3,_bm));
+          ecMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,monthly[m]||0);});
+        });
+      });
+      const OVS_STARTS=[271,282,293,304];
+      (d.ovs_detail||[]).slice(0,4).forEach((blk,bi)=>{
+        const sr=OVS_STARTS[bi];
+        (d.skus||[]).forEach((s,si)=>{
+          if(si>=8)return;
+          const row=sr+si,jan=s.jan||'',key=jan||s.name;
+          const monthly=(blk[key]||{}).monthly||blk[s.name]?.monthly||{};
+          setS('A'+row,s.name||''); setN('B'+row,recentShipForCalc(jan,'overseas',1,_bm)); setN('C'+row,recentShipForCalc(jan,'overseas',3,_bm));
+          ovsMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,monthly[m]||0);});
+        });
+      });
+    } else {
+      (d.skus||[]).forEach((s,si)=>{
+        if(si>=8)return;
+        const row=118+si;
+        setS('A'+row,s.name||''); setN('B'+row,recentShipForCalc(s.jan,'tob',1,_bm)); setN('C'+row,recentShipForCalc(s.jan,'tob',3,_bm));
+        tobMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,s.monthly_summary?.tob?.[m]||0);});
+      });
+      (d.skus||[]).forEach((s,si)=>{
+        if(si>=8)return;
+        const row=153+si;
+        setS('A'+row,s.name||''); setN('B'+row,recentShipForCalc(s.jan,'ec',1,_bm)); setN('C'+row,recentShipForCalc(s.jan,'ec',3,_bm));
+        ecMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,s.monthly_summary?.ec?.[m]||0);});
+      });
+      const OVS_STARTS_S=[163,174,185];
+      (d.ovs_detail||[]).slice(0,3).forEach((blk,bi)=>{
+        const sr=OVS_STARTS_S[bi];
+        (d.skus||[]).forEach((s,si)=>{
+          if(si>=8)return;
+          const row=sr+si,key=(s.jan||'')||s.name;
+          const monthly=(blk[key]||{}).monthly||{};
+          setS('A'+row,s.name||'');
+          ovsMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,monthly[m]||0);});
+        });
+      });
+    }
+    return {wb, ws, srcName};
+  }
+
+  // 1商品目をベースに
+  const {wb: wbBase, ws: wsFirst, srcName: srcFirst} = await buildFilledWb(drafts[0]);
+  wsFirst.name = makeSheetName(drafts[0]);
+
+  // 2商品目以降をシートコピーで追加
+  for(let i=1;i<drafts.length;i++){
+    const {ws: wsSrc} = await buildFilledWb(drafts[i]);
+    const newSheetName = makeSheetName(drafts[i]);
+    const wsDest = wbBase.addWorksheet(newSheetName);
+    wsSrc.eachRow({includeEmpty:true},(row,rowNum)=>{
+      const newRow=wsDest.getRow(rowNum);
+      newRow.height=row.height;
+      row.eachCell({includeEmpty:true},(cell,colNum)=>{
+        const newCell=newRow.getCell(colNum);
+        newCell.value=cell.value;
+        try{newCell.style=JSON.parse(JSON.stringify(cell.style));}catch(e){}
+      });
+      newRow.commit();
+    });
+    (wsSrc.model.merges||[]).forEach(merge=>{try{wsDest.mergeCells(merge);}catch(e){}});
+    wsSrc.columns.forEach((col,ci)=>{if(col.width)wsDest.getColumn(ci+1).width=col.width;});
+  }
+
+  // テンプレート用シートを削除
+  wbBase.worksheets.filter(ws=>
+    ws.name==='発注試算テンプレート'||
+    ws.name==='発注試算テンプレート（簡易）'||
+    ws.name.startsWith('（記入例）')
+  ).forEach(ws=>wbBase.removeWorksheet(ws.id));
+
+  return wbBase;
+}
+
+async function exportMergedDrafts(){
+  const ids=[...document.querySelectorAll('.draft-cb:checked')].map(c=>c.value);
+  if(ids.length<2){showNotif('2件以上選択してください','error');return;}
+  const drafts=loadDrafts().filter(d=>ids.includes(d.id));
+  if(!drafts.length)return;
+  showNotif(`${drafts.length}件を統合中...`,'success');
+  try{
+    const wb=await buildMergedWorkbook(drafts);
+    const buf=await wb.xlsx.writeBuffer();
+    const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');
+    // ファイル名: 最初の商品の日付_発注試算_N商品.xlsx
+    const calcDateVal=(drafts[0].calc_date||drafts[0].order_date||'').replace(/-/g,'').slice(2,8);
+    a.href=url;a.download=`${calcDateVal}_発注試算_${drafts.length}商品.xlsx`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    showNotif(`${drafts.length}商品を1ファイルに出力しました ✓`,'success');
+  }catch(e){console.error(e);showNotif('統合出力エラー: '+e.message,'error');}
 }
 
 async function exportSelectedDrafts(){
