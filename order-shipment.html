@@ -947,8 +947,8 @@ async function loadMergedSession(sid){
     showNotif(`「${m.product}」を読み込みました\n${statusParts.length ? '記入済み: ' + statusParts.join(' / ') : '各セクション未記入'}`, 'success');
 
     // 担当部署に応じてステップを決定（validateをスキップして直接遷移）
-    const _dept = currentDept;
-    const _targetStep = (_dept==='tob') ? 1 : (_dept==='ec'||_dept==='ovs') ? 2 : 0;
+    const _loadedDept = currentDept || '';
+    const _targetStep = (_loadedDept==='tob') ? 1 : (_loadedDept==='ec'||_loadedDept==='ovs') ? 2 : 0;
     // 全ステップ非表示にしてから対象ステップを表示
     for(let i=0;i<=4;i++){const el=document.getElementById('calcStep'+i);if(el)el.style.display=i===_targetStep?'':'none';}
     const _steps=document.querySelectorAll('#calcStepNav .step');
