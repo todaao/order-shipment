@@ -341,11 +341,14 @@ textarea:focus{border-color:var(--accent);}
     <div class="panel-body"><div class="chart-wrap" style="height:300px"><canvas id="chartInventory"></canvas></div></div>
   </div>
   <div class="panel">
-    <div class="panel-header">
+    <div class="panel-header" style="flex-wrap:wrap;gap:8px">
       <div class="panel-title"><span class="panel-title-dot"></span>在庫スナップショット一覧</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">フィルター:</span>
         <button class="drilldown-toggle" id="filterRiskBtn" onclick="toggleInvFilter('risk')" style="color:var(--accent3)">欠品リスク</button>
         <button class="drilldown-toggle" id="filterExcessBtn" onclick="toggleInvFilter('excess')" style="color:var(--accent2)">過剰在庫</button>
+        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-left:6px">並び替え:</span>
+        <span id="invSortBtnsHeader"></span>
       </div>
     </div>
     <div class="panel-body"><div class="sku-table-wrap"><table id="inventoryTable"></table></div></div>
@@ -1039,7 +1042,9 @@ function deleteCloudSessionByIdx(idx){
       await cloudFetch('sessions/'+encodeURIComponent(s.session_id), 'DELETE');
       closeModal();
       showNotif('削除しました', 'success');
-      renderCloudDraftList();
+      // ③キャッシュをクリアしてから再描画（削除済みが残る問題の修正）
+      window._cloudSessions = [];
+      await renderCloudDraftList();
     } catch(e){ showNotif('削除エラー: '+e.message,'error'); }
   });
 }
@@ -1180,6 +1185,25 @@ function showView(id,el){
     const startScreen=document.getElementById('calcStartScreen');
     const mainArea=document.getElementById('calcMainArea');
     if(calcSkus.length>0){
+      // ②試算中に新規作成画面に移動する場合は保存確認を促す
+      if(startScreen&&startScreen.style.display==='none'&&mainArea&&mainArea.style.display!=='none'){
+        // ナビクリック後にアクティブが変わってしまうのでいったん戻す
+        document.querySelectorAll('.nav-item,.mobile-nav-btn').forEach(n=>n.classList.remove('active'));
+        if(el) el.classList.remove('active');
+        // 発注試算ビューを維持
+        document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+        const calcView=document.getElementById('view-calc');
+        if(calcView) calcView.classList.add('active');
+        showConfirm(
+          '試算中です',
+          '現在の試算データはどうしますか？',
+          ()=>{closeModal();saveDraft();},
+          '💾 ブラウザに保存して新規へ',
+          ()=>{closeModal();resetCalcSession();if(startScreen)startScreen.style.display='';if(mainArea)mainArea.style.display='none';showNotif('試算データを削除しました','info');},
+          '🗑 削除して新規へ'
+        );
+        return;
+      }
       if(startScreen) startScreen.style.display='none';
       if(mainArea) mainArea.style.display='';
     } else {
@@ -1495,7 +1519,10 @@ function renderSummary(){
             ${confTotal?`<span class="badge" style="background:rgba(126,212,160,.1);color:var(--accent4);border:1px solid rgba(126,212,160,.3)">確定 ${fmt(confTotal)}</span>`:''}
           </div>
         </div>
-        <span id="${detailId}-arrow" style="font-size:16px;color:var(--text3);transition:transform .2s;flex-shrink:0">▼</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="restartCalcFromOrder(${oi})" title="この試算を元に新規試算を開始">🔄 再試算</button>
+          <span id="${detailId}-arrow" style="font-size:16px;color:var(--text3);transition:transform .2s;flex-shrink:0">▼</span>
+        </div>
       </div>
       <!-- 詳細（折りたたみ） -->
       <div id="${detailId}" style="display:none;border-top:1px solid var(--border)">
@@ -1532,6 +1559,54 @@ function renderSummary(){
     </div>`;
   });
   document.getElementById('orderCards').innerHTML=html||'<div style="color:var(--text3);padding:24px;text-align:center">発注データがありません</div>';
+}
+
+// ⑥ 発注サマリーから再試算を開始
+function restartCalcFromOrder(oi){
+  if(!dataLoaded||!DATA.orders) return;
+  let orders=DATA.orders.orders||[];
+  orders=orders.filter(o=>o.product||o.brand);
+  const o=orders[oi];
+  if(!o) return;
+  showConfirm(
+    '再試算を開始',
+    `「${o.sheet_name||o.product||''}」を元に新規試算を開始します。
+商品名・MOQ・SKU情報を引き継ぎます。`,
+    ()=>{
+      closeModal();
+      resetCalcSession();
+      // 商品情報を引き継ぐ
+      const setV=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v;};
+      setV('ci_product',o.product||'');
+      setV('ci_brand',o.brand||'');
+      setV('ci_containerMoq',o.container_moq||10000);
+      setV('ci_bulkMoq',o.bulk_moq||5000);
+      setV('ci_leadtime',o.lead_time_weeks||8);
+      // SKUを引き継ぐ
+      calcSkus=(o.skus||[]).map(s=>({
+        name:s.sku_name||masterSkuName(s.jan)||s.jan||'',
+        jan:s.jan||'',
+        stock:0,
+        posPs:0,
+        stockout_flags:{},
+        pendingArrival:0,
+        pendingArrivalMonth:null,
+        note:s.note||'',
+        confirmedOrder:null,
+      }));
+      // モード選択
+      if(o.mode) selectMode(o.mode);
+      calcArrival();updateMonthPreviews();renderCalcSkuList();
+      // 試算画面に移動
+      const startScreen=document.getElementById('calcStartScreen');
+      const mainArea=document.getElementById('calcMainArea');
+      if(startScreen) startScreen.style.display='none';
+      if(mainArea) mainArea.style.display='';
+      showView('calc',document.querySelector('.nav-item[onclick*="calc"]'));
+      goStep(0);
+      showNotif(`「${o.product||''}」を元に再試算を開始しました`,'success');
+    }
+  );
 }
 
 function switchOrderTab(tabId,tab,el){
@@ -2032,12 +2107,11 @@ function renderInventoryTable(filtMsArg){
     });
   }
   const filtMs=filtMsArg;
-  const invSortBar=`<div data-inv-sort-bar style="display:flex;gap:5px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-    <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">並び替え:</span>
-    ${[['name_asc','名前↑'],['name_desc','名前↓'],['stock_desc','在庫↓'],['stock_asc','在庫↑'],['digest_asc','消化月数↑'],['digest_desc','消化月数↓']].map(([s,l])=>`<button class="drilldown-toggle ${invSortOrder===s?'active':''}" onclick="setInvSort('${s}')" style="padding:2px 7px;font-size:10px">${l}</button>`).join('')}
-  </div>`;
+  // ⑦ 並び替えボタンをパネルヘッダーに表示
+  const hdrBtns=document.getElementById('invSortBtnsHeader');
+  if(hdrBtns) hdrBtns.innerHTML=[['name_asc','名前↑'],['name_desc','名前↓'],['stock_desc','在庫↓'],['stock_asc','在庫↑'],['digest_asc','消化月数↑'],['digest_desc','消化月数↓']].map(([s,l])=>`<button class="drilldown-toggle ${invSortOrder===s?'active':''}" onclick="setInvSort('${s}')" style="padding:2px 7px;font-size:10px">${l}</button>`).join('');
 
-  let tHtml=invSortBar+`<table class="sku-table-wrap" style="width:100%;overflow-x:auto"><table><thead><tr>
+  let tHtml=`<table class="sku-table-wrap" style="width:100%;overflow-x:auto"><table><thead><tr>
     <th style="text-align:center;width:32px">📊</th>
     <th style="text-align:left">SKU名</th><th style="text-align:left">JAN</th>
     ${filtMs.map(m=>`<th>${m}</th>`).join('')}
@@ -2754,8 +2828,10 @@ function recalcPsPreview(ri){
     // 参照POS × 業態傾斜 × 月別傾斜 × 店舗数
     const ps=s.posPs||0;
     const vals=months.map(m=>{
-      const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;
-      return Math.round(ps*r.posTilt*tilt*r.stores);
+      // ④累積乗算: 各月の傾斜は前月までの積に掛け合わせる
+      const months_before=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
+      const cumTilt=months_before.reduce((acc,k)=>{const t=r.monthTilts[k]!==undefined?r.monthTilts[k]:0.7;return acc*t;},1);
+      return Math.round(ps*r.posTilt*cumTilt*r.stores);
     });
     tbl+=`<tr><td style="color:var(--text2);white-space:nowrap">${escHtml(s.name)}</td>
       ${vals.map(v=>`<td style="text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(v)}</td>`).join('')}
@@ -2887,7 +2963,7 @@ function buildSummaryPreview(){
     const tob={},ec={},ovs={};
     tobMonths.forEach(m=>{
       tob[m]=calcMode==='normal'
-        ?calcRetailers.reduce((a,r)=>{const ps=s.posPs||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;return a+Math.round(ps*r.posTilt*tilt*r.stores);},0)
+        ?calcRetailers.reduce((a,r)=>{const ps=s.posPs||0;const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);const cumTilt=mbs.reduce((acc,k)=>{const t=r.monthTilts[k]!==undefined?r.monthTilts[k]:0.7;return acc*t;},1);return a+Math.round(ps*r.posTilt*cumTilt*r.stores);},0)
         :((calcSimpleMonthly['toB']||{})[s.name]||{})[m]||0;
     });
     ecMonths.forEach(m=>{ec[m]=((calcEcMonthly[s.name]||{})[m]||0)+((calcEcMonthly2[s.name]||{})[m]||0);});
@@ -2919,7 +2995,7 @@ function buildSummaryPreview(){
     const bm=getBaseMonth();
     const avg3=recentShipForCalc(s.jan,'tob',3,bm);
     const newQty=calcRetailers.filter(r=>r.status==='新規').reduce((a,r)=>{
-      return a+months.reduce((b,m)=>{const ps=s.posPs||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;return b+Math.round(ps*r.posTilt*tilt*r.stores);},0);
+      return a+months.reduce((b,m)=>{const ps=s.posPs||0;const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);const cumTilt=mbs.reduce((acc,k)=>{const t=r.monthTilts[k]!==undefined?r.monthTilts[k]:0.7;return acc*t;},1);return b+Math.round(ps*r.posTilt*cumTilt*r.stores);},0);
     },0);
     const total=months.reduce((a,m)=>a+(tob[m]||0),0);
     return`<tr><td style="padding:6px 8px;color:var(--text);font-size:12px">${escHtml(s.name)}<br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${s.jan||''}</span></td>
@@ -3039,7 +3115,7 @@ function buildSummaryPreview(){
     const grand=Object.values(totals).reduce((a,b)=>a+b,0);
     const newGrand=calcMode==='normal'?calcRetailers.filter(r=>r.status==='新規').reduce((a,r)=>{
       return a+skuData.reduce((b,d)=>{
-        return b+months.reduce((c,m)=>{const ps=d.s.posPs||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;return c+Math.round(ps*r.posTilt*tilt*r.stores);},0);
+        return b+months.reduce((c,m)=>{const ps=d.s.posPs||0;const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);const cumTilt=mbs.reduce((acc,k)=>{const t=r.monthTilts[k]!==undefined?r.monthTilts[k]:0.7;return acc*t;},1);return c+Math.round(ps*r.posTilt*cumTilt*r.stores);},0);
       },0);
     },0):0;
     return`<tr style="background:rgba(255,255,255,.02)"><td style="padding:6px 8px;font-size:12px;font-weight:500;border:1px solid var(--border)">合計</td>
@@ -3091,6 +3167,8 @@ function buildPreview(){
           <th style="text-align:left;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--text3)">SKU名</th>
           <th style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--text3)">JAN</th>
           <th style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--text3)">現在庫</th>
+          <th style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--accent4)">入庫予定数</th>
+          <th style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--accent4)">入庫予定月</th>
           <th style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--text3)">推計必要数</th>
           <th style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--accent)">確定発注数</th>
           <th style="padding:8px 10px;background:var(--surface2);border:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--text3)">備考</th>
@@ -3099,6 +3177,12 @@ function buildPreview(){
           <td style="padding:7px 10px;border:1px solid rgba(42,45,58,.5);color:var(--text)">${escHtml(s.name)}</td>
           <td style="padding:7px 10px;border:1px solid rgba(42,45,58,.5);font-family:var(--font-mono);font-size:10px;color:var(--text3)">${s.jan||'—'}</td>
           <td style="padding:7px 10px;border:1px solid rgba(42,45,58,.5);text-align:right">${fmt(s.stock)}</td>
+          <td style="padding:7px 10px;border:1px solid rgba(42,45,58,.5);text-align:right">
+            <input type="number" value="${s.pendingArrival||0}" min="0" placeholder="0" style="background:var(--surface2);border:1px solid var(--accent4);color:var(--accent4);padding:4px 8px;border-radius:4px;font-size:12px;width:90px;text-align:right;font-family:var(--font-mono)" onchange="calcSkus[${i}].pendingArrival=+this.value;buildSummaryPreview();renderStep5InvSim()" title="発注済みだが未入庫の数量（推計必要数から差し引かれます）">
+          </td>
+          <td style="padding:7px 10px;border:1px solid rgba(42,45,58,.5)">
+            <input type="month" value="${s.pendingArrivalMonth||''}" style="background:var(--surface2);border:1px solid var(--accent4);color:var(--accent4);padding:4px 6px;border-radius:4px;font-size:11px;font-family:var(--font-mono)" onchange="calcSkus[${i}].pendingArrivalMonth=this.value||null;renderStep5InvSim()" title="入庫予定月（在庫シミュレーションに反映）">
+          </td>
           <td style="padding:7px 10px;border:1px solid rgba(42,45,58,.5);text-align:right;color:var(--accent2)">${fmt(s.estimated_total)}</td>
           <td style="padding:7px 10px;border:1px solid rgba(42,45,58,.5);text-align:right">
             <input type="number" value="${s.order_quantity}" min="0" style="background:var(--surface2);border:1px solid var(--accent);color:var(--accent);padding:4px 8px;border-radius:4px;font-size:12px;width:90px;text-align:right;font-family:var(--font-mono)" onchange="updateConfirmed(${i},+this.value)">
@@ -3108,7 +3192,7 @@ function buildPreview(){
           </td>
         </tr>`).join('')}
         <tr style="background:rgba(200,169,110,.05)">
-          <td colspan="4" style="padding:8px 10px;font-weight:500;border:1px solid var(--border)">合計</td>
+          <td colspan="6" style="padding:8px 10px;font-weight:500;border:1px solid var(--border)">合計</td>
           <td style="padding:8px 10px;text-align:right;font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--accent);border:1px solid var(--border)" id="confirmedTotal">${fmt(totOrd)}</td>
           <td style="border:1px solid var(--border)"></td>
         </tr></tbody>
@@ -3145,9 +3229,14 @@ function renderStep5InvSim(){
     let stock=s.stock||0;
     const confirmedQty=s.confirmed_order!=null?s.confirmed_order:(s.order_quantity||0);
     const flags=s.stockout_flags||{};
+    // ⑧入庫予定月（SKU別）と入庫予定数
+    const skuPendingMonth=s.pending_arrival_month||null;
+    const skuPendingQty=s.pending_arrival||0;
     const cells=allMs.map(m=>{
       // 入庫予定月に確定発注数を補填
       if(arrivalMonth&&m===arrivalMonth) stock+=confirmedQty;
+      // ⑧SKU別入庫予定月に入庫予定数を補填
+      if(skuPendingMonth&&m===skuPendingMonth&&skuPendingQty>0) stock+=skuPendingQty;
       const ship=(tob[m]||0)+(ec[m]||0)+(ovs[m]||0);
       stock-=ship;
       // 欠品判定
@@ -3239,29 +3328,47 @@ function collectCalcData(){
     const tob={},ec={},overseas={};
     tobMonths.forEach(m=>{
       tob[m]=calcMode==='normal'
-        ?calcRetailers.reduce((a,r)=>{const ps=s.posPs||0;const tilt=r.monthTilts[m]!==undefined?r.monthTilts[m]:0.7;return a+Math.round(ps*r.posTilt*tilt*r.stores);},0)
+        ?calcRetailers.reduce((a,r)=>{const ps=s.posPs||0;const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);const cumTilt=mbs.reduce((acc,k)=>{const t=r.monthTilts[k]!==undefined?r.monthTilts[k]:0.7;return acc*t;},1);return a+Math.round(ps*r.posTilt*cumTilt*r.stores);},0)
         :((calcSimpleMonthly['toB']||{})[s.name]||{})[m]||0;
     });
     ecMonths.forEach(m=>{ec[m]=((calcEcMonthly[s.name]||{})[m]||0)+((calcEcMonthly2[s.name]||{})[m]||0);});
     ovsMonths.forEach(m=>{overseas[m]=calcOvsMonthly.reduce((a,st)=>a+((st[s.name]||{})[m]||0),0);});
-    const estimated_total=Object.values(tob).reduce((a,b)=>a+b,0)+Object.values(ec).reduce((a,b)=>a+b,0)+Object.values(overseas).reduce((a,b)=>a+b,0);
-    const order_quantity=Math.max(0,estimated_total-(s.stock||0));
-    const confirmed_order=s.confirmedOrder!=null?s.confirmedOrder:order_quantity;
-    // stockout_predictionsを月ごとに構築（欠品予測フラグはStep4 UIで設定される）
+    // stockout_predictionsを月ごとに構築
     const allMonths=[...new Set([...Object.keys(tob),...Object.keys(ec),...Object.keys(overseas)])].sort();
     const stockout_predictions={};
+    const flags=s.stockout_flags||{};
     allMonths.forEach(m=>{
       const demand=(tob[m]||0)+(ec[m]||0)+(overseas[m]||0);
-      const flags=s.stockout_flags||{};
       const excluded=!!(flags[m]);
-      stockout_predictions[m]={
-        demand_forecast:demand,
-        stockout_predicted:excluded,
-        excluded_from_total:excluded,
-      };
+      stockout_predictions[m]={demand_forecast:demand,stockout_predicted:excluded,excluded_from_total:excluded};
     });
-    return{...s,monthly_summary:{tob,ec,overseas},estimated_total,order_quantity,confirmed_order,stockout_predictions};
+    // ①欠品フラグ月を推計必要数から除外
+    const estimated_total=allMonths.reduce((a,m)=>{
+      if(flags[m]) return a;
+      return a+(tob[m]||0)+(ec[m]||0)+(overseas[m]||0);
+    },0);
+    // ⑧入庫予定数を推計必要数から減算
+    const pendingArrival=s.pendingArrival||0;
+    const estimated_total_net=Math.max(0,estimated_total-pendingArrival);
+    const order_quantity=Math.max(0,estimated_total_net-(s.stock||0));
+    const confirmed_order=s.confirmedOrder!=null?s.confirmedOrder:order_quantity;
+    return{...s,monthly_summary:{tob,ec,overseas},estimated_total:estimated_total_net,order_quantity,confirmed_order,stockout_predictions,pending_arrival:pendingArrival,pending_arrival_month:s.pendingArrivalMonth||null};
   });
+  // ⑤ retailer_blocks を構築（発注サマリーの小売別タブ用）
+  const retailer_blocks=calcMode==='normal'?calcRetailers.map(r=>{
+    const skuMap={};
+    calcSkus.forEach(s=>{
+      const ps=s.posPs||0;
+      const monthly={};
+      tobMonths.forEach(m=>{
+        const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
+        const cumTilt=mbs.reduce((acc,k)=>{const t=r.monthTilts[k]!==undefined?r.monthTilts[k]:0.7;return acc*t;},1);
+        monthly[m]=Math.round(ps*r.posTilt*cumTilt*r.stores);
+      });
+      skuMap[s.name]={monthly};
+    });
+    return{retailer:r.name,stores:r.stores,pos_tilt:r.posTilt,is_new:r.isNew||false,skus:skuMap};
+  }):[];
   return{
     mode:calcMode,
     product:document.getElementById('ci_product').value,
@@ -3274,6 +3381,7 @@ function collectCalcData(){
     tob_months:tobM,ec_months:ecM,overseas_months:ovsM,base_month:base,
     skus:skusOut,
     retailers:calcMode==='normal'?calcRetailers.map(r=>({...r})):[],
+    retailer_blocks,
     ec_detail:[
       Object.fromEntries(calcSkus.map(s=>[s.jan||s.name,{recent:0,monthly:calcEcMonthly[s.name]||{}}])),
       Object.fromEntries(calcSkus.map(s=>[s.jan||s.name,{recent:0,monthly:calcEcMonthly2[s.name]||{}}])),
