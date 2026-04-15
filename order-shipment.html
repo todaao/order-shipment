@@ -3376,7 +3376,7 @@ function renderStep5InvSim(){
         </tr></thead>
         <tbody>${window.promoPlan.map((p,pi)=>`<tr>
           <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.item||'')}" placeholder="例：什器、POPカード" style="background:transparent;border:none;color:var(--text);font-size:12px;width:100%;outline:none" oninput="window.promoPlan[${pi}].item=this.value"></td>
-          <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.jan||'')}" placeholder="JANコード（任意）" title="例: 什器JAN要確認、テスターJAN_00" style="background:transparent;border:none;color:var(--text2);font-family:var(--font-mono);font-size:11px;width:100%;outline:none" oninput="window.promoPlan[${pi}].jan=this.value"></td>
+          <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.jan||'')}" placeholder="什器JAN要確認、テスターJAN_00" title="例: 什器JAN要確認、テスターJAN_00" style="background:transparent;border:none;color:var(--text2);font-family:var(--font-mono);font-size:11px;width:100%;outline:none" oninput="window.promoPlan[${pi}].jan=this.value"></td>
           <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5);text-align:right"><input type="text" inputmode="decimal" value="${escHtml(String(p.qty||''))}" placeholder="0" style="background:transparent;border:none;color:var(--accent);font-family:var(--font-mono);font-size:12px;width:80px;text-align:right;outline:none" oninput="window.promoPlan[${pi}].qty=this.value"></td>
           <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.note||'')}" placeholder="備考（任意）" style="background:transparent;border:none;color:var(--text2);font-size:12px;width:100%;outline:none" oninput="window.promoPlan[${pi}].note=this.value"></td>
         </tr>`).join('')}</tbody>
@@ -3636,16 +3636,28 @@ async function buildWorkbook(d){
     setS('A'+r, s.name||'');
     setS('B'+r, s.jan ? String(s.jan) : '');
     setN('C'+r, s.stock||0);
-    setN('H'+r, s.confirmed_order!=null ? s.confirmed_order : (s.order_quantity||0));
-    // I列: 欠品予測フラグ月（カンマ区切り）
+    setN('I'+r, s.confirmed_order!=null ? s.confirmed_order : (s.order_quantity||0));
+    // J列: 欠品予測フラグ月（カンマ区切り）
     const sp = s.stockout_predictions||{};
     const stockoutMonths = Object.keys(sp).filter(m=>sp[m].stockout_predicted||sp[m].excluded_from_total).join(',');
-    setS('I'+r, stockoutMonths);
-    // J列: 需要予測合計（除外前）
+    setS('J'+r, stockoutMonths);
+    // K列: 需要予測合計（除外前）
     const demandTotal = Object.values(sp).reduce((a,v)=>a+(v.demand_forecast||0),0);
-    setN('J'+r, demandTotal||s.estimated_total||0);
-    // K列: 備考（旧I列から移動）
-    setS('K'+r, s.note||'');
+    setN('K'+r, demandTotal||s.estimated_total||0);
+    // L列: 備考
+    setS('L'+r, s.note||'');
+  });
+
+  // ── 販促物試算ブロック (行28〜37) ──
+  const promos = window.promoPlan || [];
+  promos.forEach((p,pi)=>{
+    if(pi>=10) return;
+    const r = 28+pi;
+    setS('A'+r, p.item||'');
+    setS('B'+r, p.jan||'');
+    const qv = parseFloat(p.qty);
+    ws.getCell('I'+r).value = isNaN(qv) ? null : qv;
+    setS('J'+r, p.note||'');
   });
 
   // ── 販路×月サマリー ──
@@ -3654,25 +3666,25 @@ async function buildWorkbook(d){
     if(i>=8) return;
     const jan = s.jan||'';
 
-    // toB (行33+i)
-    const tobR = 33+i;
+    // toB (行42+i)
+    const tobR = 42+i;
     setN('B'+tobR, recentShipForCalc(jan,'tob',1,_bm));
     setN('C'+tobR, recentShipForCalc(jan,'tob',3,_bm));
     tobMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+tobR, s.monthly_summary?.tob?.[m]||0); });
 
-    // EC (行42+i)
-    const ecR = 42+i;
+    // EC (行51+i)
+    const ecR = 51+i;
     setN('B'+ecR, recentShipForCalc(jan,'ec',1,_bm));
     setN('C'+ecR, recentShipForCalc(jan,'ec',3,_bm));
     ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+ecR, s.monthly_summary?.ec?.[m]||0); });
 
-    // 海外 (行51+i)
-    const ovsR = 51+i;
+    // 海外 (行60+i)
+    const ovsR = 60+i;
     setN('B'+ovsR, recentShipForCalc(jan,'overseas',1,_bm));
     setN('C'+ovsR, recentShipForCalc(jan,'overseas',3,_bm));
     ovsMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+ovsR, s.monthly_summary?.overseas?.[m]||0); });
 
-    // 参照POS (N〜P列, 行33+i) ※通常試算のみ
+    // 参照POS (N〜P列, 行42+i) ※通常試算のみ
     if(!isSimple){
       setS('N'+tobR, s.name||'');
       setS('O'+tobR, s.posMonth||base);
@@ -3682,8 +3694,8 @@ async function buildWorkbook(d){
 
   if(!isSimple){
     // ── 通常試算: SECTION C toB小売ブロック ──
-    // 小売ブロック: 114, 127, 140, 153, 166, 179, 192, 205, 218, 231
-    const RETAILER_STARTS = [114,127,140,153,166,179,192,205,218,231];
+    // 小売ブロック: 123, 136, 149, 162, 175, 188, 201, 214, 227, 240
+    const RETAILER_STARTS = [123,136,149,162,175,188,201,214,227,240];
     (d.retailers||[]).forEach((r,ri)=>{
       if(ri>=RETAILER_STARTS.length) return;
       const h = RETAILER_STARTS[ri];
@@ -3701,7 +3713,11 @@ async function buildWorkbook(d){
     });
 
     // ── 通常試算: SECTION D EC・海外 ──
-    const EC_STARTS = [248,259];
+    // EC チャネル名ヘッダー行: 255A, 266A
+    const EC_HEADER_ROWS = [255,266];
+    const EC_STARTS = [257,268];
+    const ecNames = [window.ecName1||'', window.ecName2||''];
+    EC_HEADER_ROWS.forEach((hr,bi)=>{ setS('A'+hr, ecNames[bi]); });
     (d.ec_detail||[]).slice(0,2).forEach((blk,bi)=>{
       const sr = EC_STARTS[bi];
       d.skus.forEach((s,si)=>{
@@ -3716,7 +3732,11 @@ async function buildWorkbook(d){
         ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, monthly[m]||0); });
       });
     });
-    const OVS_STARTS = [271,282,293,304];
+    // 海外 チャネル名ヘッダー行: 276A, 289A, 300A, 311A
+    const OVS_HEADER_ROWS = [278,289,300,311];
+    const OVS_STARTS = [280,291,302,313];
+    const ovsNames = [window.ovsName0||'', window.ovsName1||'', window.ovsName2||'', window.ovsName3||''];
+    OVS_HEADER_ROWS.forEach((hr,bi)=>{ setS('A'+hr, ovsNames[bi]); });
     (d.ovs_detail||[]).slice(0,4).forEach((blk,bi)=>{
       const sr = OVS_STARTS[bi];
       d.skus.forEach((s,si)=>{
@@ -3733,29 +3753,43 @@ async function buildWorkbook(d){
     });
   } else {
     // ── 簡易試算: SECTION C 小売直接入力 ──
-    // 小売①行118-125
-    d.skus.forEach((s,si)=>{
-      if(si>=8) return;
-      const row = 118+si;
-      setS('A'+row, s.name||'');
-      setN('B'+row, recentShipForCalc(s.jan,'tob',1,_bm));
-      setN('C'+row, recentShipForCalc(s.jan,'tob',3,_bm));
-      tobMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, s.monthly_summary?.tob?.[m]||0); });
+    // 小売①②③ 行127, 138, 149
+    const TOB_STARTS_S = [127,138,149];
+    const tobBlocks = ['toB1','toB2','toB3'];
+    TOB_STARTS_S.forEach((sr,bi)=>{
+      d.skus.forEach((s,si)=>{
+        if(si>=8) return;
+        const row = sr+si;
+        const monthly = (d.monthly_summary_simple?.[tobBlocks[bi]]||{});
+        setS('A'+row, s.name||'');
+        setN('B'+row, recentShipForCalc(s.jan,'tob',1,_bm));
+        setN('C'+row, recentShipForCalc(s.jan,'tob',3,_bm));
+        tobMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, s.monthly_summary?.tob?.[m]||0); });
+      });
     });
 
     // ── 簡易試算: SECTION D EC・海外 ──
-    // EC①行153-160
-    d.skus.forEach((s,si)=>{
-      if(si>=8) return;
-      const row = 153+si;
-      setS('A'+row, s.name||'');
-      setN('B'+row, recentShipForCalc(s.jan,'ec',1,_bm));
-      setN('C'+row, recentShipForCalc(s.jan,'ec',3,_bm));
-      ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, s.monthly_summary?.ec?.[m]||0); });
+    // EC チャネル名ヘッダー行: 160A, 171A
+    const EC_HEADER_ROWS_S = [160,171];
+    const EC_STARTS_S = [162,173];
+    const ecNamesS = [window.ecName1||'', window.ecName2||''];
+    EC_HEADER_ROWS_S.forEach((hr,bi)=>{ setS('A'+hr, ecNamesS[bi]); });
+    EC_STARTS_S.forEach((sr,bi)=>{
+      d.skus.forEach((s,si)=>{
+        if(si>=8) return;
+        const row = sr+si;
+        setS('A'+row, s.name||'');
+        setN('B'+row, recentShipForCalc(s.jan,'ec',1,_bm));
+        setN('C'+row, recentShipForCalc(s.jan,'ec',3,_bm));
+        ecMs.forEach((m,mi)=>{ if(mi<8) setN(MONTH_COLS[mi]+row, s.monthly_summary?.ec?.[m]||0); });
+      });
     });
-    // 海外①②③: 行163, 174, 185
-    const OVS_STARTS_S = [163,174,185];
-    (d.ovs_detail||[]).slice(0,3).forEach((blk,bi)=>{
+    // 海外 チャネル名ヘッダー行: 183A, 194A, 205A, 216A
+    const OVS_HEADER_ROWS_S = [183,194,205,216];
+    const OVS_STARTS_S = [185,196,207,218];
+    const ovsNamesS = [window.ovsName0||'', window.ovsName1||'', window.ovsName2||'', window.ovsName3||''];
+    OVS_HEADER_ROWS_S.forEach((hr,bi)=>{ setS('A'+hr, ovsNamesS[bi]); });
+    (d.ovs_detail||[]).slice(0,4).forEach((blk,bi)=>{
       const sr = OVS_STARTS_S[bi];
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
@@ -4105,19 +4139,31 @@ async function buildMergedWorkbook(drafts){
       const r=18+i;
       setS('A'+r,s.name||''); setS('B'+r,s.jan?String(s.jan):'');
       setN('C'+r,s.stock||0);
-      setN('H'+r,s.confirmed_order!=null?s.confirmed_order:(s.order_quantity||0));
+      setN('I'+r,s.confirmed_order!=null?s.confirmed_order:(s.order_quantity||0));
       const sp=s.stockout_predictions||{};
       const stockoutMonths=Object.keys(sp).filter(m=>sp[m].stockout_predicted||sp[m].excluded_from_total).join(',');
-      setS('I'+r,stockoutMonths);
+      setS('J'+r,stockoutMonths);
       const demandTotal=Object.values(sp).reduce((a,v)=>a+(v.demand_forecast||0),0);
-      setN('J'+r,demandTotal||s.estimated_total||0);
-      setS('K'+r,s.note||'');
+      setN('K'+r,demandTotal||s.estimated_total||0);
+      setS('L'+r,s.note||'');
+    });
+
+    // ── 販促物試算ブロック (行28〜37) ──
+    const promos=window.promoPlan||[];
+    promos.forEach((p,pi)=>{
+      if(pi>=10)return;
+      const r=28+pi;
+      setS('A'+r,p.item||'');
+      setS('B'+r,p.jan||'');
+      const qv=parseFloat(p.qty);
+      ws.getCell('I'+r).value=isNaN(qv)?null:qv;
+      setS('J'+r,p.note||'');
     });
 
     (d.skus||[]).forEach((s,i)=>{
       if(i>=8)return;
       const jan=s.jan||'';
-      const tobR=33+i,ecR=42+i,ovsR=51+i;
+      const tobR=42+i,ecR=51+i,ovsR=60+i;
       setN('B'+tobR,recentShipForCalc(jan,'tob',1,_bm)); setN('C'+tobR,recentShipForCalc(jan,'tob',3,_bm));
       tobMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+tobR,s.monthly_summary?.tob?.[m]||0);});
       setN('B'+ecR,recentShipForCalc(jan,'ec',1,_bm)); setN('C'+ecR,recentShipForCalc(jan,'ec',3,_bm));
@@ -4128,7 +4174,7 @@ async function buildMergedWorkbook(drafts){
     });
 
     if(!isSimple){
-      const RETAILER_STARTS=[114,127,140,153,166,179,192,205,218,231];
+      const RETAILER_STARTS=[123,136,149,162,175,188,201,214,227,240];
       (d.retailers||[]).forEach((r,ri)=>{
         if(ri>=RETAILER_STARTS.length)return;
         const h=RETAILER_STARTS[ri];
@@ -4137,7 +4183,10 @@ async function buildMergedWorkbook(drafts){
         tobMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+(h+2),r.monthTilts?.[m]!=null?r.monthTilts[m]:0.7);});
         (d.skus||[]).forEach((s,si)=>{if(si<8)setN('B'+(h+4+si),s.posPs||0);});
       });
-      const EC_STARTS=[248,259];
+      const EC_HEADER_ROWS=[255,266];
+      const EC_STARTS=[257,268];
+      const ecNames=[window.ecName1||'',window.ecName2||''];
+      EC_HEADER_ROWS.forEach((hr,bi)=>{setS('A'+hr,ecNames[bi]);});
       (d.ec_detail||[]).slice(0,2).forEach((blk,bi)=>{
         const sr=EC_STARTS[bi];
         (d.skus||[]).forEach((s,si)=>{
@@ -4148,7 +4197,10 @@ async function buildMergedWorkbook(drafts){
           ecMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,monthly[m]||0);});
         });
       });
-      const OVS_STARTS=[271,282,293,304];
+      const OVS_HEADER_ROWS=[278,289,300,311];
+      const OVS_STARTS=[280,291,302,313];
+      const ovsNames=[window.ovsName0||'',window.ovsName1||'',window.ovsName2||'',window.ovsName3||''];
+      OVS_HEADER_ROWS.forEach((hr,bi)=>{setS('A'+hr,ovsNames[bi]);});
       (d.ovs_detail||[]).slice(0,4).forEach((blk,bi)=>{
         const sr=OVS_STARTS[bi];
         (d.skus||[]).forEach((s,si)=>{
@@ -4160,20 +4212,32 @@ async function buildMergedWorkbook(drafts){
         });
       });
     } else {
-      (d.skus||[]).forEach((s,si)=>{
-        if(si>=8)return;
-        const row=118+si;
-        setS('A'+row,s.name||''); setN('B'+row,recentShipForCalc(s.jan,'tob',1,_bm)); setN('C'+row,recentShipForCalc(s.jan,'tob',3,_bm));
-        tobMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,s.monthly_summary?.tob?.[m]||0);});
+      const TOB_STARTS_S=[127,138,149];
+      TOB_STARTS_S.forEach((sr)=>{
+        (d.skus||[]).forEach((s,si)=>{
+          if(si>=8)return;
+          const row=sr+si;
+          setS('A'+row,s.name||''); setN('B'+row,recentShipForCalc(s.jan,'tob',1,_bm)); setN('C'+row,recentShipForCalc(s.jan,'tob',3,_bm));
+          tobMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,s.monthly_summary?.tob?.[m]||0);});
+        });
       });
-      (d.skus||[]).forEach((s,si)=>{
-        if(si>=8)return;
-        const row=153+si;
-        setS('A'+row,s.name||''); setN('B'+row,recentShipForCalc(s.jan,'ec',1,_bm)); setN('C'+row,recentShipForCalc(s.jan,'ec',3,_bm));
-        ecMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,s.monthly_summary?.ec?.[m]||0);});
+      const EC_HEADER_ROWS_S=[160,171];
+      const EC_STARTS_S=[162,173];
+      const ecNamesS=[window.ecName1||'',window.ecName2||''];
+      EC_HEADER_ROWS_S.forEach((hr,bi)=>{setS('A'+hr,ecNamesS[bi]);});
+      EC_STARTS_S.forEach((sr)=>{
+        (d.skus||[]).forEach((s,si)=>{
+          if(si>=8)return;
+          const row=sr+si;
+          setS('A'+row,s.name||''); setN('B'+row,recentShipForCalc(s.jan,'ec',1,_bm)); setN('C'+row,recentShipForCalc(s.jan,'ec',3,_bm));
+          ecMs.forEach((m,mi)=>{if(mi<8)setN(MONTH_COLS[mi]+row,s.monthly_summary?.ec?.[m]||0);});
+        });
       });
-      const OVS_STARTS_S=[163,174,185];
-      (d.ovs_detail||[]).slice(0,3).forEach((blk,bi)=>{
+      const OVS_HEADER_ROWS_S=[183,194,205,216];
+      const OVS_STARTS_S=[185,196,207,218];
+      const ovsNamesS=[window.ovsName0||'',window.ovsName1||'',window.ovsName2||'',window.ovsName3||''];
+      OVS_HEADER_ROWS_S.forEach((hr,bi)=>{setS('A'+hr,ovsNamesS[bi]);});
+      (d.ovs_detail||[]).slice(0,4).forEach((blk,bi)=>{
         const sr=OVS_STARTS_S[bi];
         (d.skus||[]).forEach((s,si)=>{
           if(si>=8)return;
