@@ -3802,12 +3802,11 @@ async function buildWorkbook(d){
     });
   }
 
-  // 使用しなかったテンプレートシートを削除
+  // 使用しなかったテンプレートシートを削除（使用したシートは残す）
+  const unusedSheetName = isSimple ? '発注試算テンプレート' : '発注試算テンプレート（簡易）';
   wb.worksheets
-    .filter(ws => ws.name === '発注試算テンプレート' ||
-                  ws.name === '発注試算テンプレート（簡易）' ||
-                  ws.name.startsWith('（記入例）'))
-    .forEach(ws => wb.removeWorksheet(ws.id));
+    .filter(s => s.name === unusedSheetName || s.name.startsWith('（記入例）'))
+    .forEach(s => wb.removeWorksheet(s.id));
 
   return wb;
 }
