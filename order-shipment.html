@@ -209,21 +209,21 @@ textarea:focus{border-color:var(--accent);}
 </header>
 
 <div class="mobile-nav" id="mobileNav">
-  <button class="mobile-nav-btn" onclick="showView('shipments',this)">③ 出荷実績</button>
-  <button class="mobile-nav-btn" onclick="showView('inventory',this)">④ 在庫推移</button>
-  <button class="mobile-nav-btn" onclick="showView('review',this)">⑤ 振り返り</button>
-  <button class="mobile-nav-btn" onclick="showView('alerts',this)">⑥ アラート</button>
-  <button class="mobile-nav-btn" onclick="showView('calc',this)">⑦ 発注試算</button>
-  <button class="mobile-nav-btn" onclick="showView('drafts',this)">⑧ 仮保存</button>
+  <button class="mobile-nav-btn" onclick="showView('review',this)">① 発注試算振り返り</button>
+  <button class="mobile-nav-btn" onclick="showView('shipments',this)">② 出荷実績</button>
+  <button class="mobile-nav-btn" onclick="showView('inventory',this)">③ 在庫推移</button>
+  <button class="mobile-nav-btn" onclick="showView('alerts',this)">④ アラート</button>
+  <button class="mobile-nav-btn" onclick="showView('calc',this)">⑤ 発注試算</button>
+  <button class="mobile-nav-btn" onclick="showView('drafts',this)">⑥ 仮保存</button>
 </div>
 
 <div class="layout">
 <aside class="sidebar">
   <div class="nav-section">
     <div class="nav-label">Views</div>
+    <div class="nav-item" onclick="showView('review',this)"><span class="nav-icon">🔍</span> 発注試算振り返り</div>
     <div class="nav-item active" onclick="showView('shipments',this)"><span class="nav-icon">📦</span> 出荷実績</div>
     <div class="nav-item" onclick="showView('inventory',this)"><span class="nav-icon">📊</span> 在庫推移</div>
-    <div class="nav-item" onclick="showView('review',this)"><span class="nav-icon">🔍</span> 振り返り</div>
     <div class="nav-item" onclick="showView('alerts',this)"><span class="nav-icon">🚨</span> アラート <span id="alertBadge" style="display:none;background:var(--accent3);color:#fff;font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:8px;margin-left:auto"></span></div>
   </div>
   <div class="nav-section">
@@ -353,7 +353,7 @@ textarea:focus{border-color:var(--accent);}
 <!-- ⑤ 振り返り -->
 <div class="view" id="view-review">
   <div class="view-title">振り返り</div>
-  <div class="view-subtitle">REVIEW — 発注ごとの試算精度分析</div>
+  <div class="view-subtitle">ORDER REVIEW — 発注ごとの試算精度分析</div>
 
   <!-- フィルターバー -->
   <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
@@ -1094,6 +1094,8 @@ async function deleteCloudSession(sid){
 
 let currentChannel='tob';
 let shipTableChannel='all';
+let barChChannel='all';
+let compareChannel='all';
 let compareSort='name_asc';
 let invFilter=null;
 let invSortOrder='stock_desc';
@@ -1396,7 +1398,7 @@ function renderShipments(){
   if(!dataLoaded||!DATA.shipments) return;
   const skus=filteredShipmentSkus();
   const months=filteredMonths();
-  const ch=barChChannel;
+  const ch=shipTableChannel;
 
   // KPI集計
   let tobT=0,ecT=0,ovsT=0,othT=0;
