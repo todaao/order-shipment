@@ -2216,31 +2216,20 @@ function restartCalcFromReview(orderId){
   // セッションリセット
   resetCalcSession();
 
-  // calcStartScreen を隠して calcMainArea を表示
-  const startScreen=document.getElementById('calcStartScreen');
-  const mainArea=document.getElementById('calcMainArea');
-  if(startScreen) startScreen.style.display='none';
-  if(mainArea) mainArea.style.display='';
-
-  // 試算ツール画面に切り替え
-  const navEl=document.querySelector('.nav-item[onclick*="calc"]');
-  showView('calc',navEl);
-
-  // ① 商品情報フォームにセット
+  // ① フォームに情報をセット（showView前に行う）
   const setV=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v;};
-  setV('ci_product', order.product||'');
-  setV('ci_brand',   order.brand||'');
-  setV('ci_leadtime',order.lead_time_weeks||8);
+  setV('ci_product',  order.product||'');
+  setV('ci_brand',    order.brand||'');
+  setV('ci_leadtime', order.lead_time_weeks||8);
   setV('ci_containerMoq', order.container_moq||0);
-  setV('ci_bulkMoq', order.bulk_moq||0);
-  // 発注日・試算日はリセット（新規試算なのでクリア）
+  setV('ci_bulkMoq',  order.bulk_moq||0);
   setV('ci_orderDate','');
-  setV('ci_calcDate','');
+  setV('ci_calcDate', '');
 
-  // モード設定
+  // ② モード設定
   selectMode(order.mode==='simple'?'simple':'normal');
 
-  // SKUリストを復元
+  // ③ SKUリストを復元（showView前にcalcSkus.length>0にしておく）
   calcSkus=(order.skus||[]).map(s=>({
     jan:    s.jan||'',
     name:   s.sku_name||s.jan||'',
@@ -2253,9 +2242,19 @@ function restartCalcFromReview(orderId){
     pendingArrivalMonth: null,
     note: s.note||'',
   }));
-  renderCalcSkuList();
 
-  // Step0（商品情報・SKU画面）へ移動
+  // ④ calcMainAreaを直接表示（showViewのstartScreen分岐を回避）
+  const startScreen=document.getElementById('calcStartScreen');
+  const mainArea=document.getElementById('calcMainArea');
+  if(startScreen) startScreen.style.display='none';
+  if(mainArea) mainArea.style.display='';
+
+  // ⑤ 試算ツール画面に切り替え（この時点でcalcSkus.length>0なのでstartScreenは表示されない）
+  const navEl=document.querySelector('.nav-item[onclick*="calc"]');
+  showView('calc', navEl);
+
+  // ⑥ SKU表示更新・Step0へ
+  renderCalcSkuList();
   goStep(0);
   calcArrival();
 
