@@ -180,6 +180,12 @@ textarea:focus{border-color:var(--accent);}
 .pos-ref-badge{font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(200,169,110,.12);color:var(--accent);border:1px solid rgba(200,169,110,.25);white-space:nowrap;}
 @media(max-width:768px){.sidebar{display:none;}.layout{flex-direction:column;}.main{padding:16px;}.kpi-row{grid-template-columns:repeat(2,1fr);}.chart-wrap{height:200px;}.mobile-nav{display:flex;}.form-grid{grid-template-columns:1fr;}}
 ::-webkit-scrollbar{width:5px;height:5px;} ::-webkit-scrollbar-track{background:var(--bg);} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+/* 振り返り チャネルボタン */
+.rv-ch-btn{transition:all .15s;}
+.rv-ch-btn.active{background:var(--accent)!important;color:#1a1208!important;border-color:var(--accent)!important;font-weight:500;}
+/* 振り返り SKU行選択ハイライト */
+.rv-sku-row-selected td{background:rgba(200,169,110,.08)!important;}
+.rv-sku-row-selected td:first-child{border-left:3px solid var(--accent);}
 .row-total-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);white-space:nowrap;}
 /* 差異ヒートマップ色 */
 .diff-positive-1{background:rgba(126,212,160,.12);color:var(--accent4);}
@@ -1106,6 +1112,7 @@ let invSortOrder='stock_desc';
 let chartShipBar=null,chartInventory=null,chartReview=null;
 let rvSelectedOrderId=null;
 let rvChannel='all';
+let rvSelectedJan=null;  // グラフ・KPI連動用の選択SKU
 window._rvDetailCharts={};
 let filters={brand:'all',product:'all',sku:'all',periodStart:'all',periodEnd:'all'};
 let calcMode='normal';
@@ -2290,15 +2297,15 @@ function selectReviewOrder(orderId){
   if(dp){ dp.style.display='block'; setTimeout(()=>dp.scrollIntoView({behavior:'smooth',block:'start'}),50); }
 }
 
-// チャネル切り替え
+// チャネル切り替え（ボタン色はCSSクラスで制御）
 function setRvChannel(ch,el){
   rvChannel=ch;
   document.querySelectorAll('.rv-ch-btn').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
-  if(rvSelectedOrderId) renderReviewOrderDetail(rvSelectedOrderId);
+  if(rvSelectedOrderId) renderReviewGraph();
 }
 
-// ── 選択発注の詳細パネル ──
+// ── 選択発注の詳細パネル（SKU集計・テーブル描画） ──
 function renderReviewOrderDetail(orderId){
   const order=(DATA.orders.orders||[]).find(o=>o.order_id===orderId);
   if(!order) return;
@@ -2323,69 +2330,46 @@ function renderReviewOrderDetail(orderId){
     const fc={tob:0,ec:0,overseas:0};
     const chM={tob:tobMonths,ec:ecMonths,overseas:ovsMonths};
     ['tob','ec','overseas'].forEach(ch=>chM[ch].forEach(m=>{fc[ch]+=(s.monthly_summary?.[ch]?.[m]||0);}));
+    // 月別試算データも保持（グラフ連動用）
+    const fcByMonth={};
+    doneMonths.forEach(m=>{fcByMonth[m]=(s.monthly_summary?.tob?.[m]||0)+(s.monthly_summary?.ec?.[m]||0)+(s.monthly_summary?.overseas?.[m]||0);});
+    const fcByMonthCh={tob:{},ec:{},overseas:{}};
+    ['tob','ec','overseas'].forEach(ch=>doneMonths.forEach(m=>{fcByMonthCh[ch][m]=s.monthly_summary?.[ch]?.[m]||0;}));
     const fcTotal=fc.tob+fc.ec+fc.overseas;
     const ac={tob:0,ec:0,overseas:0,other:0,total:0};
-    if(ss) doneMonths.forEach(m=>{const ms=(ss.monthly_shipments||{})[m]||{};ac.tob+=ms.tob||0;ac.ec+=ms.ec||0;ac.overseas+=ms.overseas||0;ac.other+=ms.other||0;ac.total+=ms.total||0;});
+    const acByMonth={};const acByMonthCh={tob:{},ec:{},overseas:{}};
+    if(ss) doneMonths.forEach(m=>{
+      const ms=(ss.monthly_shipments||{})[m]||{};
+      ac.tob+=ms.tob||0;ac.ec+=ms.ec||0;ac.overseas+=ms.overseas||0;ac.other+=ms.other||0;ac.total+=ms.total||0;
+      acByMonth[m]=(ms.total||0);
+      acByMonthCh.tob[m]=ms.tob||0;acByMonthCh.ec[m]=ms.ec||0;acByMonthCh.overseas[m]=ms.overseas||0;
+    });
     const diff=ac.total-fcTotal;
     const accuracy=Math.max(fcTotal,ac.total)>0?1-Math.abs(diff)/Math.max(fcTotal,ac.total):null;
     const errRate=fcTotal>0?Math.abs(diff)/fcTotal:null;
     const dispName=(()=>{const m=masterLookup(jan);if(m)return m.display_name||(m.product_name&&m.sku_name?(m.product_name+' '+m.sku_name).trim():m.sku_name)||jan;return s.sku_name||jan||'—';})();
-    return{jan,dispName,fc,fcTotal,ac,diff,accuracy,errRate,over:errRate!=null&&errRate>THRESH,s};
+    return{jan,dispName,fc,fcTotal,fcByMonth,fcByMonthCh,ac,acByMonth,acByMonthCh,diff,accuracy,errRate,over:errRate!=null&&errRate>THRESH,s};
   }).filter(r=>r.fcTotal>0||r.ac.total>0);
 
-  // ── KPI ──
-  const validAcc=skuRows.filter(r=>r.accuracy!=null);
-  const avgAcc=validAcc.length?validAcc.reduce((a,r)=>a+r.accuracy,0)/validAcc.length:null;
-  const totalFc=skuRows.reduce((a,r)=>a+r.fcTotal,0);
-  const totalAc=skuRows.reduce((a,r)=>a+r.ac.total,0);
-  const totalDiff=totalAc-totalFc;
-  const overCount=skuRows.filter(r=>r.over).length;
-  document.getElementById('reviewKpis').innerHTML=`
-    <div class="kpi-card blue"><div class="kpi-label">平均予測精度</div><div class="kpi-value">${avgAcc!=null?(avgAcc*100).toFixed(1)+'%':'—'}</div><div class="kpi-unit">振り返り済み ${doneMonths.length}/${trialMonths.length}ヶ月</div></div>
-    <div class="kpi-card accent"><div class="kpi-label">試算合計</div><div class="kpi-value">${fmt(totalFc)}</div><div class="kpi-unit">振り返り対象月</div></div>
-    <div class="kpi-card ${totalDiff>0?'red':'green'}"><div class="kpi-label">実績−試算</div><div class="kpi-value">${totalDiff>0?'+':''}${fmt(totalDiff)}</div><div class="kpi-unit">${totalDiff>0?'▲欠品傾向':totalDiff<0?'▽過剰傾向':'±0'}</div></div>
-    <div class="kpi-card red"><div class="kpi-label">誤差超過SKU</div><div class="kpi-value">${overCount}</div><div class="kpi-unit">±${(THRESH*100).toFixed(0)}% 超</div></div>`;
+  // グローバル保持
+  window._rvSkuRows=skuRows;
+  window._rvOrder=order;
+  window._rvDoneMonths=doneMonths;
+  window._rvTobMonths=tobMonths;
+  window._rvEcMonths=ecMonths;
+  window._rvOvsMonths=ovsMonths;
+  window._rvTrialMonths=trialMonths;
 
-  // ── 月別推移グラフ ──
-  const ch=rvChannel;
-  const graphMonths=ch==='all'?doneMonths:ch==='tob'?tobMonths:ch==='ec'?ecMonths:ovsMonths;
-  const glabels=graphMonths.map(m=>parseInt(m.slice(5))+'月');
-  const fcByMonth=graphMonths.map(m=>order.skus.reduce((a,s)=>{
-    if(ch==='all') return a+(s.monthly_summary?.tob?.[m]||0)+(s.monthly_summary?.ec?.[m]||0)+(s.monthly_summary?.overseas?.[m]||0);
-    return a+(s.monthly_summary?.[ch]?.[m]||0);
-  },0));
-  const acByMonth=graphMonths.map(m=>{
-    let tot=0;
-    order.skus.forEach(s=>{const ss=SHIP_BY_JAN[String(s.jan||'')]||null;if(!ss)return;const ms=(ss.monthly_shipments||{})[m]||{};tot+=ch==='all'?(ms.total||0):(ms[ch]||0);});
-    return tot;
-  });
+  // SKU選択を全体にリセット
+  rvSelectedJan=null;
 
-  if(chartReview) chartReview.destroy();
-  const ctx=document.getElementById('chartReview').getContext('2d');
-  if(!graphMonths.length){
-    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
-    ctx.fillStyle='#5a5750';ctx.font='12px sans-serif';ctx.textAlign='center';
-    ctx.fillText('実績データが揃い次第グラフが表示されます',ctx.canvas.width/2,ctx.canvas.height/2);
-  } else {
-    chartReview=new Chart(ctx,{type:'bar',
-      data:{labels:glabels,datasets:[
-        {label:'試算',data:fcByMonth,backgroundColor:'rgba(200,169,110,.3)',borderColor:'rgba(200,169,110,.8)',borderWidth:1,order:2},
-        {label:'実績',data:acByMonth,backgroundColor:'rgba(126,184,212,.7)',borderColor:'rgba(126,184,212,1)',borderWidth:1,order:1},
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:10}}}},
-        scales:{
-          x:{ticks:{color:'#9a9590',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}},
-          y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'},beginAtZero:true}
-        }
-      }
-    });
-  }
+  // KPI・グラフ描画
+  renderReviewKpiAndGraph();
 
   // ── SKU別精度テーブル ──
   const sorted=[...skuRows].sort((a,b)=>(b.errRate||0)-(a.errRate||0));
   let tHtml=`<thead><tr>
-    <th style="text-align:left">SKU</th>
+    <th style="text-align:left">SKU <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);font-weight:normal">（行クリックでグラフ連動）</span></th>
     <th>試算合計</th><th>実績合計</th><th>差異</th><th>予測精度</th><th>誤差率</th><th>状況</th>
   </tr></thead><tbody>`;
   sorted.forEach(r=>{
@@ -2393,7 +2377,9 @@ function renderReviewOrderDetail(orderId){
     const err=r.errRate!=null?(r.errRate*100).toFixed(1)+'%':'—';
     const accColor=r.accuracy!=null&&r.accuracy>=0.8?'var(--accent4)':'var(--accent3)';
     const safeKey=r.jan.replace(/\W/g,'_');
-    tHtml+=`<tr style="${r.over?'background:rgba(224,123,138,0.05)':''}cursor:pointer" onclick="toggleRvSkuDetail('${escHtml(r.jan)}')">
+    const isSelRow=rvSelectedJan===r.jan;
+    tHtml+=`<tr class="rv-sku-row${isSelRow?' rv-sku-row-selected':''}" style="${r.over?'background:rgba(224,123,138,0.05);':''}cursor:pointer"
+      onclick="selectRvSku('${escHtml(r.jan)}')" id="rvrow-${safeKey}">
       <td style="max-width:200px"><span style="font-size:12px">${escHtml(r.dispName)}</span><br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(r.jan)}</span></td>
       <td>${fmt(r.fcTotal)}</td><td>${fmt(r.ac.total)}</td>
       <td class="${r.diff>0?'num-warn':r.diff<0?'num-blue':''}">${r.diff>0?'+':''}${fmt(r.diff)}</td>
@@ -2405,23 +2391,145 @@ function renderReviewOrderDetail(orderId){
   });
   document.getElementById('reviewTable').innerHTML=tHtml+'</tbody>';
   document.getElementById('reviewDetailArea').innerHTML='';
-  window._rvSkuRows=skuRows;
-  window._rvOrder=order;
-  window._rvDoneMonths=doneMonths;
+
+  // ── 販促物サマリー ──
+  const promos=(order.promos||[]).filter(p=>p.item||p.jan);
+  if(promos.length){
+    let pHtml=`<div class="panel" style="margin-top:16px">
+      <div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--accent5)"></span>販促物 発注記録</div></div>
+      <div class="panel-body"><div class="sku-table-wrap"><table style="font-size:12px;border-collapse:collapse;width:100%">
+        <thead><tr>
+          <th style="text-align:left">販促項目</th>
+          <th style="text-align:left">JAN</th>
+          <th>確定発注数</th>
+          <th style="text-align:left">備考</th>
+        </tr></thead><tbody>`;
+    promos.forEach(p=>{
+      pHtml+=`<tr>
+        <td style="padding:7px 12px;color:var(--text)">${escHtml(p.item||'—')}</td>
+        <td style="padding:7px 12px;font-family:var(--font-mono);font-size:11px;color:var(--text3)">${escHtml(p.jan||'—')}</td>
+        <td style="padding:7px 12px;text-align:right;font-family:var(--font-mono);color:var(--accent)">${fmt(p.confirmed_order||0)}</td>
+        <td style="padding:7px 12px;font-size:11px;color:var(--text3)">${escHtml(p.note||'')}</td>
+      </tr>`;
+    });
+    pHtml+='</tbody></table></div></div></div>';
+    document.getElementById('reviewDetailArea').innerHTML=pHtml;
+  }
 }
 
-// SKU行クリックで詳細展開／折り畳み
-function toggleRvSkuDetail(jan){
+// ── KPI・グラフを現在の選択（全体 or SKU）× チャネルで描画 ──
+function renderReviewKpiAndGraph(){
+  const skuRows=window._rvSkuRows||[];
+  const doneMonths=window._rvDoneMonths||[];
+  const trialMonths=window._rvTrialMonths||[];
+  const tobMonths=window._rvTobMonths||[];
+  const ecMonths=window._rvEcMonths||[];
+  const ovsMonths=window._rvOvsMonths||[];
+  const THRESH=0.2;
+  const ch=rvChannel;
+
+  // 対象行を絞る（SKU選択中ならその1行、全体なら全行）
+  const targetRows=rvSelectedJan?skuRows.filter(r=>r.jan===rvSelectedJan):skuRows;
+  const skuLabel=rvSelectedJan?(targetRows[0]?.dispName||rvSelectedJan):'全SKU';
+
+  // チャネル別集計
+  const totalFc=targetRows.reduce((a,r)=>a+(ch==='all'?r.fcTotal:r.fc[ch]||0),0);
+  const totalAc=targetRows.reduce((a,r)=>a+(ch==='all'?r.ac.total:r.ac[ch]||0),0);
+  const totalDiff=totalAc-totalFc;
+  const validAcc=targetRows.filter(r=>r.accuracy!=null);
+  const avgAcc=validAcc.length?validAcc.reduce((a,r)=>a+r.accuracy,0)/validAcc.length:null;
+  const overCount=skuRows.filter(r=>r.over).length; // 誤差超過は常に全体
+
+  // ── KPI ──
+  const skuNote=rvSelectedJan?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--accent);margin-left:4px">SKU選択中</span>`:'';
+  const chNote=ch!=='all'?` (${ch.toUpperCase()})`:'';
+  document.getElementById('reviewKpis').innerHTML=`
+    <div class="kpi-card blue"><div class="kpi-label">平均予測精度${chNote}</div><div class="kpi-value">${avgAcc!=null?(avgAcc*100).toFixed(1)+'%':'—'}</div><div class="kpi-unit">${skuLabel}${skuNote} ${doneMonths.length}/${trialMonths.length}ヶ月</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">試算合計${chNote}</div><div class="kpi-value">${fmt(totalFc)}</div><div class="kpi-unit">${skuLabel}</div></div>
+    <div class="kpi-card ${totalDiff>0?'red':'green'}"><div class="kpi-label">実績−試算${chNote}</div><div class="kpi-value">${totalDiff>0?'+':''}${fmt(totalDiff)}</div><div class="kpi-unit">${totalDiff>0?'▲欠品傾向':totalDiff<0?'▽過剰傾向':'±0'}</div></div>
+    <div class="kpi-card red"><div class="kpi-label">誤差超過SKU</div><div class="kpi-value">${overCount}</div><div class="kpi-unit">±${(THRESH*100).toFixed(0)}% 超（全体）</div></div>`;
+
+  // ── 月別推移グラフ ──
+  const graphMonths=ch==='all'?doneMonths:ch==='tob'?tobMonths:ch==='ec'?ecMonths:ovsMonths;
+  const glabels=graphMonths.map(m=>parseInt(m.slice(5))+'月');
+
+  const fcByMonth=graphMonths.map(m=>targetRows.reduce((a,r)=>{
+    if(ch==='all') return a+(r.fcByMonth?.[m]||0);
+    return a+(r.fcByMonthCh?.[ch]?.[m]||0);
+  },0));
+  const acByMonth=graphMonths.map(m=>targetRows.reduce((a,r)=>{
+    if(ch==='all') return a+(r.acByMonth?.[m]||0);
+    return a+(r.acByMonthCh?.[ch]?.[m]||0);
+  },0));
+
+  if(chartReview) chartReview.destroy();
+  const ctx=document.getElementById('chartReview').getContext('2d');
+  if(!graphMonths.length){
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    ctx.fillStyle='#5a5750';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText('実績データが揃い次第グラフが表示されます',ctx.canvas.width/2,ctx.canvas.height/2);
+  } else {
+    const titleText=rvSelectedJan?`${skuLabel} の月別推移`:`全SKU合計 の月別推移`;
+    chartReview=new Chart(ctx,{type:'bar',
+      data:{labels:glabels,datasets:[
+        {label:'試算',data:fcByMonth,backgroundColor:'rgba(200,169,110,.3)',borderColor:'rgba(200,169,110,.8)',borderWidth:1,order:2},
+        {label:'実績',data:acByMonth,backgroundColor:'rgba(126,184,212,.7)',borderColor:'rgba(126,184,212,1)',borderWidth:1,order:1},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{
+          legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:10}}},
+          title:{display:true,text:titleText,color:'#9a9590',font:{family:'DM Mono',size:10},padding:{bottom:4}}
+        },
+        scales:{
+          x:{ticks:{color:'#9a9590',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}},
+          y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'},beginAtZero:true}
+        }
+      }
+    });
+  }
+}
+
+// SKU行クリック：グラフ・KPI連動 + 詳細展開
+function selectRvSku(jan){
+  const skuRows=window._rvSkuRows||[];
   const key=jan.replace(/\W/g,'_');
+
+  // 同じ行を再クリックしたら全体に戻す
+  if(rvSelectedJan===jan){
+    rvSelectedJan=null;
+    // 全行のハイライトを外す
+    document.querySelectorAll('.rv-sku-row').forEach(tr=>tr.classList.remove('rv-sku-row-selected'));
+    // 詳細行を閉じる
+    const detRow=document.getElementById('rvskudet-'+key);
+    if(detRow) detRow.style.display='none';
+    renderReviewKpiAndGraph();
+    return;
+  }
+
+  // 他のSKUの詳細行を閉じてハイライトを外す
+  document.querySelectorAll('.rv-sku-row').forEach(tr=>tr.classList.remove('rv-sku-row-selected'));
+  document.querySelectorAll('[id^="rvskudet-"]').forEach(tr=>tr.style.display='none');
+
+  rvSelectedJan=jan;
+  // 選択行をハイライト
+  const selRow=document.getElementById('rvrow-'+key);
+  if(selRow) selRow.classList.add('rv-sku-row-selected');
+
+  // グラフ・KPIを更新
+  renderReviewKpiAndGraph();
+
+  // 詳細行を展開
   const detRow=document.getElementById('rvskudet-'+key);
   if(!detRow) return;
-  if(detRow.style.display!=='none'){detRow.style.display='none';return;}
   detRow.style.display='';
-  const r=(window._rvSkuRows||[]).find(x=>x.jan===jan);
+  const r=skuRows.find(x=>x.jan===jan);
   if(!r){detRow.cells[0].innerHTML='<div style="padding:8px;color:var(--text3);font-size:12px">データなし</div>';return;}
   detRow.cells[0].innerHTML=buildRvSkuDetailHtml(r,window._rvOrder,key);
   requestAnimationFrame(()=>drawRvSkuDetailChart(r,key));
 }
+
+// 後方互換：toggleRvSkuDetail は selectRvSku に統合
+function toggleRvSkuDetail(jan){ selectRvSku(jan); }
 
 function buildRvSkuDetailHtml(r,order,key){
   const chs=['tob','ec','overseas','other'];
