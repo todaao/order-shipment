@@ -357,23 +357,60 @@ textarea:focus{border-color:var(--accent);}
 <!-- ⑤ 振り返り -->
 <div class="view" id="view-review">
   <div class="view-title">振り返り</div>
-  <div class="view-subtitle">REVIEW — 実績 vs 試算 比較・予測精度・ワーストSKU</div>
-  <div class="kpi-row" id="reviewKpis"></div>
-  <div class="panel">
-    <div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--accent2)"></span>実績 vs 試算（積み上げ棒グラフ）</div></div>
-    <div class="panel-body"><div class="chart-wrap" style="height:300px"><canvas id="chartReview"></canvas></div></div>
+  <div class="view-subtitle">REVIEW — 発注ごとの試算精度分析</div>
+
+  <!-- フィルターバー -->
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
+    <span style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);">フィルター</span>
+    <select id="rvFilterBrand" onchange="renderReview()" style="width:auto;min-width:100px;font-size:11px;padding:4px 28px 4px 8px;">
+      <option value="all">全ブランド</option>
+    </select>
+    <select id="rvFilterYear" onchange="renderReview()" style="width:auto;min-width:90px;font-size:11px;padding:4px 28px 4px 8px;">
+      <option value="all">全期間</option>
+    </select>
+    <select id="rvFilterMode" onchange="renderReview()" style="width:auto;min-width:90px;font-size:11px;padding:4px 28px 4px 8px;">
+      <option value="all">通常+簡易</option>
+      <option value="normal">通常のみ</option>
+      <option value="simple">簡易のみ</option>
+    </select>
+    <span id="rvFilterCount" style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-left:auto;"></span>
   </div>
-  <div class="panel">
-    <div class="panel-header"><div class="panel-title"><span class="panel-title-dot" style="background:var(--accent3)"></span>ワーストSKU TOP20（誤差大きい順）</div>
-      <span style="font-size:11px;color:var(--text3)">チェックで販路別比較グラフを表示</span>
-    </div>
-    <div class="panel-body">
-      <!-- 詳細グラフエリア（テーブルの上） -->
-      <div id="reviewDetailArea" style="margin-bottom:16px">
-        <div data-no-select style="color:var(--text3);font-size:12px;padding:8px 0">チェックボックスを選択するとSKU別チャネル比較グラフを表示します</div>
+
+  <!-- 発注カード一覧 -->
+  <div id="reviewOrderCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px;"></div>
+
+  <!-- 選択された発注の詳細パネル -->
+  <div id="reviewDetailPanel" style="display:none;">
+    <!-- KPI行 -->
+    <div class="kpi-row" id="reviewKpis" style="margin-bottom:16px;"></div>
+
+    <!-- 月別推移グラフ -->
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-header">
+        <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent2)"></span>月別 試算 vs 実績</div>
+        <div style="display:flex;gap:6px;">
+          <button class="drilldown-toggle rv-ch-btn active" data-ch="all" onclick="setRvChannel('all',this)">全体</button>
+          <button class="drilldown-toggle rv-ch-btn" data-ch="tob" onclick="setRvChannel('tob',this)">toB</button>
+          <button class="drilldown-toggle rv-ch-btn" data-ch="ec" onclick="setRvChannel('ec',this)">EC</button>
+          <button class="drilldown-toggle rv-ch-btn" data-ch="overseas" onclick="setRvChannel('overseas',this)">海外</button>
+        </div>
       </div>
-      <div class="sku-table-wrap"><table id="reviewTable"></table></div>
+      <div class="panel-body"><div style="height:260px;position:relative"><canvas id="chartReview"></canvas></div></div>
     </div>
+
+    <!-- SKU別精度テーブル -->
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-header">
+        <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent3)"></span>SKU別精度</div>
+        <span style="font-size:11px;color:var(--text3)">行をクリックでチャネル詳細 / toB小売内訳を表示</span>
+      </div>
+      <div class="panel-body">
+        <div class="sku-table-wrap"><table id="reviewTable"></table></div>
+      </div>
+    </div>
+
+    <!-- SKU詳細ドリルダウン -->
+    <div id="reviewDetailArea"></div>
   </div>
 </div>
 
@@ -1067,6 +1104,9 @@ let compareSort='name_asc';
 let invFilter=null;
 let invSortOrder='stock_desc';
 let chartShipBar=null,chartInventory=null,chartReview=null;
+let rvSelectedOrderId=null;
+let rvChannel='all';
+window._rvDetailCharts={};
 let filters={brand:'all',product:'all',sku:'all',periodStart:'all',periodEnd:'all'};
 let calcMode='normal';
 let itemType='existing';
@@ -2146,200 +2186,330 @@ function renderInventoryTable(filtMsArg){
 // ════════════════════════════════════════════
 //  ⑤ 振り返り
 // ════════════════════════════════════════════
-function renderReview(){
-  if(!dataLoaded||!DATA.shipments||!DATA.orders) return;
-  const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
-  const months=filteredMonths();
-  const THRESH=0.2;
+// ═══════════════════════════════════════════════════════
+//  振り返り画面 — 発注カード選択 → 月次精度分析
+// ═══════════════════════════════════════════════════════
 
-  const rows=orderSkus.map(os=>{
-    const jan=String(os.jan||'');
+function renderReview(){
+  if(!dataLoaded||!DATA.orders) return;
+  const orders = DATA.orders.orders||[];
+
+  // ── フィルター選択肢を構築（初回のみ）──
+  const brandSel = document.getElementById('rvFilterBrand');
+  const yearSel  = document.getElementById('rvFilterYear');
+  if(brandSel&&brandSel.options.length<=1){
+    const brands=[...new Set(orders.map(o=>o.brand).filter(Boolean))].sort();
+    brands.forEach(b=>{const op=document.createElement('option');op.value=b;op.textContent=b;brandSel.appendChild(op);});
+  }
+  if(yearSel&&yearSel.options.length<=1){
+    const years=[...new Set(orders.map(o=>(o.order_date||'').slice(0,4)).filter(Boolean))].sort().reverse();
+    years.forEach(y=>{const op=document.createElement('option');op.value=y;op.textContent=y+'年度';yearSel.appendChild(op);});
+  }
+
+  // ── フィルター適用 ──
+  const fBrand = brandSel?brandSel.value:'all';
+  const fYear  = yearSel?yearSel.value:'all';
+  const fMode  = document.getElementById('rvFilterMode')?.value||'all';
+  let filtered = orders.filter(o=>{
+    if(fBrand!=='all'&&o.brand!==fBrand) return false;
+    if(fYear!=='all'&&!(o.order_date||'').startsWith(fYear)) return false;
+    if(fMode!=='all'&&o.mode!==fMode) return false;
+    return true;
+  });
+  filtered=[...filtered].sort((a,b)=>(b.order_date||'').localeCompare(a.order_date||''));
+  const countEl=document.getElementById('rvFilterCount');
+  if(countEl) countEl.textContent=filtered.length+'件';
+
+  // ── 実績月リスト ──
+  const allShipMonths = DATA.shipments
+    ?[...new Set((DATA.shipments.skus||[]).flatMap(s=>Object.keys(s.monthly_shipments||{})))].sort()
+    :[];
+
+  // ── 発注カード描画 ──
+  const cardArea=document.getElementById('reviewOrderCards');
+  if(!cardArea) return;
+  cardArea.innerHTML=filtered.length?filtered.map(o=>{
+    const base=o.base_month||'';
+    const maxM=Math.max(o.tob_months||0,o.ec_months||0,o.overseas_months||0);
+    const trialMonths=Array.from({length:maxM},(_,i)=>addMonths(base,i));
+    const doneMonths=trialMonths.filter(m=>allShipMonths.includes(m));
+    const pct=trialMonths.length?Math.round(doneMonths.length/trialMonths.length*100):0;
+    let fcSum=0,acSum=0;
+    if(doneMonths.length){
+      o.skus.forEach(s=>{
+        doneMonths.forEach(m=>{fcSum+=((s.monthly_summary?.tob?.[m]||0)+(s.monthly_summary?.ec?.[m]||0)+(s.monthly_summary?.overseas?.[m]||0));});
+        const ss=SHIP_BY_JAN[String(s.jan||'')]||null;
+        if(ss) doneMonths.forEach(m=>{const ms=(ss.monthly_shipments||{})[m]||{};acSum+=ms.total||0;});
+      });
+    }
+    const acc=(fcSum>0&&acSum>0)?((1-Math.abs(acSum-fcSum)/Math.max(fcSum,acSum))*100):null;
+    const diff=acSum-fcSum;
+    const accColor=acc===null?'var(--text3)':acc>=85?'var(--accent4)':acc>=70?'var(--accent)':'var(--accent3)';
+    const isSelected=rvSelectedOrderId===o.order_id;
+    const modeTag=o.mode==='simple'
+      ?`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(126,184,212,.15);color:var(--accent2);border:1px solid rgba(126,184,212,.3)">簡易</span>`
+      :`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(200,169,110,.15);color:var(--accent);border:1px solid rgba(200,169,110,.3)">通常</span>`;
+    const sid=escHtml(o.order_id);
+    return `<div onclick="selectReviewOrder('${sid}')"
+      style="background:var(--surface);border:2px solid ${isSelected?'var(--accent)':'var(--border)'};border-radius:var(--radius);padding:14px;cursor:pointer;transition:border .15s${isSelected?';background:rgba(200,169,110,.06)':''}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:8px">
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">${escHtml(o.product||o.sheet_name||'—')}</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${escHtml(o.brand||'')}　${o.order_date||'—'}</div>
+        </div>
+        ${modeTag}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${pct===100?'var(--accent4)':'var(--accent2)'};border-radius:2px;transition:width .4s"></div>
+        </div>
+        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);white-space:nowrap">${doneMonths.length}/${trialMonths.length}ヶ月</span>
+      </div>
+      <div style="display:flex;gap:12px;font-family:var(--font-mono);font-size:11px">
+        <span style="color:${accColor}">${acc!==null?'精度 '+acc.toFixed(0)+'%':'実績待ち'}</span>
+        ${acc!==null?`<span style="color:${diff>0?'var(--accent3)':diff<0?'var(--accent2)':'var(--text3)'}">${diff>0?'▲欠品':diff<0?'▽過剰':'±0'}</span>`:''}
+        <span style="color:var(--text3);margin-left:auto">${o.skus.length} SKU</span>
+      </div>
+    </div>`;
+  }).join(''):`<div style="color:var(--text3);font-size:12px;padding:16px">条件に一致する発注がありません</div>`;
+
+  // 選択済みが絞り込みで外れた場合はパネルを隠す
+  if(rvSelectedOrderId&&!filtered.find(o=>o.order_id===rvSelectedOrderId)){
+    rvSelectedOrderId=null;
+    const dp=document.getElementById('reviewDetailPanel');
+    if(dp) dp.style.display='none';
+  }
+}
+
+// 発注カード選択
+function selectReviewOrder(orderId){
+  rvSelectedOrderId=orderId;
+  renderReview();
+  renderReviewOrderDetail(orderId);
+  const dp=document.getElementById('reviewDetailPanel');
+  if(dp){ dp.style.display='block'; setTimeout(()=>dp.scrollIntoView({behavior:'smooth',block:'start'}),50); }
+}
+
+// チャネル切り替え
+function setRvChannel(ch,el){
+  rvChannel=ch;
+  document.querySelectorAll('.rv-ch-btn').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  if(rvSelectedOrderId) renderReviewOrderDetail(rvSelectedOrderId);
+}
+
+// ── 選択発注の詳細パネル ──
+function renderReviewOrderDetail(orderId){
+  const order=(DATA.orders.orders||[]).find(o=>o.order_id===orderId);
+  if(!order) return;
+
+  const allShipMonths=DATA.shipments
+    ?[...new Set((DATA.shipments.skus||[]).flatMap(s=>Object.keys(s.monthly_shipments||{})))].sort()
+    :[];
+
+  const base=order.base_month||'';
+  const maxM=Math.max(order.tob_months||0,order.ec_months||0,order.overseas_months||0);
+  const trialMonths=Array.from({length:maxM},(_,i)=>addMonths(base,i));
+  const tobMonths=Array.from({length:order.tob_months||0},(_,i)=>addMonths(base,i)).filter(m=>allShipMonths.includes(m));
+  const ecMonths =Array.from({length:order.ec_months||0}, (_,i)=>addMonths(base,i)).filter(m=>allShipMonths.includes(m));
+  const ovsMonths=Array.from({length:order.overseas_months||0},(_,i)=>addMonths(base,i)).filter(m=>allShipMonths.includes(m));
+  const doneMonths=[...new Set([...tobMonths,...ecMonths,...ovsMonths])].sort();
+
+  // ── SKU別集計 ──
+  const THRESH=0.2;
+  const skuRows=order.skus.map(s=>{
+    const jan=String(s.jan||'');
     const ss=SHIP_BY_JAN[jan]||null;
     const fc={tob:0,ec:0,overseas:0};
-    ['tob','ec','overseas'].forEach(ch=>Object.entries(os.monthly_summary?.[ch]||{}).forEach(([m,v])=>{if(months.includes(m))fc[ch]+=v||0;}));
+    const chM={tob:tobMonths,ec:ecMonths,overseas:ovsMonths};
+    ['tob','ec','overseas'].forEach(ch=>chM[ch].forEach(m=>{fc[ch]+=(s.monthly_summary?.[ch]?.[m]||0);}));
     const fcTotal=fc.tob+fc.ec+fc.overseas;
     const ac={tob:0,ec:0,overseas:0,other:0,total:0};
-    if(ss) months.forEach(m=>{const ms=(ss.monthly_shipments||{})[m]||{};ac.tob+=ms.tob||0;ac.ec+=ms.ec||0;ac.overseas+=ms.overseas||0;ac.other+=ms.other||0;ac.total+=ms.total||0;});
+    if(ss) doneMonths.forEach(m=>{const ms=(ss.monthly_shipments||{})[m]||{};ac.tob+=ms.tob||0;ac.ec+=ms.ec||0;ac.overseas+=ms.overseas||0;ac.other+=ms.other||0;ac.total+=ms.total||0;});
     const diff=ac.total-fcTotal;
-    const accuracy=ac.total>0?1-Math.abs(diff)/ac.total:null;
+    const accuracy=Math.max(fcTotal,ac.total)>0?1-Math.abs(diff)/Math.max(fcTotal,ac.total):null;
     const errRate=fcTotal>0?Math.abs(diff)/fcTotal:null;
-    const dispName=masterSkuName(jan)||os.sku_name||jan||'—';
-    return{name:dispName,jan,fc,fcTotal,ac,diff,accuracy,errRate,over:errRate!=null&&errRate>THRESH};
+    const dispName=(()=>{const m=masterLookup(jan);if(m)return m.display_name||(m.product_name&&m.sku_name?(m.product_name+' '+m.sku_name).trim():m.sku_name)||jan;return s.sku_name||jan||'—';})();
+    return{jan,dispName,fc,fcTotal,ac,diff,accuracy,errRate,over:errRate!=null&&errRate>THRESH,s};
   }).filter(r=>r.fcTotal>0||r.ac.total>0);
 
-  const validAcc=rows.filter(r=>r.accuracy!=null);
+  // ── KPI ──
+  const validAcc=skuRows.filter(r=>r.accuracy!=null);
   const avgAcc=validAcc.length?validAcc.reduce((a,r)=>a+r.accuracy,0)/validAcc.length:null;
-  const overCount=rows.filter(r=>r.over).length;
-  const totalDiff=rows.reduce((a,r)=>a+r.diff,0);
+  const totalFc=skuRows.reduce((a,r)=>a+r.fcTotal,0);
+  const totalAc=skuRows.reduce((a,r)=>a+r.ac.total,0);
+  const totalDiff=totalAc-totalFc;
+  const overCount=skuRows.filter(r=>r.over).length;
   document.getElementById('reviewKpis').innerHTML=`
-    <div class="kpi-card blue"><div class="kpi-label">平均予測精度</div><div class="kpi-value">${avgAcc!=null?(avgAcc*100).toFixed(1)+'%':'—'}</div><div class="kpi-unit">全SKU平均</div></div>
-    <div class="kpi-card ${totalDiff>=0?'red':'blue'}"><div class="kpi-label">実績−試算合計</div><div class="kpi-value">${totalDiff>=0?'+':''}${fmt(totalDiff)}</div><div class="kpi-unit">${totalDiff>0?'欠品傾向':'過剰傾向'}</div></div>
-    <div class="kpi-card red"><div class="kpi-label">誤差超過SKU</div><div class="kpi-value">${overCount}</div><div class="kpi-unit">±${(THRESH*100).toFixed(0)}% 超</div></div>
-    <div class="kpi-card accent"><div class="kpi-label">比較SKU数</div><div class="kpi-value">${rows.length}</div><div class="kpi-unit">SKUs</div></div>`;
+    <div class="kpi-card blue"><div class="kpi-label">平均予測精度</div><div class="kpi-value">${avgAcc!=null?(avgAcc*100).toFixed(1)+'%':'—'}</div><div class="kpi-unit">振り返り済み ${doneMonths.length}/${trialMonths.length}ヶ月</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">試算合計</div><div class="kpi-value">${fmt(totalFc)}</div><div class="kpi-unit">振り返り対象月</div></div>
+    <div class="kpi-card ${totalDiff>0?'red':'green'}"><div class="kpi-label">実績−試算</div><div class="kpi-value">${totalDiff>0?'+':''}${fmt(totalDiff)}</div><div class="kpi-unit">${totalDiff>0?'▲欠品傾向':totalDiff<0?'▽過剰傾向':'±0'}</div></div>
+    <div class="kpi-card red"><div class="kpi-label">誤差超過SKU</div><div class="kpi-value">${overCount}</div><div class="kpi-unit">±${(THRESH*100).toFixed(0)}% 超</div></div>`;
 
-  const labels=rows.map(r=>r.name.length>8?r.name.slice(0,8)+'…':r.name);
+  // ── 月別推移グラフ ──
+  const ch=rvChannel;
+  const graphMonths=ch==='all'?doneMonths:ch==='tob'?tobMonths:ch==='ec'?ecMonths:ovsMonths;
+  const glabels=graphMonths.map(m=>parseInt(m.slice(5))+'月');
+  const fcByMonth=graphMonths.map(m=>order.skus.reduce((a,s)=>{
+    if(ch==='all') return a+(s.monthly_summary?.tob?.[m]||0)+(s.monthly_summary?.ec?.[m]||0)+(s.monthly_summary?.overseas?.[m]||0);
+    return a+(s.monthly_summary?.[ch]?.[m]||0);
+  },0));
+  const acByMonth=graphMonths.map(m=>{
+    let tot=0;
+    order.skus.forEach(s=>{const ss=SHIP_BY_JAN[String(s.jan||'')]||null;if(!ss)return;const ms=(ss.monthly_shipments||{})[m]||{};tot+=ch==='all'?(ms.total||0):(ms[ch]||0);});
+    return tot;
+  });
+
   if(chartReview) chartReview.destroy();
-  chartReview=new Chart(document.getElementById('chartReview').getContext('2d'),{
-    type:'bar',
-    data:{labels,datasets:[
-      {label:'実績 toB',  data:rows.map(r=>r.ac.tob),   backgroundColor:'rgba(126,184,212,.8)',stack:'actual'},
-      {label:'実績 EC',   data:rows.map(r=>r.ac.ec),    backgroundColor:'rgba(200,169,110,.8)',stack:'actual'},
-      {label:'実績 海外', data:rows.map(r=>r.ac.overseas),backgroundColor:'rgba(126,212,160,.8)',stack:'actual'},
-      {label:'実績 other',data:rows.map(r=>r.ac.other), backgroundColor:'rgba(180,158,232,.8)',stack:'actual'},
-      {label:'試算 toB',  data:rows.map(r=>r.fc.tob),   backgroundColor:'rgba(126,184,212,.25)',borderColor:'rgba(126,184,212,.7)',borderWidth:1,stack:'forecast'},
-      {label:'試算 EC',   data:rows.map(r=>r.fc.ec),    backgroundColor:'rgba(200,169,110,.25)',borderColor:'rgba(200,169,110,.7)',borderWidth:1,stack:'forecast'},
-      {label:'試算 海外', data:rows.map(r=>r.fc.overseas),backgroundColor:'rgba(126,212,160,.25)',borderColor:'rgba(126,212,160,.7)',borderWidth:1,stack:'forecast'},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:10}}}},
-      scales:{x:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10}},grid:{color:'rgba(42,45,58,.5)'}},
-              y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}}
-    }
-  });
-
-  // displayNameを商品名+SKU名に変更
-  rows.forEach(r=>{
-    const m=masterLookup(r.jan);
-    if(m) r.displayName=m.display_name||(m.product_name&&m.sku_name?(m.product_name+' '+m.sku_name).trim():m.sku_name||r.name);
-    else r.displayName=r.name;
-  });
-
-  const worst=[...rows].sort((a,b)=>(b.errRate||0)-(a.errRate||0)).slice(0,20);
-  window._reviewWorst=worst;// 詳細グラフ用にグローバル保持
-  window._reviewSelectedJans=new Set();
-
-  let tHtml=`<thead><tr>
-    <th style="text-align:center;width:32px">📊</th>
-    <th style="text-align:left">SKU名（商品名+SKU名）</th>
-    <th>試算合計</th><th>実績合計</th><th>差異</th><th>予測精度</th><th>誤差率</th><th>状況</th>
-  </tr></thead><tbody>`;
-  worst.forEach(r=>{
-    const acc=r.accuracy!=null?(r.accuracy*100).toFixed(1)+'%':'—';
-    const err=r.errRate!=null?(r.errRate*100).toFixed(1)+'%':'—';
-    tHtml+=`<tr style="${r.over?'background:rgba(224,123,138,0.05)':''}">
-      <td style="text-align:center;padding:4px">
-        <input type="checkbox" data-jan="${r.jan}" style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer" onchange="onReviewSkuCheck(this,'${r.jan}')">
-      </td>
-      <td style="max-width:220px">${escHtml(r.displayName)}</td>
-      <td>${fmt(r.fcTotal)}</td><td>${fmt(r.ac.total)}</td>
-      <td class="${r.diff>0?'num-warn':r.diff<0?'num-blue':''}">${r.diff>0?'+':''}${fmt(r.diff)}</td>
-      <td style="font-family:var(--font-mono);color:${r.accuracy!=null&&r.accuracy>=0.8?'var(--accent4)':'var(--accent3)'}">${acc}</td>
-      <td style="font-family:var(--font-mono);color:${r.over?'var(--accent3)':'var(--text2)'}">${err}</td>
-      <td>${r.over?'<span class="badge" style="background:rgba(224,123,138,.15);color:var(--accent3);border:1px solid rgba(224,123,138,.3)">誤差超過</span>':r.diff>0?'<span class="badge badge-accent" style="background:rgba(224,123,138,.1)">欠品リスク</span>':r.diff<0?'<span class="badge badge-blue">過剰傾向</span>':'—'}</td>
-    </tr>`;
-  });
-  document.getElementById('reviewTable').innerHTML=tHtml+'</tbody>';
-  // 詳細グラフエリアをリセット
-  const det=document.getElementById('reviewDetailArea');
-  if(det) det.innerHTML='<div style="color:var(--text3);font-size:12px;padding:12px 0">↑ 表のチェックボックスを選択するとSKU別チャネル詳細グラフを表示します</div>';
-}
-
-window._reviewDetailCharts={};
-function onReviewSkuCheck(el,jan){
-  // テーブル上のdetailエリア（テーブルより上）
-  const area=document.getElementById('reviewDetailArea');
-  if(!area) return;
-  if(!el.checked){
-    _reviewSelectedJans.delete(jan);
-    const existing=document.getElementById('review-detail-'+jan);
-    if(existing) existing.remove();
-    if(_reviewSelectedJans.size===0) area.innerHTML='<div style="color:var(--text3);font-size:12px;padding:12px 0">チェックボックスを選択するとSKU別チャネル比較グラフを表示します</div>';
-    return;
-  }
-  _reviewSelectedJans.add(jan);
-  // 初期メッセージを消す
-  const msg=area.querySelector('[data-no-select]');
-  if(msg) msg.remove();
-  renderReviewDetail(jan);
-}
-
-function renderReviewDetail(jan){
-  const area=document.getElementById('reviewDetailArea');
-  if(!area) return;
-  const r=(_reviewWorst||[]).find(x=>x.jan===jan);
-  if(!r) return;
-
-  // コンテナ作成
-  let card=document.getElementById('review-detail-'+jan);
-  if(!card){
-    card=document.createElement('div');
-    card.id='review-detail-'+jan;
-    card.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px';
-    area.appendChild(card);
-  }
-
-  const months=filteredMonths();
-  const channels=['tob','ec','overseas','other'];
-  const chLabels={tob:'toB',ec:'EC',overseas:'海外',other:'other'};
-  // chColors defined in chart block below
-  // datasets is built inside requestAnimationFrame below
-
-  const canvasId='canvas-review-'+jan.replace(/\W/g,'_');
-  card.innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <div style="font-size:13px;font-weight:500;color:var(--text)">${escHtml(r.displayName)}</div>
-      <div style="display:flex;gap:10px;font-family:var(--font-mono);font-size:10px">
-        <span style="color:var(--accent2)">試算: ${fmt(r.fcTotal)}</span>
-        <span style="color:var(--accent4)">実績: ${fmt(r.ac.total)}</span>
-        <span style="color:${r.diff>0?'var(--accent3)':'var(--accent2)'}">差異: ${r.diff>0?'+':''}${fmt(r.diff)}</span>
-        <span style="color:var(--text3)">誤差率: ${r.errRate!=null?(r.errRate*100).toFixed(1)+'%':'—'}</span>
-      </div>
-    </div>
-    <div style="height:180px;position:relative"><canvas id="${canvasId}"></canvas></div>
-    <div style="margin-top:8px;overflow-x:auto">
-      <table style="font-size:11px;border-collapse:collapse;width:100%">
-        <thead><tr>
-          <th style="padding:4px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border);text-align:left">チャネル</th>
-          <th style="padding:4px 8px;font-family:var(--font-mono);font-size:9px;color:var(--accent2);border-bottom:1px solid var(--border)">試算</th>
-          <th style="padding:4px 8px;font-family:var(--font-mono);font-size:9px;color:var(--accent4);border-bottom:1px solid var(--border)">実績</th>
-          <th style="padding:4px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">差異</th>
-        </tr></thead>
-        <tbody>
-          ${channels.filter(ch=>(r.fc[ch]||0)>0||(r.ac[ch]||0)>0).map(ch=>{
-            const d=(r.ac[ch]||0)-(r.fc[ch]||0);
-            return`<tr>
-              <td style="padding:4px 8px;color:var(--text)">${chLabels[ch]}</td>
-              <td style="padding:4px 8px;text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(r.fc[ch]||0)}</td>
-              <td style="padding:4px 8px;text-align:right;font-family:var(--font-mono);color:var(--accent4)">${fmt(r.ac[ch]||0)}</td>
-              <td style="padding:4px 8px;text-align:right;font-family:var(--font-mono);color:${d>0?'var(--accent3)':'var(--accent2)'}">${d>0?'+':''}${fmt(d)}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>`;
-
-  // grouped bar: 各チャネルを横並び比較（積み上げなし）
-  requestAnimationFrame(()=>{
-    const canvas=document.getElementById(canvasId);
-    if(!canvas) return;
-    if(_reviewDetailCharts[jan]) _reviewDetailCharts[jan].destroy();
-    const channels=['tob','ec','overseas','other'];
-    const chLabels={tob:'toB',ec:'EC',overseas:'海外',other:'other'};
-    const chColors={tob:'rgba(126,184,212,1)',ec:'rgba(200,169,110,1)',overseas:'rgba(126,212,160,1)',other:'rgba(180,158,232,1)'};
-    const activeChannels=channels.filter(ch=>(r.fc[ch]||0)>0||(r.ac[ch]||0)>0);
-    const groupedDatasets=[
-      {label:'試算',data:activeChannels.map(ch=>r.fc[ch]||0),
-        backgroundColor:activeChannels.map(ch=>chColors[ch].replace('1)','0.35)')),
-        borderColor:activeChannels.map(ch=>chColors[ch].replace('1)','0.7)')),
-        borderWidth:1,borderDash:[4,4]},
-      {label:'実績',data:activeChannels.map(ch=>r.ac[ch]||0),
-        backgroundColor:activeChannels.map(ch=>chColors[ch].replace('1)','0.8)')),
-        borderColor:activeChannels.map(ch=>chColors[ch]),borderWidth:1}
-    ];
-    _reviewDetailCharts[jan]=new Chart(canvas.getContext('2d'),{
-      type:'bar',
-      data:{labels:activeChannels.map(ch=>chLabels[ch]),datasets:groupedDatasets},
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'top',labels:{color:'#9a9590',font:{family:'DM Mono',size:10},boxWidth:10}}},
+  const ctx=document.getElementById('chartReview').getContext('2d');
+  if(!graphMonths.length){
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    ctx.fillStyle='#5a5750';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText('実績データが揃い次第グラフが表示されます',ctx.canvas.width/2,ctx.canvas.height/2);
+  } else {
+    chartReview=new Chart(ctx,{type:'bar',
+      data:{labels:glabels,datasets:[
+        {label:'試算',data:fcByMonth,backgroundColor:'rgba(200,169,110,.3)',borderColor:'rgba(200,169,110,.8)',borderWidth:1,order:2},
+        {label:'実績',data:acByMonth,backgroundColor:'rgba(126,184,212,.7)',borderColor:'rgba(126,184,212,1)',borderWidth:1,order:1},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:10}}}},
         scales:{
           x:{ticks:{color:'#9a9590',font:{family:'DM Mono',size:11}},grid:{color:'rgba(42,45,58,.5)'}},
-          y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'}}
+          y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:10},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'},beginAtZero:true}
         }
       }
     });
+  }
+
+  // ── SKU別精度テーブル ──
+  const sorted=[...skuRows].sort((a,b)=>(b.errRate||0)-(a.errRate||0));
+  let tHtml=`<thead><tr>
+    <th style="text-align:left">SKU</th>
+    <th>試算合計</th><th>実績合計</th><th>差異</th><th>予測精度</th><th>誤差率</th><th>状況</th>
+  </tr></thead><tbody>`;
+  sorted.forEach(r=>{
+    const acc=r.accuracy!=null?(r.accuracy*100).toFixed(1)+'%':'—';
+    const err=r.errRate!=null?(r.errRate*100).toFixed(1)+'%':'—';
+    const accColor=r.accuracy!=null&&r.accuracy>=0.8?'var(--accent4)':'var(--accent3)';
+    const safeKey=r.jan.replace(/\W/g,'_');
+    tHtml+=`<tr style="${r.over?'background:rgba(224,123,138,0.05)':''}cursor:pointer" onclick="toggleRvSkuDetail('${escHtml(r.jan)}')">
+      <td style="max-width:200px"><span style="font-size:12px">${escHtml(r.dispName)}</span><br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(r.jan)}</span></td>
+      <td>${fmt(r.fcTotal)}</td><td>${fmt(r.ac.total)}</td>
+      <td class="${r.diff>0?'num-warn':r.diff<0?'num-blue':''}">${r.diff>0?'+':''}${fmt(r.diff)}</td>
+      <td style="font-family:var(--font-mono);color:${accColor}">${acc}</td>
+      <td style="font-family:var(--font-mono);color:${r.over?'var(--accent3)':'var(--text2)'}">${err}</td>
+      <td>${r.over?'<span class="badge" style="background:rgba(224,123,138,.15);color:var(--accent3);border:1px solid rgba(224,123,138,.3)">誤差超過</span>':r.diff>0?'<span class="badge badge-accent" style="background:rgba(224,123,138,.1)">欠品リスク</span>':r.diff<0?'<span class="badge badge-blue">過剰傾向</span>':'—'}</td>
+    </tr>
+    <tr id="rvskudet-${safeKey}" style="display:none"><td colspan="7" style="padding:0"></td></tr>`;
+  });
+  document.getElementById('reviewTable').innerHTML=tHtml+'</tbody>';
+  document.getElementById('reviewDetailArea').innerHTML='';
+  window._rvSkuRows=skuRows;
+  window._rvOrder=order;
+  window._rvDoneMonths=doneMonths;
+}
+
+// SKU行クリックで詳細展開／折り畳み
+function toggleRvSkuDetail(jan){
+  const key=jan.replace(/\W/g,'_');
+  const detRow=document.getElementById('rvskudet-'+key);
+  if(!detRow) return;
+  if(detRow.style.display!=='none'){detRow.style.display='none';return;}
+  detRow.style.display='';
+  const r=(window._rvSkuRows||[]).find(x=>x.jan===jan);
+  if(!r){detRow.cells[0].innerHTML='<div style="padding:8px;color:var(--text3);font-size:12px">データなし</div>';return;}
+  detRow.cells[0].innerHTML=buildRvSkuDetailHtml(r,window._rvOrder,key);
+  requestAnimationFrame(()=>drawRvSkuDetailChart(r,key));
+}
+
+function buildRvSkuDetailHtml(r,order,key){
+  const chs=['tob','ec','overseas','other'];
+  const chL={tob:'toB',ec:'EC',overseas:'海外',other:'other'};
+  const chRows=chs.filter(ch=>(r.fc[ch]||0)>0||(r.ac[ch]||0)>0).map(ch=>{
+    const d=(r.ac[ch]||0)-(r.fc[ch]||0);
+    return`<tr>
+      <td style="padding:4px 10px;color:var(--text2)">${chL[ch]}</td>
+      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(r.fc[ch]||0)}</td>
+      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:var(--accent4)">${fmt(r.ac[ch]||0)}</td>
+      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:${d>0?'var(--accent3)':'var(--accent2)'}">${d>0?'+':''}${fmt(d)}</td>
+    </tr>`;
+  }).join('');
+
+  // toB小売ドリルダウン（通常版のみ）
+  let retailerHtml='';
+  if(order.mode==='normal'&&(order.retailers||[]).length){
+    const rows=(order.retailers||[]).map(ret=>{
+      const ps=(ret.sku_ps||[]).find(x=>x.jan===r.jan)||{pos_ps:0};
+      const tilts=Object.entries(ret.month_tilts||{}).sort((a,b)=>a[0].localeCompare(b[0]));
+      const tiltStr=tilts.slice(0,6).map(([m,v])=>`${parseInt(m.slice(5))}月:${v}`).join(' ');
+      return`<tr>
+        <td style="padding:4px 10px;color:var(--text)">${escHtml(ret.name)}</td>
+        <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:var(--accent3)">${ret.stores}</td>
+        <td style="padding:4px 10px;font-family:var(--font-mono);font-size:10px;color:${ret.status&&ret.status.includes('新規')?'var(--accent)':'var(--text3)'}">${escHtml(ret.status||'—')}</td>
+        <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:var(--accent2)">${ps.pos_ps||0}</td>
+        <td style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(tiltStr)}</td>
+      </tr>`;
+    }).join('');
+    retailerHtml=`<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px">
+      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">toB 小売別試算根拠</div>
+      <div style="overflow-x:auto"><table style="font-size:11px;border-collapse:collapse;width:100%">
+        <thead><tr>
+          <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border);text-align:left">小売</th>
+          <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--accent3);border-bottom:1px solid var(--border)">店舗数</th>
+          <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border);text-align:left">導入状態</th>
+          <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--accent2);border-bottom:1px solid var(--border)">P/S</th>
+          <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border);text-align:left">月別傾斜</th>
+        </tr></thead><tbody>${rows}</tbody>
+      </table></div>
+    </div>`;
+  }
+
+  return`<div style="background:var(--bg);border-top:1px solid var(--border);padding:12px 16px;">
+    <div style="display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">チャネル別精度</div>
+        <div style="overflow-x:auto"><table style="font-size:11px;border-collapse:collapse">
+          <thead><tr>
+            <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border);text-align:left">チャネル</th>
+            <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--accent2);border-bottom:1px solid var(--border)">試算</th>
+            <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--accent4);border-bottom:1px solid var(--border)">実績</th>
+            <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">差異</th>
+          </tr></thead><tbody>${chRows}</tbody>
+        </table></div>
+        ${retailerHtml}
+      </div>
+      <div style="width:200px;height:150px;position:relative;flex-shrink:0">
+        <canvas id="rvdet-chart-${key}"></canvas>
+      </div>
+    </div>
+  </div>`;
+}
+
+function drawRvSkuDetailChart(r,key){
+  const canvas=document.getElementById('rvdet-chart-'+key);
+  if(!canvas) return;
+  if(!window._rvDetCharts) window._rvDetCharts={};
+  if(window._rvDetCharts[key]) window._rvDetCharts[key].destroy();
+  const chs=['tob','ec','overseas','other'];
+  const chL={tob:'toB',ec:'EC',overseas:'海外',other:'other'};
+  const chC={tob:'rgba(126,184,212,1)',ec:'rgba(200,169,110,1)',overseas:'rgba(126,212,160,1)',other:'rgba(180,158,232,1)'};
+  const active=chs.filter(ch=>(r.fc[ch]||0)>0||(r.ac[ch]||0)>0);
+  window._rvDetCharts[key]=new Chart(canvas.getContext('2d'),{type:'bar',
+    data:{labels:active.map(ch=>chL[ch]),datasets:[
+      {label:'試算',data:active.map(ch=>r.fc[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.3)')),borderColor:active.map(ch=>chC[ch].replace('1)','0.7)')),borderWidth:1},
+      {label:'実績',data:active.map(ch=>r.ac[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.75)')),borderColor:active.map(ch=>chC[ch]),borderWidth:1},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{color:'#9a9590',font:{family:'DM Mono',size:9},boxWidth:8,padding:4}}},
+      scales:{
+        x:{ticks:{color:'#9a9590',font:{family:'DM Mono',size:10}},grid:{color:'rgba(42,45,58,.5)'}},
+        y:{ticks:{color:'#5a5750',font:{family:'DM Mono',size:9},callback:v=>fmt(v)},grid:{color:'rgba(42,45,58,.5)'},beginAtZero:true}
+      }
+    }
   });
 }
+
 
 // ════════════════════════════════════════════
 //  ⑥ アラート
