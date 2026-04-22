@@ -1932,10 +1932,12 @@ function selectReviewOrder(orderId){
 
 // チャネル切り替え（ボタン色はCSSクラスで制御）
 function setRvChannel(ch,el){
+  // SKU選択中は全体のみ有効
+  if(rvSelectedJan && ch!=='all') return;
   rvChannel=ch;
   document.querySelectorAll('.rv-ch-btn').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
-  if(rvSelectedOrderId) renderReviewGraph();
+  if(rvSelectedOrderId) renderReviewKpiAndGraph();
 }
 
 // ── 選択発注の詳細パネル（SKU集計・テーブル描画） ──
@@ -2071,6 +2073,27 @@ function renderReviewKpiAndGraph(){
   const ecMonths=window._rvEcMonths||[];
   const ovsMonths=window._rvOvsMonths||[];
   const THRESH=0.2;
+
+  // SKU選択中は全体のみ → ボタン制御
+  if(rvSelectedJan){
+    rvChannel='all';
+    document.querySelectorAll('.rv-ch-btn').forEach(b=>{
+      const isAll=b.dataset.ch==='all';
+      b.classList.toggle('active',isAll);
+      b.disabled=!isAll;
+      b.style.opacity=isAll?'':'0.3';
+      b.style.cursor=isAll?'':'not-allowed';
+      b.title=isAll?'':'SKU選択中は全体のみ表示できます';
+    });
+  } else {
+    document.querySelectorAll('.rv-ch-btn').forEach(b=>{
+      b.disabled=false;
+      b.style.opacity='';
+      b.style.cursor='';
+      b.title='';
+      b.classList.toggle('active',b.dataset.ch===rvChannel);
+    });
+  }
   const ch=rvChannel;
 
   // 対象行を絞る（SKU選択中ならその1行、全体なら全行）
@@ -2190,41 +2213,52 @@ function restartCalcFromReview(orderId){
   const order=(DATA.orders&&DATA.orders.orders||[]).find(o=>o.order_id===orderId);
   if(!order){showNotif('発注データが見つかりません','error');return;}
 
+  // セッションリセット
+  resetCalcSession();
+
+  // calcStartScreen を隠して calcMainArea を表示
+  const startScreen=document.getElementById('calcStartScreen');
+  const mainArea=document.getElementById('calcMainArea');
+  if(startScreen) startScreen.style.display='none';
+  if(mainArea) mainArea.style.display='';
+
   // 試算ツール画面に切り替え
   const navEl=document.querySelector('.nav-item[onclick*="calc"]');
   showView('calc',navEl);
 
-  // Step0に必要な値をフォームにセット
+  // ① 商品情報フォームにセット
   const setV=(id,v)=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v;};
-  setV('ci_product',order.product||'');
-  setV('ci_brand',order.brand||'');
-  setV('ci_orderDate',order.order_date||'');
-  setV('ci_calcDate',order.order_date||'');
+  setV('ci_product', order.product||'');
+  setV('ci_brand',   order.brand||'');
   setV('ci_leadtime',order.lead_time_weeks||8);
-  setV('ci_containerMoq',order.container_moq||0);
-  setV('ci_bulkMoq',order.bulk_moq||0);
-
-  // SKUリストを復元
-  calcSkus=(order.skus||[]).map(s=>({
-    jan:s.jan||'',
-    name:s.sku_name||s.jan||'',
-    stock:s.stock||0,
-    posPs:s.pos_ref?.pos_ps||0,
-    posMonth:s.pos_ref?.pos_month||'',
-    confirmedOrder:null,
-    stockout_flags:{},
-    pendingArrival:0,
-    pendingArrivalMonth:null,
-    note:s.note||'',
-  }));
-  renderCalcSkuList();
+  setV('ci_containerMoq', order.container_moq||0);
+  setV('ci_bulkMoq', order.bulk_moq||0);
+  // 発注日・試算日はリセット（新規試算なのでクリア）
+  setV('ci_orderDate','');
+  setV('ci_calcDate','');
 
   // モード設定
   selectMode(order.mode==='simple'?'simple':'normal');
 
-  // Step0へ移動
+  // SKUリストを復元
+  calcSkus=(order.skus||[]).map(s=>({
+    jan:    s.jan||'',
+    name:   s.sku_name||s.jan||'',
+    stock:  s.stock||0,
+    posPs:  s.pos_ref?.pos_ps||0,
+    posMonth: s.pos_ref?.pos_month||'',
+    confirmedOrder: null,
+    stockout_flags: {},
+    pendingArrival: 0,
+    pendingArrivalMonth: null,
+    note: s.note||'',
+  }));
+  renderCalcSkuList();
+
+  // Step0（商品情報・SKU画面）へ移動
   goStep(0);
   calcArrival();
+
   showNotif(`「${order.product||order.sheet_name}」を元に再試算を開始します`,'success');
 }
 
