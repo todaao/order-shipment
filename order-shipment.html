@@ -199,6 +199,30 @@ textarea:focus{border-color:var(--accent);}
 </head>
 <body>
 
+<!-- ── パスワード認証オーバーレイ ── -->
+<div id="authOverlay" style="
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg,#0f1117);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-sans,system-ui,sans-serif);
+">
+  <div style="width:320px;text-align:center">
+    <div style="font-family:var(--font-mono,monospace);font-size:11px;letter-spacing:.2em;color:#666;text-transform:uppercase;margin-bottom:24px">order-shipment analytics</div>
+    <input id="authInput" type="password" placeholder="パスワードを入力"
+      style="width:100%;padding:10px 14px;font-size:14px;
+             background:#1a1d27;border:1px solid #2e3148;border-radius:6px;
+             color:#e8e9f0;outline:none;box-sizing:border-box;text-align:center;letter-spacing:.1em"
+      onkeydown="if(event.key==='Enter') _authCheck()"
+    >
+    <div id="authErr" style="color:#e07b8a;font-size:12px;margin-top:10px;min-height:18px"></div>
+    <button onclick="_authCheck()"
+      style="margin-top:14px;padding:9px 32px;font-size:13px;
+             background:#2e3148;border:1px solid #3d4166;border-radius:6px;
+             color:#e8e9f0;cursor:pointer;font-family:inherit"
+    >ログイン</button>
+  </div>
+</div>
+
 <header>
   <div class="logo">order-shipment <span>発注試算・出荷実績 Analytics</span></div>
   <div class="header-right">
@@ -2675,7 +2699,15 @@ function renderAlerts(){
       if(!jan) return;
       const cur=orderedByJan[jan], d=order.order_date||'';
       if(!cur||(d>cur.orderDate)){
-        orderedByJan[jan]={jan,orderDate:d,product:order.product||'',orderId:order.order_id||''};
+        orderedByJan[jan]={
+          jan,
+          orderDate:d,
+          product:order.product||'',
+          orderId:order.order_id||'',
+          // 入庫状況推定に使うフィールド
+          arrivalDate:order.arrival_date||'',
+          leadTimeWeeks:order.lead_time_weeks||8,
+        };
       }
     });
   });
@@ -2687,11 +2719,11 @@ function renderAlerts(){
   const orderedAlerts=[];
   shortageOrdered.forEach(a=>{
     const od=orderedByJan[a.jan];
-    orderedAlerts.push({...a,_origType:'shortage',orderDate:od.orderDate,orderId:od.orderId,orderProduct:od.product});
+    orderedAlerts.push({...a,_origType:'shortage',orderDate:od.orderDate,orderId:od.orderId,orderProduct:od.product,arrivalDate:od.arrivalDate,leadTimeWeeks:od.leadTimeWeeks});
   });
   excessOrdered.forEach(a=>{
     const od=orderedByJan[a.jan];
-    orderedAlerts.push({...a,_origType:'excess',orderDate:od.orderDate,orderId:od.orderId,orderProduct:od.product});
+    orderedAlerts.push({...a,_origType:'excess',orderDate:od.orderDate,orderId:od.orderId,orderProduct:od.product,arrivalDate:od.arrivalDate,leadTimeWeeks:od.leadTimeWeeks});
   });
   orderedAlerts.sort((a,b)=>(b.orderDate||'').localeCompare(a.orderDate||''));
 
@@ -2930,12 +2962,48 @@ function renderAlerts(){
       const typeTextColor=a._origType==='shortage'?'var(--accent)':'var(--accent2)';
       const typeBorder=a._origType==='shortage'?'rgba(200,169,110,.3)':'rgba(126,184,212,.3)';
       const hasOrder=!!a.orderId;
+      // ── 入庫状況推定 ──────────────────────────────
+      const _today=new Date(); _today.setHours(0,0,0,0);
+      function _parseDate(s){
+        if(!s) return null;
+        const d=new Date(s); return isNaN(d)?null:d;
+      }
+      // arrival_dateが明示的に設定されていればそれを使う
+      const _arrD=_parseDate(a.arrivalDate);
+      // arrival_dateがなければ order_date + lead_time_weeks で推定
+      const _ordD=_parseDate(a.orderDate);
+      const _ltMs=(a.leadTimeWeeks||8)*7*24*60*60*1000;
+      const _estArrD=_ordD?new Date(_ordD.getTime()+_ltMs):null;
+      const _refArrD=_arrD||_estArrD; // 判定に使う入庫予定日
+      // 入庫状況ラベル
+      let _arrLabel='', _arrStyle='';
+      if(_refArrD){
+        const _diffDays=Math.round((_today-_refArrD)/(1000*60*60*24));
+        if(_diffDays>=0){
+          // 入庫予定日が今日以前 → 入庫済みの可能性高
+          _arrLabel=`📦 入庫済みの可能性あり（${_arrD?'予定日':'LT推定'}で${_diffDays}日経過）`;
+          _arrStyle='background:rgba(126,212,160,.15);color:var(--accent4);border:1px solid rgba(126,212,160,.4)';
+        } else {
+          // 入庫予定日が未来
+          const _rem=Math.abs(_diffDays);
+          _arrLabel=`🚚 入庫予定: ${_refArrD.toLocaleDateString('ja-JP')}（あと${_rem}日）`;
+          _arrStyle='background:rgba(200,169,110,.12);color:var(--accent);border:1px solid rgba(200,169,110,.35)';
+        }
+      } else {
+        _arrLabel='発注日のみ記録（入庫日不明）';
+        _arrStyle='background:var(--surface2);color:var(--text3);border:1px solid var(--border)';
+      }
+      const _arrDateStr=_arrD
+        ?`入庫予定: ${_arrD.toLocaleDateString('ja-JP')}`
+        :_estArrD?`LT推定入庫: ${_estArrD.toLocaleDateString('ja-JP')}`
+        :'';
       h+=`<div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent4);border-radius:0 var(--radius) var(--radius) 0;padding:13px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px">
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
             <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(126,212,160,.15);color:var(--accent4);border:1px solid rgba(126,212,160,.3)">試算済み</span>
             <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:${typeColor};color:${typeTextColor};border:1px solid ${typeBorder}">${typeLabel}</span>
-            ${hasOrder?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(a.orderProduct)} / 発注日: ${escHtml(a.orderDate)}</span>`:''}
+            <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;${_arrStyle}">${_arrLabel}</span>
+            ${hasOrder?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(a.orderProduct)} / 発注日: ${escHtml(a.orderDate)}${_arrDateStr?' / '+_arrDateStr:''}</span>`:''}
           </div>
           <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.name)}</div>
           <div style="display:flex;gap:16px;flex-wrap:wrap">
@@ -5091,6 +5159,27 @@ if(_wUrl){const el=document.getElementById('workerUrlInput');if(el)el.value=_wUr
 if(_wDept){currentDept=_wDept;}
 loadAllJSON();
 
+</script>
+<script>
+// ── パスワード認証 ──────────────────────────────
+(function(){
+  const _KEY='osa_auth_ok';
+  // 既認証ならすぐ非表示
+  if(sessionStorage.getItem(_KEY)==='1'){
+    document.getElementById('authOverlay').style.display='none';
+  }
+  window._authCheck=function(){
+    const val=document.getElementById('authInput').value;
+    if(val==='order2026'){
+      sessionStorage.setItem(_KEY,'1');
+      document.getElementById('authOverlay').style.display='none';
+    } else {
+      document.getElementById('authErr').textContent='パスワードが違います';
+      document.getElementById('authInput').value='';
+      document.getElementById('authInput').focus();
+    }
+  };
+})();
 </script>
 </body>
 </html>
