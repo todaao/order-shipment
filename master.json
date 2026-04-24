@@ -7,7 +7,8 @@
       "product_name": "シャインミラーティント",
       "sku_name": "B705",
       "status": "完全終売",
-      "display_name": "シャインミラーティント B705"
+      "display_name": "シャインミラーティント B705",
+      "discontinued": true
     },
     {
       "jan": "6971716398634",
@@ -16,7 +17,8 @@
       "product_name": "シャインミラーティント",
       "sku_name": "B711",
       "status": "完全終売",
-      "display_name": "シャインミラーティント B711"
+      "display_name": "シャインミラーティント B711",
+      "discontinued": true
     },
     {
       "jan": "6971716398665",
@@ -25,7 +27,8 @@
       "product_name": "シャインミラーティント",
       "sku_name": "O716",
       "status": "完全終売",
-      "display_name": "シャインミラーティント O716"
+      "display_name": "シャインミラーティント O716",
+      "discontinued": true
     },
     {
       "jan": "6971716398658",
@@ -34,7 +37,8 @@
       "product_name": "シャインミラーティント",
       "sku_name": "R715",
       "status": "完全終売",
-      "display_name": "シャインミラーティント R715"
+      "display_name": "シャインミラーティント R715",
+      "discontinued": true
     },
     {
       "jan": "6971716398580",
@@ -43,7 +47,8 @@
       "product_name": "ベルベットマットティント",
       "sku_name": "666D",
       "status": "完全終売",
-      "display_name": "ベルベットマットティント 666D"
+      "display_name": "ベルベットマットティント 666D",
+      "discontinued": true
     },
     {
       "jan": "6971716398528",
@@ -52,7 +57,8 @@
       "product_name": "ベルベットマットティント",
       "sku_name": "B606",
       "status": "完全終売",
-      "display_name": "ベルベットマットティント B606"
+      "display_name": "ベルベットマットティント B606",
+      "discontinued": true
     },
     {
       "jan": "6971716398559",
@@ -61,7 +67,8 @@
       "product_name": "ベルベットマットティント",
       "sku_name": "B620",
       "status": "完全終売",
-      "display_name": "ベルベットマットティント B620"
+      "display_name": "ベルベットマットティント B620",
+      "discontinued": true
     },
     {
       "jan": "6971716398511",
@@ -70,7 +77,8 @@
       "product_name": "ベルベットマットティント",
       "sku_name": "R601",
       "status": "完全終売",
-      "display_name": "ベルベットマットティント R601"
+      "display_name": "ベルベットマットティント R601",
+      "discontinued": true
     },
     {
       "jan": "4571501173488",
@@ -79,7 +87,8 @@
       "product_name": "女王のカメオグラデーションチーク",
       "sku_name": "01 スウィートムーン",
       "status": "完全終売",
-      "display_name": "女王のカメオグラデーションチーク 01 スウィートムーン"
+      "display_name": "女王のカメオグラデーションチーク 01 スウィートムーン",
+      "discontinued": true
     },
     {
       "jan": "4571501173495",
@@ -88,7 +97,8 @@
       "product_name": "女王のカメオグラデーションチーク",
       "sku_name": "02 エレガントムーン",
       "status": "完全終売",
-      "display_name": "女王のカメオグラデーションチーク 02 エレガントムーン"
+      "display_name": "女王のカメオグラデーションチーク 02 エレガントムーン",
+      "discontinued": true
     },
     {
       "jan": "4571501173501",
@@ -97,7 +107,8 @@
       "product_name": "女王のカメオグラデーションチーク",
       "sku_name": "03 ラスタームーン",
       "status": "完全終売",
-      "display_name": "女王のカメオグラデーションチーク 03 ラスタームーン"
+      "display_name": "女王のカメオグラデーションチーク 03 ラスタームーン",
+      "discontinued": true
     },
     {
       "jan": "4571501171132",
@@ -124,7 +135,8 @@
       "product_name": "女王のカメオネイルカラー",
       "sku_name": "01 ピンクオパール",
       "status": "完全終売",
-      "display_name": "女王のカメオネイルカラー 01 ピンクオパール"
+      "display_name": "女王のカメオネイルカラー 01 ピンクオパール",
+      "discontinued": true
     },
     {
       "jan": "4571501173891",
@@ -133,7 +145,8 @@
       "product_name": "女王のカメオネイルカラー",
       "sku_name": "02 ムーンストーン",
       "status": "完全終売",
-      "display_name": "女王のカメオネイルカラー 02 ムーンストーン"
+      "display_name": "女王のカメオネイルカラー 02 ムーンストーン",
+      "discontinued": true
     },
     {
       "jan": "4571501173907",
@@ -142,7 +155,8 @@
       "product_name": "女王のカメオネイルカラー",
       "sku_name": "03 プレナイト",
       "status": "完全終売",
-      "display_name": "女王のカメオネイルカラー 03 プレナイト"
+      "display_name": "女王のカメオネイルカラー 03 プレナイト",
+      "discontinued": true
     },
     {
       "jan": "4571501173914",
@@ -151,7 +165,8 @@
       "product_name": "女王のカメオネイルカラー",
       "sku_name": "04 パイライト",
       "status": "完全終売",
-      "display_name": "女王のカメオネイルカラー 04 パイライト"
+      "display_name": "女王のカメオネイルカラー 04 パイライト",
+      "discontinued": true
     },
     {
       "jan": "4571501173921",
@@ -160,7 +175,8 @@
       "product_name": "女王のカメオネイルカラー",
       "sku_name": "05 ラベンダージェイド",
       "status": "完全終売",
-      "display_name": "女王のカメオネイルカラー 05 ラベンダージェイド"
+      "display_name": "女王のカメオネイルカラー 05 ラベンダージェイド",
+      "discontinued": true
     },
     {
       "jan": "4571501171118",
@@ -169,7 +185,8 @@
       "product_name": "女王のカメオマルチパレット",
       "sku_name": "01 シャルロット",
       "status": "完全終売",
-      "display_name": "女王のカメオマルチパレット 01 シャルロット"
+      "display_name": "女王のカメオマルチパレット 01 シャルロット",
+      "discontinued": true
     },
     {
       "jan": "4571501171125",
@@ -178,7 +195,8 @@
       "product_name": "女王のカメオマルチパレット",
       "sku_name": "02 マーガレット",
       "status": "完全終売",
-      "display_name": "女王のカメオマルチパレット 02 マーガレット"
+      "display_name": "女王のカメオマルチパレット 02 マーガレット",
+      "discontinued": true
     },
     {
       "jan": "4571501174102",
@@ -187,7 +205,8 @@
       "product_name": "女王のカメオマルチパレット",
       "sku_name": "03 キャロライン",
       "status": "完全終売",
-      "display_name": "女王のカメオマルチパレット 03 キャロライン"
+      "display_name": "女王のカメオマルチパレット 03 キャロライン",
+      "discontinued": true
     },
     {
       "jan": "4571501171941",
@@ -196,7 +215,8 @@
       "product_name": "女王のカメオミニマルチパレット",
       "sku_name": "01 メアリー",
       "status": "完全終売",
-      "display_name": "女王のカメオミニマルチパレット 01 メアリー"
+      "display_name": "女王のカメオミニマルチパレット 01 メアリー",
+      "discontinued": true
     },
     {
       "jan": "4571501171958",
@@ -205,7 +225,8 @@
       "product_name": "女王のカメオミニマルチパレット",
       "sku_name": "02 マリア",
       "status": "完全終売",
-      "display_name": "女王のカメオミニマルチパレット 02 マリア"
+      "display_name": "女王のカメオミニマルチパレット 02 マリア",
+      "discontinued": true
     },
     {
       "jan": "4571501175864",
@@ -214,7 +235,8 @@
       "product_name": "女王のカメオミルキーティント",
       "sku_name": "01 ピーチ",
       "status": "完全終売",
-      "display_name": "女王のカメオミルキーティント 01 ピーチ"
+      "display_name": "女王のカメオミルキーティント 01 ピーチ",
+      "discontinued": true
     },
     {
       "jan": "4571501175871",
@@ -223,7 +245,8 @@
       "product_name": "女王のカメオミルキーティント",
       "sku_name": "02 プラム",
       "status": "完全終売",
-      "display_name": "女王のカメオミルキーティント 02 プラム"
+      "display_name": "女王のカメオミルキーティント 02 プラム",
+      "discontinued": true
     },
     {
       "jan": "4571501175888",
@@ -232,7 +255,8 @@
       "product_name": "女王のカメオミルキーティント",
       "sku_name": "03 フィグ",
       "status": "完全終売",
-      "display_name": "女王のカメオミルキーティント 03 フィグ"
+      "display_name": "女王のカメオミルキーティント 03 フィグ",
+      "discontinued": true
     },
     {
       "jan": "4571501175895",
@@ -241,7 +265,8 @@
       "product_name": "女王のカメオミルキーティント",
       "sku_name": "04 アプリコット",
       "status": "完全終売",
-      "display_name": "女王のカメオミルキーティント 04 アプリコット"
+      "display_name": "女王のカメオミルキーティント 04 アプリコット",
+      "discontinued": true
     },
     {
       "jan": "4571501175901",
@@ -250,7 +275,8 @@
       "product_name": "女王のカメオミルキーティント",
       "sku_name": "05 ローズ",
       "status": "完全終売",
-      "display_name": "女王のカメオミルキーティント 05 ローズ"
+      "display_name": "女王のカメオミルキーティント 05 ローズ",
+      "discontinued": true
     },
     {
       "jan": "4571501171965",
@@ -259,7 +285,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "01 ダイアナ",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 01 ダイアナ"
+      "display_name": "女王のカメオリップスティック 01 ダイアナ",
+      "discontinued": true
     },
     {
       "jan": "4571501171972",
@@ -268,7 +295,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "02 ソフィア",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 02 ソフィア"
+      "display_name": "女王のカメオリップスティック 02 ソフィア",
+      "discontinued": true
     },
     {
       "jan": "4571501171989",
@@ -277,7 +305,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "03 イザベラ",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 03 イザベラ"
+      "display_name": "女王のカメオリップスティック 03 イザベラ",
+      "discontinued": true
     },
     {
       "jan": "4571501171996",
@@ -286,7 +315,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "04 アンナ",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 04 アンナ"
+      "display_name": "女王のカメオリップスティック 04 アンナ",
+      "discontinued": true
     },
     {
       "jan": "4571501172894",
@@ -295,7 +325,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "05 アリス",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 05 アリス"
+      "display_name": "女王のカメオリップスティック 05 アリス",
+      "discontinued": true
     },
     {
       "jan": "4571501172900",
@@ -304,7 +335,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "06 グレース",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 06 グレース"
+      "display_name": "女王のカメオリップスティック 06 グレース",
+      "discontinued": true
     },
     {
       "jan": "4571501172917",
@@ -313,7 +345,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "07 ビアンカ",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 07 ビアンカ"
+      "display_name": "女王のカメオリップスティック 07 ビアンカ",
+      "discontinued": true
     },
     {
       "jan": "4571501172924",
@@ -322,7 +355,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "08 フローレンス",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 08 フローレンス"
+      "display_name": "女王のカメオリップスティック 08 フローレンス",
+      "discontinued": true
     },
     {
       "jan": "4571501172931",
@@ -331,7 +365,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "09 カミラ",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 09 カミラ"
+      "display_name": "女王のカメオリップスティック 09 カミラ",
+      "discontinued": true
     },
     {
       "jan": "4571501172948",
@@ -340,7 +375,8 @@
       "product_name": "女王のカメオリップスティック",
       "sku_name": "10 アメリア",
       "status": "完全終売",
-      "display_name": "女王のカメオリップスティック 10 アメリア"
+      "display_name": "女王のカメオリップスティック 10 アメリア",
+      "discontinued": true
     },
     {
       "jan": "4571501176236",
@@ -349,7 +385,8 @@
       "product_name": "水面アイシャドウパレット",
       "sku_name": "01 桜貝ピンク",
       "status": "最新仕様",
-      "display_name": "水面アイシャドウパレット 01 桜貝ピンク"
+      "display_name": "水面アイシャドウパレット 01 桜貝ピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176243",
@@ -358,7 +395,8 @@
       "product_name": "水面アイシャドウパレット",
       "sku_name": "02 夕日コーラル",
       "status": "最新仕様",
-      "display_name": "水面アイシャドウパレット 02 夕日コーラル"
+      "display_name": "水面アイシャドウパレット 02 夕日コーラル",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176250",
@@ -367,7 +405,8 @@
       "product_name": "水面ハイライト",
       "sku_name": "01 月光ホワイト",
       "status": "最新仕様",
-      "display_name": "水面ハイライト 01 月光ホワイト"
+      "display_name": "水面ハイライト 01 月光ホワイト",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176267",
@@ -376,7 +415,8 @@
       "product_name": "水面ハイライト",
       "sku_name": "02 砂浜シャンパン",
       "status": "最新仕様",
-      "display_name": "水面ハイライト 02 砂浜シャンパン"
+      "display_name": "水面ハイライト 02 砂浜シャンパン",
+      "discontinue_planned": true
     },
     {
       "jan": "6972796050351",
@@ -385,7 +425,8 @@
       "product_name": "ギャラクシー12色アイシャドウパレット",
       "sku_name": "VENUS",
       "status": "完全終売",
-      "display_name": "ギャラクシー12色アイシャドウパレット VENUS"
+      "display_name": "ギャラクシー12色アイシャドウパレット VENUS",
+      "discontinued": true
     },
     {
       "jan": "6939475200384",
@@ -394,7 +435,8 @@
       "product_name": "ギャラクシー9色アイシャドウパレット",
       "sku_name": "SATURN",
       "status": "完全終売",
-      "display_name": "ギャラクシー9色アイシャドウパレット SATURN"
+      "display_name": "ギャラクシー9色アイシャドウパレット SATURN",
+      "discontinued": true
     },
     {
       "jan": "6939475200391",
@@ -403,7 +445,8 @@
       "product_name": "ギャラクシー9色アイシャドウパレット",
       "sku_name": "SUN",
       "status": "完全終売",
-      "display_name": "ギャラクシー9色アイシャドウパレット SUN"
+      "display_name": "ギャラクシー9色アイシャドウパレット SUN",
+      "discontinued": true
     },
     {
       "jan": "4571501170470",
@@ -412,7 +455,8 @@
       "product_name": "EIGSHOW 2way ハイライトブラシ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "EIGSHOW 2way ハイライトブラシ"
+      "display_name": "EIGSHOW 2way ハイライトブラシ",
+      "discontinued": true
     },
     {
       "jan": "4571501170463",
@@ -421,7 +465,8 @@
       "product_name": "EIGSHOW 3D フェイスブラシ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "EIGSHOW 3D フェイスブラシ"
+      "display_name": "EIGSHOW 3D フェイスブラシ",
+      "discontinued": true
     },
     {
       "jan": "4571501170456",
@@ -430,7 +475,8 @@
       "product_name": "プロフェッショナルメイクブラシ １５本セット",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "プロフェッショナルメイクブラシ １５本セット"
+      "display_name": "プロフェッショナルメイクブラシ １５本セット",
+      "discontinued": true
     },
     {
       "jan": "4571501172528",
@@ -439,7 +485,8 @@
       "product_name": "4カラー ミニアイパレット",
       "sku_name": "201 抜け感ベージュ",
       "status": "完全終売",
-      "display_name": "4カラー ミニアイパレット 201 抜け感ベージュ"
+      "display_name": "4カラー ミニアイパレット 201 抜け感ベージュ",
+      "discontinued": true
     },
     {
       "jan": "4571501172535",
@@ -448,7 +495,8 @@
       "product_name": "4カラー ミニアイパレット",
       "sku_name": "202 愛されブラウン",
       "status": "完全終売",
-      "display_name": "4カラー ミニアイパレット 202 愛されブラウン"
+      "display_name": "4カラー ミニアイパレット 202 愛されブラウン",
+      "discontinued": true
     },
     {
       "jan": "4571501172542",
@@ -457,7 +505,8 @@
       "product_name": "4カラー ミニアイパレット",
       "sku_name": "203 こなれピンク",
       "status": "完全終売",
-      "display_name": "4カラー ミニアイパレット 203 こなれピンク"
+      "display_name": "4カラー ミニアイパレット 203 こなれピンク",
+      "discontinued": true
     },
     {
       "jan": "4571501172559",
@@ -466,7 +515,8 @@
       "product_name": "4カラー ミニアイパレット",
       "sku_name": "204 よくばりラメ",
       "status": "完全終売",
-      "display_name": "4カラー ミニアイパレット 204 よくばりラメ"
+      "display_name": "4カラー ミニアイパレット 204 よくばりラメ",
+      "discontinued": true
     },
     {
       "jan": "4571501174058",
@@ -475,7 +525,8 @@
       "product_name": "アイシャドウブラシ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "アイシャドウブラシ"
+      "display_name": "アイシャドウブラシ",
+      "discontinued": true
     },
     {
       "jan": "4571501174027",
@@ -484,7 +535,8 @@
       "product_name": "アイブロウブラシ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "アイブロウブラシ"
+      "display_name": "アイブロウブラシ",
+      "discontinued": true
     },
     {
       "jan": "4571501174034",
@@ -493,7 +545,8 @@
       "product_name": "アイライナーブラシ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "アイライナーブラシ"
+      "display_name": "アイライナーブラシ",
+      "discontinued": true
     },
     {
       "jan": "4571501173839",
@@ -502,7 +555,8 @@
       "product_name": "ガールズアイラッシュ",
       "sku_name": "01 ナチュラル",
       "status": "完全終売",
-      "display_name": "ガールズアイラッシュ 01 ナチュラル"
+      "display_name": "ガールズアイラッシュ 01 ナチュラル",
+      "discontinued": true
     },
     {
       "jan": "4571501173846",
@@ -511,7 +565,8 @@
       "product_name": "ガールズアイラッシュ",
       "sku_name": "02 スウィート",
       "status": "完全終売",
-      "display_name": "ガールズアイラッシュ 02 スウィート"
+      "display_name": "ガールズアイラッシュ 02 スウィート",
+      "discontinued": true
     },
     {
       "jan": "4571501173853",
@@ -520,7 +575,8 @@
       "product_name": "ガールズアイラッシュ",
       "sku_name": "03 リッチ",
       "status": "完全終売",
-      "display_name": "ガールズアイラッシュ 03 リッチ"
+      "display_name": "ガールズアイラッシュ 03 リッチ",
+      "discontinued": true
     },
     {
       "jan": "4571501174065",
@@ -529,7 +585,8 @@
       "product_name": "コンシーラーブラシ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "コンシーラーブラシ"
+      "display_name": "コンシーラーブラシ",
+      "discontinued": true
     },
     {
       "jan": "4571501173303",
@@ -538,7 +595,8 @@
       "product_name": "コントゥアスティック",
       "sku_name": "201 ウォームシェード",
       "status": "完全終売",
-      "display_name": "コントゥアスティック 201 ウォームシェード"
+      "display_name": "コントゥアスティック 201 ウォームシェード",
+      "discontinued": true
     },
     {
       "jan": "4571501173310",
@@ -547,7 +605,8 @@
       "product_name": "コントゥアスティック",
       "sku_name": "202 クールシェード",
       "status": "完全終売",
-      "display_name": "コントゥアスティック 202 クールシェード"
+      "display_name": "コントゥアスティック 202 クールシェード",
+      "discontinued": true
     },
     {
       "jan": "4571501173327",
@@ -556,7 +615,8 @@
       "product_name": "コントゥアスティック",
       "sku_name": "203 グロウハイライト",
       "status": "完全終売",
-      "display_name": "コントゥアスティック 203 グロウハイライト"
+      "display_name": "コントゥアスティック 203 グロウハイライト",
+      "discontinued": true
     },
     {
       "jan": "4571501174072",
@@ -565,7 +625,8 @@
       "product_name": "シリコンリップブラシ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "シリコンリップブラシ"
+      "display_name": "シリコンリップブラシ",
+      "discontinued": true
     },
     {
       "jan": "4571501172610",
@@ -574,7 +635,8 @@
       "product_name": "ジェルハイライト",
       "sku_name": "201 ピンクムーン",
       "status": "完全終売",
-      "display_name": "ジェルハイライト 201 ピンクムーン"
+      "display_name": "ジェルハイライト 201 ピンクムーン",
+      "discontinued": true
     },
     {
       "jan": "4571501172627",
@@ -583,7 +645,8 @@
       "product_name": "ジェルハイライト",
       "sku_name": "202 ヴィーナス",
       "status": "完全終売",
-      "display_name": "ジェルハイライト 202 ヴィーナス"
+      "display_name": "ジェルハイライト 202 ヴィーナス",
+      "discontinued": true
     },
     {
       "jan": "4571501172634",
@@ -592,7 +655,8 @@
       "product_name": "ジェルハイライト",
       "sku_name": "203 ミルキーウェイ",
       "status": "完全終売",
-      "display_name": "ジェルハイライト 203 ミルキーウェイ"
+      "display_name": "ジェルハイライト 203 ミルキーウェイ",
+      "discontinued": true
     },
     {
       "jan": "4571501172436",
@@ -601,7 +665,8 @@
       "product_name": "ドリーミー グリッターライナー",
       "sku_name": "201 ときめきピンク",
       "status": "完全終売",
-      "display_name": "ドリーミー グリッターライナー 201 ときめきピンク"
+      "display_name": "ドリーミー グリッターライナー 201 ときめきピンク",
+      "discontinued": true
     },
     {
       "jan": "4571501172443",
@@ -610,7 +675,8 @@
       "product_name": "ドリーミー グリッターライナー",
       "sku_name": "202 夢中ユニコーン",
       "status": "完全終売",
-      "display_name": "ドリーミー グリッターライナー 202 夢中ユニコーン"
+      "display_name": "ドリーミー グリッターライナー 202 夢中ユニコーン",
+      "discontinued": true
     },
     {
       "jan": "4571501172450",
@@ -619,7 +685,8 @@
       "product_name": "ドリーミー グリッターライナー",
       "sku_name": "203 純粋ホワイト",
       "status": "完全終売",
-      "display_name": "ドリーミー グリッターライナー 203 純粋ホワイト"
+      "display_name": "ドリーミー グリッターライナー 203 純粋ホワイト",
+      "discontinued": true
     },
     {
       "jan": "4571501172467",
@@ -628,7 +695,8 @@
       "product_name": "ドリーミー グリッターライナー",
       "sku_name": "204 憧れシャンパン",
       "status": "完全終売",
-      "display_name": "ドリーミー グリッターライナー 204 憧れシャンパン"
+      "display_name": "ドリーミー グリッターライナー 204 憧れシャンパン",
+      "discontinued": true
     },
     {
       "jan": "4571501172474",
@@ -637,7 +705,8 @@
       "product_name": "ドリーミー グリッターライナー",
       "sku_name": "205 ひと目惚れパール",
       "status": "完全終売",
-      "display_name": "ドリーミー グリッターライナー 205 ひと目惚れパール"
+      "display_name": "ドリーミー グリッターライナー 205 ひと目惚れパール",
+      "discontinued": true
     },
     {
       "jan": "4571501174041",
@@ -646,7 +715,8 @@
       "product_name": "ブレンディングブラシ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "ブレンディングブラシ"
+      "display_name": "ブレンディングブラシ",
+      "discontinued": true
     },
     {
       "jan": "4571501173860",
@@ -655,7 +725,8 @@
       "product_name": "ボトムアイラッシュシール",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "ボトムアイラッシュシール"
+      "display_name": "ボトムアイラッシュシール",
+      "discontinued": true
     },
     {
       "jan": "4571501174096",
@@ -664,7 +735,8 @@
       "product_name": "マシュマロタッチパフ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "マシュマロタッチパフ"
+      "display_name": "マシュマロタッチパフ",
+      "discontinued": true
     },
     {
       "jan": "4571501173242",
@@ -673,7 +745,8 @@
       "product_name": "モイスチャー リップスティック",
       "sku_name": "201 ローズウッド",
       "status": "完全終売",
-      "display_name": "モイスチャー リップスティック 201 ローズウッド"
+      "display_name": "モイスチャー リップスティック 201 ローズウッド",
+      "discontinued": true
     },
     {
       "jan": "4571501173259",
@@ -682,7 +755,8 @@
       "product_name": "モイスチャー リップスティック",
       "sku_name": "202 テラコッタ",
       "status": "完全終売",
-      "display_name": "モイスチャー リップスティック 202 テラコッタ"
+      "display_name": "モイスチャー リップスティック 202 テラコッタ",
+      "discontinued": true
     },
     {
       "jan": "4571501173266",
@@ -691,7 +765,8 @@
       "product_name": "モイスチャー リップスティック",
       "sku_name": "203 チェリー",
       "status": "完全終売",
-      "display_name": "モイスチャー リップスティック 203 チェリー"
+      "display_name": "モイスチャー リップスティック 203 チェリー",
+      "discontinued": true
     },
     {
       "jan": "4571501173273",
@@ -700,7 +775,8 @@
       "product_name": "モイスチャー リップスティック",
       "sku_name": "204 カシス",
       "status": "完全終売",
-      "display_name": "モイスチャー リップスティック 204 カシス"
+      "display_name": "モイスチャー リップスティック 204 カシス",
+      "discontinued": true
     },
     {
       "jan": "4571501173280",
@@ -709,7 +785,8 @@
       "product_name": "モイスチャー リップスティック",
       "sku_name": "205 ブルーム",
       "status": "完全終売",
-      "display_name": "モイスチャー リップスティック 205 ブルーム"
+      "display_name": "モイスチャー リップスティック 205 ブルーム",
+      "discontinued": true
     },
     {
       "jan": "4571501173297",
@@ -718,7 +795,8 @@
       "product_name": "リップセラム",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "リップセラム"
+      "display_name": "リップセラム",
+      "discontinued": true
     },
     {
       "jan": "4571501174089",
@@ -727,7 +805,8 @@
       "product_name": "リバーシブルパフ",
       "sku_name": "",
       "status": "完全終売",
-      "display_name": "リバーシブルパフ"
+      "display_name": "リバーシブルパフ",
+      "discontinued": true
     },
     {
       "jan": "4571501172313",
@@ -736,7 +815,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "211 こっそりベージュ",
       "status": "完全終売",
-      "display_name": "涙袋ペンシル 211 こっそりベージュ"
+      "display_name": "涙袋ペンシル 211 こっそりベージュ",
+      "discontinued": true
     },
     {
       "jan": "4571501172320",
@@ -745,7 +825,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "221 ふんわりピンク",
       "status": "完全終売",
-      "display_name": "涙袋ペンシル 221 ふんわりピンク"
+      "display_name": "涙袋ペンシル 221 ふんわりピンク",
+      "discontinued": true
     },
     {
       "jan": "4571501172337",
@@ -754,7 +835,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "222 ぷっくりベージュ",
       "status": "完全終売",
-      "display_name": "涙袋ペンシル 222 ぷっくりベージュ"
+      "display_name": "涙袋ペンシル 222 ぷっくりベージュ",
+      "discontinued": true
     },
     {
       "jan": "4571501172344",
@@ -763,7 +845,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "241 うるうるローズ",
       "status": "完全終売",
-      "display_name": "涙袋ペンシル 241 うるうるローズ"
+      "display_name": "涙袋ペンシル 241 うるうるローズ",
+      "discontinued": true
     },
     {
       "jan": "6927545982131",
@@ -772,7 +855,8 @@
       "product_name": "GO TRAVEL 15色アイシャドウパレットFA100",
       "sku_name": "#01 パリ",
       "status": "完全終売",
-      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #01 パリ"
+      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #01 パリ",
+      "discontinued": true
     },
     {
       "jan": "6927545982148",
@@ -781,7 +865,8 @@
       "product_name": "GO TRAVEL 15色アイシャドウパレットFA100",
       "sku_name": "#02 プラハ",
       "status": "完全終売",
-      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #02 プラハ"
+      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #02 プラハ",
+      "discontinued": true
     },
     {
       "jan": "6927545982162",
@@ -790,7 +875,8 @@
       "product_name": "GO TRAVEL 15色アイシャドウパレットFA100",
       "sku_name": "#04 トルコ",
       "status": "完全終売",
-      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #04 トルコ"
+      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #04 トルコ",
+      "discontinued": true
     },
     {
       "jan": "4571501170654",
@@ -799,7 +885,8 @@
       "product_name": "GO TRAVEL 15色アイシャドウパレットFA100",
       "sku_name": "#05 重慶",
       "status": "完全終売",
-      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #05 重慶"
+      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #05 重慶",
+      "discontinued": true
     },
     {
       "jan": "6927545983268",
@@ -808,7 +895,8 @@
       "product_name": "GO TRAVEL 15色アイシャドウパレットFA100",
       "sku_name": "#07 トーキョー",
       "status": "完全終売",
-      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #07 トーキョー"
+      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #07 トーキョー",
+      "discontinued": true
     },
     {
       "jan": "6927545988454",
@@ -817,7 +905,8 @@
       "product_name": "GO TRAVEL 15色アイシャドウパレットFA100",
       "sku_name": "#08 フィレンツェ",
       "status": "完全終売",
-      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #08 フィレンツェ"
+      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #08 フィレンツェ",
+      "discontinued": true
     },
     {
       "jan": "4571501170647",
@@ -826,7 +915,8 @@
       "product_name": "GO TRAVEL 15色アイシャドウパレットFA100",
       "sku_name": "#09 西安",
       "status": "完全終売",
-      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #09 西安"
+      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #09 西安",
+      "discontinued": true
     },
     {
       "jan": "4571501171019",
@@ -835,7 +925,8 @@
       "product_name": "GO TRAVEL 15色アイシャドウパレットFA100",
       "sku_name": "#10 ヨコハマ",
       "status": "完全終売",
-      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #10 ヨコハマ"
+      "display_name": "GO TRAVEL 15色アイシャドウパレットFA100 #10 ヨコハマ",
+      "discontinued": true
     },
     {
       "jan": "6935091333246",
@@ -844,7 +935,8 @@
       "product_name": "クリスタルミラーティント FA133",
       "sku_name": "#01パーシモン",
       "status": "完全終売",
-      "display_name": "クリスタルミラーティント FA133 #01パーシモン"
+      "display_name": "クリスタルミラーティント FA133 #01パーシモン",
+      "discontinued": true
     },
     {
       "jan": "6935091300354",
@@ -853,7 +945,8 @@
       "product_name": "クリスタルミラーティント FA133",
       "sku_name": "#02クリムゾン",
       "status": "完全終売",
-      "display_name": "クリスタルミラーティント FA133 #02クリムゾン"
+      "display_name": "クリスタルミラーティント FA133 #02クリムゾン",
+      "discontinued": true
     },
     {
       "jan": "6935091300361",
@@ -862,7 +955,8 @@
       "product_name": "クリスタルミラーティント FA133",
       "sku_name": "#05マーベリック",
       "status": "完全終売",
-      "display_name": "クリスタルミラーティント FA133 #05マーベリック"
+      "display_name": "クリスタルミラーティント FA133 #05マーベリック",
+      "discontinued": true
     },
     {
       "jan": "6935091333628",
@@ -871,7 +965,8 @@
       "product_name": "クリスタルミラーティント FA133",
       "sku_name": "#06フローティングライト",
       "status": "完全終売",
-      "display_name": "クリスタルミラーティント FA133 #06フローティングライト"
+      "display_name": "クリスタルミラーティント FA133 #06フローティングライト",
+      "discontinued": true
     },
     {
       "jan": "6927545998804",
@@ -880,7 +975,8 @@
       "product_name": "ハイライトパレット",
       "sku_name": "スーパースターハイライト",
       "status": "完全終売",
-      "display_name": "ハイライトパレット スーパースターハイライト"
+      "display_name": "ハイライトパレット スーパースターハイライト",
+      "discontinued": true
     },
     {
       "jan": "6971471204409",
@@ -889,7 +985,8 @@
       "product_name": "フェアリーグリッターライナー",
       "sku_name": "G01 フェアリーマーメイド",
       "status": "完全終売",
-      "display_name": "フェアリーグリッターライナー G01 フェアリーマーメイド"
+      "display_name": "フェアリーグリッターライナー G01 フェアリーマーメイド",
+      "discontinued": true
     },
     {
       "jan": "6971471204386",
@@ -898,7 +995,8 @@
       "product_name": "フェアリーグリッターライナー",
       "sku_name": "S01 フェアリーダイヤモンド",
       "status": "完全終売",
-      "display_name": "フェアリーグリッターライナー S01 フェアリーダイヤモンド"
+      "display_name": "フェアリーグリッターライナー S01 フェアリーダイヤモンド",
+      "discontinued": true
     },
     {
       "jan": "6971471204423",
@@ -907,7 +1005,8 @@
       "product_name": "フェアリーグリッターライナー",
       "sku_name": "S03 フェアリーローズ",
       "status": "完全終売",
-      "display_name": "フェアリーグリッターライナー S03 フェアリーローズ"
+      "display_name": "フェアリーグリッターライナー S03 フェアリーローズ",
+      "discontinued": true
     },
     {
       "jan": "6927545996725",
@@ -916,7 +1015,8 @@
       "product_name": "フェアリーグリッターライナー",
       "sku_name": "S05 フェアリージュエル",
       "status": "完全終売",
-      "display_name": "フェアリーグリッターライナー S05 フェアリージュエル"
+      "display_name": "フェアリーグリッターライナー S05 フェアリージュエル",
+      "discontinued": true
     },
     {
       "jan": "6927545996732",
@@ -925,7 +1025,8 @@
       "product_name": "フェアリーグリッターライナー",
       "sku_name": "S06 フェアリーゴールド",
       "status": "完全終売",
-      "display_name": "フェアリーグリッターライナー S06 フェアリーゴールド"
+      "display_name": "フェアリーグリッターライナー S06 フェアリーゴールド",
+      "discontinued": true
     },
     {
       "jan": "4571501171026",
@@ -934,7 +1035,8 @@
       "product_name": "フェアリーグリッターライナー",
       "sku_name": "S07 フェアリーピンクベリル",
       "status": "完全終売",
-      "display_name": "フェアリーグリッターライナー S07 フェアリーピンクベリル"
+      "display_name": "フェアリーグリッターライナー S07 フェアリーピンクベリル",
+      "discontinued": true
     },
     {
       "jan": "6927545998361",
@@ -943,7 +1045,8 @@
       "product_name": "９色アイシャドウ",
       "sku_name": "#01 リングアラーム",
       "status": "完全終売",
-      "display_name": "９色アイシャドウ #01 リングアラーム"
+      "display_name": "９色アイシャドウ #01 リングアラーム",
+      "discontinued": true
     },
     {
       "jan": "6927545998378",
@@ -952,7 +1055,8 @@
       "product_name": "９色アイシャドウ",
       "sku_name": "#02 ソフトパワー",
       "status": "完全終売",
-      "display_name": "９色アイシャドウ #02 ソフトパワー"
+      "display_name": "９色アイシャドウ #02 ソフトパワー",
+      "discontinued": true
     },
     {
       "jan": "6927545998392",
@@ -961,7 +1065,8 @@
       "product_name": "９色アイシャドウ",
       "sku_name": "#04 サンライズ",
       "status": "完全終売",
-      "display_name": "９色アイシャドウ #04 サンライズ"
+      "display_name": "９色アイシャドウ #04 サンライズ",
+      "discontinued": true
     },
     {
       "jan": "4571501170746",
@@ -970,7 +1075,8 @@
       "product_name": "９色アイシャドウ",
       "sku_name": "#07タロパイ",
       "status": "完全終売",
-      "display_name": "９色アイシャドウ #07タロパイ"
+      "display_name": "９色アイシャドウ #07タロパイ",
+      "discontinued": true
     },
     {
       "jan": "6970675970189",
@@ -979,7 +1085,8 @@
       "product_name": "キャンディーボックスアイシャドウ",
       "sku_name": "F01",
       "status": "完全終売",
-      "display_name": "キャンディーボックスアイシャドウ F01"
+      "display_name": "キャンディーボックスアイシャドウ F01",
+      "discontinued": true
     },
     {
       "jan": "6970370707486",
@@ -988,7 +1095,8 @@
       "product_name": "キャンディーボックスアイシャドウ",
       "sku_name": "Z01",
       "status": "完全終売",
-      "display_name": "キャンディーボックスアイシャドウ Z01"
+      "display_name": "キャンディーボックスアイシャドウ Z01",
+      "discontinued": true
     },
     {
       "jan": "6927545995551",
@@ -997,7 +1105,8 @@
       "product_name": "シガレットティント",
       "sku_name": "I Am Busy",
       "status": "完全終売",
-      "display_name": "シガレットティント I Am Busy"
+      "display_name": "シガレットティント I Am Busy",
+      "discontinued": true
     },
     {
       "jan": "6927545995575",
@@ -1006,7 +1115,8 @@
       "product_name": "シガレットティント",
       "sku_name": "Strawberry",
       "status": "完全終売",
-      "display_name": "シガレットティント Strawberry"
+      "display_name": "シガレットティント Strawberry",
+      "discontinued": true
     },
     {
       "jan": "6970370700142",
@@ -1015,7 +1125,8 @@
       "product_name": "スペード５カラーアイシャドウ",
       "sku_name": "K02 コーラル",
       "status": "完全終売",
-      "display_name": "スペード５カラーアイシャドウ K02 コーラル"
+      "display_name": "スペード５カラーアイシャドウ K02 コーラル",
+      "discontinued": true
     },
     {
       "jan": "6970370700159",
@@ -1024,7 +1135,8 @@
       "product_name": "スペード５カラーアイシャドウ",
       "sku_name": "K03 イエロー",
       "status": "完全終売",
-      "display_name": "スペード５カラーアイシャドウ K03 イエロー"
+      "display_name": "スペード５カラーアイシャドウ K03 イエロー",
+      "discontinued": true
     },
     {
       "jan": "6971479461767",
@@ -1033,7 +1145,8 @@
       "product_name": "山海シリーズ リップグロス",
       "sku_name": "#01狂鳥",
       "status": "完全終売",
-      "display_name": "山海シリーズ リップグロス #01狂鳥"
+      "display_name": "山海シリーズ リップグロス #01狂鳥",
+      "discontinued": true
     },
     {
       "jan": "6971479461743",
@@ -1042,7 +1155,8 @@
       "product_name": "山海シリーズ リップグロス",
       "sku_name": "#03鮫人",
       "status": "完全終売",
-      "display_name": "山海シリーズ リップグロス #03鮫人"
+      "display_name": "山海シリーズ リップグロス #03鮫人",
+      "discontinued": true
     },
     {
       "jan": "6971479461712",
@@ -1051,7 +1165,8 @@
       "product_name": "山海シリーズ リップグロス",
       "sku_name": "#05果果",
       "status": "完全終売",
-      "display_name": "山海シリーズ リップグロス #05果果"
+      "display_name": "山海シリーズ リップグロス #05果果",
+      "discontinued": true
     },
     {
       "jan": "6971479461736",
@@ -1060,7 +1175,8 @@
       "product_name": "山海シリーズ リップグロス",
       "sku_name": "#06火鳥",
       "status": "完全終売",
-      "display_name": "山海シリーズ リップグロス #06火鳥"
+      "display_name": "山海シリーズ リップグロス #06火鳥",
+      "discontinued": true
     },
     {
       "jan": "4571501170784",
@@ -1069,7 +1185,8 @@
       "product_name": "山海シリーズ リップグロス",
       "sku_name": "07朱厭",
       "status": "完全終売",
-      "display_name": "山海シリーズ リップグロス 07朱厭"
+      "display_name": "山海シリーズ リップグロス 07朱厭",
+      "discontinued": true
     },
     {
       "jan": "6972962321520",
@@ -1078,7 +1195,8 @@
       "product_name": "山海シリーズグロウハイライト",
       "sku_name": "01 快楽水 ice Flow",
       "status": "完全終売",
-      "display_name": "山海シリーズグロウハイライト 01 快楽水 ice Flow"
+      "display_name": "山海シリーズグロウハイライト 01 快楽水 ice Flow",
+      "discontinued": true
     },
     {
       "jan": "6972962320776",
@@ -1087,7 +1205,8 @@
       "product_name": "山海シリーズグロウハイライト",
       "sku_name": "03 月亮海 Moonsea",
       "status": "完全終売",
-      "display_name": "山海シリーズグロウハイライト 03 月亮海 Moonsea"
+      "display_name": "山海シリーズグロウハイライト 03 月亮海 Moonsea",
+      "discontinued": true
     },
     {
       "jan": "6972962321070",
@@ -1096,7 +1215,8 @@
       "product_name": "山海シリーズグロウハイライト",
       "sku_name": "06 鸚鵡洲 Unicorn Dust",
       "status": "完全終売",
-      "display_name": "山海シリーズグロウハイライト 06 鸚鵡洲 Unicorn Dust"
+      "display_name": "山海シリーズグロウハイライト 06 鸚鵡洲 Unicorn Dust",
+      "discontinued": true
     },
     {
       "jan": "6972962320806",
@@ -1105,7 +1225,8 @@
       "product_name": "山海シリーズグロウハイライト&チーク",
       "sku_name": "檀香山 Honolulu",
       "status": "完全終売",
-      "display_name": "山海シリーズグロウハイライト&チーク 檀香山 Honolulu"
+      "display_name": "山海シリーズグロウハイライト&チーク 檀香山 Honolulu",
+      "discontinued": true
     },
     {
       "jan": "6970664290496",
@@ -1114,7 +1235,8 @@
       "product_name": "山海シリーズ４色アイシャドウパレット",
       "sku_name": "01 sparrow",
       "status": "完全終売",
-      "display_name": "山海シリーズ４色アイシャドウパレット 01 sparrow"
+      "display_name": "山海シリーズ４色アイシャドウパレット 01 sparrow",
+      "discontinued": true
     },
     {
       "jan": "6970664290502",
@@ -1123,7 +1245,8 @@
       "product_name": "山海シリーズ４色アイシャドウパレット",
       "sku_name": "02 Rabbit fish",
       "status": "完全終売",
-      "display_name": "山海シリーズ４色アイシャドウパレット 02 Rabbit fish"
+      "display_name": "山海シリーズ４色アイシャドウパレット 02 Rabbit fish",
+      "discontinued": true
     },
     {
       "jan": "6972962320851",
@@ -1132,7 +1255,8 @@
       "product_name": "山海シリーズ４色アイシャドウパレット",
       "sku_name": "05 elephant",
       "status": "完全終売",
-      "display_name": "山海シリーズ４色アイシャドウパレット 05 elephant"
+      "display_name": "山海シリーズ４色アイシャドウパレット 05 elephant",
+      "discontinued": true
     },
     {
       "jan": "6972962320868",
@@ -1141,7 +1265,8 @@
       "product_name": "山海シリーズ４色アイシャドウパレット",
       "sku_name": "06 sika deer",
       "status": "完全終売",
-      "display_name": "山海シリーズ４色アイシャドウパレット 06 sika deer"
+      "display_name": "山海シリーズ４色アイシャドウパレット 06 sika deer",
+      "discontinued": true
     },
     {
       "jan": "4571501170791",
@@ -1150,7 +1275,8 @@
       "product_name": "山海シリーズ４色アイシャドウパレット",
       "sku_name": "07 dreaming sheep",
       "status": "完全終売",
-      "display_name": "山海シリーズ４色アイシャドウパレット 07 dreaming sheep"
+      "display_name": "山海シリーズ４色アイシャドウパレット 07 dreaming sheep",
+      "discontinued": true
     },
     {
       "jan": "4571501178711",
@@ -1420,7 +1546,8 @@
       "product_name": "コントロールカラーベース",
       "sku_name": "01 パープル",
       "status": "完全終売",
-      "display_name": "コントロールカラーベース 01 パープル"
+      "display_name": "コントロールカラーベース 01 パープル",
+      "discontinued": true
     },
     {
       "jan": "4571501173143",
@@ -1429,7 +1556,8 @@
       "product_name": "コントロールカラーベース",
       "sku_name": "02 グリーン",
       "status": "完全終売",
-      "display_name": "コントロールカラーベース 02 グリーン"
+      "display_name": "コントロールカラーベース 02 グリーン",
+      "discontinued": true
     },
     {
       "jan": "4571501173150",
@@ -1438,7 +1566,8 @@
       "product_name": "コントロールカラーベース",
       "sku_name": "03 ピンク",
       "status": "完全終売",
-      "display_name": "コントロールカラーベース 03 ピンク"
+      "display_name": "コントロールカラーベース 03 ピンク",
+      "discontinued": true
     },
     {
       "jan": "4571501177752",
@@ -1447,7 +1576,8 @@
       "product_name": "シルキーフェイスパウダー",
       "sku_name": "01 ホワイト",
       "status": "最新仕様",
-      "display_name": "シルキーフェイスパウダー 01 ホワイト"
+      "display_name": "シルキーフェイスパウダー 01 ホワイト",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501177769",
@@ -1456,7 +1586,8 @@
       "product_name": "シルキーフェイスパウダー",
       "sku_name": "02 ベージュ",
       "status": "最新仕様",
-      "display_name": "シルキーフェイスパウダー 02 ベージュ"
+      "display_name": "シルキーフェイスパウダー 02 ベージュ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501177776",
@@ -1465,7 +1596,8 @@
       "product_name": "シルキーフェイスパウダー",
       "sku_name": "03 ラベンダー",
       "status": "最新仕様",
-      "display_name": "シルキーフェイスパウダー 03 ラベンダー"
+      "display_name": "シルキーフェイスパウダー 03 ラベンダー",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174294",
@@ -1564,7 +1696,8 @@
       "product_name": "PUKU PUKU GELS",
       "sku_name": "#01 CLEAR",
       "status": "完全終売",
-      "display_name": "PUKU PUKU GELS #01 CLEAR"
+      "display_name": "PUKU PUKU GELS #01 CLEAR",
+      "discontinued": true
     },
     {
       "jan": "4571501171835",
@@ -1573,7 +1706,8 @@
       "product_name": "PUKU PUKU GELS",
       "sku_name": "#02 ORANGE",
       "status": "完全終売",
-      "display_name": "PUKU PUKU GELS #02 ORANGE"
+      "display_name": "PUKU PUKU GELS #02 ORANGE",
+      "discontinued": true
     },
     {
       "jan": "4571501171842",
@@ -1582,7 +1716,8 @@
       "product_name": "PUKU PUKU GELS",
       "sku_name": "#03 PINK",
       "status": "完全終売",
-      "display_name": "PUKU PUKU GELS #03 PINK"
+      "display_name": "PUKU PUKU GELS #03 PINK",
+      "discontinued": true
     },
     {
       "jan": "4571501171859",
@@ -1591,7 +1726,8 @@
       "product_name": "PUKU PUKU GELS",
       "sku_name": "#04 PURPLE",
       "status": "完全終売",
-      "display_name": "PUKU PUKU GELS #04 PURPLE"
+      "display_name": "PUKU PUKU GELS #04 PURPLE",
+      "discontinued": true
     },
     {
       "jan": "4571501171866",
@@ -1600,7 +1736,8 @@
       "product_name": "PUKU PUKU GELS",
       "sku_name": "#05 LIGHT BLUE",
       "status": "完全終売",
-      "display_name": "PUKU PUKU GELS #05 LIGHT BLUE"
+      "display_name": "PUKU PUKU GELS #05 LIGHT BLUE",
+      "discontinued": true
     },
     {
       "jan": "4571501171873",
@@ -1609,7 +1746,8 @@
       "product_name": "PUKU PUKU GELS",
       "sku_name": "#06 SAND",
       "status": "完全終売",
-      "display_name": "PUKU PUKU GELS #06 SAND"
+      "display_name": "PUKU PUKU GELS #06 SAND",
+      "discontinued": true
     },
     {
       "jan": "4571501171484",
@@ -1618,7 +1756,8 @@
       "product_name": "リトリル タバカン ナチュラル アイラッシュ",
       "sku_name": "Aタイプ",
       "status": "完全終売",
-      "display_name": "リトリル タバカン ナチュラル アイラッシュ Aタイプ"
+      "display_name": "リトリル タバカン ナチュラル アイラッシュ Aタイプ",
+      "discontinued": true
     },
     {
       "jan": "4571501171491",
@@ -1627,7 +1766,8 @@
       "product_name": "リトリル タバカン ナチュラル アイラッシュ",
       "sku_name": "Vタイプ",
       "status": "完全終売",
-      "display_name": "リトリル タバカン ナチュラル アイラッシュ Vタイプ"
+      "display_name": "リトリル タバカン ナチュラル アイラッシュ Vタイプ",
+      "discontinued": true
     },
     {
       "jan": "4571501172016",
@@ -1636,7 +1776,8 @@
       "product_name": "リトリル タバカン ナチュラル アイラッシュ",
       "sku_name": "Wタイプ",
       "status": "完全終売",
-      "display_name": "リトリル タバカン ナチュラル アイラッシュ Wタイプ"
+      "display_name": "リトリル タバカン ナチュラル アイラッシュ Wタイプ",
+      "discontinued": true
     },
     {
       "jan": "4571501175833",
@@ -1645,7 +1786,8 @@
       "product_name": "エアリーハンドクリーム",
       "sku_name": "01 フローラルガーデン",
       "status": "最新仕様",
-      "display_name": "エアリーハンドクリーム 01 フローラルガーデン"
+      "display_name": "エアリーハンドクリーム 01 フローラルガーデン",
+      "discontinued": true
     },
     {
       "jan": "4571501175840",
@@ -1654,7 +1796,8 @@
       "product_name": "エアリーハンドクリーム",
       "sku_name": "02 グラスムスク",
       "status": "最新仕様",
-      "display_name": "エアリーハンドクリーム 02 グラスムスク"
+      "display_name": "エアリーハンドクリーム 02 グラスムスク",
+      "discontinued": true
     },
     {
       "jan": "4571501175857",
@@ -1663,7 +1806,8 @@
       "product_name": "エアリーハンドクリーム",
       "sku_name": "03 ホワイトティー",
       "status": "最新仕様",
-      "display_name": "エアリーハンドクリーム 03 ホワイトティー"
+      "display_name": "エアリーハンドクリーム 03 ホワイトティー",
+      "discontinued": true
     },
     {
       "jan": "4571501178667",
@@ -2266,7 +2410,8 @@
       "product_name": "グラマラスリッププランパー",
       "sku_name": "01 クリアブロッサム",
       "status": "旧仕様",
-      "display_name": "グラマラスリッププランパー 01 クリアブロッサム"
+      "display_name": "グラマラスリッププランパー 01 クリアブロッサム",
+      "discontinued": true
     },
     {
       "jan": "4571501174874",
@@ -2275,7 +2420,8 @@
       "product_name": "グラマラスリッププランパー",
       "sku_name": "02 ハニーアプリコット",
       "status": "旧仕様",
-      "display_name": "グラマラスリッププランパー 02 ハニーアプリコット"
+      "display_name": "グラマラスリッププランパー 02 ハニーアプリコット",
+      "discontinued": true
     },
     {
       "jan": "4571501174881",
@@ -2338,7 +2484,8 @@
       "product_name": "グロウリップス",
       "sku_name": "01 グリーミングフィグ",
       "status": "井田・あらた終売",
-      "display_name": "グロウリップス 01 グリーミングフィグ"
+      "display_name": "グロウリップス 01 グリーミングフィグ",
+      "discontinued": true
     },
     {
       "jan": "4571501173037",
@@ -2347,7 +2494,8 @@
       "product_name": "グロウリップス",
       "sku_name": "02 ドラマチックベリー",
       "status": "井田・あらた終売",
-      "display_name": "グロウリップス 02 ドラマチックベリー"
+      "display_name": "グロウリップス 02 ドラマチックベリー",
+      "discontinued": true
     },
     {
       "jan": "4571501173044",
@@ -2356,7 +2504,8 @@
       "product_name": "グロウリップス",
       "sku_name": "03 モダンレッド",
       "status": "井田・あらた終売",
-      "display_name": "グロウリップス 03 モダンレッド"
+      "display_name": "グロウリップス 03 モダンレッド",
+      "discontinued": true
     },
     {
       "jan": "4571501173051",
@@ -2365,7 +2514,8 @@
       "product_name": "グロウリップス",
       "sku_name": "04 ダスティローズ",
       "status": "井田・あらた終売",
-      "display_name": "グロウリップス 04 ダスティローズ"
+      "display_name": "グロウリップス 04 ダスティローズ",
+      "discontinued": true
     },
     {
       "jan": "4571501173068",
@@ -2374,7 +2524,8 @@
       "product_name": "グロウリップス",
       "sku_name": "05 ビタータンジェリン",
       "status": "井田・あらた終売",
-      "display_name": "グロウリップス 05 ビタータンジェリン"
+      "display_name": "グロウリップス 05 ビタータンジェリン",
+      "discontinued": true
     },
     {
       "jan": "4571501173075",
@@ -2383,7 +2534,8 @@
       "product_name": "グロウリップス",
       "sku_name": "06 ベビーピンク",
       "status": "井田・あらた終売",
-      "display_name": "グロウリップス 06 ベビーピンク"
+      "display_name": "グロウリップス 06 ベビーピンク",
+      "discontinued": true
     },
     {
       "jan": "4571501178223",
@@ -2518,7 +2670,8 @@
       "product_name": "シンデレラパウダリーミスト",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "シンデレラパウダリーミスト"
+      "display_name": "シンデレラパウダリーミスト",
+      "discontinued": true
     },
     {
       "jan": "4571501177585",
@@ -2527,7 +2680,8 @@
       "product_name": "シンデレラパウダリーミスト",
       "sku_name": "キープ＋",
       "status": "最新仕様",
-      "display_name": "シンデレラパウダリーミスト キープ＋"
+      "display_name": "シンデレラパウダリーミスト キープ＋",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501173334",
@@ -2536,7 +2690,8 @@
       "product_name": "シークレットコンシーラーパレット",
       "sku_name": "01 カバーグリーン",
       "status": "井田・あらた終売",
-      "display_name": "シークレットコンシーラーパレット 01 カバーグリーン"
+      "display_name": "シークレットコンシーラーパレット 01 カバーグリーン",
+      "discontinued": true
     },
     {
       "jan": "4571501173341",
@@ -2545,7 +2700,8 @@
       "product_name": "シークレットコンシーラーパレット",
       "sku_name": "02 ブライトイエロー",
       "status": "井田・あらた終売",
-      "display_name": "シークレットコンシーラーパレット 02 ブライトイエロー"
+      "display_name": "シークレットコンシーラーパレット 02 ブライトイエロー",
+      "discontinued": true
     },
     {
       "jan": "4571501178759",
@@ -2626,7 +2782,8 @@
       "product_name": "ステラグリッターライナー",
       "sku_name": "01 スピカ",
       "status": "井田・あらた終売",
-      "display_name": "ステラグリッターライナー 01 スピカ"
+      "display_name": "ステラグリッターライナー 01 スピカ",
+      "discontinued": true
     },
     {
       "jan": "4571501172672",
@@ -2635,7 +2792,8 @@
       "product_name": "ステラグリッターライナー",
       "sku_name": "02 ミモザ",
       "status": "井田・あらた終売",
-      "display_name": "ステラグリッターライナー 02 ミモザ"
+      "display_name": "ステラグリッターライナー 02 ミモザ",
+      "discontinued": true
     },
     {
       "jan": "4571501173365",
@@ -2644,7 +2802,8 @@
       "product_name": "ステラグリッターライナー",
       "sku_name": "02 ミモザ E",
       "status": "井田・あらた終売",
-      "display_name": "ステラグリッターライナー 02 ミモザ E"
+      "display_name": "ステラグリッターライナー 02 ミモザ E",
+      "discontinued": true
     },
     {
       "jan": "4571501172740",
@@ -2653,7 +2812,8 @@
       "product_name": "ステラグリッターライナー",
       "sku_name": "03 ファーストスター",
       "status": "井田・あらた終売",
-      "display_name": "ステラグリッターライナー 03 ファーストスター"
+      "display_name": "ステラグリッターライナー 03 ファーストスター",
+      "discontinued": true
     },
     {
       "jan": "4571501173372",
@@ -2662,7 +2822,8 @@
       "product_name": "ステラグリッターライナー",
       "sku_name": "03 ファーストスター E",
       "status": "井田・あらた終売",
-      "display_name": "ステラグリッターライナー 03 ファーストスター E"
+      "display_name": "ステラグリッターライナー 03 ファーストスター E",
+      "discontinued": true
     },
     {
       "jan": "4571501172696",
@@ -2671,7 +2832,8 @@
       "product_name": "ステラグリッターライナー",
       "sku_name": "04 ミラ",
       "status": "井田・あらた終売",
-      "display_name": "ステラグリッターライナー 04 ミラ"
+      "display_name": "ステラグリッターライナー 04 ミラ",
+      "discontinued": true
     },
     {
       "jan": "4571501172702",
@@ -2680,7 +2842,8 @@
       "product_name": "ステラグリッターライナー",
       "sku_name": "05 スターリースカイ",
       "status": "井田・あらた終売",
-      "display_name": "ステラグリッターライナー 05 スターリースカイ"
+      "display_name": "ステラグリッターライナー 05 スターリースカイ",
+      "discontinued": true
     },
     {
       "jan": "4571501172719",
@@ -2689,7 +2852,8 @@
       "product_name": "ステラグリッターライナー",
       "sku_name": "06 コメット",
       "status": "井田・あらた終売",
-      "display_name": "ステラグリッターライナー 06 コメット"
+      "display_name": "ステラグリッターライナー 06 コメット",
+      "discontinued": true
     },
     {
       "jan": "4571501171392",
@@ -2698,7 +2862,8 @@
       "product_name": "スパークル リキッド アイズ",
       "sku_name": "G01 starlight（スターライト）",
       "status": "完全終売",
-      "display_name": "スパークル リキッド アイズ G01 starlight（スターライト）"
+      "display_name": "スパークル リキッド アイズ G01 starlight（スターライト）",
+      "discontinued": true
     },
     {
       "jan": "4571501171408",
@@ -2707,7 +2872,8 @@
       "product_name": "スパークル リキッド アイズ",
       "sku_name": "G02 euphoria（ユーフォリア）",
       "status": "完全終売",
-      "display_name": "スパークル リキッド アイズ G02 euphoria（ユーフォリア）"
+      "display_name": "スパークル リキッド アイズ G02 euphoria（ユーフォリア）",
+      "discontinued": true
     },
     {
       "jan": "4571501171415",
@@ -2716,7 +2882,8 @@
       "product_name": "スパークル リキッド アイズ",
       "sku_name": "G03 liberty（リバティ）",
       "status": "完全終売",
-      "display_name": "スパークル リキッド アイズ G03 liberty（リバティ）"
+      "display_name": "スパークル リキッド アイズ G03 liberty（リバティ）",
+      "discontinued": true
     },
     {
       "jan": "4571501171422",
@@ -2725,7 +2892,8 @@
       "product_name": "スパークル リキッド アイズ",
       "sku_name": "G04 lovefool（ラブフール）",
       "status": "完全終売",
-      "display_name": "スパークル リキッド アイズ G04 lovefool（ラブフール）"
+      "display_name": "スパークル リキッド アイズ G04 lovefool（ラブフール）",
+      "discontinued": true
     },
     {
       "jan": "4571501171378",
@@ -2734,7 +2902,8 @@
       "product_name": "スパークル リキッド アイズ",
       "sku_name": "L01 afterglow（アフターグロウ）",
       "status": "完全終売",
-      "display_name": "スパークル リキッド アイズ L01 afterglow（アフターグロウ）"
+      "display_name": "スパークル リキッド アイズ L01 afterglow（アフターグロウ）",
+      "discontinued": true
     },
     {
       "jan": "4571501171385",
@@ -2743,7 +2912,8 @@
       "product_name": "スパークル リキッド アイズ",
       "sku_name": "L02 staygold（ステイゴールド）",
       "status": "完全終売",
-      "display_name": "スパークル リキッド アイズ L02 staygold（ステイゴールド）"
+      "display_name": "スパークル リキッド アイズ L02 staygold（ステイゴールド）",
+      "discontinued": true
     },
     {
       "jan": "4580805230193",
@@ -2770,7 +2940,8 @@
       "product_name": "チート顔コントゥアパレット",
       "sku_name": "01 いつわりウォーム",
       "status": "最新仕様",
-      "display_name": "チート顔コントゥアパレット 01 いつわりウォーム"
+      "display_name": "チート顔コントゥアパレット 01 いつわりウォーム",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174805",
@@ -2779,7 +2950,8 @@
       "product_name": "チート顔コントゥアパレット",
       "sku_name": "02 したたかクール",
       "status": "最新仕様",
-      "display_name": "チート顔コントゥアパレット 02 したたかクール"
+      "display_name": "チート顔コントゥアパレット 02 したたかクール",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501178056",
@@ -2788,7 +2960,8 @@
       "product_name": "チート顔コントゥアパレット",
       "sku_name": "03 ふっくらピンク",
       "status": "最新仕様",
-      "display_name": "チート顔コントゥアパレット 03 ふっくらピンク"
+      "display_name": "チート顔コントゥアパレット 03 ふっくらピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501178124",
@@ -2797,7 +2970,8 @@
       "product_name": "チート顔コントゥアパレット",
       "sku_name": "04 しのばせベージュ",
       "status": "最新仕様",
-      "display_name": "チート顔コントゥアパレット 04 しのばせベージュ"
+      "display_name": "チート顔コントゥアパレット 04 しのばせベージュ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179077",
@@ -2824,7 +2998,8 @@
       "product_name": "ティアーズ アイバッグ リキッドライナー",
       "sku_name": "081 シャドウ ピンクグレージュ",
       "status": "完全終売",
-      "display_name": "ティアーズ アイバッグ リキッドライナー 081 シャドウ ピンクグレージュ"
+      "display_name": "ティアーズ アイバッグ リキッドライナー 081 シャドウ ピンクグレージュ",
+      "discontinued": true
     },
     {
       "jan": "4571501172252",
@@ -2833,7 +3008,8 @@
       "product_name": "ティアーズアイバッグペンシル",
       "sku_name": "011 マット ナチュラルベージュ",
       "status": "井田・あらた終売",
-      "display_name": "ティアーズアイバッグペンシル 011 マット ナチュラルベージュ"
+      "display_name": "ティアーズアイバッグペンシル 011 マット ナチュラルベージュ",
+      "discontinued": true
     },
     {
       "jan": "4571501171583",
@@ -2842,7 +3018,8 @@
       "product_name": "ティアーズアイバッグペンシル",
       "sku_name": "021 シマー ライトベージュ",
       "status": "井田・あらた終売",
-      "display_name": "ティアーズアイバッグペンシル 021 シマー ライトベージュ"
+      "display_name": "ティアーズアイバッグペンシル 021 シマー ライトベージュ",
+      "discontinued": true
     },
     {
       "jan": "4571501171590",
@@ -2851,7 +3028,8 @@
       "product_name": "ティアーズアイバッグペンシル",
       "sku_name": "022 シマー ピーチクリーム",
       "status": "井田・あらた終売",
-      "display_name": "ティアーズアイバッグペンシル 022 シマー ピーチクリーム"
+      "display_name": "ティアーズアイバッグペンシル 022 シマー ピーチクリーム",
+      "discontinued": true
     },
     {
       "jan": "4571501171606",
@@ -2860,7 +3038,8 @@
       "product_name": "ティアーズアイバッグペンシル",
       "sku_name": "041 シャイン ムーンシルバー",
       "status": "井田・あらた終売",
-      "display_name": "ティアーズアイバッグペンシル 041 シャイン ムーンシルバー"
+      "display_name": "ティアーズアイバッグペンシル 041 シャイン ムーンシルバー",
+      "discontinued": true
     },
     {
       "jan": "4571501171613",
@@ -2869,7 +3048,8 @@
       "product_name": "ティアーズアイバッグペンシル",
       "sku_name": "042 シャイン シェルピンク",
       "status": "井田・あらた終売",
-      "display_name": "ティアーズアイバッグペンシル 042 シャイン シェルピンク"
+      "display_name": "ティアーズアイバッグペンシル 042 シャイン シェルピンク",
+      "discontinued": true
     },
     {
       "jan": "4571501173549",
@@ -2878,7 +3058,8 @@
       "product_name": "ティアーズアイバッグペンシル",
       "sku_name": "043 シャイン シュガーバニラ",
       "status": "井田・あらた終売",
-      "display_name": "ティアーズアイバッグペンシル 043 シャイン シュガーバニラ"
+      "display_name": "ティアーズアイバッグペンシル 043 シャイン シュガーバニラ",
+      "discontinued": true
     },
     {
       "jan": "4571501178551",
@@ -2914,7 +3095,8 @@
       "product_name": "ニュアンスグロウハイライター",
       "sku_name": "01 パールホワイト",
       "status": "最新仕様",
-      "display_name": "ニュアンスグロウハイライター 01 パールホワイト"
+      "display_name": "ニュアンスグロウハイライター 01 パールホワイト",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176762",
@@ -2923,7 +3105,8 @@
       "product_name": "ニュアンスグロウハイライター",
       "sku_name": "02 ロゼピンク",
       "status": "最新仕様",
-      "display_name": "ニュアンスグロウハイライター 02 ロゼピンク"
+      "display_name": "ニュアンスグロウハイライター 02 ロゼピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176779",
@@ -2932,7 +3115,8 @@
       "product_name": "ニュアンスグロウハイライター",
       "sku_name": "03 ラベンダームーン",
       "status": "最新仕様",
-      "display_name": "ニュアンスグロウハイライター 03 ラベンダームーン"
+      "display_name": "ニュアンスグロウハイライター 03 ラベンダームーン",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176786",
@@ -2941,7 +3125,8 @@
       "product_name": "ニュアンスグロウハイライター",
       "sku_name": "04 マットソフトピンク",
       "status": "最新仕様",
-      "display_name": "ニュアンスグロウハイライター 04 マットソフトピンク"
+      "display_name": "ニュアンスグロウハイライター 04 マットソフトピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805230032",
@@ -2968,7 +3153,8 @@
       "product_name": "フェアリーメイクアップブラシセット",
       "sku_name": "",
       "status": "井田・あらた終売",
-      "display_name": "フェアリーメイクアップブラシセット"
+      "display_name": "フェアリーメイクアップブラシセット",
+      "discontinued": true
     },
     {
       "jan": "4571501173945",
@@ -2977,7 +3163,8 @@
       "product_name": "フェアリールージュ",
       "sku_name": "01 奔放",
       "status": "井田・あらた終売",
-      "display_name": "フェアリールージュ 01 奔放"
+      "display_name": "フェアリールージュ 01 奔放",
+      "discontinued": true
     },
     {
       "jan": "4571501173952",
@@ -2986,7 +3173,8 @@
       "product_name": "フェアリールージュ",
       "sku_name": "02 幻想",
       "status": "井田・あらた終売",
-      "display_name": "フェアリールージュ 02 幻想"
+      "display_name": "フェアリールージュ 02 幻想",
+      "discontinued": true
     },
     {
       "jan": "4571501173969",
@@ -2995,7 +3183,8 @@
       "product_name": "フェアリールージュ",
       "sku_name": "03 幸福",
       "status": "井田・あらた終売",
-      "display_name": "フェアリールージュ 03 幸福"
+      "display_name": "フェアリールージュ 03 幸福",
+      "discontinued": true
     },
     {
       "jan": "4571501173976",
@@ -3004,7 +3193,8 @@
       "product_name": "フェアリールージュ",
       "sku_name": "04 誘惑",
       "status": "井田・あらた終売",
-      "display_name": "フェアリールージュ 04 誘惑"
+      "display_name": "フェアリールージュ 04 誘惑",
+      "discontinued": true
     },
     {
       "jan": "4571501173983",
@@ -3013,7 +3203,8 @@
       "product_name": "フェアリールージュ",
       "sku_name": "05 神秘",
       "status": "井田・あらた終売",
-      "display_name": "フェアリールージュ 05 神秘"
+      "display_name": "フェアリールージュ 05 神秘",
+      "discontinued": true
     },
     {
       "jan": "4571501173990",
@@ -3022,7 +3213,8 @@
       "product_name": "フェアリールージュ",
       "sku_name": "06 夢見",
       "status": "井田・あらた終売",
-      "display_name": "フェアリールージュ 06 夢見"
+      "display_name": "フェアリールージュ 06 夢見",
+      "discontinued": true
     },
     {
       "jan": "4571501177448",
@@ -3103,7 +3295,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "01 エキゾチックショートヘア",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット 01 エキゾチックショートヘア"
+      "display_name": "マイキティアイパレット 01 エキゾチックショートヘア",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174683",
@@ -3112,7 +3305,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "02 ラグドール",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット 02 ラグドール"
+      "display_name": "マイキティアイパレット 02 ラグドール",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174690",
@@ -3121,7 +3315,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "03 三毛猫",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット 03 三毛猫"
+      "display_name": "マイキティアイパレット 03 三毛猫",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174706",
@@ -3130,7 +3325,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "04 ミヌエット",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット 04 ミヌエット"
+      "display_name": "マイキティアイパレット 04 ミヌエット",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176953",
@@ -3139,7 +3335,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "05 サイベリアン",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット 05 サイベリアン"
+      "display_name": "マイキティアイパレット 05 サイベリアン",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176960",
@@ -3148,7 +3345,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "06 スコティッシュフォールド",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット 06 スコティッシュフォールド"
+      "display_name": "マイキティアイパレット 06 スコティッシュフォールド",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176977",
@@ -3157,7 +3355,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "07 アメリカンショートヘア",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット 07 アメリカンショートヘア"
+      "display_name": "マイキティアイパレット 07 アメリカンショートヘア",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501178131",
@@ -3238,7 +3437,8 @@
       "product_name": "マジカルスピーディーリムーバー",
       "sku_name": "",
       "status": "井田・あらた終売",
-      "display_name": "マジカルスピーディーリムーバー"
+      "display_name": "マジカルスピーディーリムーバー",
+      "discontinued": true
     },
     {
       "jan": "4571501173778",
@@ -3256,7 +3456,8 @@
       "product_name": "ミャオパウズアイシャドウパレット",
       "sku_name": "01 甘えんぼ",
       "status": "最新仕様",
-      "display_name": "ミャオパウズアイシャドウパレット 01 甘えんぼ"
+      "display_name": "ミャオパウズアイシャドウパレット 01 甘えんぼ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174126",
@@ -3265,7 +3466,8 @@
       "product_name": "ミャオパウズアイシャドウパレット",
       "sku_name": "02 わがまま",
       "status": "最新仕様",
-      "display_name": "ミャオパウズアイシャドウパレット 02 わがまま"
+      "display_name": "ミャオパウズアイシャドウパレット 02 わがまま",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174133",
@@ -3355,7 +3557,8 @@
       "product_name": "メタルブラシマスカラ",
       "sku_name": "01 ブラック",
       "status": "井田・あらた終売",
-      "display_name": "メタルブラシマスカラ 01 ブラック"
+      "display_name": "メタルブラシマスカラ 01 ブラック",
+      "discontinued": true
     },
     {
       "jan": "4571501172771",
@@ -3364,7 +3567,8 @@
       "product_name": "メタルブラシマスカラ",
       "sku_name": "02 ナチュラルブラウン",
       "status": "井田・あらた終売",
-      "display_name": "メタルブラシマスカラ 02 ナチュラルブラウン"
+      "display_name": "メタルブラシマスカラ 02 ナチュラルブラウン",
+      "discontinued": true
     },
     {
       "jan": "4571501172788",
@@ -3373,7 +3577,8 @@
       "product_name": "メタルブラシマスカラ",
       "sku_name": "03 ピンクブラウン",
       "status": "井田・あらた終売",
-      "display_name": "メタルブラシマスカラ 03 ピンクブラウン"
+      "display_name": "メタルブラシマスカラ 03 ピンクブラウン",
+      "discontinued": true
     },
     {
       "jan": "4571501174331",
@@ -3382,7 +3587,8 @@
       "product_name": "メタルブラシマスカラ",
       "sku_name": "04 ブルー",
       "status": "井田・あらた終売",
-      "display_name": "メタルブラシマスカラ 04 ブルー"
+      "display_name": "メタルブラシマスカラ 04 ブルー",
+      "discontinued": true
     },
     {
       "jan": "4571501178544",
@@ -3409,7 +3615,8 @@
       "product_name": "ラディアントセラムクッション",
       "sku_name": "BE10",
       "status": "最新仕様",
-      "display_name": "ラディアントセラムクッション BE10"
+      "display_name": "ラディアントセラムクッション BE10",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174317",
@@ -3418,7 +3625,8 @@
       "product_name": "ラディアントセラムクッション",
       "sku_name": "BE20",
       "status": "最新仕様",
-      "display_name": "ラディアントセラムクッション BE20"
+      "display_name": "ラディアントセラムクッション BE20",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174324",
@@ -3427,7 +3635,8 @@
       "product_name": "ラディアントセラムクッション",
       "sku_name": "BE30",
       "status": "最新仕様",
-      "display_name": "ラディアントセラムクッション BE30"
+      "display_name": "ラディアントセラムクッション BE30",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179602",
@@ -3454,7 +3663,8 @@
       "product_name": "レディフラワーパレット",
       "sku_name": "01 リリー",
       "status": "井田・あらた終売",
-      "display_name": "レディフラワーパレット 01 リリー"
+      "display_name": "レディフラワーパレット 01 リリー",
+      "discontinued": true
     },
     {
       "jan": "4571501173600",
@@ -3463,7 +3673,8 @@
       "product_name": "レディフラワーパレット",
       "sku_name": "02 アイリス",
       "status": "井田・あらた終売",
-      "display_name": "レディフラワーパレット 02 アイリス"
+      "display_name": "レディフラワーパレット 02 アイリス",
+      "discontinued": true
     },
     {
       "jan": "4571501173617",
@@ -3472,7 +3683,8 @@
       "product_name": "レディフラワーパレット",
       "sku_name": "03 ローズ",
       "status": "井田・あらた終売",
-      "display_name": "レディフラワーパレット 03 ローズ"
+      "display_name": "レディフラワーパレット 03 ローズ",
+      "discontinued": true
     },
     {
       "jan": "4571501171316",
@@ -3481,7 +3693,8 @@
       "product_name": "ワンコンプリート ジェルネイル",
       "sku_name": "F01 ファーストクラッシュ",
       "status": "井田・あらた終売",
-      "display_name": "ワンコンプリート ジェルネイル F01 ファーストクラッシュ"
+      "display_name": "ワンコンプリート ジェルネイル F01 ファーストクラッシュ",
+      "discontinued": true
     },
     {
       "jan": "4571501171323",
@@ -3490,7 +3703,8 @@
       "product_name": "ワンコンプリート ジェルネイル",
       "sku_name": "F02 ミッドサマー",
       "status": "井田・あらた終売",
-      "display_name": "ワンコンプリート ジェルネイル F02 ミッドサマー"
+      "display_name": "ワンコンプリート ジェルネイル F02 ミッドサマー",
+      "discontinued": true
     },
     {
       "jan": "4571501171330",
@@ -3499,7 +3713,8 @@
       "product_name": "ワンコンプリート ジェルネイル",
       "sku_name": "F03 アフタヌーン",
       "status": "井田・あらた終売",
-      "display_name": "ワンコンプリート ジェルネイル F03 アフタヌーン"
+      "display_name": "ワンコンプリート ジェルネイル F03 アフタヌーン",
+      "discontinued": true
     },
     {
       "jan": "4571501171347",
@@ -3508,7 +3723,8 @@
       "product_name": "ワンコンプリート ジェルネイル",
       "sku_name": "F04 ブルーミング",
       "status": "井田・あらた終売",
-      "display_name": "ワンコンプリート ジェルネイル F04 ブルーミング"
+      "display_name": "ワンコンプリート ジェルネイル F04 ブルーミング",
+      "discontinued": true
     },
     {
       "jan": "4571501171354",
@@ -3517,7 +3733,8 @@
       "product_name": "ワンコンプリート ジェルネイル",
       "sku_name": "F05 デイドリーム",
       "status": "井田・あらた終売",
-      "display_name": "ワンコンプリート ジェルネイル F05 デイドリーム"
+      "display_name": "ワンコンプリート ジェルネイル F05 デイドリーム",
+      "discontinued": true
     },
     {
       "jan": "4571501171361",
@@ -3526,7 +3743,8 @@
       "product_name": "ワンコンプリート ジェルネイル",
       "sku_name": "F06 レインクラウド",
       "status": "井田・あらた終売",
-      "display_name": "ワンコンプリート ジェルネイル F06 レインクラウド"
+      "display_name": "ワンコンプリート ジェルネイル F06 レインクラウド",
+      "discontinued": true
     },
     {
       "jan": "4571501172061",
@@ -3535,7 +3753,8 @@
       "product_name": "天使の絵画チーク",
       "sku_name": "01 アムールとプシュケー",
       "status": "井田・あらた終売",
-      "display_name": "天使の絵画チーク 01 アムールとプシュケー"
+      "display_name": "天使の絵画チーク 01 アムールとプシュケー",
+      "discontinued": true
     },
     {
       "jan": "4571501172078",
@@ -3544,7 +3763,8 @@
       "product_name": "天使の絵画チーク",
       "sku_name": "02 絵画の寓意",
       "status": "井田・あらた終売",
-      "display_name": "天使の絵画チーク 02 絵画の寓意"
+      "display_name": "天使の絵画チーク 02 絵画の寓意",
+      "discontinued": true
     },
     {
       "jan": "4571501172085",
@@ -3553,7 +3773,8 @@
       "product_name": "天使の絵画チーク",
       "sku_name": "03 ラブ ザ センチネル",
       "status": "井田・あらた終売",
-      "display_name": "天使の絵画チーク 03 ラブ ザ センチネル"
+      "display_name": "天使の絵画チーク 03 ラブ ザ センチネル",
+      "discontinued": true
     },
     {
       "jan": "6977266305627",
@@ -3616,7 +3837,8 @@
       "product_name": "絵画アイシャドウパレット",
       "sku_name": "02 花束",
       "status": "最新仕様",
-      "display_name": "絵画アイシャドウパレット 02 花束"
+      "display_name": "絵画アイシャドウパレット 02 花束",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171293",
@@ -3634,7 +3856,8 @@
       "product_name": "絵画アイシャドウパレット",
       "sku_name": "04 日傘の女",
       "status": "最新仕様",
-      "display_name": "絵画アイシャドウパレット 04 日傘の女"
+      "display_name": "絵画アイシャドウパレット 04 日傘の女",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501175109",
@@ -3643,7 +3866,8 @@
       "product_name": "絵画アイシャドウパレット",
       "sku_name": "04 日傘の女  マイメロディ コラボ",
       "status": "完全終売",
-      "display_name": "絵画アイシャドウパレット 04 日傘の女  マイメロディ コラボ"
+      "display_name": "絵画アイシャドウパレット 04 日傘の女  マイメロディ コラボ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171880",
@@ -3661,7 +3885,8 @@
       "product_name": "絵画アイシャドウパレット",
       "sku_name": "05 画家の庭  ポムポムプリン コラボ",
       "status": "完全終売",
-      "display_name": "絵画アイシャドウパレット 05 画家の庭  ポムポムプリン コラボ"
+      "display_name": "絵画アイシャドウパレット 05 画家の庭  ポムポムプリン コラボ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171897",
@@ -3697,7 +3922,8 @@
       "product_name": "絵画アイシャドウパレット",
       "sku_name": "08 星月夜  シナモロール コラボ",
       "status": "完全終売",
-      "display_name": "絵画アイシャドウパレット 08 星月夜  シナモロール コラボ"
+      "display_name": "絵画アイシャドウパレット 08 星月夜  シナモロール コラボ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501172993",
@@ -3931,7 +4157,8 @@
       "product_name": "薄眉エアリームース",
       "sku_name": "01 ライトベージュ",
       "status": "井田・あらた終売",
-      "display_name": "薄眉エアリームース 01 ライトベージュ"
+      "display_name": "薄眉エアリームース 01 ライトベージュ",
+      "discontinued": true
     },
     {
       "jan": "4571501174775",
@@ -3940,7 +4167,8 @@
       "product_name": "薄眉エアリームース",
       "sku_name": "02 モカブラウン",
       "status": "井田・あらた終売",
-      "display_name": "薄眉エアリームース 02 モカブラウン"
+      "display_name": "薄眉エアリームース 02 モカブラウン",
+      "discontinued": true
     },
     {
       "jan": "4571501174782",
@@ -3949,7 +4177,8 @@
       "product_name": "薄眉エアリームース",
       "sku_name": "03 モーヴピンク",
       "status": "井田・あらた終売",
-      "display_name": "薄眉エアリームース 03 モーヴピンク"
+      "display_name": "薄眉エアリームース 03 モーヴピンク",
+      "discontinued": true
     },
     {
       "jan": "6977266305641",
@@ -3985,7 +4214,8 @@
       "product_name": "リップケアオイルLIGHT",
       "sku_name": "#01 ピーチ",
       "status": "完全終売",
-      "display_name": "リップケアオイルLIGHT #01 ピーチ"
+      "display_name": "リップケアオイルLIGHT #01 ピーチ",
+      "discontinued": true
     },
     {
       "jan": "8859640401140",
@@ -3994,7 +4224,8 @@
       "product_name": "リップケアオイルLIGHT",
       "sku_name": "#05 モヒート",
       "status": "完全終売",
-      "display_name": "リップケアオイルLIGHT #05 モヒート"
+      "display_name": "リップケアオイルLIGHT #05 モヒート",
+      "discontinued": true
     },
     {
       "jan": "8859640401126",
@@ -4003,7 +4234,8 @@
       "product_name": "リップケアオイルPRO",
       "sku_name": "#03 スイートポテト",
       "status": "完全終売",
-      "display_name": "リップケアオイルPRO #03 スイートポテト"
+      "display_name": "リップケアオイルPRO #03 スイートポテト",
+      "discontinued": true
     },
     {
       "jan": "8859640401157",
@@ -4012,7 +4244,8 @@
       "product_name": "リップケアオイルPRO",
       "sku_name": "#06 オートミルク",
       "status": "完全終売",
-      "display_name": "リップケアオイルPRO #06 オートミルク"
+      "display_name": "リップケアオイルPRO #06 オートミルク",
+      "discontinued": true
     },
     {
       "jan": "8859640401171",
@@ -4021,7 +4254,8 @@
       "product_name": "リップケアオイルPRO",
       "sku_name": "#08マロン",
       "status": "完全終売",
-      "display_name": "リップケアオイルPRO #08マロン"
+      "display_name": "リップケアオイルPRO #08マロン",
+      "discontinued": true
     },
     {
       "jan": "4571501176939",
@@ -4192,7 +4426,8 @@
       "product_name": "シャイニング12色ミニアイシャドウパレット",
       "sku_name": "HT04",
       "status": "最新仕様",
-      "display_name": "シャイニング12色ミニアイシャドウパレット HT04"
+      "display_name": "シャイニング12色ミニアイシャドウパレット HT04",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501173815",
@@ -4219,7 +4454,8 @@
       "product_name": "シャイニング１２色ミニアイシャドウパレット",
       "sku_name": "HT01",
       "status": "完全終売",
-      "display_name": "シャイニング１２色ミニアイシャドウパレット HT01"
+      "display_name": "シャイニング１２色ミニアイシャドウパレット HT01",
+      "discontinued": true
     },
     {
       "jan": "4571501170494",
@@ -4228,7 +4464,8 @@
       "product_name": "シャイニング９色ミニアイシャドウパレット",
       "sku_name": "GM03",
       "status": "完全終売",
-      "display_name": "シャイニング９色ミニアイシャドウパレット GM03"
+      "display_name": "シャイニング９色ミニアイシャドウパレット GM03",
+      "discontinued": true
     },
     {
       "jan": "4571501170500",
@@ -4237,7 +4474,8 @@
       "product_name": "シャイニング９色ミニアイシャドウパレット",
       "sku_name": "GM12",
       "status": "完全終売",
-      "display_name": "シャイニング９色ミニアイシャドウパレット GM12"
+      "display_name": "シャイニング９色ミニアイシャドウパレット GM12",
+      "discontinued": true
     },
     {
       "jan": "4571501171088",
@@ -4246,7 +4484,8 @@
       "product_name": "シャイニング９色ミニアイシャドウパレット",
       "sku_name": "GM16",
       "status": "完全終売",
-      "display_name": "シャイニング９色ミニアイシャドウパレット GM16"
+      "display_name": "シャイニング９色ミニアイシャドウパレット GM16",
+      "discontinued": true
     },
     {
       "jan": "4571501171644",
@@ -4255,7 +4494,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "101 ホワイトシュガー",
       "status": "最新仕様",
-      "display_name": "シングルムースアイシャドウ 101 ホワイトシュガー"
+      "display_name": "シングルムースアイシャドウ 101 ホワイトシュガー",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171651",
@@ -4264,7 +4504,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "102 ポッピングキャンディ",
       "status": "最新仕様",
-      "display_name": "シングルムースアイシャドウ 102 ポッピングキャンディ"
+      "display_name": "シングルムースアイシャドウ 102 ポッピングキャンディ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171668",
@@ -4273,7 +4514,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "103 クランチチョコレート",
       "status": "最新仕様",
-      "display_name": "シングルムースアイシャドウ 103 クランチチョコレート"
+      "display_name": "シングルムースアイシャドウ 103 クランチチョコレート",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171675",
@@ -4291,7 +4533,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "105 キャラメルナッツ",
       "status": "最新仕様",
-      "display_name": "シングルムースアイシャドウ 105 キャラメルナッツ"
+      "display_name": "シングルムースアイシャドウ 105 キャラメルナッツ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171699",
@@ -4309,7 +4552,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "107 ストロベリーミルク",
       "status": "最新仕様",
-      "display_name": "シングルムースアイシャドウ 107 ストロベリーミルク"
+      "display_name": "シングルムースアイシャドウ 107 ストロベリーミルク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501172368",
@@ -4318,7 +4562,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "108 プラムソルベ",
       "status": "最新仕様",
-      "display_name": "シングルムースアイシャドウ 108 プラムソルベ"
+      "display_name": "シングルムースアイシャドウ 108 プラムソルベ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501175000",
@@ -4327,7 +4572,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "109 ミルキーバニラ",
       "status": "最新仕様",
-      "display_name": "シングルムースアイシャドウ 109 ミルキーバニラ"
+      "display_name": "シングルムースアイシャドウ 109 ミルキーバニラ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501175017",
@@ -4336,7 +4582,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "110 ピーチフラッぺ",
       "status": "最新仕様",
-      "display_name": "シングルムースアイシャドウ 110 ピーチフラッぺ"
+      "display_name": "シングルムースアイシャドウ 110 ピーチフラッぺ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501170906",
@@ -4345,7 +4592,8 @@
       "product_name": "スターグリッターライナー",
       "sku_name": "A11 グリーンパイシース",
       "status": "完全終売",
-      "display_name": "スターグリッターライナー A11 グリーンパイシース"
+      "display_name": "スターグリッターライナー A11 グリーンパイシース",
+      "discontinued": true
     },
     {
       "jan": "4571501170913",
@@ -4354,7 +4602,8 @@
       "product_name": "スターグリッターライナー",
       "sku_name": "A13 ピンクキャンサー",
       "status": "完全終売",
-      "display_name": "スターグリッターライナー A13 ピンクキャンサー"
+      "display_name": "スターグリッターライナー A13 ピンクキャンサー",
+      "discontinued": true
     },
     {
       "jan": "4571501170920",
@@ -4363,7 +4612,8 @@
       "product_name": "スターグリッターライナー",
       "sku_name": "A15 クリームエアリーズ",
       "status": "完全終売",
-      "display_name": "スターグリッターライナー A15 クリームエアリーズ"
+      "display_name": "スターグリッターライナー A15 クリームエアリーズ",
+      "discontinued": true
     },
     {
       "jan": "4571501172153",
@@ -4381,7 +4631,8 @@
       "product_name": "スターグリッターライナー",
       "sku_name": "A16 パープルスコーピオ",
       "status": "完全終売",
-      "display_name": "スターグリッターライナー A16 パープルスコーピオ"
+      "display_name": "スターグリッターライナー A16 パープルスコーピオ",
+      "discontinued": true
     },
     {
       "jan": "4571501170883",
@@ -4390,7 +4641,8 @@
       "product_name": "スターグリッターライナー",
       "sku_name": "A2 ロゼヴァーゴ",
       "status": "完全終売",
-      "display_name": "スターグリッターライナー A2 ロゼヴァーゴ"
+      "display_name": "スターグリッターライナー A2 ロゼヴァーゴ",
+      "discontinued": true
     },
     {
       "jan": "4571501171545",
@@ -4399,7 +4651,8 @@
       "product_name": "スターグリッターライナー",
       "sku_name": "A20 オパールリブラ",
       "status": "完全終売",
-      "display_name": "スターグリッターライナー A20 オパールリブラ"
+      "display_name": "スターグリッターライナー A20 オパールリブラ",
+      "discontinued": true
     },
     {
       "jan": "4571501172160",
@@ -4417,7 +4670,8 @@
       "product_name": "スターグリッターライナー",
       "sku_name": "A22 オーロラジェミニ",
       "status": "完全終売",
-      "display_name": "スターグリッターライナー A22 オーロラジェミニ"
+      "display_name": "スターグリッターライナー A22 オーロラジェミニ",
+      "discontinued": true
     },
     {
       "jan": "4571501170890",
@@ -4426,7 +4680,8 @@
       "product_name": "スターグリッターライナー",
       "sku_name": "A6 ホワイトカプリコーン",
       "status": "完全終売",
-      "display_name": "スターグリッターライナー A6 ホワイトカプリコーン"
+      "display_name": "スターグリッターライナー A6 ホワイトカプリコーン",
+      "discontinued": true
     },
     {
       "jan": "4571501172146",
@@ -4471,7 +4726,8 @@
       "product_name": "チョコレートアイシャドウ",
       "sku_name": "01 スイートトリュフ",
       "status": "最新仕様",
-      "display_name": "チョコレートアイシャドウ 01 スイートトリュフ"
+      "display_name": "チョコレートアイシャドウ 01 スイートトリュフ",
+      "discontinued": true
     },
     {
       "jan": "4571501176632",
@@ -4480,7 +4736,8 @@
       "product_name": "チョコレートアイシャドウ",
       "sku_name": "02 ローズショコラ",
       "status": "最新仕様",
-      "display_name": "チョコレートアイシャドウ 02 ローズショコラ"
+      "display_name": "チョコレートアイシャドウ 02 ローズショコラ",
+      "discontinued": true
     },
     {
       "jan": "4571501176649",
@@ -4489,7 +4746,8 @@
       "product_name": "チョコレートアイシャドウ",
       "sku_name": "03 アプリコットブラウニー",
       "status": "最新仕様",
-      "display_name": "チョコレートアイシャドウ 03 アプリコットブラウニー"
+      "display_name": "チョコレートアイシャドウ 03 アプリコットブラウニー",
+      "discontinued": true
     },
     {
       "jan": "4571501175246",
@@ -4498,7 +4756,8 @@
       "product_name": "ニュアンスムースチーク",
       "sku_name": "101 ナッツベージュ",
       "status": "最新仕様",
-      "display_name": "ニュアンスムースチーク 101 ナッツベージュ"
+      "display_name": "ニュアンスムースチーク 101 ナッツベージュ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501175253",
@@ -4507,7 +4766,8 @@
       "product_name": "ニュアンスムースチーク",
       "sku_name": "102 サクラピンク",
       "status": "最新仕様",
-      "display_name": "ニュアンスムースチーク 102 サクラピンク"
+      "display_name": "ニュアンスムースチーク 102 サクラピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501175260",
@@ -4516,7 +4776,8 @@
       "product_name": "ニュアンスムースチーク",
       "sku_name": "103 マカロンピンク",
       "status": "最新仕様",
-      "display_name": "ニュアンスムースチーク 103 マカロンピンク"
+      "display_name": "ニュアンスムースチーク 103 マカロンピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501175277",
@@ -4525,7 +4786,8 @@
       "product_name": "ニュアンスムースチーク",
       "sku_name": "104 コーラルピーチ",
       "status": "最新仕様",
-      "display_name": "ニュアンスムースチーク 104 コーラルピーチ"
+      "display_name": "ニュアンスムースチーク 104 コーラルピーチ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176182",
@@ -4534,7 +4796,8 @@
       "product_name": "モーモーリップ",
       "sku_name": "M01 ベビーピンクムース",
       "status": "最新仕様",
-      "display_name": "モーモーリップ M01 ベビーピンクムース"
+      "display_name": "モーモーリップ M01 ベビーピンクムース",
+      "discontinued": true
     },
     {
       "jan": "4571501176199",
@@ -4543,7 +4806,8 @@
       "product_name": "モーモーリップ",
       "sku_name": "M02 コーラルピンクムース",
       "status": "最新仕様",
-      "display_name": "モーモーリップ M02 コーラルピンクムース"
+      "display_name": "モーモーリップ M02 コーラルピンクムース",
+      "discontinued": true
     },
     {
       "jan": "4571501176205",
@@ -4552,7 +4816,8 @@
       "product_name": "モーモーリップ",
       "sku_name": "S01 ベビーピンクシロップ",
       "status": "最新仕様",
-      "display_name": "モーモーリップ S01 ベビーピンクシロップ"
+      "display_name": "モーモーリップ S01 ベビーピンクシロップ",
+      "discontinued": true
     },
     {
       "jan": "4571501176212",
@@ -4561,7 +4826,8 @@
       "product_name": "モーモーリップ",
       "sku_name": "S02 コーラルピンクシロップ",
       "status": "最新仕様",
-      "display_name": "モーモーリップ S02 コーラルピンクシロップ"
+      "display_name": "モーモーリップ S02 コーラルピンクシロップ",
+      "discontinued": true
     },
     {
       "jan": "4571501176229",
@@ -4570,7 +4836,8 @@
       "product_name": "モーモーリップ",
       "sku_name": "S03 ストロベリーピンクシロップ",
       "status": "最新仕様",
-      "display_name": "モーモーリップ S03 ストロベリーピンクシロップ"
+      "display_name": "モーモーリップ S03 ストロベリーピンクシロップ",
+      "discontinued": true
     },
     {
       "jan": "6971804008124",
@@ -4579,7 +4846,8 @@
       "product_name": "宝石ネイル",
       "sku_name": "C1 ストロベリーキャンディー",
       "status": "完全終売",
-      "display_name": "宝石ネイル C1 ストロベリーキャンディー"
+      "display_name": "宝石ネイル C1 ストロベリーキャンディー",
+      "discontinued": true
     },
     {
       "jan": "6971804008131",
@@ -4588,7 +4856,8 @@
       "product_name": "宝石ネイル",
       "sku_name": "C2 グレープキャンディー",
       "status": "完全終売",
-      "display_name": "宝石ネイル C2 グレープキャンディー"
+      "display_name": "宝石ネイル C2 グレープキャンディー",
+      "discontinued": true
     },
     {
       "jan": "6971804008148",
@@ -4597,7 +4866,8 @@
       "product_name": "宝石ネイル",
       "sku_name": "C3 ミルクキャンディー",
       "status": "完全終売",
-      "display_name": "宝石ネイル C3 ミルクキャンディー"
+      "display_name": "宝石ネイル C3 ミルクキャンディー",
+      "discontinued": true
     },
     {
       "jan": "6971804003112",
@@ -4606,7 +4876,8 @@
       "product_name": "宝石ネイル",
       "sku_name": "C6 シャンパンキャンディー",
       "status": "完全終売",
-      "display_name": "宝石ネイル C6 シャンパンキャンディー"
+      "display_name": "宝石ネイル C6 シャンパンキャンディー",
+      "discontinued": true
     },
     {
       "jan": "6971804008056",
@@ -4615,7 +4886,8 @@
       "product_name": "宝石ネイル",
       "sku_name": "C7 コットンキャンディー",
       "status": "完全終売",
-      "display_name": "宝石ネイル C7 コットンキャンディー"
+      "display_name": "宝石ネイル C7 コットンキャンディー",
+      "discontinued": true
     },
     {
       "jan": "4571501174232",
@@ -4624,7 +4896,8 @@
       "product_name": "微笑唇リップペンシル",
       "sku_name": "101 チェリーピンク",
       "status": "最新仕様",
-      "display_name": "微笑唇リップペンシル 101 チェリーピンク"
+      "display_name": "微笑唇リップペンシル 101 チェリーピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174249",
@@ -4633,7 +4906,8 @@
       "product_name": "微笑唇リップペンシル",
       "sku_name": "102 ヌーディコーラル",
       "status": "最新仕様",
-      "display_name": "微笑唇リップペンシル 102 ヌーディコーラル"
+      "display_name": "微笑唇リップペンシル 102 ヌーディコーラル",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174256",
@@ -4642,7 +4916,8 @@
       "product_name": "微笑唇リップペンシル",
       "sku_name": "103 ダスティローズ",
       "status": "最新仕様",
-      "display_name": "微笑唇リップペンシル 103 ダスティローズ"
+      "display_name": "微笑唇リップペンシル 103 ダスティローズ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174263",
@@ -4651,7 +4926,8 @@
       "product_name": "微笑唇リップペンシル",
       "sku_name": "104 アンバーブラウン",
       "status": "最新仕様",
-      "display_name": "微笑唇リップペンシル 104 アンバーブラウン"
+      "display_name": "微笑唇リップペンシル 104 アンバーブラウン",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174270",
@@ -4660,7 +4936,8 @@
       "product_name": "微笑唇リップペンシル",
       "sku_name": "105 ピンクブラウン",
       "status": "最新仕様",
-      "display_name": "微笑唇リップペンシル 105 ピンクブラウン"
+      "display_name": "微笑唇リップペンシル 105 ピンクブラウン",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171170",
@@ -4669,7 +4946,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "031 クリームベージュ",
       "status": "最新仕様",
-      "display_name": "涙袋ペンシル 031 クリームベージュ"
+      "display_name": "涙袋ペンシル 031 クリームベージュ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501172177",
@@ -4687,7 +4965,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "032 ハニーベージュ",
       "status": "完全終売",
-      "display_name": "涙袋ペンシル 032 ハニーベージュ"
+      "display_name": "涙袋ペンシル 032 ハニーベージュ",
+      "discontinued": true
     },
     {
       "jan": "4571501171750",
@@ -4696,7 +4975,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "033 ピュアベージュ",
       "status": "最新仕様",
-      "display_name": "涙袋ペンシル 033 ピュアベージュ"
+      "display_name": "涙袋ペンシル 033 ピュアベージュ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501172184",
@@ -4714,7 +4994,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "034 ライトベージュ",
       "status": "最新仕様",
-      "display_name": "涙袋ペンシル 034 ライトベージュ"
+      "display_name": "涙袋ペンシル 034 ライトベージュ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501172191",
@@ -4741,7 +5022,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "101 シャンパンピンク",
       "status": "最新仕様",
-      "display_name": "涙袋ペンシル 101 シャンパンピンク"
+      "display_name": "涙袋ペンシル 101 シャンパンピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171163",
@@ -4759,7 +5041,8 @@
       "product_name": "涙袋ペンシル",
       "sku_name": "103 シャンパンゴールド",
       "status": "最新仕様",
-      "display_name": "涙袋ペンシル 103 シャンパンゴールド"
+      "display_name": "涙袋ペンシル 103 シャンパンゴールド",
+      "discontinue_planned": true
     },
     {
       "jan": "6971804008094",
@@ -4768,7 +5051,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B1 ももジャム",
       "status": "完全終売",
-      "display_name": "繊維ネイル B1 ももジャム"
+      "display_name": "繊維ネイル B1 ももジャム",
+      "discontinued": true
     },
     {
       "jan": "4571501171736",
@@ -4777,7 +5061,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B10 スイートピオニー",
       "status": "完全終売",
-      "display_name": "繊維ネイル B10 スイートピオニー"
+      "display_name": "繊維ネイル B10 スイートピオニー",
+      "discontinued": true
     },
     {
       "jan": "6971804008100",
@@ -4786,7 +5071,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B2 あずきジャム",
       "status": "完全終売",
-      "display_name": "繊維ネイル B2 あずきジャム"
+      "display_name": "繊維ネイル B2 あずきジャム",
+      "discontinued": true
     },
     {
       "jan": "6971804008117",
@@ -4795,7 +5081,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B3 さくらんぼジャム",
       "status": "完全終売",
-      "display_name": "繊維ネイル B3 さくらんぼジャム"
+      "display_name": "繊維ネイル B3 さくらんぼジャム",
+      "discontinued": true
     },
     {
       "jan": "4571501170814",
@@ -4804,7 +5091,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B4 キウイジャム",
       "status": "完全終売",
-      "display_name": "繊維ネイル B4 キウイジャム"
+      "display_name": "繊維ネイル B4 キウイジャム",
+      "discontinued": true
     },
     {
       "jan": "4571501170821",
@@ -4813,7 +5101,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B5 ブルーベリージャム",
       "status": "完全終売",
-      "display_name": "繊維ネイル B5 ブルーベリージャム"
+      "display_name": "繊維ネイル B5 ブルーベリージャム",
+      "discontinued": true
     },
     {
       "jan": "4571501170838",
@@ -4822,7 +5111,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B6 りんごジャム",
       "status": "完全終売",
-      "display_name": "繊維ネイル B6 りんごジャム"
+      "display_name": "繊維ネイル B6 りんごジャム",
+      "discontinued": true
     },
     {
       "jan": "4571501170845",
@@ -4831,7 +5121,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B7 くるみジャム",
       "status": "完全終売",
-      "display_name": "繊維ネイル B7 くるみジャム"
+      "display_name": "繊維ネイル B7 くるみジャム",
+      "discontinued": true
     },
     {
       "jan": "4571501170852",
@@ -4840,7 +5131,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B8 カシスジャム",
       "status": "完全終売",
-      "display_name": "繊維ネイル B8 カシスジャム"
+      "display_name": "繊維ネイル B8 カシスジャム",
+      "discontinued": true
     },
     {
       "jan": "4571501171729",
@@ -4849,7 +5141,8 @@
       "product_name": "繊維ネイル",
       "sku_name": "B9 ビターローズ",
       "status": "完全終売",
-      "display_name": "繊維ネイル B9 ビターローズ"
+      "display_name": "繊維ネイル B9 ビターローズ",
+      "discontinued": true
     },
     {
       "jan": "4571501170517",
@@ -4858,7 +5151,8 @@
       "product_name": "４in１マルチパレット",
       "sku_name": "04",
       "status": "完全終売",
-      "display_name": "４in１マルチパレット 04"
+      "display_name": "４in１マルチパレット 04",
+      "discontinued": true
     },
     {
       "jan": "4571501170524",
@@ -4867,7 +5161,8 @@
       "product_name": "４in１マルチパレット",
       "sku_name": "06",
       "status": "完全終売",
-      "display_name": "４in１マルチパレット 06"
+      "display_name": "４in１マルチパレット 06",
+      "discontinued": true
     },
     {
       "jan": "6935157915874",
@@ -4876,7 +5171,8 @@
       "product_name": "Fancy Diamond Highlight ダイヤモンドハイライト",
       "sku_name": "#01 シルバーパール",
       "status": "完全終売",
-      "display_name": "Fancy Diamond Highlight ダイヤモンドハイライト #01 シルバーパール"
+      "display_name": "Fancy Diamond Highlight ダイヤモンドハイライト #01 シルバーパール",
+      "discontinued": true
     },
     {
       "jan": "6935157915881",
@@ -4885,7 +5181,8 @@
       "product_name": "Fancy Diamond Highlight ダイヤモンドハイライト",
       "sku_name": "#02 ゴールドパール",
       "status": "完全終売",
-      "display_name": "Fancy Diamond Highlight ダイヤモンドハイライト #02 ゴールドパール"
+      "display_name": "Fancy Diamond Highlight ダイヤモンドハイライト #02 ゴールドパール",
+      "discontinued": true
     },
     {
       "jan": "6935157915898",
@@ -4894,7 +5191,8 @@
       "product_name": "Fancy Diamond Highlight ダイヤモンドハイライト",
       "sku_name": "#03 ピンクパール",
       "status": "完全終売",
-      "display_name": "Fancy Diamond Highlight ダイヤモンドハイライト #03 ピンクパール"
+      "display_name": "Fancy Diamond Highlight ダイヤモンドハイライト #03 ピンクパール",
+      "discontinued": true
     },
     {
       "jan": "4571501170616",
@@ -4903,7 +5201,8 @@
       "product_name": "キャットミニアイカラー",
       "sku_name": "001マオミーシトリン",
       "status": "完全終売",
-      "display_name": "キャットミニアイカラー 001マオミーシトリン"
+      "display_name": "キャットミニアイカラー 001マオミーシトリン",
+      "discontinued": true
     },
     {
       "jan": "4571501170623",
@@ -4912,7 +5211,8 @@
       "product_name": "キャットミニアイカラー",
       "sku_name": "003マオミークリスタル",
       "status": "完全終売",
-      "display_name": "キャットミニアイカラー 003マオミークリスタル"
+      "display_name": "キャットミニアイカラー 003マオミークリスタル",
+      "discontinued": true
     },
     {
       "jan": "4571501170630",
@@ -4921,7 +5221,8 @@
       "product_name": "キャットミニアイカラー",
       "sku_name": "005マオミーシェリー",
       "status": "完全終売",
-      "display_name": "キャットミニアイカラー 005マオミーシェリー"
+      "display_name": "キャットミニアイカラー 005マオミーシェリー",
+      "discontinued": true
     },
     {
       "jan": "4571501170609",
@@ -4930,7 +5231,8 @@
       "product_name": "キャットミニチーク",
       "sku_name": "M05ミャオロゼピンク",
       "status": "完全終売",
-      "display_name": "キャットミニチーク M05ミャオロゼピンク"
+      "display_name": "キャットミニチーク M05ミャオロゼピンク",
+      "discontinued": true
     },
     {
       "jan": "4571501170586",
@@ -4939,7 +5241,8 @@
       "product_name": "キャットミニチーク",
       "sku_name": "S02ミャオシャインオレンジ",
       "status": "完全終売",
-      "display_name": "キャットミニチーク S02ミャオシャインオレンジ"
+      "display_name": "キャットミニチーク S02ミャオシャインオレンジ",
+      "discontinued": true
     },
     {
       "jan": "4580805240239",

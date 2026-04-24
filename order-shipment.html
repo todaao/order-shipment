@@ -427,6 +427,15 @@ textarea:focus{border-color:var(--accent);}
     <div id="alertThreshBody" style="display:none;margin-top:14px">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
         <div>
+          <div class="form-label">デフォルトLT（master未設定SKU用）</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+            <input type="number" id="alertThreshLT" value="2" min="0.5" max="12" step="0.5"
+              style="width:80px" onchange="renderAlerts()">
+            <span style="font-size:12px;color:var(--text3)">ヶ月</span>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">masterにlead_time_weeksがある場合はSKU別値を優先</div>
+        </div>
+        <div>
           <div class="form-label">欠品警告バッファ（LT + N ヶ月）</div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
             <input type="number" id="alertThreshBuffer" value="1" min="0" max="6" step="0.5"
@@ -467,11 +476,19 @@ textarea:focus{border-color:var(--accent);}
     <button class="tab-btn" onclick="switchAlertTab('accuracy',this)" id="alertTab-accuracy">
       予測精度 <span id="alertTabBadge-accuracy" style="font-family:var(--font-mono);font-size:9px;background:rgba(200,169,110,.2);color:var(--accent);padding:1px 6px;border-radius:8px;margin-left:4px"></span>
     </button>
+    <button class="tab-btn" onclick="switchAlertTab('ordered',this)" id="alertTab-ordered">
+      発注試算済み <span id="alertTabBadge-ordered" style="font-family:var(--font-mono);font-size:9px;background:rgba(126,212,160,.2);color:var(--accent4);padding:1px 6px;border-radius:8px;margin-left:4px"></span>
+    </button>
+    <button class="tab-btn" onclick="switchAlertTab('discontinued',this)" id="alertTab-discontinued">
+      廃版予定 <span id="alertTabBadge-discontinued" style="font-family:var(--font-mono);font-size:9px;background:rgba(180,158,232,.2);color:var(--accent5);padding:1px 6px;border-radius:8px;margin-left:4px"></span>
+    </button>
   </div>
   <!-- タブコンテンツ -->
   <div id="alertPane-shortage"></div>
   <div id="alertPane-excess" style="display:none"></div>
   <div id="alertPane-accuracy" style="display:none"></div>
+  <div id="alertPane-ordered" style="display:none"></div>
+  <div id="alertPane-discontinued" style="display:none"></div>
 </div>
 
 <!-- ⑦ 発注試算ツール -->
@@ -2528,7 +2545,7 @@ function switchAlertTab(name, el){
   _alertCurrentTab=name;
   document.querySelectorAll('#alertTabBar .tab-btn').forEach(t=>t.classList.remove('active'));
   if(el) el.classList.add('active');
-  ['shortage','excess','accuracy'].forEach(n=>{
+  ['shortage','excess','accuracy','ordered','discontinued'].forEach(n=>{
     const p=document.getElementById('alertPane-'+n);
     if(p) p.style.display=(n===name)?'block':'none';
   });
@@ -2542,13 +2559,26 @@ function renderAlerts(){
   const _thBuffer=parseFloat(document.getElementById('alertThreshBuffer')?.value??1)||1;
   const _thExcess=parseFloat(document.getElementById('alertThreshExcess')?.value??12)||12;
   const THRESH=(parseFloat(document.getElementById('alertThreshAccuracy')?.value??20)||20)/100;
-  const leadTimeMonths=(DATA.orders?.orders||[]).reduce((a,o)=>Math.max(a,(o.lead_time_weeks||8)/4.33),2);
+  const _defaultLT=parseFloat(document.getElementById('alertThreshLT')?.value??2)||2;
+  // SKU別LT取得ヘルパー: master.lead_time_weeks優先 → デフォルト値フォールバック
+  function skuLeadTime(jan){
+    const m=masterLookup(String(jan));
+    if(m&&m.lead_time_weeks) return m.lead_time_weeks/4.33;
+    return _defaultLT;
+  }
+  // グローバルLT（KPI表示用・後方互換）
+  const leadTimeMonths=_defaultLT;
 
   // ── アラートデータ構築 ──────────────────────
   // shortage アラート
   const shortageAlerts=[];
   invSkus.forEach(inv=>{
     const jan=String(inv.sku_code);
+    // ① マスタに存在するSKUのみアラート対象
+    const _mS=masterLookup(jan);
+    if(!_mS) return;
+    // 廃盤済みは完全除外、廃版予定は廃版予定タブで別途表示
+    if(_mS.discontinued||_mS.discontinue_planned) return;
     const ss=SHIP_BY_JAN[jan]||null;
     let dm=null, tobAvg=0, ecAvg=0, monthly=0;
     if(ss&&ss.monthly_shipments){
@@ -2563,18 +2593,20 @@ function renderAlerts(){
     }
     const dispName=skuDisplayName(inv.sku_code,inv.sku_name);
     const stock=inv.latest_stock||0;
+    // ③ SKU別LT
+    const lt=skuLeadTime(jan);
     // 緊急: LT以内
-    if(dm!=null&&dm<=leadTimeMonths){
-      shortageAlerts.push({level:'danger',subtype:'over_lt',name:dispName,jan,dm,stock,monthly,lt:leadTimeMonths,
+    if(dm!=null&&dm<=lt){
+      shortageAlerts.push({level:'danger',subtype:'over_lt',name:dispName,jan,dm,stock,monthly,lt,
         urgency:`リードタイム超過 — 今週要対応`});
     // 警告: LT+buffer以内
-    } else if(dm!=null&&dm<=leadTimeMonths+_thBuffer){
-      shortageAlerts.push({level:'warn',subtype:'near_lt',name:dispName,jan,dm,stock,monthly,lt:leadTimeMonths,
-        urgency:`発注推奨 — ${Math.ceil(leadTimeMonths)}ヶ月以内`});
+    } else if(dm!=null&&dm<=lt+_thBuffer){
+      shortageAlerts.push({level:'warn',subtype:'near_lt',name:dispName,jan,dm,stock,monthly,lt,
+        urgency:`発注推奨 — LT(${lt.toFixed(1)}ヶ月)以内に`});
     // 注意: LT+buffer+1以内
-    } else if(dm!=null&&dm<=leadTimeMonths+_thBuffer+1){
-      shortageAlerts.push({level:'caution',subtype:'watch',name:dispName,jan,dm,stock,monthly,lt:leadTimeMonths,
-        urgency:`要監視 — ${Math.ceil(leadTimeMonths+_thBuffer)}ヶ月以内に発注`});
+    } else if(dm!=null&&dm<=lt+_thBuffer+1){
+      shortageAlerts.push({level:'caution',subtype:'watch',name:dispName,jan,dm,stock,monthly,lt,
+        urgency:`要監視 — LT+${_thBuffer.toFixed(1)}ヶ月以内に発注`});
     }
   });
   shortageAlerts.sort((a,b)=>((a.dm??99)-(b.dm??99)));
@@ -2583,6 +2615,11 @@ function renderAlerts(){
   const excessAlerts=[];
   invSkus.forEach(inv=>{
     const jan=String(inv.sku_code);
+    // ① マスタに存在するSKUのみアラート対象
+    const _mE=masterLookup(jan);
+    if(!_mE) return;
+    // 廃盤済み・廃版予定は過剰在庫タブに出さない
+    if(_mE.discontinued||_mE.discontinue_planned) return;
     const ss=SHIP_BY_JAN[jan]||null;
     let dm=null, monthly=0;
     if(ss&&ss.monthly_shipments){
@@ -2628,22 +2665,79 @@ function renderAlerts(){
   });
   accuracyAlerts.sort((a,b)=>b.err-a.err);
 
+  // ── 発注試算済みアラート構築 ────────────────
+  // orders.jsonの発注記録とshortageAlerts（元の全対象）を突き合わせ
+  // ── 発注試算済み判定: orders.jsonのSKU一致ベース ──────────
+  const orderedByJan={};
+  (DATA.orders.orders||[]).forEach(order=>{
+    (order.skus||[]).forEach(s=>{
+      const jan=String(s.jan||'');
+      if(!jan) return;
+      const cur=orderedByJan[jan], d=order.order_date||'';
+      if(!cur||(d>cur.orderDate)){
+        orderedByJan[jan]={jan,orderDate:d,product:order.product||'',orderId:order.order_id||''};
+      }
+    });
+  });
+  // orders.jsonに記録があるJANは「発注試算済み」タブへ仕訳
+  const shortageActive=shortageAlerts.filter(a=>!orderedByJan[a.jan]);
+  const shortageOrdered=shortageAlerts.filter(a=>!!orderedByJan[a.jan]);
+  const excessActive=excessAlerts.filter(a=>!orderedByJan[a.jan]);
+  const excessOrdered=excessAlerts.filter(a=>!!orderedByJan[a.jan]);
+  const orderedAlerts=[];
+  shortageOrdered.forEach(a=>{
+    const od=orderedByJan[a.jan];
+    orderedAlerts.push({...a,_origType:'shortage',orderDate:od.orderDate,orderId:od.orderId,orderProduct:od.product});
+  });
+  excessOrdered.forEach(a=>{
+    const od=orderedByJan[a.jan];
+    orderedAlerts.push({...a,_origType:'excess',orderDate:od.orderDate,orderId:od.orderId,orderProduct:od.product});
+  });
+  orderedAlerts.sort((a,b)=>(b.orderDate||'').localeCompare(a.orderDate||''));
+
+  // ── 廃版予定アラート構築 ──────────────────────────────────
+  const discontinuedAlerts=[];
+  invSkus.forEach(inv=>{
+    const jan=String(inv.sku_code);
+    const _mD=masterLookup(jan);
+    if(!_mD||!_mD.discontinue_planned||_mD.discontinued) return;
+    const ss=SHIP_BY_JAN[jan]||null;
+    let dm=null,monthly=0;
+    if(ss&&ss.monthly_shipments){
+      const mKeys=Object.keys(ss.monthly_shipments).sort();
+      const tobM=mKeys.filter(k=>(ss.monthly_shipments[k]?.tob||0)>0);
+      const tobR=tobM.length>=2?tobM.slice(1).slice(-3):tobM.slice(-3);
+      const tobAvg=tobR.length?tobR.reduce((a,k)=>a+(ss.monthly_shipments[k]?.tob||0),0)/tobR.length:0;
+      const ecR=mKeys.slice(-3);
+      const ecAvg=ecR.length?ecR.reduce((a,k)=>a+(ss.monthly_shipments[k]?.ec||0),0)/ecR.length:0;
+      monthly=tobAvg+ecAvg;
+      if(monthly>0) dm=(inv.latest_stock||0)/monthly;
+    }
+    const stock=inv.latest_stock||0, lt=skuLeadTime(jan);
+    const surplus=monthly>0?Math.round(stock-monthly*12):null;
+    const dlv=dm!=null&&dm<=lt?'danger':dm!=null&&dm<=lt+_thBuffer?'warn':'ok';
+    discontinuedAlerts.push({jan,name:skuDisplayName(inv.sku_code,inv.sku_name),dm,stock,monthly,lt,surplus,level:dlv});
+  });
+  discontinuedAlerts.sort((a,b)=>(a.dm??999)-(b.dm??999));
+
   // ── バッジ更新 ──────────────────────────────
-  const totalDanger=shortageAlerts.filter(a=>a.level==='danger').length
+  const totalDanger=shortageActive.filter(a=>a.level==='danger').length
     +accuracyAlerts.filter(a=>a.level==='danger').length;
-  const totalAll=shortageAlerts.length+excessAlerts.length+accuracyAlerts.length;
+  const totalAll=shortageActive.length+excessActive.length+accuracyAlerts.length;
   const badge=document.getElementById('alertBadge');
   if(badge){badge.textContent=totalAll;badge.style.display=totalAll?'inline':'none';}
 
   // タブバッジ
   const tb=s=>document.getElementById('alertTabBadge-'+s);
-  if(tb('shortage')) tb('shortage').textContent=shortageAlerts.length||'';
-  if(tb('excess'))   tb('excess').textContent=excessAlerts.length||'';
+  if(tb('shortage')) tb('shortage').textContent=shortageActive.length||'';
+  if(tb('excess'))   tb('excess').textContent=excessActive.length||'';
   if(tb('accuracy')) tb('accuracy').textContent=accuracyAlerts.length||'';
+  if(tb('ordered'))      tb('ordered').textContent=orderedAlerts.length||'';
+  if(tb('discontinued')) tb('discontinued').textContent=discontinuedAlerts.length||'';
 
   // ── KPIカード ───────────────────────────────
-  const dangerShortage=shortageAlerts.filter(a=>a.level==='danger').length;
-  const warnShortage=shortageAlerts.filter(a=>a.level==='warn').length;
+  const dangerShortage=shortageActive.filter(a=>a.level==='danger').length;
+  const warnShortage=shortageActive.filter(a=>a.level==='warn').length;
   // 予測精度スコア計算（accuracyAlerts以外 = 誤差20%以内のSKU数）
   const orderSkuTotal=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]).filter(os=>{
     const jan=String(os.jan||'');const ss=SHIP_BY_JAN[jan]||null;if(!ss) return false;
@@ -2655,26 +2749,31 @@ function renderAlerts(){
   document.getElementById('alertKpis').innerHTML=`
     <div class="kpi-card red"><div class="kpi-label">緊急（今週要対応）</div><div class="kpi-value">${dangerShortage}</div><div class="kpi-unit">件 — LT以内</div></div>
     <div class="kpi-card accent"><div class="kpi-label">欠品警告</div><div class="kpi-value">${warnShortage}</div><div class="kpi-unit">件 — LT+${_thBuffer}ヶ月</div></div>
-    <div class="kpi-card blue"><div class="kpi-label">過剰在庫リスク</div><div class="kpi-value">${excessAlerts.length}</div><div class="kpi-unit">件 — ${_thExcess}ヶ月超</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">過剰在庫リスク</div><div class="kpi-value">${excessActive.length}</div><div class="kpi-unit">件 — ${_thExcess}ヶ月超</div></div>
     <div class="kpi-card ${accuracyScore===null?'':'green'}"><div class="kpi-label">先月予測精度</div><div class="kpi-value">${accuracyScore!==null?accuracyScore+'%':'—'}</div><div class="kpi-unit">${accuracyScore!==null?`誤差${Math.round(THRESH*100)}%以内のSKU`:'試算データなし'}</div></div>`;
 
   // ── 今週のアクションバナー ──────────────────
   const actionItems=[];
-  shortageAlerts.filter(a=>a.level==='danger').forEach(a=>{
+  shortageActive.filter(a=>a.level==='danger').forEach(a=>{
     actionItems.push({cls:'danger',text:`【要発注】${escHtml(a.name)} — 消化月数 ${a.dm.toFixed(1)}ヶ月、今週中に発注手配`});
   });
-  shortageAlerts.filter(a=>a.level==='warn').forEach(a=>{
+  shortageActive.filter(a=>a.level==='warn').forEach(a=>{
     actionItems.push({cls:'warn',text:`【発注推奨】${escHtml(a.name)} — 消化月数 ${a.dm.toFixed(1)}ヶ月`});
   });
-  if(excessAlerts.length){
-    actionItems.push({cls:'excess',text:`【過剰在庫確認】${excessAlerts.length}SKUで消化12ヶ月超。EC特集等での消化促進を検討`});
+  if(excessActive.length){
+    actionItems.push({cls:'excess',text:`【過剰在庫確認】${excessActive.length}SKUで消化${_thExcess}ヶ月超。EC特集等での消化促進を検討`});
   }
+  if(orderedAlerts.length){
+    actionItems.push({cls:'ordered',text:`【発注試算済み】${orderedAlerts.length}SKUはorders.jsonに試算記録あり（振り返りタブで進捗確認）`});
+  }
+  const _discDanger=discontinuedAlerts.filter(a=>a.level==='danger').length;
+  if(_discDanger) actionItems.push({cls:'warn',text:`【廃版予定・在庫不足】${_discDanger}SKUが廃版予定なのに在庫がLT以内です`});
   const bannerEl=document.getElementById('alertActionBanner');
   if(bannerEl){
     if(!actionItems.length){
       bannerEl.innerHTML='<div style="background:rgba(126,212,160,.08);border:1px solid rgba(126,212,160,.2);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--accent4)">✓ 今週対応が必要なアラートはありません</div>';
     } else {
-      const dotStyle={danger:'background:var(--accent3)',warn:'background:var(--accent)',excess:'background:var(--accent2)'};
+      const dotStyle={danger:'background:var(--accent3)',warn:'background:var(--accent)',excess:'background:var(--accent2)',ordered:'background:var(--accent4)'};
       bannerEl.innerHTML=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px">
         <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">今週のアクション</div>
         <div style="display:flex;flex-direction:column;gap:7px">
@@ -2730,6 +2829,7 @@ function renderAlerts(){
         <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
           ${dmBar(a.dm,'shortage')}
           ${a.jan?`<button onclick="jumpToCalcFromAlert('${a.jan}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(200,169,110,.4);border-radius:var(--radius);background:rgba(200,169,110,.08);color:var(--accent);cursor:pointer;white-space:nowrap" title="この商品を発注試算ツールに追加">+ 試算へ</button>`:''}
+          ${a.jan?`<button onclick="dismissAlert('${a.jan}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(126,212,160,.4);border-radius:var(--radius);background:rgba(126,212,160,.06);color:var(--accent4);cursor:pointer;white-space:nowrap" title="発注試算済みとしてマーク">✓ 試算済みへ</button>`:''}
         </div>
       </div>`;
     }
@@ -2750,6 +2850,7 @@ function renderAlerts(){
         <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
           ${dmBar(a.dm,'excess')}
           ${a.jan?`<button onclick="jumpToCalcFromAlert('${a.jan}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(126,184,212,.4);border-radius:var(--radius);background:rgba(126,184,212,.08);color:var(--accent2);cursor:pointer;white-space:nowrap" title="在庫推移を発注試算で確認">+ 試算へ</button>`:''}
+          ${a.jan?`<button onclick="dismissAlert('${a.jan}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(126,212,160,.4);border-radius:var(--radius);background:rgba(126,212,160,.06);color:var(--accent4);cursor:pointer;white-space:nowrap" title="対応済みとしてマーク">✓ 対応済みへ</button>`:''}
         </div>
       </div>`;
     }
@@ -2779,14 +2880,14 @@ function renderAlerts(){
 
   // ── 欠品タブ描画 ────────────────────────────
   function renderShortagePane(){
-    if(!shortageAlerts.length){
+    if(!shortageActive.length){
       return '<div style="color:var(--text3);font-size:13px;text-align:center;padding:32px">欠品リスクのあるSKUはありません ✓</div>';
     }
     let h='';
     const levels=['danger','warn','caution'];
-    const levelHeadings={danger:'緊急 — 今週要対応（LT以内）',warn:'警告 — 発注推奨（LT+1ヶ月以内）',caution:'要監視（LT+2ヶ月以内）'};
+    const levelHeadings={danger:'緊急 — 今週要対応（LT以内）',warn:'警告 — 発注推奨',caution:'要監視'};
     levels.forEach(lv=>{
-      const grp=shortageAlerts.filter(a=>a.level===lv);
+      const grp=shortageActive.filter(a=>a.level===lv);
       if(!grp.length) return;
       h+=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:${lv==='danger'?'var(--accent3)':lv==='warn'?'var(--accent)':'var(--text3)'};margin:${h?'20px':0} 0 8px;text-transform:uppercase">${levelHeadings[lv]} (${grp.length}件)</div>`;
       grp.forEach(a=>{ h+=alertCard(a,'shortage'); });
@@ -2796,11 +2897,11 @@ function renderAlerts(){
 
   // ── 過剰在庫タブ描画 ───────────────────────
   function renderExcessPane(){
-    if(!excessAlerts.length){
+    if(!excessActive.length){
       return '<div style="color:var(--text3);font-size:13px;text-align:center;padding:32px">過剰在庫リスクのあるSKUはありません ✓</div>';
     }
-    let h=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3);margin-bottom:8px;text-transform:uppercase">消化月数 ${_thExcess}ヶ月超 — 消化促進検討 (${excessAlerts.length}件)</div>`;
-    excessAlerts.forEach(a=>{ h+=alertCard(a,'excess'); });
+    let h=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3);margin-bottom:8px;text-transform:uppercase">消化月数 ${_thExcess}ヶ月超 — 消化促進検討 (${excessActive.length}件)</div>`;
+    excessActive.forEach(a=>{ h+=alertCard(a,'excess'); });
     return h;
   }
 
@@ -2814,16 +2915,114 @@ function renderAlerts(){
     return h;
   }
 
+  // ── 発注試算済みタブ描画 ─────────────────────
+  function renderOrderedPane(){
+    if(!orderedAlerts.length){
+      return '<div style="text-align:center;padding:32px">'
+        +'<div style="color:var(--text3);font-size:13px">発注試算済みのSKUはありません</div>'
+        +'<div style="font-size:12px;color:var(--text3);margin-top:8px">orders.jsonに発注記録があるSKUが自動的にここに表示されます</div>'
+        +'</div>';
+    }
+    let h=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3);margin-bottom:12px;text-transform:uppercase">発注試算済み（orders.json記録あり）— 振り返りページで進捗確認 (${orderedAlerts.length}件)</div>`;
+    orderedAlerts.forEach(a=>{
+      const typeLabel=a._origType==='shortage'?'欠品リスク（対応済）':'過剰在庫（対応済）';
+      const typeColor=a._origType==='shortage'?'rgba(200,169,110,.15)':'rgba(126,184,212,.15)';
+      const typeTextColor=a._origType==='shortage'?'var(--accent)':'var(--accent2)';
+      const typeBorder=a._origType==='shortage'?'rgba(200,169,110,.3)':'rgba(126,184,212,.3)';
+      const hasOrder=!!a.orderId;
+      h+=`<div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent4);border-radius:0 var(--radius) var(--radius) 0;padding:13px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+            <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(126,212,160,.15);color:var(--accent4);border:1px solid rgba(126,212,160,.3)">試算済み</span>
+            <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:${typeColor};color:${typeTextColor};border:1px solid ${typeBorder}">${typeLabel}</span>
+            ${hasOrder?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(a.orderProduct)} / 発注日: ${escHtml(a.orderDate)}</span>`:''}
+          </div>
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.name)}</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:var(--text2)">${a.dm.toFixed(1)}ヶ月</span></span>
+            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
+            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">月平均出荷 </span><span style="color:var(--text2)">${fmt(Math.round(a.monthly))}個</span></span>
+          </div>
+        </div>
+        <div style="flex-shrink:0">
+          ${hasOrder?`<button onclick="jumpToReviewFromAlert('${escHtml(a.orderId)}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(126,212,160,.4);border-radius:var(--radius);background:rgba(126,212,160,.08);color:var(--accent4);cursor:pointer">振り返りへ ↗</button>`:''}
+        </div>
+      </div>`;
+    });
+    return h;
+  }
+
   // タブペインへ書き込み
   const sp=document.getElementById('alertPane-shortage');
   const ep=document.getElementById('alertPane-excess');
   const ap=document.getElementById('alertPane-accuracy');
+  const op=document.getElementById('alertPane-ordered');
+  const xp=document.getElementById('alertPane-discontinued');
+
+  // ── 廃版予定タブ描画 ──────────────────────────────────────
+  function renderDiscontinuedPane(){
+    if(!discontinuedAlerts.length){
+      return '<div style="text-align:center;padding:32px">'
+        +'<div style="color:var(--text3);font-size:13px">廃版予定のSKUはありません</div>'
+        +'<div style="font-size:12px;color:var(--text3);margin-top:8px">masterデータに '
+        +'<span style="font-family:var(--font-mono);background:var(--surface2);padding:1px 6px;border-radius:3px">discontinue_planned: true</span>'
+        +' を設定すると表示されます</div></div>';
+    }
+    let h=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--accent5);margin-bottom:12px;text-transform:uppercase">廃版予定 — 在庫消化状況 (${discontinuedAlerts.length}件)</div>`;
+    const grpD=discontinuedAlerts.filter(a=>a.level==='danger');
+    const grpW=discontinuedAlerts.filter(a=>a.level==='warn');
+    const grpO=discontinuedAlerts.filter(a=>a.level==='ok');
+    function rdg(grp,label,color){
+      if(!grp.length) return '';
+      let g=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:${color};margin:14px 0 8px;text-transform:uppercase">${label} (${grp.length}件)</div>`;
+      grp.forEach(a=>{
+        const ds=a.dm!=null?a.dm.toFixed(1)+'ヶ月':'—';
+        const pct=a.dm!=null?Math.min(100,Math.round(a.dm/12*100)):0;
+        g+=`<div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent5);border-radius:0 var(--radius) var(--radius) 0;padding:13px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px">
+          <div style="flex:1;min-width:0">
+            <div style="margin-bottom:4px"><span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(180,158,232,.15);color:var(--accent5);border:1px solid rgba(180,158,232,.3)">廃版予定</span></div>
+            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.name)}</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:var(--text2);font-weight:500">${ds}</span></span>
+              <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
+              <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">月平均出荷 </span><span style="color:var(--text2)">${fmt(Math.round(a.monthly))}個</span></span>
+              ${a.surplus!==null&&a.surplus>0?`<span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">12ヶ月超過分 </span><span style="color:var(--accent2)">+${fmt(a.surplus)}個</span></span>`:''}
+            </div>
+          </div>
+          <div style="flex-shrink:0;width:80px">
+            <div style="background:var(--surface2);border-radius:2px;height:6px;overflow:hidden;margin-bottom:3px"><div style="width:${pct}%;height:100%;background:var(--accent5);border-radius:2px"></div></div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);text-align:right">${ds}</div>
+          </div>
+        </div>`;
+      });
+      return g;
+    }
+    h+=rdg(grpD,'在庫不足リスク（LT以内）','var(--accent3)');
+    h+=rdg(grpW,'要注意（LT+バッファ以内）','var(--accent)');
+    h+=rdg(grpO,'適正 / 過剰在庫','var(--text3)');
+    return h;
+  }
+
   if(sp) sp.innerHTML=renderShortagePane();
   if(ep) ep.innerHTML=renderExcessPane();
   if(ap) ap.innerHTML=renderAccuracyPane();
+  if(op) op.innerHTML=renderOrderedPane();
+  if(xp) xp.innerHTML=renderDiscontinuedPane();
 
   // 現在のタブを維持
   switchAlertTab(_alertCurrentTab, document.getElementById('alertTab-'+_alertCurrentTab));
+}
+
+// (試算済みマークはorders.json連動方式に変更済み)
+
+
+// アラートの発注試算済みタブから振り返りページへジャンプ
+function jumpToReviewFromAlert(orderId){
+  if(!orderId) return;
+  showView('review',document.querySelector('.nav-item[onclick*="review"]'));
+  setTimeout(()=>{
+    selectReviewOrder(orderId);
+  },200);
 }
 
 // アラートから発注試算ツールへジャンプ
