@@ -2462,12 +2462,11 @@ async function exportOrderAsExcel(orderId){
       qty:  String(p.confirmed_order||''), note: p.note||'',
     }));
 
-    const ret=await buildWorkbook(d);
-    if(!ret){showNotif('ワークブック生成失敗','error');return;}
-
     const isSimple=order.mode==='simple';
     const dateStr=(order.order_date||'').replace(/-/g,'').slice(2,8);
     const newSheetName=(dateStr+'_'+(order.product||'発注試算')).slice(0,31);
+    const ret=await buildWorkbook(d, newSheetName);
+    if(!ret){showNotif('ワークブック生成失敗','error');return;}
 
     const buf=await ret.generateAsync({type:'arraybuffer'});
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
@@ -4594,7 +4593,7 @@ function recentShipForCalc(jan,channel,n,baseMonth=null){
   return Math.round(total/months.length);
 }
 
-async function buildWorkbook(d){
+async function buildWorkbook(d, overrideSheetName){
   const isSimple = d.mode === 'simple';
 
   // ── JSZipでテンプレートZIPを直接展開（スタイルを一切変更しない）──
@@ -4615,11 +4614,12 @@ async function buildWorkbook(d){
   wbXml = wbXml.replace(/<sheet [^>]*r:id="rId1"[^/]*\/>/,'');
   wbXml = wbXml.replace(/<sheet [^>]*r:id="rId2"[^/]*\/>/,'');
   // 使用するシートだけ残す
-  const sheetName  = isSimple ? '発注試算テンプレート（簡易）' : '発注試算テンプレート';
+  const defaultSheetName = isSimple ? '発注試算テンプレート（簡易）' : '発注試算テンプレート';
+  const sheetName  = (overrideSheetName||defaultSheetName).slice(0,31);
   const sheetId    = isSimple ? '2' : '1';
   const sheetRid   = isSimple ? 'rId2' : 'rId1';
   const sheetFile  = isSimple ? '/xl/worksheets/sheet2.xml' : '/xl/worksheets/sheet1.xml';
-  const printArea  = isSimple ? "'発注試算テンプレート（簡易）'!$A$1:$M$235" : "'発注試算テンプレート'!$A$1:$M$336";
+  const printArea  = isSimple ? `'${sheetName}'!$A$1:$M$235` : `'${sheetName}'!$A$1:$M$336`;
   wbXml = wbXml.replace(
     /<sheets>[\s\S]*?<\/sheets>/,
     `<sheets><sheet xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" name="${sheetName}" sheetId="${sheetId}" state="visible" r:id="${sheetRid}"/></sheets>`
@@ -4690,8 +4690,21 @@ async function buildWorkbook(d){
     });
   }
 
+  // セルを空（値なし・数式なし）にするヘルパー（月別傾斜の空欄対応）
+  function setCellEmpty(xml, ref) {
+    const re = new RegExp(`<c r="${ref}"((?:\\s+[a-zA-Z:]+="[^"]*")*?)\\s*/?>(?:.*?)<\\/c>`, 'gs');
+    return xml.replace(re, (match, attrs) => {
+      const sMatch = attrs.match(/\bs="(\d+)"/);
+      const sAttr = sMatch ? ` s="${sMatch[1]}"` : '';
+      return `<c r="${ref}"${sAttr}/>`;
+    });
+  }
+
   // ── ユーティリティ ──
-  const MONTH_COLS = ['D','E','F','G','H','I','J','K'];
+  // 通常版: D〜K列が月別入力。簡易版: D列=初回納品数、E〜L列が月別入力
+  const MONTH_COLS_NORMAL = ['D','E','F','G','H','I','J','K'];
+  const MONTH_COLS_SIMPLE = ['E','F','G','H','I','J','K','L'];
+  const MONTH_COLS = isSimple ? MONTH_COLS_SIMPLE : MONTH_COLS_NORMAL;
   const base = d.base_month || d.order_date?.slice(0,7) || '';
   function addM(ym,n){ if(!ym)return''; const[y,m]=ym.split('-').map(Number); const dt=new Date(y,m-1+n,1); return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0'); }
   function mLabel2(ym){ if(!ym)return''; return parseInt(ym.split('-')[1])+'月'; }
@@ -4748,21 +4761,43 @@ async function buildWorkbook(d){
   });
 
   // ── 販路×月サマリー ──
-  // ③ toB合計（行42〜49）のD〜K列: テンプレート数式を削除してサマリー試算値を直接書き込む
-  // monthly_summaryはcollectCalcData()済みのd.skusから取得
   d.skus.forEach((s,i)=>{
     if(i>=8) return;
     const jan = s.jan||'';
     const tobR = 42+i;
     sheetXml = setCellNum(sheetXml, 'B'+tobR, recentShipForCalc(jan,'tob',1,_bm));
     sheetXml = setCellNum(sheetXml, 'C'+tobR, recentShipForCalc(jan,'tob',3,_bm));
-    // ③ D〜K列: テンプレート数式を削除し、サマリー試算値（初回納品数込み）を直接書き込む
-    tobMs.forEach((m,mi)=>{
-      if(mi<8){
-        const v=s.monthly_summary?.tob?.[m]||0;
-        sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+tobR, v);
-      }
-    });
+    if(!isSimple){
+      // ③ 通常版: D〜K列に試算値（初回納品数込み）を直接書き込む（テンプレート数式を上書き）
+      MONTH_COLS_NORMAL.forEach((col,mi)=>{
+        const v=s.monthly_summary?.tob?.[tobMs[mi]]||0;
+        sheetXml = setCellNum(sheetXml, col+tobR, v);
+      });
+      // 通常版: M列に新規内訳を書き込む
+      const newQty=(d.retailers||[]).filter(r=>r.status==='新規'||r.isNew).reduce((a,r)=>{
+        const initDel=r.initial_delivery||r.initialDelivery||0;
+        const ps=s.posPs||0;
+        let ret=tobMs.reduce((b,m)=>{
+          const mbs=Object.keys(r.monthTilts||{}).sort().filter(k=>k<=m);
+          if(mbs.length===0) return b;
+          const allBlank=mbs.every(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined||r.monthTilts[k]===null);
+          if(allBlank) return b;
+          const cumTilt=mbs.reduce((acc,k)=>{const t=parseFloat(r.monthTilts[k]);return isNaN(t)?acc:acc*t;},1);
+          return b+Math.round(ps*(r.posTilt||1)*cumTilt*(r.stores||0));
+        },0);
+        ret+=initDel;
+        return a+ret;
+      },0);
+      if(newQty>0) sheetXml = setCellNum(sheetXml, 'M'+tobR, newQty);
+    } else {
+      // ③ 簡易版: SECTION CのD列=初回納品数のため、行42〜49のD〜K列の参照数式が
+      //    初回納品数を月別数量と混同する。そのためD〜K列をmonthly_summary.tobで直接上書きする。
+      //    簡易版のmonthly_summary.tobはSECTION Cの全小売合計（初回納品数込み）を反映している。
+      MONTH_COLS_NORMAL.forEach((col,mi)=>{
+        const v=s.monthly_summary?.tob?.[tobMs[mi]]||0;
+        sheetXml = setCellNum(sheetXml, col+tobR, v);
+      });
+    }
     const ecR = 51+i;
     sheetXml = setCellNum(sheetXml, 'B'+ecR, recentShipForCalc(jan,'ec',1,_bm));
     sheetXml = setCellNum(sheetXml, 'C'+ecR, recentShipForCalc(jan,'ec',3,_bm));
@@ -4791,9 +4826,13 @@ async function buildWorkbook(d){
       tobMs.forEach((m,mi)=>{
         if(mi<8){
           const tv=r.monthTilts?.[m];
-          // 空欄（未入力）の場合は0を書き込む（計算値を出さない）
-          const val=(tv===''||tv===undefined||tv===null)?0:parseFloat(tv)||0;
-          sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+(h+2), val);
+          const isEmpty=(tv===''||tv===undefined||tv===null);
+          if(isEmpty){
+            // 空欄の場合は空セルにする（テンプレートのデフォルト値0.7を消す）
+            sheetXml = setCellEmpty(sheetXml, MONTH_COLS_NORMAL[mi]+(h+2));
+          } else {
+            sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+(h+2), parseFloat(tv)||0);
+          }
         }
       });
       // ① 初回納品数をC列（SKU行）に書き込む: h+4+si行のC列
@@ -4862,8 +4901,16 @@ async function buildWorkbook(d){
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(s.jan,'tob',1,_bm));
         sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(s.jan,'tob',3,_bm));
-        // ② D〜K列に月別数量を書き込む（初回納品数はmonthly_summary.tobに加算済み）
-        tobMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+row, s.monthly_summary?.tob?.[m]||0); });
+        // ② D列=初回納品数（初回納品数込みの月別値はE〜Lに書く）
+        // 初回納品数は各ブロックのsimToBInitDeliveryから取得（d経由では来ないためwindow参照）
+        const initDel=simInitDels[bi]||0;
+        if(initDel>0) sheetXml = setCellNum(sheetXml, 'D'+row, initDel);
+        // ② E〜L列: 8ヶ月分の月別数量（MONTH_COLS_SIMPLEはE〜L）
+        // 初回納品数はmonthly_summary.tobに加算済みなので、D列の初回納品数と月別数量は分離できないため
+        // E列（最初の月）= monthly_summary.tob[月0]の値（これに初回納品数が含まれる）
+        tobMs.forEach((m,mi)=>{
+          if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_SIMPLE[mi]+row, s.monthly_summary?.tob?.[m]||0);
+        });
       });
     });
     // ── 簡易試算: SECTION D EC・海外 ──
@@ -4910,12 +4957,11 @@ async function exportCalcDirect(){
   if(!d.product){showNotif('商品名を入力してください','error');return;}
   showNotif('Excelを生成中...','success');
   try{
-    const ret=await buildWorkbook(d);
-    if(!ret){showNotif('ワークブック生成失敗','error');return;}
-
     const calcDateVal=document.getElementById('ci_calcDate')?.value||d.order_date||'';
     const dateStr=calcDateVal?calcDateVal.replace(/-/g,'').slice(2,8):'';
     const newSheetName=(dateStr+'_'+(d.product||'発注試算')).slice(0,31);
+    const ret=await buildWorkbook(d, newSheetName);
+    if(!ret){showNotif('ワークブック生成失敗','error');return;}
 
     const buf=await ret.generateAsync({type:'arraybuffer'});
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
@@ -5159,10 +5205,10 @@ function reEditDraft(id){
 async function exportOneDraft(id){
   const d=loadDrafts().find(x=>x.id===id);if(!d)return;
   try{
-    const ret=await buildWorkbook(d);if(!ret){showNotif('ワークブック生成失敗','error');return;}
     const calcDateVal=d.calc_date||d.order_date||'';
     const dateStr=calcDateVal?calcDateVal.replace(/-/g,'').slice(2,8):'';
     const newSheetName=(dateStr+'_'+(d.product||'発注試算')).slice(0,31);
+    const ret=await buildWorkbook(d, newSheetName);if(!ret){showNotif('ワークブック生成失敗','error');return;}
     const buf=await ret.generateAsync({type:'arraybuffer'});
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
@@ -5185,7 +5231,8 @@ async function buildMergedWorkbook(drafts){
   // 各ドラフトを個別Excelとして生成してまとめZIPに格納
   const outerZip = new JSZip();
   for(let i=0;i<drafts.length;i++){
-    const ret = await buildWorkbook(drafts[i]);
+    const sheetN=makeSheetName(drafts[i]);
+    const ret = await buildWorkbook(drafts[i], sheetN);
     const buf = await ret.generateAsync({type:'arraybuffer'});
     const fname = makeSheetName(drafts[i])+'.xlsx';
     outerZip.file(fname, buf);
@@ -5217,10 +5264,10 @@ async function exportSelectedDrafts(){
   for(const id of ids){
     const d=loadDrafts().find(x=>x.id===id);if(!d)continue;
     try{
-      const ret=await buildWorkbook(d);if(!ret){showNotif('ワークブック生成失敗','error');return;}
       const calcDateVal=d.calc_date||d.order_date||'';
       const dateStr=calcDateVal?calcDateVal.replace(/-/g,'').slice(2,8):'';
       const newSheetName=(dateStr+'_'+(d.product||'発注試算')).slice(0,31);
+      const ret=await buildWorkbook(d, newSheetName);if(!ret){showNotif('ワークブック生成失敗','error');return;}
       const buf=await ret.generateAsync({type:'arraybuffer'});
       const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       const url=URL.createObjectURL(blob);const a=document.createElement('a');
