@@ -1606,7 +1606,8 @@
       "product_name": "AZAリペアクリーム アゼライン酸10%",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "AZAリペアクリーム アゼライン酸10%"
+      "display_name": "AZAリペアクリーム アゼライン酸10%",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501172139",
@@ -1615,7 +1616,8 @@
       "product_name": "Cセラム ビタミンC誘導体6%",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "Cセラム ビタミンC誘導体6%"
+      "display_name": "Cセラム ビタミンC誘導体6%",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501173235",
@@ -1624,7 +1626,8 @@
       "product_name": "トーンアップUVプロテクション ビタミンC誘導体2％",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "トーンアップUVプロテクション ビタミンC誘導体2％"
+      "display_name": "トーンアップUVプロテクション ビタミンC誘導体2％",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501172122",
@@ -1633,7 +1636,8 @@
       "product_name": "ピールケアセラム 乳酸6%",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "ピールケアセラム 乳酸6%"
+      "display_name": "ピールケアセラム 乳酸6%",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174539",
@@ -1642,7 +1646,8 @@
       "product_name": "フリーズドライエッセンスマスク ナイアシンアミド15%＋VC 1枚入",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "フリーズドライエッセンスマスク ナイアシンアミド15%＋VC 1枚入"
+      "display_name": "フリーズドライエッセンスマスク ナイアシンアミド15%＋VC 1枚入",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174522",
@@ -1651,7 +1656,8 @@
       "product_name": "フリーズドライエッセンスマスク ナイアシンアミド15%＋VC 4枚入",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "フリーズドライエッセンスマスク ナイアシンアミド15%＋VC 4枚入"
+      "display_name": "フリーズドライエッセンスマスク ナイアシンアミド15%＋VC 4枚入",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501173204",
@@ -1660,7 +1666,8 @@
       "product_name": "フリーズドライエッセンスマスク ナイアシンアミド22% 1枚入",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "フリーズドライエッセンスマスク ナイアシンアミド22% 1枚入"
+      "display_name": "フリーズドライエッセンスマスク ナイアシンアミド22% 1枚入",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501173198",
@@ -1669,7 +1676,8 @@
       "product_name": "フリーズドライエッセンスマスク ナイアシンアミド22% 4枚入",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "フリーズドライエッセンスマスク ナイアシンアミド22% 4枚入"
+      "display_name": "フリーズドライエッセンスマスク ナイアシンアミド22% 4枚入",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501172757",
@@ -1678,7 +1686,8 @@
       "product_name": "レチセラム HPR0.1%",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "レチセラム HPR0.1%"
+      "display_name": "レチセラム HPR0.1%",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501174720",
@@ -1687,7 +1696,8 @@
       "product_name": "炭酸ミルク泡パックC 18000",
       "sku_name": "",
       "status": "最新仕様",
-      "display_name": "炭酸ミルク泡パックC 18000"
+      "display_name": "炭酸ミルク泡パックC 18000",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171828",
@@ -2194,7 +2204,8 @@
       "product_name": "ぷくぷく涙袋パレット",
       "sku_name": "N01 シュガーベージュ",
       "status": "最新仕様",
-      "display_name": "ぷくぷく涙袋パレット N01 シュガーベージュ"
+      "display_name": "ぷくぷく涙袋パレット N01 シュガーベージュ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179015",
@@ -2203,7 +2214,8 @@
       "product_name": "ぷくぷく涙袋パレット",
       "sku_name": "N02 ストロベリーピンク",
       "status": "最新仕様",
-      "display_name": "ぷくぷく涙袋パレット N02 ストロベリーピンク"
+      "display_name": "ぷくぷく涙袋パレット N02 ストロベリーピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179022",
@@ -2212,7 +2224,8 @@
       "product_name": "ぷくぷく涙袋パレット",
       "sku_name": "N03 スイートラベンダー",
       "status": "最新仕様",
-      "display_name": "ぷくぷく涙袋パレット N03 スイートラベンダー"
+      "display_name": "ぷくぷく涙袋パレット N03 スイートラベンダー",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179848",
@@ -2607,7 +2620,8 @@
       "product_name": "シェイクドロップチーク",
       "sku_name": "N01 ピーチスフレ",
       "status": "最新仕様",
-      "display_name": "シェイクドロップチーク N01 ピーチスフレ"
+      "display_name": "シェイクドロップチーク N01 ピーチスフレ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179046",
@@ -2616,7 +2630,8 @@
       "product_name": "シェイクドロップチーク",
       "sku_name": "N02 モカムース",
       "status": "最新仕様",
-      "display_name": "シェイクドロップチーク N02 モカムース"
+      "display_name": "シェイクドロップチーク N02 モカムース",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179053",
@@ -2625,7 +2640,8 @@
       "product_name": "シェイクドロップチーク",
       "sku_name": "N03 フィグラテ",
       "status": "最新仕様",
-      "display_name": "シェイクドロップチーク N03 フィグラテ"
+      "display_name": "シェイクドロップチーク N03 フィグラテ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179060",
@@ -2634,7 +2650,8 @@
       "product_name": "シェイクドロップチーク",
       "sku_name": "N04 ブルーベリーミルク",
       "status": "最新仕様",
-      "display_name": "シェイクドロップチーク N04 ブルーベリーミルク"
+      "display_name": "シェイクドロップチーク N04 ブルーベリーミルク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501176588",
@@ -2980,7 +2997,8 @@
       "product_name": "チート顔コントゥアパレット",
       "sku_name": "N03 ふっくらピンク",
       "status": "最新仕様",
-      "display_name": "チート顔コントゥアパレット N03 ふっくらピンク"
+      "display_name": "チート顔コントゥアパレット N03 ふっくらピンク",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179084",
@@ -2989,7 +3007,8 @@
       "product_name": "チート顔コントゥアパレット",
       "sku_name": "N04 しのばせベージュ",
       "status": "最新仕様",
-      "display_name": "チート顔コントゥアパレット N04 しのばせベージュ"
+      "display_name": "チート顔コントゥアパレット N04 しのばせベージュ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501171620",
@@ -3365,7 +3384,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "M02 ラグドール / ディズニー マリー",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット M02 ラグドール / ディズニー マリー"
+      "display_name": "マイキティアイパレット M02 ラグドール / ディズニー マリー",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501178148",
@@ -3374,7 +3394,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "M05 サイベリアン / ディズニー マリー",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット M05 サイベリアン / ディズニー マリー"
+      "display_name": "マイキティアイパレット M05 サイベリアン / ディズニー マリー",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501178155",
@@ -3383,7 +3404,8 @@
       "product_name": "マイキティアイパレット",
       "sku_name": "M08 お姫様キャット / ディズニー マリー",
       "status": "最新仕様",
-      "display_name": "マイキティアイパレット M08 お姫様キャット / ディズニー マリー"
+      "display_name": "マイキティアイパレット M08 お姫様キャット / ディズニー マリー",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805230049",
@@ -3530,7 +3552,8 @@
       "product_name": "ミャオパウズアイシャドウパレット",
       "sku_name": "M03 ツンデレ / ディズニー マリー",
       "status": "最新仕様",
-      "display_name": "ミャオパウズアイシャドウパレット M03 ツンデレ / ディズニー マリー"
+      "display_name": "ミャオパウズアイシャドウパレット M03 ツンデレ / ディズニー マリー",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501178179",
@@ -3539,7 +3562,8 @@
       "product_name": "ミャオパウズアイシャドウパレット",
       "sku_name": "M05 アイドル / ディズニー マリー",
       "status": "最新仕様",
-      "display_name": "ミャオパウズアイシャドウパレット M05 アイドル / ディズニー マリー"
+      "display_name": "ミャオパウズアイシャドウパレット M05 アイドル / ディズニー マリー",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501178186",
@@ -3548,7 +3572,8 @@
       "product_name": "ミャオパウズアイシャドウパレット",
       "sku_name": "M08 おしゃれ / ディズニー マリー",
       "status": "最新仕様",
-      "display_name": "ミャオパウズアイシャドウパレット M08 おしゃれ / ディズニー マリー"
+      "display_name": "ミャオパウズアイシャドウパレット M08 おしゃれ / ディズニー マリー",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501172764",
@@ -5252,7 +5277,8 @@
       "sku_name": "いぬ",
       "ip": "いらすとや/插画小人",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ いぬ"
+      "display_name": "CharaPOP！ スマホグリップ いぬ",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240260",
@@ -5262,7 +5288,8 @@
       "sku_name": "うさぎ",
       "ip": "いらすとや/插画小人",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ うさぎ"
+      "display_name": "CharaPOP！ スマホグリップ うさぎ",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240246",
@@ -5272,7 +5299,8 @@
       "sku_name": "くま",
       "ip": "いらすとや/插画小人",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ くま"
+      "display_name": "CharaPOP！ スマホグリップ くま",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240253",
@@ -5282,7 +5310,8 @@
       "sku_name": "ねこ",
       "ip": "いらすとや/插画小人",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ ねこ"
+      "display_name": "CharaPOP！ スマホグリップ ねこ",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240383",
@@ -5292,7 +5321,8 @@
       "sku_name": "シュタルク",
       "ip": "葬送のフリーレン/葬送的芙莉莲",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ シュタルク"
+      "display_name": "CharaPOP！ スマホグリップ シュタルク",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240369",
@@ -5302,7 +5332,8 @@
       "sku_name": "ヒンメル",
       "ip": "葬送のフリーレン/葬送的芙莉莲",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ ヒンメル"
+      "display_name": "CharaPOP！ スマホグリップ ヒンメル",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240376",
@@ -5312,7 +5343,8 @@
       "sku_name": "フェルン",
       "ip": "葬送のフリーレン/葬送的芙莉莲",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ フェルン"
+      "display_name": "CharaPOP！ スマホグリップ フェルン",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240352",
@@ -5322,7 +5354,8 @@
       "sku_name": "フリーレン",
       "ip": "葬送のフリーレン/葬送的芙莉莲",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ フリーレン"
+      "display_name": "CharaPOP！ スマホグリップ フリーレン",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240321",
@@ -5332,7 +5365,8 @@
       "sku_name": "亜白ミナ",
       "ip": "怪獣8号/怪兽8号",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 亜白ミナ"
+      "display_name": "CharaPOP！ スマホグリップ 亜白ミナ",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240338",
@@ -5342,7 +5376,8 @@
       "sku_name": "保科宗四郎",
       "ip": "怪獣8号/怪兽8号",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 保科宗四郎"
+      "display_name": "CharaPOP！ スマホグリップ 保科宗四郎",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240192",
@@ -5352,7 +5387,8 @@
       "sku_name": "凪 誠士郎",
       "ip": "ブルーロック/蓝色禁区",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 凪 誠士郎"
+      "display_name": "CharaPOP！ スマホグリップ 凪 誠士郎",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240314",
@@ -5362,7 +5398,8 @@
       "sku_name": "四ノ宮キコル",
       "ip": "怪獣8号/怪兽8号",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 四ノ宮キコル"
+      "display_name": "CharaPOP！ スマホグリップ 四ノ宮キコル",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240307",
@@ -5372,7 +5409,8 @@
       "sku_name": "市川レノ",
       "ip": "怪獣8号/怪兽8号",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 市川レノ"
+      "display_name": "CharaPOP！ スマホグリップ 市川レノ",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240291",
@@ -5382,7 +5420,8 @@
       "sku_name": "日比野カフカ",
       "ip": "怪獣8号/怪兽8号",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 日比野カフカ"
+      "display_name": "CharaPOP！ スマホグリップ 日比野カフカ",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240185",
@@ -5392,7 +5431,8 @@
       "sku_name": "潔 世一",
       "ip": "ブルーロック/蓝色禁区",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 潔 世一"
+      "display_name": "CharaPOP！ スマホグリップ 潔 世一",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240208",
@@ -5402,7 +5442,8 @@
       "sku_name": "糸師 凛",
       "ip": "ブルーロック/蓝色禁区",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 糸師 凛"
+      "display_name": "CharaPOP！ スマホグリップ 糸師 凛",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240215",
@@ -5412,7 +5453,8 @@
       "sku_name": "蜂楽 廻",
       "ip": "ブルーロック/蓝色禁区",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 蜂楽 廻"
+      "display_name": "CharaPOP！ スマホグリップ 蜂楽 廻",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240345",
@@ -5422,7 +5464,8 @@
       "sku_name": "鳴海弦",
       "ip": "怪獣8号/怪兽8号",
       "status": "",
-      "display_name": "CharaPOP！ スマホグリップ 鳴海弦"
+      "display_name": "CharaPOP！ スマホグリップ 鳴海弦",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805240949",

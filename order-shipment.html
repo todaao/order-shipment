@@ -246,9 +246,9 @@ textarea:focus{border-color:var(--accent);}
   <div class="nav-section">
     <div class="nav-label">Views</div>
     <div class="nav-item" onclick="showView('review',this)"><span class="nav-icon">🔍</span> 発注試算振り返り</div>
-    <div class="nav-item active" onclick="showView('shipments',this)"><span class="nav-icon">📦</span> 出荷実績</div>
+    <div class="nav-item" onclick="showView('shipments',this)"><span class="nav-icon">📦</span> 出荷実績</div>
     <div class="nav-item" onclick="showView('inventory',this)"><span class="nav-icon">📊</span> 在庫推移</div>
-    <div class="nav-item" onclick="showView('alerts',this)"><span class="nav-icon">🚨</span> アラート <span id="alertBadge" style="display:none;background:var(--accent3);color:#fff;font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:8px;margin-left:auto"></span></div>
+    <div class="nav-item active" onclick="showView('alerts',this)"><span class="nav-icon">🚨</span> アラート <span id="alertBadge" style="display:none;background:var(--accent3);color:#fff;font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:8px;margin-left:auto"></span></div>
   </div>
   <div class="nav-section">
     <div class="nav-label">Tools</div>
@@ -465,18 +465,18 @@ textarea:focus{border-color:var(--accent);}
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
         <div>
-          <div class="form-label">デフォルトLT <span style="font-family:var(--font-mono);font-size:9px;color:var(--accent);background:rgba(200,169,110,.12);padding:1px 6px;border-radius:3px;margin-left:4px">初期値: 2ヶ月</span></div>
+          <div class="form-label">デフォルトLT <span style="font-family:var(--font-mono);font-size:9px;color:var(--accent);background:rgba(200,169,110,.12);padding:1px 6px;border-radius:3px;margin-left:4px">初期値: 3ヶ月（12週）</span></div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-            <input type="number" id="alertThreshLT" value="2" min="0.5" max="12" step="0.5"
+            <input type="number" id="alertThreshLT" value="3" min="0.5" max="12" step="0.5"
               style="width:80px" onchange="renderAlerts()">
             <span style="font-size:12px;color:var(--text3)">ヶ月</span>
           </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px">master.jsonにlead_time_weeksがあるSKUはそちらを優先。OEM品は3ヶ月、仕入れ品は1ヶ月が目安</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">master.jsonにlead_time_weeksがあるSKUはそちらを優先。全商品の基本は3ヶ月（12週）。仕入れ品など短い場合のみ個別設定</div>
         </div>
         <div>
-          <div class="form-label">欠品警告バッファ <span style="font-family:var(--font-mono);font-size:9px;color:var(--accent);background:rgba(200,169,110,.12);padding:1px 6px;border-radius:3px;margin-left:4px">初期値: 1ヶ月</span></div>
+          <div class="form-label">欠品警告バッファ <span style="font-family:var(--font-mono);font-size:9px;color:var(--accent);background:rgba(200,169,110,.12);padding:1px 6px;border-radius:3px;margin-left:4px">初期値: 2ヶ月</span></div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-            <input type="number" id="alertThreshBuffer" value="1" min="0" max="6" step="0.5"
+            <input type="number" id="alertThreshBuffer" value="2" min="0" max="6" step="0.5"
               style="width:80px" onchange="renderAlerts()">
             <span style="font-size:12px;color:var(--text3)">ヶ月</span>
           </div>
@@ -849,6 +849,7 @@ async function loadAllJSON(){
     buildFiltersFromData();
     renderShipments();
     updateDraftBadge();
+    showView('alerts',document.querySelector('.nav-item[onclick*="alerts"]'));
     setTimeout(()=>{renderAlerts();},300);
   }catch(e){
     hideLoader();
@@ -2606,10 +2607,10 @@ function renderAlerts(){
   const invSkus=filteredInventorySkus();
   const orderSkus=(DATA.orders.orders||[]).flatMap(o=>o.skus||[]);
   const months=filteredMonths();
-  const _thBuffer=parseFloat(document.getElementById('alertThreshBuffer')?.value??1)||1;
+  const _thBuffer=parseFloat(document.getElementById('alertThreshBuffer')?.value??2)||2;
   const _thExcess=parseFloat(document.getElementById('alertThreshExcess')?.value??12)||12;
   const THRESH=(parseFloat(document.getElementById('alertThreshAccuracy')?.value??20)||20)/100;
-  const _defaultLT=parseFloat(document.getElementById('alertThreshLT')?.value??2)||2;
+  const _defaultLT=parseFloat(document.getElementById('alertThreshLT')?.value??3)||3;
   // SKU別LT取得ヘルパー: master.lead_time_weeks優先 → デフォルト値フォールバック
   function skuLeadTime(jan){
     const m=masterLookup(String(jan));
@@ -2890,7 +2891,6 @@ function renderAlerts(){
         </div>
         <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
           ${dmBar(a.dm,'shortage')}
-          ${a.jan?`<button onclick="jumpToCalcFromAlert('${a.jan}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(200,169,110,.4);border-radius:var(--radius);background:rgba(200,169,110,.08);color:var(--accent);cursor:pointer;white-space:nowrap" title="この商品を発注試算ツールに追加">+ 試算へ</button>`:''}
           ${a.jan?`<button onclick="dismissAlert('${a.jan}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(126,212,160,.4);border-radius:var(--radius);background:rgba(126,212,160,.06);color:var(--accent4);cursor:pointer;white-space:nowrap" title="発注試算済みとしてマーク">✓ 試算済みへ</button>`:''}
         </div>
       </div>`;
@@ -2914,7 +2914,6 @@ function renderAlerts(){
         </div>
         <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
           ${dmBar(a.dm,'excess')}
-          ${a.jan?`<button onclick="jumpToCalcFromAlert('${a.jan}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(126,184,212,.4);border-radius:var(--radius);background:rgba(126,184,212,.08);color:var(--accent2);cursor:pointer;white-space:nowrap" title="在庫推移を発注試算で確認">+ 試算へ</button>`:''}
           ${a.jan?`<button onclick="dismissAlert('${a.jan}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(126,212,160,.4);border-radius:var(--radius);background:rgba(126,212,160,.06);color:var(--accent4);cursor:pointer;white-space:nowrap" title="対応済みとしてマーク">✓ 対応済みへ</button>`:''}
         </div>
       </div>`;
@@ -3130,35 +3129,6 @@ function jumpToReviewFromAlert(orderId){
   },200);
 }
 
-// アラートから発注試算ツールへジャンプ
-function jumpToCalcFromAlert(jan){
-  const m=masterLookup(String(jan));
-  if(!m){showNotif('マスタにないSKUです','error');return;}
-  // 発注試算ビューへ移動
-  showView('calc',document.querySelector('.nav-item[onclick*="calc"]'));
-  // 既に追加済みなら追加スキップ
-  if(!calcSkus.find(s=>String(s.jan)===String(jan))){
-    const inv=INV_BY_JAN[String(jan)];
-    const _invMs=Object.keys((inv&&inv.monthly_stock)||{}).sort();
-    const _invLat=_invMs.length?inv.monthly_stock[_invMs[_invMs.length-1]]:null;
-    const _invStk=inv?(_invLat!=null?_invLat:(inv.current_stock!=null?inv.current_stock:0)):0;
-    calcSkus.push({
-      jan:String(jan),
-      name:m.sku_name||m.display_name,
-      product_name:m.product_name,
-      brand:m.brand,
-      display_name:m.display_name||m.sku_name,
-      stock:_invStk,
-      note:''
-    });
-    renderCalcSkuList();
-    showNotif(`${m.sku_name||m.display_name} を発注試算に追加しました`,'success');
-  } else {
-    showNotif(`${m.sku_name||m.display_name} はすでに試算に追加済みです`,'success');
-  }
-  // Step0へスクロール
-  goStep(0);
-}
 
 // ════════════════════════════════════════════
 //  ⑦ 発注試算ツール
