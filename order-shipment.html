@@ -2876,16 +2876,28 @@ function renderGroupedCards(alerts, type){
     const product=rep.skuInfo?.product||rep.name;
     const isSingle=grp.length===1;
     const singleSku=isSingle?(rep.skuInfo?.sku||""):""; 
-    // 複数SKUの場合：全SKU名と各消化月数を列挙
+    // 複数SKUの場合：SKU名 + 各数値を列挙
     const skuLines=isSingle?"":grp
       .slice().sort((a,b)=>((a.dm??999)-(b.dm??999)))
       .map(a=>{
         const skuName=a.skuInfo?.sku||a.name;
-        const dmStr=a.dm!=null?a.dm.toFixed(1)+'ヶ月':'在庫なし';
+        const dmStr=a.dm!=null?a.dm.toFixed(1)+'ヶ月':'—';
         const dmColor=a.level==='danger'?'var(--accent3)':a.level==='warn'?'var(--accent)':'var(--text3)';
-        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">
-          <span style="font-size:12px;color:var(--text2)">${escHtml(skuName)}</span>
-          <span style="font-family:var(--font-mono);font-size:11px;color:${dmColor};font-weight:500;margin-left:16px;white-space:nowrap">${dmStr}</span>
+        const extraCols=type==='shortage'?`
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">在庫 ${fmt(a.stock)}個</span>
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">月出荷 ${fmt(Math.round(a.monthly))}個</span>
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">LT ${a.lt?a.lt.toFixed(1):'—'}ヶ月</span>`
+          :type==='excess'?`
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">在庫 ${fmt(a.stock)}個</span>
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">月出荷 ${fmt(Math.round(a.monthly))}個</span>
+          ${a.surplus!=null&&a.surplus>0?`<span style="font-family:var(--font-mono);font-size:10px;color:var(--accent2)">超過 +${fmt(a.surplus)}個</span>`:''}`
+          :'';
+        return `<div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:12px;color:var(--text2);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(skuName)}</span>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:nowrap;justify-content:flex-end">
+            ${extraCols}
+            <span style="font-family:var(--font-mono);font-size:11px;color:${dmColor};font-weight:500;white-space:nowrap">${dmStr}</span>
+          </div>
         </div>`;
       }).join("");
     const displayName=product+(isSingle&&singleSku?" "+singleSku:"");
@@ -2943,12 +2955,12 @@ function renderGroupedCards(alerts, type){
         ${!isSingle?`<div style="margin-bottom:8px;border-top:1px solid var(--border);padding-top:4px">${skuLines}</div>`:''}
         <div style="display:flex;gap:16px;flex-wrap:wrap">
           ${type==='shortage'||type==='discontinued'?`
-            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数</span>${isSingle?` <span style="color:${repDmColor};font-weight:500">${repDm}</span>`:' 最短'+` <span style="color:${repDmColor};font-weight:500">${repDm}</span>`}</span>
+            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:${repDmColor};font-weight:500">${repDm}${!isSingle?' (最短)':''}</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(rep.stock)}個</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">月平均出荷 </span><span style="color:var(--text2)">${fmt(Math.round(rep.monthly))}個</span></span>
             ${type==='shortage'?`<span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">LT </span><span style="color:var(--text2)">${rep.lt.toFixed(1)}ヶ月</span></span>`:''}
           `:
-            `<span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数</span>${isSingle?` <span style="color:var(--accent2);font-weight:500">${repDm}</span>`:' 最長'+` <span style="color:var(--accent2);font-weight:500">${repDm}</span>`}</span>
+            `<span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:var(--accent2);font-weight:500">${repDm}${!isSingle?' (最長)':''}</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(rep.stock)}個</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">月平均出荷 </span><span style="color:var(--text2)">${fmt(Math.round(rep.monthly))}個</span></span>
             ${rep.surplus!=null&&rep.surplus>0?`<span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">12ヶ月超過分 </span><span style="color:var(--accent2)">+${fmt(rep.surplus)}個</span></span>`:''}`
@@ -4654,22 +4666,17 @@ async function exportCalcDirect(){
   if(!d.product){showNotif('商品名を入力してください','error');return;}
   showNotif('Excelを生成中...','success');
   try{
-    const wb=await buildWorkbook(d);if(!ret){showNotif('ワークブック生成失敗','error');return;}
+    const ret=await buildWorkbook(d);
+    if(!ret){showNotif('ワークブック生成失敗','error');return;}
 
-    // シート名を変更: 発注試算日_商品名
-    const isSimple = d.mode === 'simple';
-    const srcSheet = isSimple ? '発注試算テンプレート（簡易）' : '発注試算テンプレート';
-    const calcDateVal = document.getElementById('ci_calcDate')?.value||d.order_date||'';
-    const dateStr = calcDateVal ? calcDateVal.replace(/-/g,'').slice(2,8) : '';
-    const newSheetName = (dateStr+'_'+(d.product||'発注試算')).slice(0,31);
-    const ws = wb.getWorksheet(srcSheet);
-    if(ws) ws.name = newSheetName;
+    const calcDateVal=document.getElementById('ci_calcDate')?.value||d.order_date||'';
+    const dateStr=calcDateVal?calcDateVal.replace(/-/g,'').slice(2,8):'';
+    const newSheetName=(dateStr+'_'+(d.product||'発注試算')).slice(0,31);
 
-    const buf = await ret.generateAsync({type:'arraybuffer'});
+    const buf=await ret.generateAsync({type:'arraybuffer'});
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
-    a.href=url;
-    a.download=`${newSheetName}.xlsx`;
+    a.href=url;a.download=`${newSheetName}.xlsx`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
     showNotif('テンプレートExcelを出力しました ✓','success');
   }catch(e){console.error(e);showNotif('Excel出力エラー: '+e.message,'error');}
