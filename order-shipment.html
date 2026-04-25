@@ -4739,6 +4739,8 @@ async function buildWorkbook(d, overrideSheetName){
     sheetXml = setCellInline(sheetXml, 'A'+r, s.name||'');
     sheetXml = setCellInline(sheetXml, 'B'+r, s.jan ? String(s.jan) : '');
     sheetXml = setCellNum(sheetXml, 'C'+r, s.stock||0);
+    // F列（F-H統合）に推計必要数を書き込む（テンプレートの数式を上書き）
+    sheetXml = setCellNum(sheetXml, 'F'+r, s.estimated_total||0);
     sheetXml = setCellNum(sheetXml, 'I'+r, s.confirmed_order!=null ? s.confirmed_order : (s.order_quantity||0));
     const sp = s.stockout_predictions||{};
     const stockoutMonths = Object.keys(sp).filter(m=>sp[m].stockout_predicted||sp[m].excluded_from_total).join(',');
@@ -4885,31 +4887,47 @@ async function buildWorkbook(d, overrideSheetName){
     });
   } else {
     // ── 簡易試算: SECTION C 小売直接入力 ──
-    // ② 簡易版の初回納品数はmonthly_summary.tobに加算済みのため、
-    //    各月のD〜K列（MONTH_COLS）に書き込む際に自動的に反映される。
-    //    初回納品数は最初の月（D列 = MONTH_COLS[0]）のセルに含まれる。
     const TOB_STARTS_S = [127,138,149];
     const simInitDels = [
       window.simToBInitDelivery?.[1]||0,
       window.simToBInitDelivery?.[2]||0,
       window.simToBInitDelivery?.[3]||0,
     ];
+    // 各小売ブロックの月別値を個別に取得（monthly_summary.tobは3ブロック合計なので使えない）
+    // calcSimpleMonthlyはグローバル変数（発注試算ツールからの出力時に有効）
+    // 振り返り画面からの再出力時はcalcSimpleMonthlyが空のためfallbackを使用
+    const hasSimpleData = calcSimpleMonthly &&
+      (Object.keys(calcSimpleMonthly['toB1']||{}).length > 0 ||
+       Object.keys(calcSimpleMonthly['toB2']||{}).length > 0 ||
+       Object.keys(calcSimpleMonthly['toB3']||{}).length > 0);
+    const simBlocks = hasSimpleData ? [
+      calcSimpleMonthly?.['toB1'] || {},
+      calcSimpleMonthly?.['toB2'] || {},
+      calcSimpleMonthly?.['toB3'] || {},
+    ] : [
+      // fallback: 合計値をブロック①のみに入れ、②③は空
+      Object.fromEntries(d.skus.map(s=>[s.name, Object.fromEntries(tobMs.map(m=>[m,s.monthly_summary?.tob?.[m]||0]))])),
+      {},
+      {},
+    ];
     TOB_STARTS_S.forEach((sr,bi)=>{
+      const blockData = simBlocks[bi];
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
         const row = sr+si;
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(s.jan,'tob',1,_bm));
         sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(s.jan,'tob',3,_bm));
-        // ② D列=初回納品数（初回納品数込みの月別値はE〜Lに書く）
-        // 初回納品数は各ブロックのsimToBInitDeliveryから取得（d経由では来ないためwindow参照）
+        // D列=初回納品数
         const initDel=simInitDels[bi]||0;
         if(initDel>0) sheetXml = setCellNum(sheetXml, 'D'+row, initDel);
-        // ② E〜L列: 8ヶ月分の月別数量（MONTH_COLS_SIMPLEはE〜L）
-        // 初回納品数はmonthly_summary.tobに加算済みなので、D列の初回納品数と月別数量は分離できないため
-        // E列（最初の月）= monthly_summary.tob[月0]の値（これに初回納品数が含まれる）
+        // E〜L列: このブロック（小売①②③）のSKU別月別値を個別に書き込む
+        const skuMonthly = (blockData[s.name]||{});
         tobMs.forEach((m,mi)=>{
-          if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_SIMPLE[mi]+row, s.monthly_summary?.tob?.[m]||0);
+          if(mi<8){
+            const val = skuMonthly[m]!=null ? skuMonthly[m] : 0;
+            sheetXml = setCellNum(sheetXml, MONTH_COLS_SIMPLE[mi]+row, val);
+          }
         });
       });
     });
