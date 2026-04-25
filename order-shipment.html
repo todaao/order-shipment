@@ -449,42 +449,56 @@ textarea:focus{border-color:var(--accent);}
       <span id="alertThreshCaret" style="font-size:11px;color:var(--text3)">▼ 展開</span>
     </div>
     <div id="alertThreshBody" style="display:none;margin-top:14px">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+      <!-- 消化月数の計算説明 -->
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;font-size:11px;color:var(--text3);line-height:1.8">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:8px">消化月数の計算方法</div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 12px;align-items:baseline">
+          <span style="color:var(--accent);font-family:var(--font-mono);white-space:nowrap">消化月数</span>
+          <span>= 良品在庫 ÷ 月平均出荷数</span>
+          <span style="color:var(--accent);font-family:var(--font-mono);white-space:nowrap">月平均出荷数</span>
+          <span>= toB月平均 + EC月平均（海外は含まない）</span>
+          <span style="color:var(--accent);font-family:var(--font-mono);white-space:nowrap">toB月平均</span>
+          <span>= toB出荷実績のある月のうち<strong style="color:var(--text2)">最古の1ヶ月を除いた直近3ヶ月</strong>の平均 <span style="font-size:10px">（立ち上がり月の外れ値を除去）</span></span>
+          <span style="color:var(--accent);font-family:var(--font-mono);white-space:nowrap">EC月平均</span>
+          <span>= 直近3ヶ月の平均</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
         <div>
-          <div class="form-label">デフォルトLT（master未設定SKU用）</div>
+          <div class="form-label">デフォルトLT <span style="font-family:var(--font-mono);font-size:9px;color:var(--accent);background:rgba(200,169,110,.12);padding:1px 6px;border-radius:3px;margin-left:4px">初期値: 2ヶ月</span></div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
             <input type="number" id="alertThreshLT" value="2" min="0.5" max="12" step="0.5"
               style="width:80px" onchange="renderAlerts()">
             <span style="font-size:12px;color:var(--text3)">ヶ月</span>
           </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px">masterにlead_time_weeksがある場合はSKU別値を優先</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">master.jsonにlead_time_weeksがあるSKUはそちらを優先。OEM品は3ヶ月、仕入れ品は1ヶ月が目安</div>
         </div>
         <div>
-          <div class="form-label">欠品警告バッファ（LT + N ヶ月）</div>
+          <div class="form-label">欠品警告バッファ <span style="font-family:var(--font-mono);font-size:9px;color:var(--accent);background:rgba(200,169,110,.12);padding:1px 6px;border-radius:3px;margin-left:4px">初期値: 1ヶ月</span></div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
             <input type="number" id="alertThreshBuffer" value="1" min="0" max="6" step="0.5"
               style="width:80px" onchange="renderAlerts()">
             <span style="font-size:12px;color:var(--text3)">ヶ月</span>
           </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px">緊急=LT以内 / 警告=LT+N以内 / 監視=LT+N+1以内</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">🔴 緊急 = 消化月数 ≤ LT<br>🟡 警告 = 消化月数 ≤ LT + N ヶ月<br>⚪ 監視 = 消化月数 ≤ LT + N + 1ヶ月</div>
         </div>
         <div>
-          <div class="form-label">過剰在庫閾値（消化 N ヶ月超）</div>
+          <div class="form-label">過剰在庫閾値 <span style="font-family:var(--font-mono);font-size:9px;color:var(--accent);background:rgba(200,169,110,.12);padding:1px 6px;border-radius:3px;margin-left:4px">初期値: 12ヶ月</span></div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
             <input type="number" id="alertThreshExcess" value="12" min="3" max="36" step="1"
               style="width:80px" onchange="renderAlerts()">
             <span style="font-size:12px;color:var(--text3)">ヶ月</span>
           </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px">デフォルト 12ヶ月</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">消化月数がこの値を超えると「過剰在庫」タブに表示。1年分以上の在庫が目安</div>
         </div>
         <div>
-          <div class="form-label">予測誤差警告閾値</div>
+          <div class="form-label">予測誤差警告閾値 <span style="font-family:var(--font-mono);font-size:9px;color:var(--accent);background:rgba(200,169,110,.12);padding:1px 6px;border-radius:3px;margin-left:4px">初期値: 20%</span></div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
             <input type="number" id="alertThreshAccuracy" value="20" min="5" max="80" step="5"
               style="width:80px" onchange="renderAlerts()">
             <span style="font-size:12px;color:var(--text3)">% 超</span>
           </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px">50%超は「緊急」扱い</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">発注試算と出荷実績の乖離率。50%超は🔴緊急、20〜50%は🟡警告</div>
         </div>
       </div>
     </div>
@@ -1298,6 +1312,18 @@ function skuDisplayName(sku_code,sku_name){
   const m=masterLookup(String(sku_code));
   if(m) return m.display_name||(m.product_name&&m.sku_name?(m.product_name+' '+m.sku_name).trim():m.sku_name||m.product_name||sku_name);
   return sku_name;
+}
+// アラート専用: JANからブランド/商品名/SKU名の構造化オブジェクトを返す
+function alertSkuInfo(jan, fallback){
+  const m=masterLookup(String(jan));
+  if(m) return {
+    brand: m.brand||'',
+    product: m.product_name||'',
+    sku: m.sku_name||'',
+    full: [m.brand,m.product_name,m.sku_name].filter(Boolean).join(' / '),
+    short: (m.product_name&&m.sku_name?(m.product_name+' '+m.sku_name).trim():m.sku_name||m.product_name||fallback||String(jan)),
+  };
+  return {brand:'',product:'',sku:'',full:fallback||String(jan),short:fallback||String(jan)};
 }
 function skuShortName(sku_code,sku_name){
   const m=masterLookup(String(sku_code));
@@ -2615,21 +2641,21 @@ function renderAlerts(){
       monthly=tobAvg+ecAvg;
       if(monthly>0) dm=(inv.latest_stock||0)/monthly;
     }
-    const dispName=skuDisplayName(inv.sku_code,inv.sku_name);
+    const _si=alertSkuInfo(jan,inv.sku_name);
     const stock=inv.latest_stock||0;
     // ③ SKU別LT
     const lt=skuLeadTime(jan);
     // 緊急: LT以内
     if(dm!=null&&dm<=lt){
-      shortageAlerts.push({level:'danger',subtype:'over_lt',name:dispName,jan,dm,stock,monthly,lt,
+      shortageAlerts.push({level:'danger',subtype:'over_lt',skuInfo:_si,name:_si.short,jan,dm,stock,monthly,lt,
         urgency:`リードタイム超過 — 今週要対応`});
     // 警告: LT+buffer以内
     } else if(dm!=null&&dm<=lt+_thBuffer){
-      shortageAlerts.push({level:'warn',subtype:'near_lt',name:dispName,jan,dm,stock,monthly,lt,
+      shortageAlerts.push({level:'warn',subtype:'near_lt',skuInfo:_si,name:_si.short,jan,dm,stock,monthly,lt,
         urgency:`発注推奨 — LT(${lt.toFixed(1)}ヶ月)以内に`});
     // 注意: LT+buffer+1以内
     } else if(dm!=null&&dm<=lt+_thBuffer+1){
-      shortageAlerts.push({level:'caution',subtype:'watch',name:dispName,jan,dm,stock,monthly,lt,
+      shortageAlerts.push({level:'caution',subtype:'watch',skuInfo:_si,name:_si.short,jan,dm,stock,monthly,lt,
         urgency:`要監視 — LT+${_thBuffer.toFixed(1)}ヶ月以内に発注`});
     }
   });
@@ -2659,8 +2685,8 @@ function renderAlerts(){
     if(dm!=null&&dm>=_thExcess){
       const stock=inv.latest_stock||0;
       const surplus=monthly>0?Math.round(stock-monthly*12):null;
-      const dispName=skuDisplayName(inv.sku_code,inv.sku_name);
-      excessAlerts.push({level:'excess',name:dispName,jan,dm,stock,monthly,surplus});
+      const _siE=alertSkuInfo(jan,inv.sku_name);
+      excessAlerts.push({level:'excess',skuInfo:_siE,name:_siE.short,jan,dm,stock,monthly,surplus});
     }
   });
   excessAlerts.sort((a,b)=>(b.dm-a.dm));
@@ -2748,7 +2774,8 @@ function renderAlerts(){
     const stock=inv.latest_stock||0, lt=skuLeadTime(jan);
     const surplus=monthly>0?Math.round(stock-monthly*12):null;
     const dlv=dm!=null&&dm<=lt?'danger':dm!=null&&dm<=lt+_thBuffer?'warn':'ok';
-    discontinuedAlerts.push({jan,name:skuDisplayName(inv.sku_code,inv.sku_name),dm,stock,monthly,lt,surplus,level:dlv});
+    const _siD=alertSkuInfo(jan,inv.sku_name);
+    discontinuedAlerts.push({jan,skuInfo:_siD,name:_siD.short,dm,stock,monthly,lt,surplus,level:dlv});
   });
   discontinuedAlerts.sort((a,b)=>(a.dm??999)-(b.dm??999));
 
@@ -2850,7 +2877,10 @@ function renderAlerts(){
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:${a.level==='danger'?'rgba(224,123,138,.15)':a.level==='warn'?'rgba(200,169,110,.15)':'rgba(42,45,58,.6)'};color:${a.level==='danger'?'var(--accent3)':a.level==='warn'?'var(--accent)':'var(--text3)'};border:1px solid ${a.level==='danger'?'rgba(224,123,138,.3)':a.level==='warn'?'rgba(200,169,110,.3)':'var(--border)'}">${levelLabel}</span>
           </div>
-          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.name)}</div>
+          <div style="display:none"></div>
+          ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:2px">${escHtml(a.skuInfo.brand)}</div>`:''}
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.skuInfo?a.skuInfo.product:a.name)}</div>
+          ${a.skuInfo&&a.skuInfo.sku?`<div style="font-size:11px;color:var(--text3);margin-bottom:5px">${escHtml(a.skuInfo.sku)}</div>`:''}
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:${a.level==='danger'?'var(--accent3)':a.level==='warn'?'var(--accent)':'var(--text2)'};font-weight:500">${a.dm.toFixed(1)}ヶ月</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
@@ -2871,7 +2901,10 @@ function renderAlerts(){
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(126,184,212,.15);color:var(--accent2);border:1px solid rgba(126,184,212,.3)">過剰在庫</span>
           </div>
-          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.name)}</div>
+          <div style="display:none"></div>
+          ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:2px">${escHtml(a.skuInfo.brand)}</div>`:''}
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.skuInfo?a.skuInfo.product:a.name)}</div>
+          ${a.skuInfo&&a.skuInfo.sku?`<div style="font-size:11px;color:var(--text3);margin-bottom:5px">${escHtml(a.skuInfo.sku)}</div>`:''}
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:var(--accent2);font-weight:500">${a.dm.toFixed(1)}ヶ月</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
@@ -3005,7 +3038,9 @@ function renderAlerts(){
             <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;${_arrStyle}">${_arrLabel}</span>
             ${hasOrder?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(a.orderProduct)} / 発注日: ${escHtml(a.orderDate)}${_arrDateStr?' / '+_arrDateStr:''}</span>`:''}
           </div>
-          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.name)}</div>
+          ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:2px">${escHtml(a.skuInfo.brand)}</div>`:''}
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.skuInfo?a.skuInfo.product:a.name)}</div>
+          ${a.skuInfo&&a.skuInfo.sku?`<div style="font-size:11px;color:var(--text3);margin-bottom:5px">${escHtml(a.skuInfo.sku)}</div>`:''}
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:var(--text2)">${a.dm.toFixed(1)}ヶ月</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
@@ -3049,7 +3084,9 @@ function renderAlerts(){
         g+=`<div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent5);border-radius:0 var(--radius) var(--radius) 0;padding:13px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px">
           <div style="flex:1;min-width:0">
             <div style="margin-bottom:4px"><span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(180,158,232,.15);color:var(--accent5);border:1px solid rgba(180,158,232,.3)">廃版予定</span></div>
-            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.name)}</div>
+            ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:2px">${escHtml(a.skuInfo.brand)}</div>`:''}
+            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.skuInfo?a.skuInfo.product:a.name)}</div>
+            ${a.skuInfo&&a.skuInfo.sku?`<div style="font-size:11px;color:var(--text3);margin-bottom:5px">${escHtml(a.skuInfo.sku)}</div>`:''}
             <div style="display:flex;gap:16px;flex-wrap:wrap">
               <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:var(--text2);font-weight:500">${ds}</span></span>
               <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
