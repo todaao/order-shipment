@@ -4748,13 +4748,21 @@ async function buildWorkbook(d){
   });
 
   // ── 販路×月サマリー ──
+  // ③ toB合計（行42〜49）のD〜K列: テンプレート数式を削除してサマリー試算値を直接書き込む
+  // monthly_summaryはcollectCalcData()済みのd.skusから取得
   d.skus.forEach((s,i)=>{
     if(i>=8) return;
     const jan = s.jan||'';
     const tobR = 42+i;
     sheetXml = setCellNum(sheetXml, 'B'+tobR, recentShipForCalc(jan,'tob',1,_bm));
     sheetXml = setCellNum(sheetXml, 'C'+tobR, recentShipForCalc(jan,'tob',3,_bm));
-    // toB D〜K列はテンプレート数式（小売合計）のため書き込み不要
+    // ③ D〜K列: テンプレート数式を削除し、サマリー試算値（初回納品数込み）を直接書き込む
+    tobMs.forEach((m,mi)=>{
+      if(mi<8){
+        const v=s.monthly_summary?.tob?.[m]||0;
+        sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+tobR, v);
+      }
+    });
     const ecR = 51+i;
     sheetXml = setCellNum(sheetXml, 'B'+ecR, recentShipForCalc(jan,'ec',1,_bm));
     sheetXml = setCellNum(sheetXml, 'C'+ecR, recentShipForCalc(jan,'ec',3,_bm));
@@ -4780,10 +4788,6 @@ async function buildWorkbook(d){
       sheetXml = setCellNum(sheetXml, 'B'+(h+1), r.posTilt||1);
       sheetXml = setCellNum(sheetXml, 'D'+(h+1), r.stores||0);
       sheetXml = setCellInline(sheetXml, 'F'+(h+1), r.status||'導入済み');
-      // 初回納品数をG列に記録
-      if(r.initial_delivery||r.initialDelivery){
-        sheetXml = setCellNum(sheetXml, 'G'+(h+1), r.initial_delivery||r.initialDelivery||0);
-      }
       tobMs.forEach((m,mi)=>{
         if(mi<8){
           const tv=r.monthTilts?.[m];
@@ -4792,9 +4796,15 @@ async function buildWorkbook(d){
           sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+(h+2), val);
         }
       });
+      // ① 初回納品数をC列（SKU行）に書き込む: h+4+si行のC列
+      const initDel = r.initial_delivery||r.initialDelivery||0;
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
         sheetXml = setCellNum(sheetXml, 'B'+(h+4+si), s.posPs||0);
+        // ① 試算したSKUの行のC列に初回納品数を記入
+        if(initDel>0){
+          sheetXml = setCellNum(sheetXml, 'C'+(h+4+si), initDel);
+        }
       });
     });
     // ── 通常試算: SECTION D EC・海外 ──
@@ -4836,7 +4846,15 @@ async function buildWorkbook(d){
     });
   } else {
     // ── 簡易試算: SECTION C 小売直接入力 ──
+    // ② 簡易版の初回納品数はmonthly_summary.tobに加算済みのため、
+    //    各月のD〜K列（MONTH_COLS）に書き込む際に自動的に反映される。
+    //    初回納品数は最初の月（D列 = MONTH_COLS[0]）のセルに含まれる。
     const TOB_STARTS_S = [127,138,149];
+    const simInitDels = [
+      window.simToBInitDelivery?.[1]||0,
+      window.simToBInitDelivery?.[2]||0,
+      window.simToBInitDelivery?.[3]||0,
+    ];
     TOB_STARTS_S.forEach((sr,bi)=>{
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
@@ -4844,6 +4862,7 @@ async function buildWorkbook(d){
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(s.jan,'tob',1,_bm));
         sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(s.jan,'tob',3,_bm));
+        // ② D〜K列に月別数量を書き込む（初回納品数はmonthly_summary.tobに加算済み）
         tobMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+row, s.monthly_summary?.tob?.[m]||0); });
       });
     });
