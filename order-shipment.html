@@ -589,7 +589,9 @@ textarea:focus{border-color:var(--accent);}
             </div>
             <div class="form-group">
               <label class="form-label">ブランド <span class="req">*</span></label>
-              <input type="text" id="ci_brand" placeholder="例：MilleFee">
+              <select id="ci_brand" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:var(--radius);font-family:var(--font-body);font-size:12px;width:100%;outline:none;cursor:pointer;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'6\'%3E%3Cpath d=\'M0 0l5 6 5-6z\' fill=\'%235a5750\'/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 10px center">
+                <option value="">-- ブランドを選択 --</option>
+              </select>
             </div>
             <div class="form-group">
               <label class="form-label">発注試算日 <span class="req">*</span></label>
@@ -639,7 +641,6 @@ textarea:focus{border-color:var(--accent);}
           <div id="janSearchArea" style="margin-bottom:10px">
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <input type="text" id="janSearchInput" placeholder="JANコード・商品名・SKU名で検索" style="flex:1;min-width:200px" oninput="janSearchPreview()">
-              <button class="btn btn-primary" onclick="applyJanSearch()">追加</button>
             </div>
             <div id="janSearchResult" style="margin-top:6px;max-height:200px;overflow-y:auto"></div>
           </div>
@@ -847,6 +848,7 @@ async function loadAllJSON(){
     dataLoaded=true;
     hideLoader();
     buildFiltersFromData();
+    initCalcBrandSelect();
     renderShipments();
     updateDraftBadge();
     showView('alerts',document.querySelector('.nav-item[onclick*="alerts"]'));
@@ -895,6 +897,16 @@ function buildFiltersFromData(){
   sel('filterPeriodStart').innerHTML='<option value="all">すべて</option>'+months.map(m=>`<option value="${m}">${m}</option>`).join('');
   sel('filterPeriodEnd').innerHTML='<option value="all">すべて</option>'
     +months.map(m=>`<option value="${m}">${m}</option>`).join('');
+}
+
+// ── 発注試算ツールのブランド選択肢を初期化 ──
+function initCalcBrandSelect(){
+  const sel=document.getElementById('ci_brand');
+  if(!sel) return;
+  const brands=Object.keys(window.MASTER_TREE||{}).sort();
+  const cur=sel.value;
+  sel.innerHTML='<option value="">-- ブランドを選択 --</option>'
+    +brands.map(b=>`<option value="${escHtml(b)}"${b===cur?' selected':''}>${escHtml(b)}</option>`).join('');
 }
 
 function refreshProductFilter(brand){
@@ -3259,7 +3271,7 @@ function goStep(n){
 
 function validateStep0(){
   if(!document.getElementById('ci_product').value){showNotif('商品名を入力してください','error');return false;}
-  if(!document.getElementById('ci_brand').value){showNotif('ブランド名を入力してください','error');return false;}
+  if(!document.getElementById('ci_brand').value){showNotif('ブランドを選択してください','error');return false;}
   if(!document.getElementById('ci_calcDate').value&&!document.getElementById('ci_orderDate').value){showNotif('発注試算日または発注予定日を入力してください','error');return false;}
   if(calcSkus.length===0){showNotif('SKUを1件以上追加してください','error');return false;}
   const noJan=calcSkus.filter(s=>!s.jan||!s.jan.trim());
@@ -3548,7 +3560,7 @@ function buildPsBlocks(){
     area.innerHTML=buildSimpleToBInput();
     return;
   }
-  if(calcRetailers.length===0) calcRetailers=[{name:'ロフト',posTilt:1,stores:150,monthTilts:{},status:'導入済み'}];
+  if(calcRetailers.length===0) calcRetailers=[{name:'ロフト',posTilt:1,stores:150,monthTilts:{},status:'導入済み',initialDelivery:0}];
   renderPsBlocks();
 }
 
@@ -3580,6 +3592,10 @@ function renderPsBlocks(){
         </div>
         <div class="form-group"><label class="form-label">全店舗数</label>
           <input type="number" value="${r.stores}" min="0" oninput="calcRetailers[${ri}].stores=+this.value;recalcPsPreview(${ri})">
+        </div>
+        <div class="form-group">
+          <label class="form-label">初回納品数 <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">(最初の計算月に加算)</span></label>
+          <input type="number" value="${r.initialDelivery||0}" min="0" style="border-color:var(--accent5)" oninput="calcRetailers[${ri}].initialDelivery=+this.value;recalcPsPreview(${ri})" placeholder="0">
         </div>
       </div>
       <!-- 月別傾斜 -->
@@ -3623,7 +3639,7 @@ function renderPsBlocks(){
       </div>
       <div id="psPreview_${ri}" style="overflow-x:auto;margin-top:4px"></div>
     </div>`).join('')
-  +`<button class="btn btn-secondary" style="margin-top:8px;font-size:11px" onclick="calcRetailers.push({name:'',posTilt:1,stores:0,monthTilts:{},status:'導入済み'});renderPsBlocks()">+ 小売追加</button>`;
+  +`<button class="btn btn-secondary" style="margin-top:8px;font-size:11px" onclick="calcRetailers.push({name:'',posTilt:1,stores:0,monthTilts:{},status:'導入済み',initialDelivery:0});renderPsBlocks()">+ 小売追加</button>`;
   calcRetailers.forEach((_,ri)=>recalcPsPreview(ri));
 }
 
@@ -3641,6 +3657,27 @@ function recalcPsPreview(ri){
   const months=monthRange(base,8);// ②は常に8ヶ月フル
   const el=document.getElementById('psPreview_'+ri);
   if(!el) return;
+
+  // 修正４: 最初に計算値が出る月を特定（月別傾斜が入力されている最初の月）
+  // 初回納品数を加算する月 = 月別傾斜で最初に値が入っている月
+  const initDelivery=r.initialDelivery||0;
+  // 月別傾斜が1つも入っていない場合は全月を対象とする
+  const hasTilt=Object.values(r.monthTilts||{}).some(v=>v!==''&&v!=null&&!isNaN(parseFloat(v)));
+
+  // 最初に計算値が出る月を求める
+  function getFirstCalcMonth(){
+    if(!hasTilt) return months[0]; // 傾斜なしなら先頭月
+    for(const m of months){
+      const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
+      if(mbs.length===0) continue;
+      const allEmpty=mbs.every(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined||r.monthTilts[k]===null);
+      if(allEmpty) continue;
+      return m;
+    }
+    return null;
+  }
+  const firstCalcMonth=getFirstCalcMonth();
+
   let tbl=`<table style="font-size:11px"><thead><tr>
     <th style="text-align:left;font-family:var(--font-mono);font-size:9px;color:var(--text3)">SKU</th>
     ${months.map(m=>`<th style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${mLabel(m)}</th>`).join('')}
@@ -3649,15 +3686,30 @@ function recalcPsPreview(ri){
   calcSkus.forEach(s=>{
     const ps=s.posPs||0;
     const vals=months.map(m=>{
+      // 修正４: 月別傾斜の入力が一つも無い月は計算値を出さない
       const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
-      const hasEmpty=mbs.some(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined);
-      if(hasEmpty) return null;
+      if(mbs.length===0) return null; // 傾斜入力なし→空欄
+      const allBlank=mbs.every(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined||r.monthTilts[k]===null);
+      if(allBlank) return null; // その月以前に傾斜なし→空欄
       const cumTilt=mbs.reduce((acc,k)=>{const t=parseFloat(r.monthTilts[k]);return isNaN(t)?acc:acc*t;},1);
-      return Math.round(ps*r.posTilt*cumTilt*r.stores);
+      let v=Math.round(ps*r.posTilt*cumTilt*r.stores);
+      // 修正５: 最初の計算月に初回納品数を加算（初回納品数>0の場合）
+      if(m===firstCalcMonth&&initDelivery>0) v+=initDelivery;
+      return v;
     });
     const subTotal=vals.filter(v=>v!==null).reduce((a,b)=>a+b,0);
     tbl+=`<tr><td style="color:var(--text2);white-space:nowrap">${escHtml(s.name)}</td>
-      ${vals.map(v=>v===null?`<td style="text-align:right;font-family:var(--font-mono);color:var(--text3)">—</td>`:`<td style="text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(v)}</td>`).join('')}
+      ${vals.map((v,vi)=>{
+        const m=months[vi];
+        let cell='';
+        if(v===null){
+          cell=`<td style="text-align:right;font-family:var(--font-mono);color:var(--text3)">—</td>`;
+        } else {
+          const initPart=(m===firstCalcMonth&&initDelivery>0)?`<span style="color:var(--accent5);font-size:10px"> (+${fmt(initDelivery)})</span>`:'';
+          cell=`<td style="text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(v)}${initPart}</td>`;
+        }
+        return cell;
+      }).join('')}
       <td style="text-align:right;font-family:var(--font-mono);color:var(--accent)">${fmt(subTotal)}</td></tr>`;
   });
   tbl+='</tbody></table>';
@@ -3678,16 +3730,13 @@ function buildSimpleToBInput(){
     const jan=s.jan;
     const _bm=getBaseMonth();
     const r3=jan?recentShip(jan,'tob',3,_bm):0;
-    // toB③は3ヶ月平均で初期値
-    if(blockKey==='toB3'&&r3>0){
-      months.forEach(m=>{if(!store[s.name])store[s.name]={};if(store[s.name][m]==null)store[s.name][m]=Math.ceil(r3);});
-    }
+    // 修正３: 初期値は空欄（自動設定なし）
     const badge='<span style="color:var(--text3);font-size:10px;margin-left:6px">'+(r3?'3月均: '+fmt(r3):'出荷データなし')+'</span>';
     const inputs=months.map(m=>{
       const val=(store[s.name]||{})[m];
       return '<div class="monthly-input-wrap">'
         +'<label class="monthly-label">'+mLabel(m)+'</label>'
-        +'<input type="text" inputmode="decimal" class="monthly-input" value="'+(val!=null&&val!==''?val:'')+'" placeholder="0"'
+        +'<input type="text" inputmode="decimal" class="monthly-input" value="'+(val!=null&&val!==''?val:'')+'" placeholder=""'
         +' data-key="'+blockKey+'_simple" data-sku="'+s.name+'" data-month="'+m+'" onchange="simpleStoreChange(this)"></div>';
     }).join('');
     return '<div class="sku-block" style="margin-bottom:8px">'
@@ -3698,14 +3747,16 @@ function buildSimpleToBInput(){
 
   function mkBlock(blockKey,num){
     const nameVal=window.simToBNames[num]||'';
+    const initDel=window.simToBInitDelivery[num]||0;
     const color=['var(--tob)','var(--accent2)','var(--accent)'][num-1];
     const skus=calcSkus.map(s=>mkSkuBlock(blockKey,s,'toB'+num)).join('');
-    const initNote=num===3?'<span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-left:8px">（直近3ヶ月平均で初期値設定）</span>':'';
     return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px">'
-      +'<div style="font-size:13px;font-weight:500;color:'+color+';margin-bottom:10px;display:flex;align-items:center;gap:8px">'
+      +'<div style="font-size:13px;font-weight:500;color:'+color+';margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
       +'▼ toB'+['①','②','③'][num-1]+' '
-      +'<input type="text" value="'+escHtml(nameVal)+'" placeholder="小売名を入力" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:3px 8px;border-radius:4px;font-size:12px;width:200px" oninput="window.simToBNames['+num+']=this.value">'
-      +initNote+'</div>'
+      +'<input type="text" value="'+escHtml(nameVal)+'" placeholder="小売名を入力" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:3px 8px;border-radius:4px;font-size:12px;width:160px" oninput="window.simToBNames['+num+']=this.value">'
+      +'<span style="font-size:11px;color:var(--text3);margin-left:4px">初回納品数:</span>'
+      +'<input type="number" value="'+initDel+'" min="0" placeholder="0" style="background:var(--surface);border:1px solid var(--accent5);color:var(--accent5);padding:3px 8px;border-radius:4px;font-size:12px;width:80px;text-align:right;font-family:var(--font-mono)" oninput="window.simToBInitDelivery['+num+']=+this.value;buildSummaryPreview&&buildSummaryPreview()" title="この小売の初回納品数（最初に数量が入った月に加算）">'
+      +'</div>'
       +skus+'</div>';
   }
 
@@ -3735,9 +3786,9 @@ function buildEcOverseasInput(){
       const r3=jan?recentShip(jan,channel,3,_bm):0;
       const badge=r1||r3?`<span class="ref-badge" style="margin-left:4px">直近: ${fmt(r1)}</span><span class="pos-ref-badge" style="margin-left:4px">3月均: ${fmt(r3)}</span>`:'<span style="color:var(--text3);font-size:10px;margin-left:4px">出荷データなし</span>';
       const monthInputs=months.map(m=>{
+        // 修正３: 初期値は空欄（自動設定なし）
         let val=(stores[s.name]||{})[m];
-        if(val===undefined&&isFirst&&r3>0){val=Math.ceil(r3);if(!stores[s.name])stores[s.name]={};stores[s.name][m]=val;}
-        return `<div class="monthly-input-wrap"><label class="monthly-label">${mLabel(m)}</label><input type="text" inputmode="decimal" class="monthly-input" style="width:72px" value="${val!=null&&val!==''?val:''}" placeholder="0" onchange="setStoreVal('${storeKey}','${escHtml(s.name)}','${m}',this.value===''?null:(parseFloat(this.value)||0))"></div>`;
+        return `<div class="monthly-input-wrap"><label class="monthly-label">${mLabel(m)}</label><input type="text" inputmode="decimal" class="monthly-input" style="width:72px" value="${val!=null&&val!==''?val:''}" placeholder="" onchange="setStoreVal('${storeKey}','${escHtml(s.name)}','${m}',this.value===''?null:(parseFloat(this.value)||0))"></div>`;
       }).join('');
       return `<div class="sku-block" style="margin-bottom:8px"><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">${escHtml(s.name)} ${badge}</div><div style="display:flex;flex-wrap:wrap;gap:6px">${monthInputs}</div></div>`;
     }).join('');
@@ -3803,6 +3854,22 @@ function setStoreVal(key,sku,m,v){
   if(v===null||v===undefined){delete store[sku][m];}else{store[sku][m]=v;}
 }
 
+// ── 修正４・５ ヘルパー: 小売の最初に計算値が出る月を返す ──
+function getRetailerFirstCalcMonth(r, months){
+  const hasTilt=Object.values(r.monthTilts||{}).some(v=>v!==''&&v!=null&&!isNaN(parseFloat(v)));
+  if(!hasTilt) return months[0]||null;
+  for(const m of months){
+    const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
+    if(mbs.length===0) continue;
+    const allBlank=mbs.every(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined||r.monthTilts[k]===null);
+    if(!allBlank) return m;
+  }
+  return null;
+}
+
+// 簡易試算の初回納品数（小売ブロック単位で管理）
+if(!window.simToBInitDelivery) window.simToBInitDelivery={1:0,2:0,3:0};
+
 // ── STEP 3: サマリープレビュー ──
 function buildSummaryPreview(){
   const area=document.getElementById('summaryPreviewArea');
@@ -3826,9 +3893,39 @@ function buildSummaryPreview(){
   const skuData=calcSkus.map(s=>{
     const tob={},ec={},ovs={};
     tobMonths.forEach(m=>{
-      tob[m]=calcMode==='normal'
-        ?calcRetailers.reduce((a,r)=>{const ps=s.posPs||0;const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);const hasE=mbs.some(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined);if(hasE)return a;const cumTilt=mbs.reduce((acc,k)=>{const t=parseFloat(r.monthTilts[k]);return isNaN(t)?acc:acc*t;},1);return a+Math.round(ps*r.posTilt*cumTilt*r.stores);},0)
-        :(((calcSimpleMonthly['toB1']||{})[s.name]||{})[m]||0)+(((calcSimpleMonthly['toB2']||{})[s.name]||{})[m]||0)+(((calcSimpleMonthly['toB3']||{})[s.name]||{})[m]||0);
+      if(calcMode==='normal'){
+        tob[m]=calcRetailers.reduce((a,r)=>{
+          const ps=s.posPs||0;
+          const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
+          if(mbs.length===0) return a; // 修正４: 傾斜入力なし→0加算しない
+          const allBlank=mbs.every(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined||r.monthTilts[k]===null);
+          if(allBlank) return a; // 修正４: その月以前に傾斜なし→加算しない
+          const cumTilt=mbs.reduce((acc,k)=>{const t=parseFloat(r.monthTilts[k]);return isNaN(t)?acc:acc*t;},1);
+          let v=Math.round(ps*r.posTilt*cumTilt*r.stores);
+          // 修正５: 最初に計算値が出る月に初回納品数を加算
+          const firstCalcM=getRetailerFirstCalcMonth(r,tobMonths);
+          if(m===firstCalcM&&(r.initialDelivery||0)>0) v+=(r.initialDelivery||0);
+          return a+v;
+        },0);
+      } else {
+        // 簡易試算: 各ブロックの月別数量合計
+        const tobVal=(((calcSimpleMonthly['toB1']||{})[s.name]||{})[m]||0)
+               +(((calcSimpleMonthly['toB2']||{})[s.name]||{})[m]||0)
+               +(((calcSimpleMonthly['toB3']||{})[s.name]||{})[m]||0);
+        // 修正５: 簡易試算の初回納品数を各ブロックの最初の入力月に加算
+        let initAdd=0;
+        [1,2,3].forEach(num=>{
+          const bk='toB'+num;
+          const initDel=window.simToBInitDelivery[num]||0;
+          if(initDel>0){
+            const store=calcSimpleMonthly[bk]||{};
+            const skuStore=store[s.name]||{};
+            const firstInputM=tobMonths.find(mm=>skuStore[mm]!=null&&skuStore[mm]!=='');
+            if(firstInputM===m) initAdd+=initDel;
+          }
+        });
+        tob[m]=tobVal+initAdd;
+      }
     });
     ecMonths.forEach(m=>{ec[m]=((calcEcMonthly[s.name]||{})[m]||0)+((calcEcMonthly2[s.name]||{})[m]||0);});
     ovsMonths.forEach(m=>{ovs[m]=calcOvsMonthly.reduce((a,st)=>a+((st[s.name]||{})[m]||0),0);});
@@ -3854,19 +3951,56 @@ function buildSummaryPreview(){
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:${accent};border:1px solid var(--border)">${fmt(total)}</td>
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;border:1px solid var(--border)" class="${diff>=0?'num-pos':'num-warn'}">${diff>=0?'+':''}${fmt(diff)}</td></tr>`;
   };
-  // mkRowToB: 直近3月平均・月別・合計・新規内訳
+  // mkRowToB: 直近3月平均・月別・合計・新規内訳（初回納品数を（）付きで表示）
   const mkRowToB=(s,tob,months)=>{
     const bm=getBaseMonth();
     const avg3=recentShipForCalc(s.jan,'tob',3,bm);
-    const newQty=calcRetailers.filter(r=>r.status==='新規').reduce((a,r)=>{
-      return a+months.reduce((b,m)=>{const ps=s.posPs||0;const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);const cumTilt=mbs.reduce((acc,k)=>{const t=r.monthTilts[k]!==undefined?r.monthTilts[k]:0.7;return acc*t;},1);return b+Math.round(ps*r.posTilt*cumTilt*r.stores);},0);
-    },0);
+    // 月別初回納品数マップを計算（通常試算）
+    const initByMonth={};
+    if(calcMode==='normal'){
+      calcRetailers.forEach(r=>{
+        const initDel=r.initialDelivery||0;
+        if(initDel>0){
+          const firstM=getRetailerFirstCalcMonth(r,months);
+          if(firstM) initByMonth[firstM]=(initByMonth[firstM]||0)+initDel;
+        }
+      });
+    } else {
+      // 簡易試算: ブロック別の初回納品数
+      [1,2,3].forEach(num=>{
+        const initDel=window.simToBInitDelivery[num]||0;
+        if(initDel>0){
+          const store=calcSimpleMonthly['toB'+num]||{};
+          const skuStore=store[s.name]||{};
+          const firstM=months.find(mm=>skuStore[mm]!=null&&skuStore[mm]!=='');
+          if(firstM) initByMonth[firstM]=(initByMonth[firstM]||0)+initDel;
+        }
+      });
+    }
+    // 新規内訳（通常試算）: P/S × 傾斜 × 店舗数の合計 + 新規小売の初回納品数
+    const newQty=calcMode==='normal'?calcRetailers.filter(r=>r.status==='新規').reduce((a,r)=>{
+      const initDel=r.initialDelivery||0;
+      const ps=s.posPs||0;
+      let ret=months.reduce((b,m)=>{
+        const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
+        if(mbs.length===0) return b;
+        const allBlank=mbs.every(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined||r.monthTilts[k]===null);
+        if(allBlank) return b;
+        const cumTilt=mbs.reduce((acc,k)=>{const t=parseFloat(r.monthTilts[k]);return isNaN(t)?acc:acc*t;},1);
+        return b+Math.round(ps*r.posTilt*cumTilt*r.stores);
+      },0);
+      ret+=initDel; // 新規小売の初回納品数を新規内訳に加算
+      return a+ret;
+    },0):0;
     const total=months.reduce((a,m)=>a+(tob[m]||0),0);
     return`<tr><td style="padding:6px 8px;color:var(--text);font-size:12px">${escHtml(s.name)}<br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${s.jan||''}</span></td>
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--accent4);border:1px solid var(--border)">${avg3?fmt(avg3):'—'}</td>
-      ${months.map(m=>`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--tob);border:1px solid rgba(42,45,58,.4)">${fmt(tob[m]||0)}</td>`).join('')}
+      ${months.map(m=>{
+        const initPart=initByMonth[m]?`<span style="color:var(--accent5);font-size:10px">(+${fmt(initByMonth[m])})</span>`:'';
+        return`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--tob);border:1px solid rgba(42,45,58,.4)">${fmt(tob[m]||0)}${initPart}</td>`;
+      }).join('')}
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--tob);border:1px solid var(--border)">${fmt(total)}</td>
-      <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--accent3);border:1px solid var(--border)">${calcMode==='normal'&&newQty>0?fmt(newQty):'—'}</td></tr>`;
+      <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--accent3);border:1px solid var(--border)">${(calcMode==='normal'||calcMode==='simple')&&newQty>0?fmt(newQty):'—'}</td></tr>`;
   };
   const mkRow=(s,vals,months,accent,channel='ec')=>{
     const bm=getBaseMonth();
@@ -3979,14 +4113,38 @@ function buildSummaryPreview(){
   const mkToBTotalRow=(skuData,months)=>{
     const totals=months.reduce((acc,m)=>{acc[m]=skuData.reduce((a,d)=>a+(d.tob[m]||0),0);return acc;},{});
     const grand=Object.values(totals).reduce((a,b)=>a+b,0);
+    // 新規内訳: 新規小売のP/S×傾斜×店舗数 + 新規小売の初回納品数
     const newGrand=calcMode==='normal'?calcRetailers.filter(r=>r.status==='新規').reduce((a,r)=>{
+      const initDel=r.initialDelivery||0;
       return a+skuData.reduce((b,d)=>{
-        return b+months.reduce((c,m)=>{const ps=d.s.posPs||0;const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);const cumTilt=mbs.reduce((acc,k)=>{const t=r.monthTilts[k]!==undefined?r.monthTilts[k]:0.7;return acc*t;},1);return c+Math.round(ps*r.posTilt*cumTilt*r.stores);},0);
-      },0);
+        const ps=d.s.posPs||0;
+        return b+months.reduce((c,m)=>{
+          const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
+          if(mbs.length===0) return c;
+          const allBlank=mbs.every(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined||r.monthTilts[k]===null);
+          if(allBlank) return c;
+          const cumTilt=mbs.reduce((acc,k)=>{const t=parseFloat(r.monthTilts[k]);return isNaN(t)?acc:acc*t;},1);
+          return c+Math.round(ps*r.posTilt*cumTilt*r.stores);
+        },0);
+      },0)+initDel;
     },0):0;
+    // 月別初回納品数マップ
+    const initByMonth={};
+    if(calcMode==='normal'){
+      calcRetailers.forEach(r=>{
+        const initDel=r.initialDelivery||0;
+        if(initDel>0){
+          const firstM=getRetailerFirstCalcMonth(r,months);
+          if(firstM) initByMonth[firstM]=(initByMonth[firstM]||0)+initDel;
+        }
+      });
+    }
     return`<tr style="background:rgba(255,255,255,.02)"><td style="padding:6px 8px;font-size:12px;font-weight:500;border:1px solid var(--border)">合計</td>
       <td style="padding:6px 8px;border:1px solid var(--border)"></td>
-      ${months.map(m=>`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--tob);border:1px solid rgba(42,45,58,.4)">${fmt(totals[m]||0)}</td>`).join('')}
+      ${months.map(m=>{
+        const initPart=initByMonth[m]?`<span style="color:var(--accent5);font-size:10px">(+${fmt(initByMonth[m])})</span>`:'';
+        return`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--tob);border:1px solid rgba(42,45,58,.4)">${fmt(totals[m]||0)}${initPart}</td>`;
+      }).join('')}
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--tob);border:1px solid var(--border)">${fmt(grand)}</td>
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--accent3);border:1px solid var(--border)">${calcMode==='normal'&&newGrand>0?fmt(newGrand):'—'}</td></tr>`;
   };
@@ -4040,7 +4198,32 @@ function buildPreview(){
     ${moqAlertLines}
   </div>`;
 
-  document.getElementById('calcPreviewContent').innerHTML=moqBanner+`
+  // 初回納品数サマリーを構築
+  let initDeliveryInfo='';
+  if(calcMode==='normal'){
+    const initLines=calcRetailers.filter(r=>(r.initialDelivery||0)>0).map(r=>{
+      const all8c2=monthRange(d.base_month||'2026-01',8);
+      const tobMs2=all8c2.filter(m=>m<=(d.base_month?addMonths(d.base_month,d.tob_months-1):all8c2[all8c2.length-1]));
+      const firstM=getRetailerFirstCalcMonth(r,tobMs2);
+      return`<span style="font-family:var(--font-mono);font-size:11px;color:var(--accent5)">${escHtml(r.name)}: ${fmt(r.initialDelivery||0)}個（${firstM?mLabel(firstM):'—'}に計上）</span>`;
+    });
+    if(initLines.length){
+      initDeliveryInfo=`<div style="margin-bottom:10px;padding:10px 14px;background:rgba(180,158,232,.08);border:1px solid rgba(180,158,232,.25);border-radius:var(--radius)">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--accent5);margin-bottom:6px">初回納品数（toB）</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">${initLines.join('')}</div></div>`;
+    }
+  } else {
+    const simLines=[1,2,3].filter(n=>(window.simToBInitDelivery[n]||0)>0).map(n=>{
+      return`<span style="font-family:var(--font-mono);font-size:11px;color:var(--accent5)">toB${['①','②','③'][n-1]} ${window.simToBNames[n]||''}: ${fmt(window.simToBInitDelivery[n]||0)}個</span>`;
+    });
+    if(simLines.length){
+      initDeliveryInfo=`<div style="margin-bottom:10px;padding:10px 14px;background:rgba(180,158,232,.08);border:1px solid rgba(180,158,232,.25);border-radius:var(--radius)">
+        <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--accent5);margin-bottom:6px">初回納品数（toB）</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">${simLines.join('')}</div></div>`;
+    }
+  }
+
+  document.getElementById('calcPreviewContent').innerHTML=moqBanner+initDeliveryInfo+`
     <div style="margin-bottom:16px">
       <div class="kpi-row" style="margin-bottom:12px">
         <div class="kpi-card blue"><div class="kpi-label">推計必要数合計</div><div class="kpi-value">${fmt(totEst)}</div></div>
@@ -4289,9 +4472,35 @@ function collectCalcData(){
   const skusOut=calcSkus.map(s=>{
     const tob={},ec={},overseas={};
     tobMonths.forEach(m=>{
-      tob[m]=calcMode==='normal'
-        ?calcRetailers.reduce((a,r)=>{const ps=s.posPs||0;const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);const hasE=mbs.some(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined);if(hasE)return a;const cumTilt=mbs.reduce((acc,k)=>{const t=parseFloat(r.monthTilts[k]);return isNaN(t)?acc:acc*t;},1);return a+Math.round(ps*r.posTilt*cumTilt*r.stores);},0)
-        :(((calcSimpleMonthly['toB1']||{})[s.name]||{})[m]||0)+(((calcSimpleMonthly['toB2']||{})[s.name]||{})[m]||0)+(((calcSimpleMonthly['toB3']||{})[s.name]||{})[m]||0);
+      if(calcMode==='normal'){
+        tob[m]=calcRetailers.reduce((a,r)=>{
+          const ps=s.posPs||0;
+          const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
+          if(mbs.length===0) return a;
+          const allBlank=mbs.every(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined||r.monthTilts[k]===null);
+          if(allBlank) return a;
+          const cumTilt=mbs.reduce((acc,k)=>{const t=parseFloat(r.monthTilts[k]);return isNaN(t)?acc:acc*t;},1);
+          let v=Math.round(ps*r.posTilt*cumTilt*r.stores);
+          const firstM=getRetailerFirstCalcMonth(r,tobMonths);
+          if(m===firstM&&(r.initialDelivery||0)>0) v+=(r.initialDelivery||0);
+          return a+v;
+        },0);
+      } else {
+        const tobVal=(((calcSimpleMonthly['toB1']||{})[s.name]||{})[m]||0)
+                    +(((calcSimpleMonthly['toB2']||{})[s.name]||{})[m]||0)
+                    +(((calcSimpleMonthly['toB3']||{})[s.name]||{})[m]||0);
+        let initAdd=0;
+        [1,2,3].forEach(num=>{
+          const initDel=window.simToBInitDelivery[num]||0;
+          if(initDel>0){
+            const store=calcSimpleMonthly['toB'+num]||{};
+            const skuStore=store[s.name]||{};
+            const firstM=tobMonths.find(mm=>skuStore[mm]!=null&&skuStore[mm]!=='');
+            if(firstM===m) initAdd+=initDel;
+          }
+        });
+        tob[m]=tobVal+initAdd;
+      }
     });
     ecMonths.forEach(m=>{ec[m]=((calcEcMonthly[s.name]||{})[m]||0)+((calcEcMonthly2[s.name]||{})[m]||0);});
     ovsMonths.forEach(m=>{overseas[m]=calcOvsMonthly.reduce((a,st)=>a+((st[s.name]||{})[m]||0),0);});
@@ -4322,18 +4531,25 @@ function collectCalcData(){
   });
   // ⑤ retailer_blocks を構築（発注サマリーの小売別タブ用）
   const retailer_blocks=calcMode==='normal'?calcRetailers.map(r=>{
+    const firstM=getRetailerFirstCalcMonth(r,tobMonths);
+    const initDel=r.initialDelivery||0;
     const skuMap={};
     calcSkus.forEach(s=>{
       const ps=s.posPs||0;
       const monthly={};
       tobMonths.forEach(m=>{
         const mbs=Object.keys(r.monthTilts).sort().filter(k=>k<=m);
-        const cumTilt=mbs.reduce((acc,k)=>{const t=r.monthTilts[k]!==undefined?r.monthTilts[k]:0.7;return acc*t;},1);
-        monthly[m]=Math.round(ps*r.posTilt*cumTilt*r.stores);
+        if(mbs.length===0) return;
+        const allBlank=mbs.every(k=>r.monthTilts[k]===''||r.monthTilts[k]===undefined||r.monthTilts[k]===null);
+        if(allBlank) return;
+        const cumTilt=mbs.reduce((acc,k)=>{const t=parseFloat(r.monthTilts[k]);return isNaN(t)?acc:acc*t;},1);
+        let v=Math.round(ps*r.posTilt*cumTilt*r.stores);
+        if(m===firstM&&initDel>0) v+=initDel;
+        monthly[m]=v;
       });
       skuMap[s.name]={monthly};
     });
-    return{retailer:r.name,stores:r.stores,pos_tilt:r.posTilt,is_new:r.isNew||false,skus:skuMap};
+    return{retailer:r.name,stores:r.stores,pos_tilt:r.posTilt,is_new:r.isNew||false,initial_delivery:initDel,skus:skuMap};
   }):[];
   return{
     mode:calcMode,
@@ -4564,8 +4780,17 @@ async function buildWorkbook(d){
       sheetXml = setCellNum(sheetXml, 'B'+(h+1), r.posTilt||1);
       sheetXml = setCellNum(sheetXml, 'D'+(h+1), r.stores||0);
       sheetXml = setCellInline(sheetXml, 'F'+(h+1), r.status||'導入済み');
+      // 初回納品数をG列に記録
+      if(r.initial_delivery||r.initialDelivery){
+        sheetXml = setCellNum(sheetXml, 'G'+(h+1), r.initial_delivery||r.initialDelivery||0);
+      }
       tobMs.forEach((m,mi)=>{
-        if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+(h+2), r.monthTilts?.[m]!=null ? r.monthTilts[m] : 0.7);
+        if(mi<8){
+          const tv=r.monthTilts?.[m];
+          // 空欄（未入力）の場合は0を書き込む（計算値を出さない）
+          const val=(tv===''||tv===undefined||tv===null)?0:parseFloat(tv)||0;
+          sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+(h+2), val);
+        }
       });
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
@@ -4695,6 +4920,9 @@ function saveDraft(){
   const d=collectCalcData();
   if(!d.product){showNotif('商品名を入力してください','error');return;}
   d.dept=dept;d.memo=(document.getElementById('ci_memo')||{}).value||'';
+  // 簡易試算の小売名・初回納品数も保存
+  d.simToBNames=JSON.parse(JSON.stringify(window.simToBNames||{1:'',2:'',3:''}));
+  d.simToBInitDelivery=JSON.parse(JSON.stringify(window.simToBInitDelivery||{1:0,2:0,3:0}));
   const calcDateVal=document.getElementById('ci_calcDate')?.value||d.order_date||'';
   const draftTitle=(calcDateVal?calcDateVal.replace(/-/g,'').slice(0,8)+'_':'')+(d.product||'無題');
   d.draft_title=draftTitle;
@@ -4790,8 +5018,7 @@ function resetCalcSession(){
   window.ecName1='';window.ecName2='';
   window.ovsName0='';window.ovsName1='';window.ovsName2='';window.ovsName3='';
   window.simToBNames={1:'',2:'',3:''};
-  window.promoPlan=null;
-  window.simToBNames={1:'',2:'',3:''};
+  window.simToBInitDelivery={1:0,2:0,3:0};
   window.promoPlan=null;
   const clearV=(id)=>{const el=document.getElementById(id);if(el) el.value='';};
   clearV('ci_product');clearV('ci_brand');clearV('ci_calcDate');clearV('ci_orderDate');
@@ -4858,9 +5085,13 @@ function reEditDraft(id){
   selectMode(calcMode);
   calcSkus=JSON.parse(JSON.stringify(d.skus||[]));
   calcRetailers=JSON.parse(JSON.stringify(d.retailers||[]));
+  // 旧データとの互換: initialDeliveryが無い場合は0を補完
+  calcRetailers.forEach(r=>{ if(r.initialDelivery==null) r.initialDelivery=0; });
   calcEcMonthly={};calcEcMonthly2={};
   calcOvsMonthly=[{},{},{},{}];
   calcSimpleMonthly={};
+  // 簡易試算の初回納品数を復元
+  window.simToBInitDelivery=d.simToBInitDelivery||{1:0,2:0,3:0};
 
   // EC・海外データ復元
   if(d.ec_detail&&d.ec_detail[0]) Object.entries(d.ec_detail[0]).forEach(([k,v])=>{calcEcMonthly[k]=v.monthly||{};});
