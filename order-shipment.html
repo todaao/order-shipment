@@ -2862,7 +2862,117 @@ function renderAlerts(){
   }
 
   // ── アラートカード描画ヘルパー ──────────────
-  function alertCard(a, type){
+  // ── 同一商品名グループ化カード描画 ────────────────────────
+function renderGroupedCards(alerts, type){
+  // product_nameでグループ化（マスタにないSKUはname単位）
+  const groups={};
+  alerts.forEach(a=>{
+    const key=(a.skuInfo&&a.skuInfo.product)||a.name||a.jan;
+    if(!groups[key]) groups[key]=[];
+    groups[key].push(a);
+  });
+  // 各グループ: グループ内で消化月数が最小のものを代表値とし、SKU名を列挙
+  let h="";
+  Object.values(groups).forEach(grp=>{
+    // 代表: dmが最小（nullは末尾）
+    const rep=grp.slice().sort((a,b)=>((a.dm??999)-(b.dm??999)))[0];
+    const brand=rep.skuInfo?.brand||"";
+    const product=rep.skuInfo?.product||rep.name;
+    const isSingle=grp.length===1;
+    const singleSku=isSingle?(rep.skuInfo?.sku||""):""; 
+    // 複数SKUの場合：全SKU名と各消化月数を列挙
+    const skuLines=isSingle?"":grp
+      .slice().sort((a,b)=>((a.dm??999)-(b.dm??999)))
+      .map(a=>{
+        const skuName=a.skuInfo?.sku||a.name;
+        const dmStr=a.dm!=null?a.dm.toFixed(1)+'ヶ月':'在庫なし';
+        const dmColor=a.level==='danger'?'var(--accent3)':a.level==='warn'?'var(--accent)':'var(--text3)';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:12px;color:var(--text2)">${escHtml(skuName)}</span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:${dmColor};font-weight:500;margin-left:16px;white-space:nowrap">${dmStr}</span>
+        </div>`;
+      }).join("");
+    const displayName=product+(isSingle&&singleSku?" "+singleSku:"");
+
+    // 代表値の消化月数表示
+    const repDm=rep.dm!=null?rep.dm.toFixed(1)+'ヶ月':'—';
+    const repDmColor=rep.level==='danger'?'var(--accent3)':rep.level==='warn'?'var(--accent)':'var(--text2)';
+
+    // ボーダー色
+    const borderColor=
+      type==='shortage'?(rep.level==='danger'?'var(--accent3)':rep.level==='warn'?'var(--accent)':'var(--border2)')
+      :type==='excess'?'var(--accent2)'
+      :type==='discontinued'?'var(--accent5)'
+      :'var(--border)';
+
+    // レベルバッジ
+    const levelLabel=type==='shortage'
+      ?(rep.level==='danger'?'緊急 — 今週要対応':rep.level==='warn'?'警告 — 発注推奨':'要監視')
+      :type==='excess'?'過剰在庫'
+      :type==='discontinued'?'廃版予定'
+      :'';
+    const levelBg=type==='shortage'
+      ?(rep.level==='danger'?'rgba(224,123,138,.15)':rep.level==='warn'?'rgba(200,169,110,.15)':'rgba(42,45,58,.6)')
+      :type==='excess'?'rgba(126,184,212,.15)'
+      :type==='discontinued'?'rgba(180,158,232,.15)'
+      :'rgba(42,45,58,.6)';
+    const levelColor=type==='shortage'
+      ?(rep.level==='danger'?'var(--accent3)':rep.level==='warn'?'var(--accent)':'var(--text3)')
+      :type==='excess'?'var(--accent2)'
+      :type==='discontinued'?'var(--accent5)'
+      :'var(--text3)';
+    const levelBorder=type==='shortage'
+      ?(rep.level==='danger'?'rgba(224,123,138,.3)':rep.level==='warn'?'rgba(200,169,110,.3)':'var(--border)')
+      :type==='excess'?'rgba(126,184,212,.3)'
+      :type==='discontinued'?'rgba(180,158,232,.3)'
+      :'var(--border)';
+
+    // 消化月数バー（代表値）
+    const maxDm=12;
+    const pct=rep.dm!=null?Math.min(100,Math.round((rep.dm/maxDm)*100)):0;
+    const barColor=type==='shortage'
+      ?(rep.level==='danger'?'var(--accent3)':'var(--accent)')
+      :type==='excess'?'var(--accent2)'
+      :type==='discontinued'?'var(--accent5)'
+      :'var(--text3)';
+
+    h+=`<div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid ${borderColor};border-radius:0 var(--radius) var(--radius) 0;padding:13px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:${levelBg};color:${levelColor};border:1px solid ${levelBorder}">${levelLabel}</span>
+          ${!isSingle?`<span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:var(--surface2);color:var(--text3);border:1px solid var(--border)">${grp.length} SKU</span>`:''}
+        </div>
+        ${brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px">${escHtml(brand)}</div>`:''}
+        <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:${isSingle?'7':'8'}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(displayName)}</div>
+        ${!isSingle?`<div style="margin-bottom:8px;border-top:1px solid var(--border);padding-top:4px">${skuLines}</div>`:''}
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          ${type==='shortage'||type==='discontinued'?`
+            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数</span>${isSingle?` <span style="color:${repDmColor};font-weight:500">${repDm}</span>`:' 最短'+` <span style="color:${repDmColor};font-weight:500">${repDm}</span>`}</span>
+            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(rep.stock)}個</span></span>
+            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">月平均出荷 </span><span style="color:var(--text2)">${fmt(Math.round(rep.monthly))}個</span></span>
+            ${type==='shortage'?`<span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">LT </span><span style="color:var(--text2)">${rep.lt.toFixed(1)}ヶ月</span></span>`:''}
+          `:
+            `<span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数</span>${isSingle?` <span style="color:var(--accent2);font-weight:500">${repDm}</span>`:' 最長'+` <span style="color:var(--accent2);font-weight:500">${repDm}</span>`}</span>
+            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(rep.stock)}個</span></span>
+            <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">月平均出荷 </span><span style="color:var(--text2)">${fmt(Math.round(rep.monthly))}個</span></span>
+            ${rep.surplus!=null&&rep.surplus>0?`<span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">12ヶ月超過分 </span><span style="color:var(--accent2)">+${fmt(rep.surplus)}個</span></span>`:''}`
+          }
+        </div>
+      </div>
+      <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        <div style="width:80px">
+          <div style="background:var(--surface2);border-radius:2px;height:6px;overflow:hidden;margin-bottom:3px">
+            <div style="width:${pct}%;height:100%;background:${barColor};border-radius:2px"></div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);text-align:right">${isSingle?repDm:'最短 '+repDm}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  return h;
+}
+
+function alertCard(a, type){
     const borderColor=
       type==='shortage'?(a.level==='danger'?'var(--accent3)':a.level==='warn'?'var(--accent)':'var(--border2)')
       :type==='excess'?'var(--accent2)'
@@ -2879,9 +2989,8 @@ function renderAlerts(){
             <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:${a.level==='danger'?'rgba(224,123,138,.15)':a.level==='warn'?'rgba(200,169,110,.15)':'rgba(42,45,58,.6)'};color:${a.level==='danger'?'var(--accent3)':a.level==='warn'?'var(--accent)':'var(--text3)'};border:1px solid ${a.level==='danger'?'rgba(224,123,138,.3)':a.level==='warn'?'rgba(200,169,110,.3)':'var(--border)'}">${levelLabel}</span>
           </div>
           <div style="display:none"></div>
-          ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:2px">${escHtml(a.skuInfo.brand)}</div>`:''}
-          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.skuInfo?a.skuInfo.product:a.name)}</div>
-          ${a.skuInfo&&a.skuInfo.sku?`<div style="font-size:11px;color:var(--text3);margin-bottom:5px">${escHtml(a.skuInfo.sku)}</div>`:''}
+          ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px">${escHtml(a.skuInfo.brand)}</div>`:''}
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.skuInfo&&a.skuInfo.product?a.skuInfo.product+(a.skuInfo.sku?' '+a.skuInfo.sku:''):a.name)}</div>
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:${a.level==='danger'?'var(--accent3)':a.level==='warn'?'var(--accent)':'var(--text2)'};font-weight:500">${a.dm.toFixed(1)}ヶ月</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
@@ -2902,9 +3011,8 @@ function renderAlerts(){
             <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(126,184,212,.15);color:var(--accent2);border:1px solid rgba(126,184,212,.3)">過剰在庫</span>
           </div>
           <div style="display:none"></div>
-          ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:2px">${escHtml(a.skuInfo.brand)}</div>`:''}
-          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.skuInfo?a.skuInfo.product:a.name)}</div>
-          ${a.skuInfo&&a.skuInfo.sku?`<div style="font-size:11px;color:var(--text3);margin-bottom:5px">${escHtml(a.skuInfo.sku)}</div>`:''}
+          ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px">${escHtml(a.skuInfo.brand)}</div>`:''}
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.skuInfo&&a.skuInfo.product?a.skuInfo.product+(a.skuInfo.sku?' '+a.skuInfo.sku:''):a.name)}</div>
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:var(--accent2);font-weight:500">${a.dm.toFixed(1)}ヶ月</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
@@ -2954,7 +3062,7 @@ function renderAlerts(){
       const grp=shortageActive.filter(a=>a.level===lv);
       if(!grp.length) return;
       h+=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:${lv==='danger'?'var(--accent3)':lv==='warn'?'var(--accent)':'var(--text3)'};margin:${h?'20px':0} 0 8px;text-transform:uppercase">${levelHeadings[lv]} (${grp.length}件)</div>`;
-      grp.forEach(a=>{ h+=alertCard(a,'shortage'); });
+      h+=renderGroupedCards(grp,'shortage');
     });
     return h;
   }
@@ -2965,7 +3073,7 @@ function renderAlerts(){
       return '<div style="color:var(--text3);font-size:13px;text-align:center;padding:32px">過剰在庫リスクのあるSKUはありません ✓</div>';
     }
     let h=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3);margin-bottom:8px;text-transform:uppercase">消化月数 ${_thExcess}ヶ月超 — 消化促進検討 (${excessActive.length}件)</div>`;
-    excessActive.forEach(a=>{ h+=alertCard(a,'excess'); });
+    h+=renderGroupedCards(excessActive,'excess');
     return h;
   }
 
@@ -3037,9 +3145,8 @@ function renderAlerts(){
             <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;${_arrStyle}">${_arrLabel}</span>
             ${hasOrder?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(a.orderProduct)} / 発注日: ${escHtml(a.orderDate)}${_arrDateStr?' / '+_arrDateStr:''}</span>`:''}
           </div>
-          ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:2px">${escHtml(a.skuInfo.brand)}</div>`:''}
-          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.skuInfo?a.skuInfo.product:a.name)}</div>
-          ${a.skuInfo&&a.skuInfo.sku?`<div style="font-size:11px;color:var(--text3);margin-bottom:5px">${escHtml(a.skuInfo.sku)}</div>`:''}
+          ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px">${escHtml(a.skuInfo.brand)}</div>`:''}
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(a.skuInfo&&a.skuInfo.product?a.skuInfo.product+(a.skuInfo.sku?' '+a.skuInfo.sku:''):a.name)}</div>
           <div style="display:flex;gap:16px;flex-wrap:wrap">
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:var(--text2)">${a.dm.toFixed(1)}ヶ月</span></span>
             <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
@@ -3077,28 +3184,7 @@ function renderAlerts(){
     function rdg(grp,label,color){
       if(!grp.length) return '';
       let g=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:${color};margin:14px 0 8px;text-transform:uppercase">${label} (${grp.length}件)</div>`;
-      grp.forEach(a=>{
-        const ds=a.dm!=null?a.dm.toFixed(1)+'ヶ月':'—';
-        const pct=a.dm!=null?Math.min(100,Math.round(a.dm/12*100)):0;
-        g+=`<div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent5);border-radius:0 var(--radius) var(--radius) 0;padding:13px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px">
-          <div style="flex:1;min-width:0">
-            <div style="margin-bottom:4px"><span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(180,158,232,.15);color:var(--accent5);border:1px solid rgba(180,158,232,.3)">廃版予定</span></div>
-            ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:2px">${escHtml(a.skuInfo.brand)}</div>`:''}
-            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(a.skuInfo?a.skuInfo.product:a.name)}</div>
-            ${a.skuInfo&&a.skuInfo.sku?`<div style="font-size:11px;color:var(--text3);margin-bottom:5px">${escHtml(a.skuInfo.sku)}</div>`:''}
-            <div style="display:flex;gap:16px;flex-wrap:wrap">
-              <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">消化月数 </span><span style="color:var(--text2);font-weight:500">${ds}</span></span>
-              <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">良品在庫 </span><span style="color:var(--text2)">${fmt(a.stock)}個</span></span>
-              <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">月平均出荷 </span><span style="color:var(--text2)">${fmt(Math.round(a.monthly))}個</span></span>
-              ${a.surplus!==null&&a.surplus>0?`<span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">12ヶ月超過分 </span><span style="color:var(--accent2)">+${fmt(a.surplus)}個</span></span>`:''}
-            </div>
-          </div>
-          <div style="flex-shrink:0;width:80px">
-            <div style="background:var(--surface2);border-radius:2px;height:6px;overflow:hidden;margin-bottom:3px"><div style="width:${pct}%;height:100%;background:var(--accent5);border-radius:2px"></div></div>
-            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);text-align:right">${ds}</div>
-          </div>
-        </div>`;
-      });
+      g+=renderGroupedCards(grp,'discontinued');
       return g;
     }
     h+=rdg(grpD,'在庫不足リスク（LT以内）','var(--accent3)');
