@@ -4909,15 +4909,11 @@ function reEditDraft(id){
 async function exportOneDraft(id){
   const d=loadDrafts().find(x=>x.id===id);if(!d)return;
   try{
-    const wb=await buildWorkbook(d);if(!ret){showNotif('ワークブック生成失敗','error');return;}
-    const isSimple=d.mode==='simple';
-    const srcSheet=isSimple?'発注試算テンプレート（簡易）':'発注試算テンプレート';
+    const ret=await buildWorkbook(d);if(!ret){showNotif('ワークブック生成失敗','error');return;}
     const calcDateVal=d.calc_date||d.order_date||'';
     const dateStr=calcDateVal?calcDateVal.replace(/-/g,'').slice(2,8):'';
     const newSheetName=(dateStr+'_'+(d.product||'発注試算')).slice(0,31);
-    const ws=wb.getWorksheet(srcSheet);
-    if(ws) ws.name=newSheetName;
-    const buf = await ret.generateAsync({type:'arraybuffer'});
+    const buf=await ret.generateAsync({type:'arraybuffer'});
     const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');
     a.href=url;a.download=`${newSheetName}.xlsx`;
@@ -4971,15 +4967,11 @@ async function exportSelectedDrafts(){
   for(const id of ids){
     const d=loadDrafts().find(x=>x.id===id);if(!d)continue;
     try{
-      const wb=await buildWorkbook(d);if(!ret){showNotif('ワークブック生成失敗','error');return;}
-      const isSimple=d.mode==='simple';
-      const srcSheet=isSimple?'発注試算テンプレート（簡易）':'発注試算テンプレート';
+      const ret=await buildWorkbook(d);if(!ret){showNotif('ワークブック生成失敗','error');return;}
       const calcDateVal=d.calc_date||d.order_date||'';
       const dateStr=calcDateVal?calcDateVal.replace(/-/g,'').slice(2,8):'';
       const newSheetName=(dateStr+'_'+(d.product||'発注試算')).slice(0,31);
-      const ws=wb.getWorksheet(srcSheet);
-      if(ws) ws.name=newSheetName;
-      const buf = await ret.generateAsync({type:'arraybuffer'});
+      const buf=await ret.generateAsync({type:'arraybuffer'});
       const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       const url=URL.createObjectURL(blob);const a=document.createElement('a');
       a.href=url;a.download=`${newSheetName}.xlsx`;
