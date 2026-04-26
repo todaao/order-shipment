@@ -2134,7 +2134,13 @@ function renderInventoryTable(filtMsArg){
       if(monthly>0) dm=(s.latest_stock||0)/monthly;
     }
     return{...s,_digestMonths:dm,
-      _shortage:dm!=null&&dm<=leadTimeMonths+1&&dm<3,
+      // マスタ未登録・廃盤済み・廃盤予定は欠品リスクバッジを付けない
+      _shortage:dm!=null&&dm<=leadTimeMonths+1&&dm<3&&(()=>{
+        const mst=masterLookup(jan);
+        if(!mst) return false; // マスタ未登録
+        if(mst.discontinued||mst.discontinue_planned) return false; // 廃盤済み・予定
+        return true;
+      })(),
       _excess:dm!=null&&dm>=12};
   });
 
@@ -4547,12 +4553,14 @@ function renderStep5InvSim(){
       if(arrivalMonth&&m===arrivalMonth) stock+=confirmedQty;
       // ⑧SKU別入庫予定月に入庫予定数を補填
       if(skuPendingMonth&&m===skuPendingMonth&&skuPendingQty>0) stock+=skuPendingQty;
-      const ship=(tob[m]||0)+(ec[m]||0)+(ovs[m]||0);
-      stock-=ship;
-      // 欠品判定
+      const shipRaw=(tob[m]||0)+(ec[m]||0)+(ovs[m]||0);
+      // 欠品フラグが立っている月は出荷数をゼロとして在庫を消費しない
       const isFlagged=!!flags[m];
-      const isStockout=stock<0;
-      const isRisk=stock>=0&&stock<ship;
+      const ship=isFlagged?0:shipRaw;
+      stock-=ship;
+      // 欠品判定（フラグなし時のみ）
+      const isStockout=!isFlagged&&stock<0;
+      const isRisk=!isFlagged&&stock>=0&&stock<shipRaw;
       // 色: 赤=欠品確定(stock<0)、黄=リスク(0<=stock<当月試算)、フラグ立て済みは背景色付き
       let bgStyle='';
       let cls='';
@@ -4569,8 +4577,12 @@ function renderStep5InvSim(){
         :'';
       const isPending=skuPendingMonth&&m===skuPendingMonth&&skuPendingQty>0;
       if(isPending&&!isFlagged&&!isStockout&&!isRisk) bgStyle='background:rgba(126,212,160,.05);';
-      const indicator=isStockout?'🔴 ':isRisk?'⚠️ ':isPending?'📦 ':'';
-      return`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;border:1px solid rgba(42,45,58,.4);${bgStyle}vertical-align:top" class="${cls}">${indicator}${fmt(stock)}${checkHtml}</td>`;
+      const indicator=isStockout?'🔴 ':isRisk?'⚠️ ':isPending&&!isFlagged?'📦 ':'';
+      // フラグ月は出荷数を打消し線で表示（どれだけ省いたか分かるように）
+      const shipNote=isFlagged&&shipRaw>0
+        ?`<br><span style="font-family:var(--font-mono);font-size:9px;color:var(--accent3);text-decoration:line-through;opacity:.6">${fmt(shipRaw)}</span>`
+        :'';
+      return`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;border:1px solid rgba(42,45,58,.4);${bgStyle}vertical-align:top" class="${cls}">${indicator}${fmt(stock)}${shipNote}${checkHtml}</td>`;
     }).join('');
     return`<tr>
       <td style="padding:6px 8px;font-size:12px;color:var(--text);border:1px solid var(--border);white-space:nowrap">${escHtml(s.name)}</td>
