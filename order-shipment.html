@@ -1045,7 +1045,7 @@ async function saveDeptSection(){
   if(!currentSessionId){ showNotif('セッションIDを選択してください', 'error'); return; }
   // アーカイブ済みセッションは保存不可
   if(window._currentSessionReadOnly){
-    showNotif('完了済みのセッションは編集できません', 'error'); return;
+    showNotif('完了済みのセッションは編集できません。新規試算を開始するか、別のセッションを開いてください。', 'error'); return;
   }
 
   const d = collectCalcData();
@@ -5366,6 +5366,9 @@ function resetCalcSession(){
   window.simToBNames={1:'',2:'',3:''};
   window.simToBInitDelivery={1:0,2:0,3:0};
   window.promoPlan=null;
+  // クラウドセッション状態もリセット
+  currentSessionId='';
+  window._currentSessionReadOnly=false;
   const clearV=(id)=>{const el=document.getElementById(id);if(el) el.value='';};
   clearV('ci_product');clearV('ci_brand');clearV('ci_calcDate');clearV('ci_orderDate');
   clearV('ci_dept');clearV('ci_memo');
