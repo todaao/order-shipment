@@ -1360,13 +1360,15 @@ function buildDetailHtml(m, s){
     rows.push(`<div style="margin-bottom:6px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--tob);letter-spacing:.08em">toB</span> <span style="font-size:11px;color:var(--text3)">未入力</span></div>`);
   }
 
-  // EC: チャネル名
-  const ecNames = (m.ec_detail||[]).map(blk=>blk.channel_name||blk._name).filter(Boolean);
+  // EC: チャネル名（ec_name1/ec_name2 から取得）
+  const ecName1 = m.ec_name1||'';
+  const ecName2 = m.ec_name2||'';
+  const ecNames = [ecName1, ecName2].filter(Boolean);
   rows.push(`<div style="margin-bottom:6px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--ec);letter-spacing:.08em">EC</span> <span style="font-size:11px;color:${ecNames.length?'var(--text2)':'var(--text3)'}">${ecNames.length ? ecNames.map(escHtml).join(' / ') : '未入力'}</span></div>`);
 
-  // 海外: チャネル名
-  const ovsNames = (m.ovs_detail||[]).map(blk=>blk.channel_name||blk._name).filter(Boolean);
-  rows.push(`<div><span style="font-family:var(--font-mono);font-size:9px;color:var(--overseas);letter-spacing:.08em">海外</span> <span style="font-size:11px;color:${ovsNames.length?'var(--text2)':'var(--text3)'}">${ovsNames.length ? ovsNames.map(escHtml).join(' / ') : '未入力'}</span></div>`);
+  // 海外: チャネル名（ovs_name0〜3 から取得）
+  const ovsNameArr = [m.ovs_name0, m.ovs_name1, m.ovs_name2, m.ovs_name3].filter(Boolean);
+  rows.push(`<div><span style="font-family:var(--font-mono);font-size:9px;color:var(--overseas);letter-spacing:.08em">海外</span> <span style="font-size:11px;color:${ovsNameArr.length?'var(--text2)':'var(--text3)'}">${ovsNameArr.length ? ovsNameArr.map(escHtml).join(' / ') : '未入力'}</span></div>`);
 
   // SKUリスト
   const skuNames = (m.skus||[]).map(s=>escHtml(s.name||s.jan||'')).filter(Boolean);
