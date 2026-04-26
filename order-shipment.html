@@ -4946,6 +4946,25 @@ async function buildWorkbook(d, overrideSheetName){
   // ── シートXMLを取得して値を書き込む ──
   let sheetXml = await zip.file(useSheet).async('string');
 
+  // ── 共有数式を通常数式に展開（孤立参照によるExcel修復警告対策）──
+  // テンプレートの共有数式マスターをsetCellInline等で上書きすると
+  // 後続の参照セル(siのみ)が孤立して「削除されたレコード: 共有数式」警告が発生する
+  (function expandSharedFormulas() {
+    const masters = {};
+    sheetXml.replace(/<f [^>]*t="shared"[^>]*ref="[^"]*"[^>]*>([^<]*)<\/f>/g, (match, formula) => {
+      const siM = match.match(/\bsi="(\d+)"/);
+      if (siM) masters[siM[1]] = formula;
+      return match;
+    });
+    if (Object.keys(masters).length === 0) return;
+    sheetXml = sheetXml.replace(/<f [^>]*t="shared"[^>]*si="(\d+)"[^>]*\/>/g, (match, si) =>
+      si in masters ? `<f>${masters[si]}</f>` : match
+    );
+    sheetXml = sheetXml.replace(/<f [^>]*t="shared"[^>]*ref="[^"]*"[^>]*>([^<]*)<\/f>/g,
+      (match, formula) => `<f>${formula}</f>`
+    );
+  })();
+
   // ── XMLヘルパー関数 ──
   // Excelシリアル日付変換 (YYYY-MM-DD → 数値)
   function dateToSerial(s) {
