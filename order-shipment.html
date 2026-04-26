@@ -1118,6 +1118,7 @@ async function loadMergedSession(sid, readOnly=false){
     if(m.ec_name2!=null) window.ecName2=m.ec_name2;
     (m.ec_detail||[]).forEach((blk,i)=>{
       const store=i===0?calcEcMonthly:calcEcMonthly2;
+      // キーはSKU名（s.name）で保存されている
       Object.entries(blk).forEach(([k,v])=>{ store[k]=v.monthly||{}; });
     });
 
@@ -4850,10 +4851,10 @@ function collectCalcData(){
     retailers:calcMode==='normal'?calcRetailers.map(r=>({...r})):[],
     retailer_blocks,
     ec_detail:[
-      Object.fromEntries(calcSkus.map(s=>[s.jan||s.name,{recent:0,monthly:calcEcMonthly[s.name]||{}}])),
-      Object.fromEntries(calcSkus.map(s=>[s.jan||s.name,{recent:0,monthly:calcEcMonthly2[s.name]||{}}])),
+      Object.fromEntries(calcSkus.map(s=>[s.name,{recent:0,monthly:calcEcMonthly[s.name]||{}}])),
+      Object.fromEntries(calcSkus.map(s=>[s.name,{recent:0,monthly:calcEcMonthly2[s.name]||{}}])),
     ],
-    ovs_detail:calcOvsMonthly.map(st=>Object.fromEntries(calcSkus.map(s=>[s.jan||s.name,{recent:0,monthly:st[s.name]||{}}]))),
+    ovs_detail:calcOvsMonthly.map(st=>Object.fromEntries(calcSkus.map(s=>[s.name,{recent:0,monthly:st[s.name]||{}}]))),
     calc_date:document.getElementById('ci_calcDate')?.value||'',
     dept:currentDept||'',
     memo:document.getElementById('ci_memo')?document.getElementById('ci_memo').value:'',
@@ -5811,8 +5812,9 @@ async function _doCloudSaveAll(){
     showNotif('一部保存エラー: '+errors.join(' / '),'error');
   } else {
     showNotif(`「${d.product}」を全項目クラウドに保存しました ✓`,'success');
+    // キャッシュを完全クリアしてから再描画（バッジを最新状態に更新）
     window._cloudSessions=[];
-    renderCloudDraftList();
+    await renderCloudDraftList();
   }
 }
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'})+' 更新';
