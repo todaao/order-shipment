@@ -752,6 +752,15 @@ textarea:focus{border-color:var(--accent);}
       <div id="cloudDraftListBody">
         <div style="color:var(--text3);font-size:12px;padding:8px">Worker URLを設定してください</div>
       </div>
+      <!-- 残骸セッション強制削除（Session not foundが出る場合） -->
+      <div style="margin-top:10px;padding:10px;background:rgba(255,80,80,.06);border:1px solid rgba(255,80,80,.2);border-radius:var(--radius)">
+        <div style="font-size:11px;color:var(--accent3);margin-bottom:6px;font-weight:500">⚠️ 残骸セッションの強制削除</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">「開いて編集」で Session not found が出る場合、セッションIDを入力して強制削除できます。</div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <input type="text" id="forceCleanSidInput" placeholder="セッションID（例: 20260417_XXXX_1234）" style="flex:1;min-width:200px;font-family:var(--font-mono);font-size:11px">
+          <button class="btn btn-danger" style="font-size:11px;padding:5px 12px;white-space:nowrap" onclick="runForceCleanSession()">強制削除</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1178,7 +1187,7 @@ async function renderCloudDraftList(){
       +'</div>'
       +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
       +'<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadMergedSessionByIdx('+idx+')">✏️ 開いて編集</button>'
-      +'<button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteCloudSessionByIdx('+idx+')">🗑</button>'
+      +'<button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteCloudSessionByIdx('+idx+')" title="セッション本体＋全セクションを削除">🗑 完全削除</button>'
       +'</div></div></div>';
   }).join('');
 }
@@ -1190,15 +1199,61 @@ function loadMergedSessionByIdx(idx){
   loadMergedSession(s.session_id);
 }
 
+async function runForceCleanSession(){
+  const input = document.getElementById('forceCleanSidInput');
+  const sid = (input?.value||'').trim();
+  if(!sid){ showNotif('セッションIDを入力してください','error'); return; }
+  showConfirm('強制削除確認',
+    `「${sid}」のセッション本体と全セクション（tob/ec/ovs/summary）を強制削除します。\n一覧に表示されていない残骸セッションも消去します。\n\nよろしいですか？`,
+    async function(){
+      try{
+        showLoader('強制削除中…');
+        await forceCleanSession(sid);
+        hideLoader();
+        closeModal();
+        if(input) input.value = '';
+        showNotif(`「${sid}」を強制削除しました`, 'success');
+        window._cloudSessions = [];
+        await renderCloudDraftList();
+      } catch(e){
+        hideLoader();
+        showNotif('エラー: '+e.message, 'error');
+      }
+    }, '強制削除'
+  );
+}
+
+// 指定セッションIDの残骸セクションを強制クリア（Session not found対策）
+async function forceCleanSession(sid){
+  const encoded = encodeURIComponent(sid);
+  let cleaned = 0;
+  for(const dept of ['tob','ec','ovs','summary']){
+    try {
+      await cloudFetch('sessions/'+encoded+'/sections/'+dept, 'DELETE');
+      cleaned++;
+    } catch(e){ /* 無視 */ }
+  }
+  try { await cloudFetch('sessions/'+encoded, 'DELETE'); } catch(e){ /* 無視 */ }
+  return cleaned;
+}
+async function deleteCloudSessionFull(sid){
+  const encoded = encodeURIComponent(sid);
+  // セッション本体を削除
+  try { await cloudFetch('sessions/'+encoded, 'DELETE'); } catch(e){ /* 既に無い場合もある */ }
+  // 全部署セクションも削除（残骸が残ると「開いて編集」でエラーになる）
+  for(const dept of ['tob','ec','ovs','summary']){
+    try { await cloudFetch('sessions/'+encoded+'/sections/'+dept, 'DELETE'); } catch(e){ /* 無視 */ }
+  }
+}
+
 function deleteCloudSessionByIdx(idx){
   const s = window._cloudSessions[idx];
   if(!s){ showNotif('セッションが見つかりません','error'); return; }
   showConfirm('削除確認', '「'+s.session_id+'」を削除しますか？', async function(){
     try {
-      await cloudFetch('sessions/'+encodeURIComponent(s.session_id), 'DELETE');
+      await deleteCloudSessionFull(s.session_id);
       closeModal();
       showNotif('削除しました', 'success');
-      // ③キャッシュをクリアしてから再描画（削除済みが残る問題の修正）
       window._cloudSessions = [];
       await renderCloudDraftList();
     } catch(e){ showNotif('削除エラー: '+e.message,'error'); }
@@ -1208,9 +1263,10 @@ function deleteCloudSessionByIdx(idx){
 async function deleteCloudSession(sid){
   showConfirm('削除確認', '「'+sid+'」を削除しますか？', async function(){
     try {
-      await cloudFetch('sessions/'+encodeURIComponent(sid), 'DELETE');
+      await deleteCloudSessionFull(sid);
       closeModal(); showNotif('削除しました', 'success');
-      renderCloudDraftList();
+      window._cloudSessions = [];
+      await renderCloudDraftList();
     } catch(e){ showNotif('削除エラー: '+e.message,'error'); }
   });
 }
@@ -4731,6 +4787,13 @@ async function buildWorkbook(d, overrideSheetName){
   if(tobMs.length) sheetXml = setCellInline(sheetXml, 'C13', tobMs.map(mLabel2).join(' → '));
   if(ecMs.length)  sheetXml = setCellInline(sheetXml, 'C14', ecMs.map(mLabel2).join(' → '));
   if(ovsMs.length) sheetXml = setCellInline(sheetXml, 'C15', ovsMs.map(mLabel2).join(' → '));
+
+  // D40〜K40: 月ヘッダーをbase_monthから直接テキストで上書き（$B$5=発注日を参照する数式がずれるため）
+  const allCalcMs = buildMonthRange(8);
+  const MONTH_HEADER_COLS = ['D','E','F','G','H','I','J','K'];
+  MONTH_HEADER_COLS.forEach((col,i)=>{
+    sheetXml = setCellInline(sheetXml, col+'40', allCalcMs[i] ? mLabel2(allCalcMs[i]) : '');
+  });
 
   // ── 確定発注数サマリー (行18〜25) ──
   d.skus.forEach((s,i)=>{
