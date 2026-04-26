@@ -981,7 +981,8 @@ function setCurrentDept(dept){
 
 async function cloudFetch(path, method='GET', body=null){
   if(!WORKER_URL) throw new Error('Worker URLが設定されていません');
-  // スラッシュを保持しつつ各セグメントをエンコード
+  // セグメントをエンコードしてスラッシュを保持
+  // 注意: 日本語を含むセッションIDはWorker側でdecodeURIComponentが必要
   const encodedPath = path.split('/').map(seg => encodeURIComponent(seg)).join('/');
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
   if(body) opts.body = JSON.stringify(body);
@@ -1042,7 +1043,10 @@ async function saveSessionHeader(){
 async function saveDeptSection(){
   if(!WORKER_URL){ showNotif('Worker URLを設定してください', 'error'); return; }
   if(!currentSessionId){ showNotif('セッションIDを選択してください', 'error'); return; }
-  // 担当部署は任意（誰でも保存可能）
+  // アーカイブ済みセッションは保存不可
+  if(window._currentSessionReadOnly){
+    showNotif('完了済みのセッションは編集できません', 'error'); return;
+  }
 
   const d = collectCalcData();
   let sectionData = { saved_by: currentDept };
@@ -1079,7 +1083,7 @@ function loadMergedSessionFromBtn(btn){
   loadMergedSession(sid);
 }
 
-async function loadMergedSession(sid){
+async function loadMergedSession(sid, readOnly=false){
   if(!WORKER_URL){ showNotif('Worker URLを設定してください', 'error'); return; }
   try {
     showLoader('クラウドからデータを読み込み中…');
@@ -1087,6 +1091,7 @@ async function loadMergedSession(sid){
     hideLoader();
     const m = data.merged;
     currentSessionId = sid;
+    window._currentSessionReadOnly = readOnly || !!m.archived;
 
     // フォーム復元
     const setV = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
@@ -1127,7 +1132,8 @@ async function loadMergedSession(sid){
     document.querySelectorAll('.nav-item').forEach(n=>{ if(n.textContent.includes('発注試算')) n.classList.add('active'); });
     renderCalcSkuList();
 
-    showNotif(`「${m.product}」を読み込みました\n${statusParts.length ? '記入済み: ' + statusParts.join(' / ') : '各セクション未記入'}`, 'success');
+    const roNote = (readOnly || m.archived) ? '\n📦 完了済みのため参照のみ（編集・保存は不可）' : '';
+    showNotif(`「${m.product}」を読み込みました\n${statusParts.length ? '記入済み: ' + statusParts.join(' / ') : '各セクション未記入'}${roNote}`, 'success');
 
     // 担当部署に応じてステップを決定（validateをスキップして直接遷移）
     const _loadedDept = currentDept || '';
@@ -1160,43 +1166,217 @@ async function renderCloudDraftList(){
   }
   area.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px">読み込み中…</div>';
   const sessions = await loadCloudSessions();
-  window._cloudSessions = sessions;// インデックスアクセス用に保存
+  window._cloudSessions = sessions;
   if(!sessions.length){
     area.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:12px">クラウドにセッションがありません</div>';
     return;
   }
-  const deptColors = {tob:'var(--tob)',ec:'var(--ec)',ovs:'var(--overseas)'};
-  const deptLabels = {tob:'toB',ec:'EC',ovs:'海外'};
-  area.innerHTML = sessions.map((s,idx) => {
-    const badges = ['tob','ec','ovs'].map(d => {
-      const color = deptColors[d];
-      const label = deptLabels[d];
-      const rgb = d==='tob'?'126,184,212':d==='ec'?'200,169,110':'126,212,160';
-      if(!s[d+'_saved_at']) return '<span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba(90,87,80,.2);color:var(--text3)">'+label+': 未</span>';
-      return '<span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;background:rgba('+rgb+',.2);color:'+color+'">'+label+': '+(s[d+'_saved_by']||'済')+'</span>';
-    }).join(' ');
-    const product = escHtml(s.product||s.session_id);
-    const sid = escHtml(s.session_id);
-    const calcDate = s.calc_date||'—';
-    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;margin-bottom:8px">'
-      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">'
-      +'<div>'
-      +'<div style="font-size:13px;font-weight:500;color:var(--text)">'+product+'</div>'
-      +'<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-top:2px">'+sid+' / 試算日: '+calcDate+'</div>'
-      +'<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">'+badges+'</div>'
-      +'</div>'
-      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
-      +'<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadMergedSessionByIdx('+idx+')">✏️ 開いて編集</button>'
-      +'<button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteCloudSessionByIdx('+idx+')" title="セッション本体＋全セクションを削除">🗑 完全削除</button>'
-      +'</div></div></div>';
-  }).join('');
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  function buildSessionCard(s, idx){
+    const isArchived = !!s.archived;
+    const product = escHtml(s.product || s.session_id);
+    const brand   = escHtml(s.brand || '');
+    const calcDate  = s.calc_date  || '';
+    const orderDate = s.order_date || '';
+
+    // 期限状態を計算
+    let urgency = 'normal'; // normal / warn / overdue
+    let urgencyDays = null;
+    if(orderDate && !isArchived){
+      const od = new Date(orderDate); od.setHours(0,0,0,0);
+      const diff = Math.floor((od - today) / 86400000);
+      urgencyDays = diff;
+      if(diff < 0)       urgency = 'overdue';
+      else if(diff <= 7) urgency = 'warn';
+    }
+
+    // カードの境界線・背景色
+    const borderColor = urgency==='overdue' ? 'var(--accent3)' : urgency==='warn' ? '#d4820a' : isArchived ? 'rgba(90,87,80,.3)' : 'var(--border)';
+    const headerBg    = urgency==='overdue' ? 'rgba(255,80,80,.1)' : urgency==='warn' ? 'rgba(212,130,10,.08)' : 'transparent';
+
+    // 期限バナー
+    let urgencyBanner = '';
+    if(!isArchived){
+      if(urgency==='overdue'){
+        urgencyBanner = `<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--accent3);margin-bottom:6px">⚠️ 発注期限切れ（${Math.abs(urgencyDays)}日経過）</div>`;
+      } else if(urgency==='warn'){
+        urgencyBanner = `<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:#d4820a;margin-bottom:6px">🔔 発注予定日まで ${urgencyDays}日</div>`;
+      }
+    }
+
+    // アーカイブバナー
+    const archivedBanner = isArchived ? `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:6px">📦 完了済み（編集不可）</div>` : '';
+
+    // 試算日・発注予定日表示
+    const calcDateStr  = calcDate  ? `<span style="font-size:13px;font-weight:600;color:var(--accent2)">${calcDate.replace(/-/g,'/')}</span><span style="font-size:10px;color:var(--text3);margin-left:4px">試算〆日</span>` : '';
+    const orderDateStr = orderDate ? `<span style="font-size:12px;color:${urgency==='overdue'?'var(--accent3)':urgency==='warn'?'#d4820a':'var(--text2)'};margin-left:12px">${orderDate.replace(/-/g,'/')} 発注予定</span>` : '';
+
+    // 入力状況バッジ
+    function deptBadge(key, label, rgb, colorVar){
+      if(s[key+'_saved_at']){
+        return `<span style="display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(${rgb},.18);color:${colorVar};border:1px solid rgba(${rgb},.35)">✓ ${label}</span>`;
+      }
+      return `<span style="display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(90,87,80,.15);color:var(--text3);border:1px solid rgba(90,87,80,.25)">— ${label}</span>`;
+    }
+    const badges = [
+      deptBadge('tob', 'toB',   '126,184,212', 'var(--tob)'),
+      deptBadge('ec',  'EC',    '200,169,110', 'var(--ec)'),
+      deptBadge('ovs', '海外',  '126,212,160', 'var(--overseas)'),
+    ].join('');
+
+    // 詳細展開エリア（チャネル名）
+    const detailId = 'cloudDetail_'+idx;
+    const detailArea = `<div id="${detailId}" style="display:none;margin-top:10px;padding:10px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border2)">
+      <div style="font-size:11px;color:var(--text3)">読み込み中…</div>
+    </div>`;
+
+    // ボタン群
+    let buttons = '';
+    buttons += `<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="toggleCloudDetail(${idx},'${detailId}')">▼ 詳細</button>`;
+    if(!isArchived){
+      buttons += `<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadMergedSessionByIdx(${idx})">✏️ 開いて編集</button>`;
+      buttons += `<button class="btn btn-green" style="font-size:11px;padding:4px 10px" onclick="archiveCloudSessionByIdx(${idx})">✅ 完了</button>`;
+    } else {
+      buttons += `<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;opacity:.7" onclick="viewArchivedSessionByIdx(${idx})">👁 参照</button>`;
+    }
+    buttons += `<button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteCloudSessionByIdx(${idx})" title="完全削除">🗑</button>`;
+
+    const cardOpacity = isArchived ? 'opacity:.65;' : '';
+
+    return `<div style="${cardOpacity}background:var(--surface2);border:1px solid ${borderColor};border-radius:var(--radius);overflow:hidden;margin-bottom:8px">
+      <div style="background:${headerBg};padding:12px 16px">
+        ${urgencyBanner}${archivedBanner}
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div style="min-width:0">
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">${product} <span style="font-size:11px;font-weight:400;color:var(--text3)">${brand}</span></div>
+            <div style="margin-bottom:8px">${calcDateStr}${orderDateStr}</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap">${badges}</div>
+          </div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0">${buttons}</div>
+        </div>
+        ${detailArea}
+      </div>
+    </div>`;
+  }
+
+  const active   = sessions.filter((s,i) => !s.archived).map((s,i) => buildSessionCard(s, sessions.indexOf(s)));
+  const archived = sessions.filter((s,i) =>  s.archived).map((s,i) => buildSessionCard(s, sessions.indexOf(s)));
+
+  let html = active.join('');
+
+  if(archived.length){
+    html += `<details style="margin-top:12px">
+      <summary style="cursor:pointer;font-family:var(--font-mono);font-size:10px;color:var(--text3);padding:6px 0;list-style:none;display:flex;align-items:center;gap:6px">
+        <span>▶</span><span>📦 完了済み（${archived.length}件）</span>
+      </summary>
+      <div style="margin-top:6px">${archived.join('')}</div>
+    </details>`;
+  }
+
+  area.innerHTML = html;
+}
+
+// 詳細展開：/mergeを叩いてチャネル名を取得して表示
+async function toggleCloudDetail(idx, detailId){
+  const el = document.getElementById(detailId);
+  if(!el) return;
+  if(el.style.display !== 'none'){
+    el.style.display = 'none';
+    // ▼ボタンのテキストを戻す
+    el.closest('[style*="surface2"]')?.querySelector('button')?.textContent.includes('▲') &&
+      (el.closest('[style*="surface2"]').querySelector('button[onclick*="toggleCloudDetail"]').textContent = '▼ 詳細');
+    return;
+  }
+  el.style.display = 'block';
+  const btn = el.closest('[style*="surface2"]')?.querySelector(`button[onclick*="toggleCloudDetail"]`);
+  if(btn) btn.textContent = '▲ 詳細';
+
+  const s = window._cloudSessions[idx];
+  if(!s){ el.innerHTML = '<div style="font-size:11px;color:var(--text3)">データなし</div>'; return; }
+
+  // すでに詳細データがキャッシュされていれば再利用
+  if(s._detail){
+    el.innerHTML = buildDetailHtml(s._detail, s);
+    return;
+  }
+
+  el.innerHTML = '<div style="font-size:11px;color:var(--text3)">読み込み中…</div>';
+  try {
+    const data = await cloudFetch(`sessions/${s.session_id}/merge`);
+    const m = data.merged;
+    s._detail = m; // キャッシュ
+    el.innerHTML = buildDetailHtml(m, s);
+  } catch(e){
+    el.innerHTML = `<div style="font-size:11px;color:var(--accent3)">読み込みエラー: ${escHtml(e.message)}</div>`;
+  }
+}
+
+function buildDetailHtml(m, s){
+  const rows = [];
+
+  // toB: 小売名リスト（通常試算）or simToBNames（簡易試算）
+  const retailers = (m.retailers||[]).filter(r=>r.name);
+  if(retailers.length){
+    rows.push(`<div style="margin-bottom:6px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--tob);letter-spacing:.08em">toB</span> <span style="font-size:11px;color:var(--text2)">${retailers.map(r=>escHtml(r.name)+(r.status==='新規'?' 🆕':'')).join(' / ')}</span></div>`);
+  } else if(m.mode==='simple'){
+    // 簡易版は simToBNames が header に保存されていれば表示
+    const names = [m.simToBName1||m.simToBNames?.[1], m.simToBName2||m.simToBNames?.[2], m.simToBName3||m.simToBNames?.[3]].filter(Boolean);
+    if(names.length) rows.push(`<div style="margin-bottom:6px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--tob);letter-spacing:.08em">toB</span> <span style="font-size:11px;color:var(--text2)">${names.map(escHtml).join(' / ')}</span></div>`);
+  }
+  if(!retailers.length && !(m.mode==='simple')){
+    rows.push(`<div style="margin-bottom:6px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--tob);letter-spacing:.08em">toB</span> <span style="font-size:11px;color:var(--text3)">未入力</span></div>`);
+  }
+
+  // EC: チャネル名
+  const ecNames = (m.ec_detail||[]).map(blk=>blk.channel_name||blk._name).filter(Boolean);
+  rows.push(`<div style="margin-bottom:6px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--ec);letter-spacing:.08em">EC</span> <span style="font-size:11px;color:${ecNames.length?'var(--text2)':'var(--text3)'}">${ecNames.length ? ecNames.map(escHtml).join(' / ') : '未入力'}</span></div>`);
+
+  // 海外: チャネル名
+  const ovsNames = (m.ovs_detail||[]).map(blk=>blk.channel_name||blk._name).filter(Boolean);
+  rows.push(`<div><span style="font-family:var(--font-mono);font-size:9px;color:var(--overseas);letter-spacing:.08em">海外</span> <span style="font-size:11px;color:${ovsNames.length?'var(--text2)':'var(--text3)'}">${ovsNames.length ? ovsNames.map(escHtml).join(' / ') : '未入力'}</span></div>`);
+
+  // SKUリスト
+  const skuNames = (m.skus||[]).map(s=>escHtml(s.name||s.jan||'')).filter(Boolean);
+  if(skuNames.length){
+    rows.push(`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border2)"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:.08em">SKU</span> <span style="font-size:11px;color:var(--text3)">${skuNames.join(' · ')}</span></div>`);
+  }
+
+  return rows.join('') || '<div style="font-size:11px;color:var(--text3)">詳細データなし</div>';
+}
+
+// アーカイブ処理
+async function archiveCloudSessionByIdx(idx){
+  const s = window._cloudSessions[idx];
+  if(!s){ showNotif('セッションが見つかりません','error'); return; }
+  showConfirm('完了確認',
+    `「${s.product||s.session_id}」を完了済みにします。\n完了後は編集できません（参照・削除は可能）。\n\nよろしいですか？`,
+    async function(){
+      try {
+        await cloudFetch(`sessions/${s.session_id}/archive`, 'POST', {});
+        closeModal();
+        showNotif(`「${s.product||s.session_id}」を完了済みにしました`, 'success');
+        window._cloudSessions = [];
+        await renderCloudDraftList();
+      } catch(e){ showNotif('エラー: '+e.message, 'error'); }
+    }, '完了にする'
+  );
+}
+
+// アーカイブ済みの参照（読み取り専用で開く）
+async function viewArchivedSessionByIdx(idx){
+  const s = window._cloudSessions[idx];
+  if(!s){ showNotif('セッションが見つかりません','error'); return; }
+  await loadMergedSession(s.session_id, true); // readOnly=true
 }
 
 // インデックス経由でsession_idを安全に取得
 function loadMergedSessionByIdx(idx){
   const s = window._cloudSessions[idx];
   if(!s){ showNotif('セッションが見つかりません','error'); return; }
-  loadMergedSession(s.session_id);
+  if(s.archived){ showNotif('完了済みのセッションは編集できません。「参照」ボタンをご利用ください','error'); return; }
+  loadMergedSession(s.session_id, false);
 }
 
 async function runForceCleanSession(){
@@ -1238,12 +1418,20 @@ async function forceCleanSession(sid){
 }
 async function deleteCloudSessionFull(sid){
   const encoded = encodeURIComponent(sid);
-  // セッション本体を削除
-  try { await cloudFetch('sessions/'+encoded, 'DELETE'); } catch(e){ /* 既に無い場合もある */ }
-  // 全部署セクションも削除（残骸が残ると「開いて編集」でエラーになる）
+  // 1. Worker APIのDELETEエンドポイントで削除試行
+  try { await cloudFetch('sessions/'+encoded, 'DELETE'); } catch(e){ /* 無視 */ }
+  // 全部署セクションも削除
   for(const dept of ['tob','ec','ovs','summary']){
     try { await cloudFetch('sessions/'+encoded+'/sections/'+dept, 'DELETE'); } catch(e){ /* 無視 */ }
   }
+  // 2. __index__を直接読んで該当セッションを除去して書き戻す（Worker側の削除が不完全な場合の保険）
+  try {
+    const indexData = await cloudFetch('index'); // GET /index
+    if(indexData && Array.isArray(indexData.sessions)){
+      const filtered = indexData.sessions.filter(s=>s.session_id !== sid);
+      await cloudFetch('index', 'PUT', {sessions: filtered}); // PUT /index
+    }
+  } catch(e){ /* indexエンドポイントがない場合は無視 */ }
 }
 
 function deleteCloudSessionByIdx(idx){
