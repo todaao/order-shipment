@@ -4931,6 +4931,18 @@ async function buildWorkbook(d, overrideSheetName){
   ctXml = ctXml.replace(new RegExp(`<Override PartName="${dropSheet.replace('/','\\/').replace(/\//g,'\\/')}"[^/]*\\/>`,'g'), '');
   zip.file('[Content_Types].xml', ctXml);
 
+  // ── calcChain削除（両シート混在による修復警告対策）──
+  // テンプレートのcalcChainにはsheet1/sheet2両方の参照が含まれるため
+  // 片方のシートを削除した後にcalcChainが残るとExcelが修復警告を出す
+  // calcChainを削除してfullCalcOnLoad="1"を設定し、Excel開時に再計算させる
+  zip.remove('xl/calcChain.xml');
+  ctXml = ctXml.replace(/<Override[^>]*calcChain[^>]*\/>/g, '');
+  zip.file('[Content_Types].xml', ctXml);
+  relsXml = relsXml.replace(/<Relationship[^>]*calcChain[^>]*\/>/g, '');
+  zip.file('xl/_rels/workbook.xml.rels', relsXml);
+  wbXml = wbXml.replace(/<calcPr([^/]*)\/>/, '<calcPr$1 fullCalcOnLoad="1"/>');
+  zip.file('xl/workbook.xml', wbXml);
+
   // ── シートXMLを取得して値を書き込む ──
   let sheetXml = await zip.file(useSheet).async('string');
 
