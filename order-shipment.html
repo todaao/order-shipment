@@ -647,7 +647,6 @@ textarea:focus{border-color:var(--accent);}
           <div id="calcSkuList"></div>
           <div class="btn-row" style="margin-top:16px">
             <button class="btn btn-primary" onclick="goStep(1)">次へ: 参照POS &amp; toB →</button>
-            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(0)">☁️ セッション作成 / クラウドに保存</button>
           </div>
         </div>
       </div>
@@ -667,7 +666,6 @@ textarea:focus{border-color:var(--accent);}
           <div class="btn-row" style="margin-top:16px">
             <button class="btn btn-secondary" onclick="goStep(0)">← 戻る</button>
             <button class="btn btn-primary" onclick="goStep(2)">次へ: EC・海外 →</button>
-            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(1)">☁️ クラウドに保存</button>
           </div>
         </div>
       </div>
@@ -683,7 +681,6 @@ textarea:focus{border-color:var(--accent);}
           <div class="btn-row" style="margin-top:16px">
             <button class="btn btn-secondary" onclick="goStep(1)">← 戻る</button>
             <button class="btn btn-primary" onclick="goStep(3)">次へ: サマリー確認 →</button>
-            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(2)">☁️ クラウドに保存</button>
           </div>
         </div>
       </div>
@@ -694,7 +691,6 @@ textarea:focus{border-color:var(--accent);}
       <div class="btn-row" style="margin-top:16px">
         <button class="btn btn-secondary" onclick="goStep(2)">← 戻る</button>
         <button class="btn btn-primary" onclick="goStep(4)">次へ: 確定・保存 →</button>
-        <button class="btn btn-blue" onclick="cloudSaveCurrentStep(3)">☁️ クラウドに保存</button>
       </div>
     </div>
     <!-- STEP 4: 確定・保存 -->
@@ -713,7 +709,7 @@ textarea:focus{border-color:var(--accent);}
           <div class="btn-row">
             <button class="btn btn-secondary" onclick="goStep(3)">← 戻る</button>
             <button class="btn btn-green" onclick="saveDraft()">💾 ブラウザに仮保存</button>
-            <button class="btn btn-blue" onclick="cloudSaveCurrentStep(4)">☁️ クラウドに保存</button>
+            <button class="btn btn-blue" onclick="cloudSaveAll()">☁️ クラウドに全項目保存（上書き）</button>
             <button class="btn btn-primary" onclick="exportCalcDirect()">📥 テンプレートExcel出力</button>
           </div>
         </div>
@@ -1105,15 +1101,49 @@ async function loadMergedSession(sid, readOnly=false){
     // SKU・小売・EC・海外復元
     calcSkus = JSON.parse(JSON.stringify(m.skus || []));
     calcRetailers = JSON.parse(JSON.stringify(m.retailers || []));
-    calcEcMonthly = {}; calcEcMonthly2 = {};
-    calcOvsMonthly = [{},{},{},{}];
-    (m.ec_detail || []).forEach((blk,i) => {
-      const store = i===0 ? calcEcMonthly : calcEcMonthly2;
-      Object.entries(blk).forEach(([k,v]) => { store[k] = v.monthly || {}; });
+    calcRetailers.forEach(r=>{ if(r.initialDelivery==null) r.initialDelivery=0; });
+
+    // toBチャネル名・簡易版データ復元（tob セクションに保存）
+    if(m.sim_tob_names) window.simToBNames=m.sim_tob_names;
+    if(m.sim_tob_init_delivery) window.simToBInitDelivery=m.sim_tob_init_delivery;
+    if(m.calc_simple_monthly_tob){
+      calcSimpleMonthly['toB1']=m.calc_simple_monthly_tob.toB1||{};
+      calcSimpleMonthly['toB2']=m.calc_simple_monthly_tob.toB2||{};
+      calcSimpleMonthly['toB3']=m.calc_simple_monthly_tob.toB3||{};
+    }
+
+    // ECチャネル名・月別データ復元（ec セクションに保存）
+    calcEcMonthly={}; calcEcMonthly2={};
+    if(m.ec_name1!=null) window.ecName1=m.ec_name1;
+    if(m.ec_name2!=null) window.ecName2=m.ec_name2;
+    (m.ec_detail||[]).forEach((blk,i)=>{
+      const store=i===0?calcEcMonthly:calcEcMonthly2;
+      Object.entries(blk).forEach(([k,v])=>{ store[k]=v.monthly||{}; });
     });
-    (m.ovs_detail || []).forEach((blk,i) => {
-      if(i < 4) Object.entries(blk).forEach(([k,v]) => { calcOvsMonthly[i][k] = v.monthly || {}; });
+
+    // 海外チャネル名・月別データ復元（ovs セクションに保存）
+    calcOvsMonthly=[{},{},{},{}];
+    if(m.ovs_name0!=null) window.ovsName0=m.ovs_name0;
+    if(m.ovs_name1!=null) window.ovsName1=m.ovs_name1;
+    if(m.ovs_name2!=null) window.ovsName2=m.ovs_name2;
+    if(m.ovs_name3!=null) window.ovsName3=m.ovs_name3;
+    (m.ovs_detail||[]).forEach((blk,i)=>{
+      if(i<4) Object.entries(blk).forEach(([k,v])=>{ calcOvsMonthly[i][k]=v.monthly||{}; });
     });
+
+    // 確定発注数の復元（summary セクションの confirmed_orders から）
+    if(m.confirmed_orders){
+      calcSkus.forEach(s=>{
+        const key=s.jan||s.name;
+        if(m.confirmed_orders[key]!=null){
+          s.confirmedOrder=m.confirmed_orders[key];
+          s.confirmed_order=m.confirmed_orders[key];
+        }
+      });
+    }
+
+    // メモ復元
+    if(m.memo){ const memoEl=document.getElementById('ci_memo'); if(memoEl) memoEl.value=m.memo; }
 
     calcArrival(); updateMonthPreviews();
 
@@ -5672,9 +5702,119 @@ async function _doCloudSaveStep(step){
 }
 
 
-// ════════════════════════════════════════════
-//  INIT
-// ════════════════════════════════════════════
+// ── 全項目クラウド上書き保存 ──────────────────────────────────
+async function cloudSaveAll(){
+  if(!WORKER_URL){ showNotif('Worker URLを設定してください（仮保存・出力画面）','error'); return; }
+  if(window._currentSessionReadOnly){ showNotif('完了済みのセッションは編集できません','error'); return; }
+
+  // セッションがなければ新規作成
+  if(!currentSessionId){
+    showConfirm('セッションがありません',
+      'クラウドに保存するにはセッションを作成する必要があります。\n今すぐ作成しますか？',
+      async ()=>{
+        closeModal();
+        const sid = await saveSessionHeader();
+        if(sid){ currentSessionId=sid; await _doCloudSaveAll(); }
+      }, 'セッション作成 & 保存', null, null);
+    return;
+  }
+  await _doCloudSaveAll();
+}
+
+async function _doCloudSaveAll(){
+  if(!currentSessionId){ showNotif('セッションIDがありません','error'); return; }
+  const d = collectCalcData();
+  if(!d.product){ showNotif('商品名を入力してください','error'); return; }
+
+  showLoader('クラウドに保存中…');
+  const errors=[];
+
+  // ① ヘッダー（商品情報・SKU）
+  try{
+    await cloudFetch('sessions','POST',{
+      session_id: currentSessionId,
+      product:    d.product,
+      brand:      d.brand,
+      calc_date:  d.calc_date,
+      order_date: d.order_date,
+      lead_time_weeks: d.lead_time_weeks,
+      container_moq:   d.container_moq,
+      bulk_moq:        d.bulk_moq,
+      skus:  d.skus,
+      mode:  d.mode,
+      created_by: currentDept||'案件担当',
+    });
+  }catch(e){ errors.push('ヘッダー: '+e.message); }
+
+  // ② toB セクション
+  try{
+    await cloudFetch(`sessions/${currentSessionId}/sections/tob`,'PUT',{
+      saved_by: currentDept||'案件担当',
+      retailers: d.retailers,
+      sim_tob_names:           window.simToBNames||{},
+      sim_tob_init_delivery:   window.simToBInitDelivery||{},
+      calc_simple_monthly_tob: {
+        toB1: calcSimpleMonthly?.['toB1']||{},
+        toB2: calcSimpleMonthly?.['toB2']||{},
+        toB3: calcSimpleMonthly?.['toB3']||{},
+      },
+    });
+  }catch(e){ errors.push('toB: '+e.message); }
+
+  // ③ EC セクション
+  try{
+    await cloudFetch(`sessions/${currentSessionId}/sections/ec`,'PUT',{
+      saved_by:  currentDept||'案件担当',
+      ec_detail: d.ec_detail,
+      ec_name1:  window.ecName1||'',
+      ec_name2:  window.ecName2||'',
+    });
+  }catch(e){ errors.push('EC: '+e.message); }
+
+  // ④ 海外 セクション
+  try{
+    await cloudFetch(`sessions/${currentSessionId}/sections/ovs`,'PUT',{
+      saved_by:   currentDept||'案件担当',
+      ovs_detail: d.ovs_detail,
+      ovs_name0:  window.ovsName0||'',
+      ovs_name1:  window.ovsName1||'',
+      ovs_name2:  window.ovsName2||'',
+      ovs_name3:  window.ovsName3||'',
+    });
+  }catch(e){ errors.push('海外: '+e.message); }
+
+  // ⑤ サマリー・確定発注数セクション
+  try{
+    const sumTob = document.getElementById('sum_tobEnd')?.value||'';
+    const sumEc  = document.getElementById('sum_ecEnd')?.value||'';
+    const sumOvs = document.getElementById('sum_ovsEnd')?.value||'';
+    // confirmedOrder（入力値）と confirmed_order（計算値）両方を収集
+    const confirmed={};
+    d.skus.forEach(s=>{
+      const v = s.confirmedOrder!=null ? s.confirmedOrder : (s.confirmed_order||s.order_quantity||0);
+      confirmed[s.jan||s.name] = v;
+    });
+    await cloudFetch(`sessions/${currentSessionId}/sections/summary`,'PUT',{
+      saved_by:        currentDept||'案件担当',
+      sum_tobEnd:      sumTob,
+      sum_ecEnd:       sumEc,
+      sum_ovsEnd:      sumOvs,
+      confirmed_orders: confirmed,
+      skus:            d.skus,
+      memo:            document.getElementById('ci_memo')?.value||'',
+    });
+  }catch(e){ errors.push('サマリー: '+e.message); }
+
+  hideLoader();
+
+  if(errors.length){
+    showNotif('一部保存エラー: '+errors.join(' / '),'error');
+  } else {
+    showNotif(`「${d.product}」を全項目クラウドに保存しました ✓`,'success');
+    window._cloudSessions=[];
+    renderCloudDraftList();
+  }
+}
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'})+' 更新';
 // Worker URL・部署設定をフォームに反映
 const _wUrl=localStorage.getItem('orderShipmentWorkerUrl')||'';
