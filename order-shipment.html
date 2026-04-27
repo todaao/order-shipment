@@ -13,7 +13,7 @@
   --bg:#0e0f14;--surface:#161820;--surface2:#1e2028;--surface3:#252733;
   --border:#2a2d3a;--border2:#353848;
   --accent:#c8a96e;--accent2:#7eb8d4;--accent3:#e07b8a;--accent4:#7ed4a0;--accent5:#b49ee8;
-  --text:#e8e6e0;--text2:#9a9590;--text3:#5a5750;
+  --text:#e8e6e0;--text2:#c0bbb5;--text3:#8c8880;
   --tob:#7eb8d4;--ec:#c8a96e;--overseas:#7ed4a0;
   --font-body:'Noto Sans JP',sans-serif;--font-mono:'DM Mono',monospace;--font-display:'Playfair Display',serif;
   --radius:6px;--radius2:10px;
@@ -1089,10 +1089,10 @@ async function loadMergedSession(sid, readOnly=false){
     const m = data.merged;
     currentSessionId = sid;
     window._currentSessionReadOnly = readOnly || !!m.archived;
+    window._loadedSessionUpdatedAt = m.updated_at || null;  // 競合検出用
 
     // フォーム復元
     const setV = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
-    // モード復元（通常版/簡易版）
     if(m.mode){ calcMode=m.mode; if(typeof selectMode==='function') selectMode(calcMode); }
     setV('ci_product', m.product); setV('ci_brand', m.brand);
     setV('ci_calcDate', m.calc_date || m.order_date);
@@ -1104,7 +1104,6 @@ async function loadMergedSession(sid, readOnly=false){
 
     // SKU・小売・EC・海外復元
     calcSkus = JSON.parse(JSON.stringify(m.skus || []));
-    // pending_arrival(snakeCase) → pendingArrival(camelCase) 変換
     calcSkus.forEach(s=>{
       if(s.pending_arrival!=null && s.pendingArrival==null) s.pendingArrival=s.pending_arrival;
       if(s.pending_arrival_month!=null && s.pendingArrivalMonth==null) s.pendingArrivalMonth=s.pending_arrival_month;
@@ -1156,13 +1155,9 @@ async function loadMergedSession(sid, readOnly=false){
 
     // メモ復元
     if(m.memo){ const memoEl=document.getElementById('ci_memo'); if(memoEl) memoEl.value=m.memo; }
-
-    // 発注終了月: DOM未生成のためグローバル変数に保持 → buildSummaryPreview で使用
     if(m.sum_tobEnd) window._pendingSumTobEnd = m.sum_tobEnd;
     if(m.sum_ecEnd)  window._pendingSumEcEnd  = m.sum_ecEnd;
     if(m.sum_ovsEnd) window._pendingSumOvsEnd = m.sum_ovsEnd;
-
-    // 販促物試算: DOM未生成のためwindow.promoPlanに直接セット → renderStep5InvSim で使用
     if(m.promo_plan && m.promo_plan.length) window.promoPlan = m.promo_plan;
 
     calcArrival(); updateMonthPreviews();
@@ -1226,13 +1221,14 @@ async function renderCloudDraftList(){
 
   function buildSessionCard(s, idx){
     const isArchived = !!s.archived;
-    const product = escHtml(s.product || s.session_id);
-    const brand   = escHtml(s.brand || '');
+    const product  = escHtml(s.product || s.session_id);
+    const brand    = escHtml(s.brand || '');
     const calcDate  = s.calc_date  || '';
     const orderDate = s.order_date || '';
+    const sessionId = escHtml(s.session_id || '');
 
     // 期限状態を計算
-    let urgency = 'normal'; // normal / warn / overdue
+    let urgency = 'normal';
     let urgencyDays = null;
     if(orderDate && !isArchived){
       const od = new Date(orderDate); od.setHours(0,0,0,0);
@@ -1249,34 +1245,51 @@ async function renderCloudDraftList(){
     // 期限バナー
     let urgencyBanner = '';
     if(!isArchived){
-      if(urgency==='overdue'){
+      if(urgency==='overdue')
         urgencyBanner = `<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--accent3);margin-bottom:6px">⚠️ 発注期限切れ（${Math.abs(urgencyDays)}日経過）</div>`;
-      } else if(urgency==='warn'){
+      else if(urgency==='warn')
         urgencyBanner = `<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:#d4820a;margin-bottom:6px">🔔 発注予定日まで ${urgencyDays}日</div>`;
-      }
     }
 
     // アーカイブバナー
     const archivedBanner = isArchived ? `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:6px">📦 完了済み（編集不可）</div>` : '';
 
-    // 試算日・発注予定日表示
-    const calcDateStr  = calcDate  ? `<span style="font-size:13px;font-weight:600;color:var(--accent2)">${calcDate.replace(/-/g,'/')}</span><span style="font-size:10px;color:var(--text3);margin-left:4px">試算〆日</span>` : '';
-    const orderDateStr = orderDate ? `<span style="font-size:12px;color:${urgency==='overdue'?'var(--accent3)':urgency==='warn'?'#d4820a':'var(--text2)'};margin-left:12px">${orderDate.replace(/-/g,'/')} 発注予定</span>` : '';
+    // 試算日・発注予定日
+    const calcDateStr  = calcDate  ? `<span style="font-size:13px;font-weight:600;color:var(--accent2)">${calcDate.replace(/-/g,'/')}</span><span style="font-size:10px;color:var(--text2);margin-left:4px">試算〆日</span>` : '';
+    const orderDateStr = orderDate ? `<span style="font-size:12px;color:${urgency==='overdue'?'var(--accent3)':urgency==='warn'?'#d4820a':'var(--text)'};margin-left:12px">${orderDate.replace(/-/g,'/')} 発注予定</span>` : '';
 
-    // 入力状況バッジ
+    // 通常/簡易バッジ
+    const modeVal = s.mode || '';
+    const modeBadge = modeVal
+      ? `<span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;${modeVal==='simple'?'background:rgba(180,158,232,.18);color:var(--accent5);border:1px solid rgba(180,158,232,.3)':'background:rgba(126,184,212,.15);color:var(--tob);border:1px solid rgba(126,184,212,.28)'};">${modeVal==='simple'?'簡易':'通常'}</span>`
+      : '';
+
+    // ── 入力状況バッジ（未保存は — グレー、保存済みは ✓ カラー）──
     function deptBadge(key, label, rgb, colorVar){
       if(s[key+'_saved_at']){
-        return `<span style="display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(${rgb},.18);color:${colorVar};border:1px solid rgba(${rgb},.35)">✓ ${label}</span>`;
+        const dt = new Date(s[key+'_saved_at']);
+        const dtStr = dt.toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+        const who = s[key+'_saved_by'] ? ` ${escHtml(s[key+'_saved_by'])}` : '';
+        return `<span title="${dtStr}${who}" style="display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(${rgb},.18);color:${colorVar};border:1px solid rgba(${rgb},.35)">✓ ${label}</span>`;
       }
-      return `<span style="display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(90,87,80,.15);color:var(--text3);border:1px solid rgba(90,87,80,.25)">— ${label}</span>`;
+      return `<span style="display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(90,87,80,.12);color:var(--text3);border:1px solid rgba(90,87,80,.2)">— ${label}</span>`;
     }
     const badges = [
-      deptBadge('tob', 'toB',   '126,184,212', 'var(--tob)'),
-      deptBadge('ec',  'EC',    '200,169,110', 'var(--ec)'),
-      deptBadge('ovs', '海外',  '126,212,160', 'var(--overseas)'),
+      deptBadge('tob', 'toB',  '126,184,212', 'var(--tob)'),
+      deptBadge('ec',  'EC',   '200,169,110', 'var(--ec)'),
+      deptBadge('ovs', '海外', '126,212,160', 'var(--overseas)'),
     ].join('');
 
-    // 詳細展開エリア（チャネル名）
+    // 最終保存日時
+    const updatedAt = s.updated_at ? new Date(s.updated_at).toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+    const updatedAtStr = updatedAt
+      ? `<span style="font-family:var(--font-mono);font-size:10px;color:var(--text2)">🕐 最終保存 ${updatedAt}</span>`
+      : '';
+
+    // セッションID表示
+    const sidStr = `<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);user-select:all" title="セッションID（クリックで選択）">${sessionId}</span>`;
+
+    // 詳細展開エリア
     const detailId = 'cloudDetail_'+idx;
     const detailArea = `<div id="${detailId}" style="display:none;margin-top:10px;padding:10px 12px;background:var(--surface);border-radius:6px;border:1px solid var(--border2)">
       <div style="font-size:11px;color:var(--text3)">読み込み中…</div>
@@ -1299,10 +1312,15 @@ async function renderCloudDraftList(){
       <div style="background:${headerBg};padding:12px 16px">
         ${urgencyBanner}${archivedBanner}
         <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
-          <div style="min-width:0">
-            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">${product} <span style="font-size:11px;font-weight:400;color:var(--text3)">${brand}</span></div>
-            <div style="margin-bottom:8px">${calcDateStr}${orderDateStr}</div>
-            <div style="display:flex;gap:5px;flex-wrap:wrap">${badges}</div>
+          <div style="min-width:0;flex:1">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px">
+              <span style="font-size:13px;font-weight:600;color:var(--text)">${product}</span>
+              <span style="font-size:11px;color:var(--text2)">${brand}</span>
+              ${modeBadge}
+            </div>
+            <div style="margin-bottom:6px">${calcDateStr}${orderDateStr}</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:6px">${badges}</div>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${updatedAtStr}${sidStr}</div>
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0">${buttons}</div>
         </div>
@@ -1311,7 +1329,7 @@ async function renderCloudDraftList(){
     </div>`;
   }
 
-  const active   = sessions.filter((s,i) => !s.archived).map((s,i) => buildSessionCard(s, sessions.indexOf(s)));
+    const active   = sessions.filter((s,i) => !s.archived).map((s,i) => buildSessionCard(s, sessions.indexOf(s)));
   const archived = sessions.filter((s,i) =>  s.archived).map((s,i) => buildSessionCard(s, sessions.indexOf(s)));
 
   let html = active.join('');
@@ -4178,12 +4196,10 @@ function buildSummaryPreview(){
   const base=getBaseMonth()||'2026-01';
   const all8=monthRange(base,8);
   // サマリー内の期間選択セレクトから取得（初期値は全8ヶ月）
-  // DOMが未生成の場合（ロード直後）は _pendingSumXxxEnd を初期値として使用
   const getSumMonth=(id,def)=>{const el=document.getElementById(id);return el?el.value:def;};
   const tobEndM=getSumMonth('sum_tobEnd', window._pendingSumTobEnd||all8[all8.length-1]);
   const ecEndM =getSumMonth('sum_ecEnd',  window._pendingSumEcEnd ||all8[all8.length-1]);
   const ovsEndM=getSumMonth('sum_ovsEnd', window._pendingSumOvsEnd||all8[all8.length-1]);
-  // DOMが生成されたら pending をクリア（次回以降はDOMから取得）
   window._pendingSumTobEnd=null; window._pendingSumEcEnd=null; window._pendingSumOvsEnd=null;
   const tobMonths=all8.filter(m=>m<=tobEndM);
   const ecMonths=all8.filter(m=>m<=ecEndM);
@@ -5802,6 +5818,28 @@ async function _doCloudSaveAll(){
   const d = collectCalcData();
   if(!d.product){ showNotif('商品名を入力してください','error'); return; }
 
+  // ── 競合チェック：他ユーザーが更新していないか確認 ──
+  if(window._loadedSessionUpdatedAt){
+    try{
+      const chk = await cloudFetch(`sessions/${currentSessionId}`);
+      const latestUpdatedAt = chk?.session?.updated_at || null;
+      if(latestUpdatedAt && latestUpdatedAt !== window._loadedSessionUpdatedAt){
+        const latestDt = new Date(latestUpdatedAt).toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+        const confirmed = await new Promise(resolve=>{
+          showConfirm(
+            '⚠️ 競合：他のユーザーが更新しています',
+            `このセッションは ${latestDt} に別のユーザーによって更新されています。\n上書き保存すると、その変更が失われる可能性があります。\n\n上書き保存しますか？`,
+            ()=>{ closeModal(); resolve(true); },
+            '上書き保存',
+            ()=>{ closeModal(); resolve(false); },
+            'キャンセル'
+          );
+        });
+        if(!confirmed){ showNotif('保存をキャンセルしました','error'); return; }
+      }
+    }catch(e){ /* チェック失敗は無視して続行 */ }
+  }
+
   showLoader('クラウドに保存中…');
   const errors=[];
 
@@ -5891,7 +5929,9 @@ async function _doCloudSaveAll(){
     showNotif('一部保存エラー: '+errors.join(' / '),'error');
   } else {
     showNotif(`「${d.product}」を全項目クラウドに保存しました ✓`,'success');
-    // キャッシュを完全クリアしてから再描画（バッジを最新状態に更新）
+    // 保存後に _loadedSessionUpdatedAt を更新（次回競合チェック用）
+    try{ const upd=await cloudFetch(`sessions/${currentSessionId}`); window._loadedSessionUpdatedAt=upd?.session?.updated_at||null; }catch(e){}
+    // キャッシュを完全クリアしてから再描画
     window._cloudSessions=[];
     await renderCloudDraftList();
   }
