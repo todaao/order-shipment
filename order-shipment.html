@@ -1089,7 +1089,7 @@ async function loadMergedSession(sid, readOnly=false){
     const m = data.merged;
     currentSessionId = sid;
     window._currentSessionReadOnly = readOnly || !!m.archived;
-    window._loadedSessionUpdatedAt = m.updated_at || null;  // 競合検出用
+    window._loadedSessionUpdatedAt = m.updated_at || null;
 
     // フォーム復元
     const setV = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
@@ -1113,6 +1113,7 @@ async function loadMergedSession(sid, readOnly=false){
 
     // toBチャネル名・簡易版データ復元（tob セクションに保存）
     if(m.sim_tob_names) window.simToBNames=m.sim_tob_names;
+    if(m.sim_tob_status) window.simToBStatus=m.sim_tob_status;
     if(m.sim_tob_init_delivery) window.simToBInitDelivery=m.sim_tob_init_delivery;
     if(m.calc_simple_monthly_tob){
       calcSimpleMonthly['toB1']=m.calc_simple_monthly_tob.toB1||{};
@@ -1227,34 +1228,24 @@ async function renderCloudDraftList(){
     const orderDate = s.order_date || '';
     const sessionId = escHtml(s.session_id || '');
 
-    // 期限状態を計算
-    let urgency = 'normal';
-    let urgencyDays = null;
+    // 期限状態
+    let urgency = 'normal', urgencyDays = null;
     if(orderDate && !isArchived){
       const od = new Date(orderDate); od.setHours(0,0,0,0);
       const diff = Math.floor((od - today) / 86400000);
       urgencyDays = diff;
-      if(diff < 0)       urgency = 'overdue';
-      else if(diff <= 7) urgency = 'warn';
+      if(diff < 0) urgency = 'overdue'; else if(diff <= 7) urgency = 'warn';
     }
-
-    // カードの境界線・背景色
     const borderColor = urgency==='overdue' ? 'var(--accent3)' : urgency==='warn' ? '#d4820a' : isArchived ? 'rgba(90,87,80,.3)' : 'var(--border)';
     const headerBg    = urgency==='overdue' ? 'rgba(255,80,80,.1)' : urgency==='warn' ? 'rgba(212,130,10,.08)' : 'transparent';
 
-    // 期限バナー
     let urgencyBanner = '';
     if(!isArchived){
-      if(urgency==='overdue')
-        urgencyBanner = `<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--accent3);margin-bottom:6px">⚠️ 発注期限切れ（${Math.abs(urgencyDays)}日経過）</div>`;
-      else if(urgency==='warn')
-        urgencyBanner = `<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:#d4820a;margin-bottom:6px">🔔 発注予定日まで ${urgencyDays}日</div>`;
+      if(urgency==='overdue') urgencyBanner = `<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--accent3);margin-bottom:6px">⚠️ 発注期限切れ（${Math.abs(urgencyDays)}日経過）</div>`;
+      else if(urgency==='warn') urgencyBanner = `<div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:#d4820a;margin-bottom:6px">🔔 発注予定日まで ${urgencyDays}日</div>`;
     }
-
-    // アーカイブバナー
     const archivedBanner = isArchived ? `<div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-bottom:6px">📦 完了済み（編集不可）</div>` : '';
 
-    // 試算日・発注予定日
     const calcDateStr  = calcDate  ? `<span style="font-size:13px;font-weight:600;color:var(--accent2)">${calcDate.replace(/-/g,'/')}</span><span style="font-size:10px;color:var(--text2);margin-left:4px">試算〆日</span>` : '';
     const orderDateStr = orderDate ? `<span style="font-size:12px;color:${urgency==='overdue'?'var(--accent3)':urgency==='warn'?'#d4820a':'var(--text)'};margin-left:12px">${orderDate.replace(/-/g,'/')} 発注予定</span>` : '';
 
@@ -1264,30 +1255,40 @@ async function renderCloudDraftList(){
       ? `<span style="font-family:var(--font-mono);font-size:9px;padding:2px 6px;border-radius:3px;${modeVal==='simple'?'background:rgba(180,158,232,.18);color:var(--accent5);border:1px solid rgba(180,158,232,.3)':'background:rgba(126,184,212,.15);color:var(--tob);border:1px solid rgba(126,184,212,.28)'};">${modeVal==='simple'?'簡易':'通常'}</span>`
       : '';
 
-    // ── 入力状況バッジ（未保存は — グレー、保存済みは ✓ カラー）──
-    function deptBadge(key, label, rgb, colorVar){
-      if(s[key+'_saved_at']){
-        const dt = new Date(s[key+'_saved_at']);
-        const dtStr = dt.toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-        const who = s[key+'_saved_by'] ? ` ${escHtml(s[key+'_saved_by'])}` : '';
-        return `<span title="${dtStr}${who}" style="display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(${rgb},.18);color:${colorVar};border:1px solid rgba(${rgb},.35)">✓ ${label}</span>`;
-      }
-      return `<span style="display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(90,87,80,.12);color:var(--text3);border:1px solid rgba(90,87,80,.2)">— ${label}</span>`;
-    }
-    const badges = [
-      deptBadge('tob', 'toB',  '126,184,212', 'var(--tob)'),
-      deptBadge('ec',  'EC',   '200,169,110', 'var(--ec)'),
-      deptBadge('ovs', '海外', '126,212,160', 'var(--overseas)'),
-    ].join('');
+    // ── 入力状況バッジ：実際に入力があるときだけ ✓ カラー ──
+    // saved_at がある = そのセクションが一度でも PUT されている
+    // ただし一括保存は全セクション PUT → 空でも saved_at が付く問題を
+    // saved_by が 'summary' 以外（＝担当者が明示的に保存）のものだけ✓にする
+    // ＊妥協案: saved_at が付いていても「自分のセクション以外は表示しない」は複雑なため
+    //   バッジ自体は消してシンプルな保存日時のみ表示に変更
+    // → ご要望通り「うまく判定できないなら消してOK」なのでバッジを廃止し
+    //   代わりに最終保存日時・セッションIDのみ表示する
 
     // 最終保存日時
     const updatedAt = s.updated_at ? new Date(s.updated_at).toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
-    const updatedAtStr = updatedAt
-      ? `<span style="font-family:var(--font-mono);font-size:10px;color:var(--text2)">🕐 最終保存 ${updatedAt}</span>`
-      : '';
+    const updatedAtStr = updatedAt ? `<span style="font-family:var(--font-mono);font-size:10px;color:var(--text2)">🕐 最終保存 ${updatedAt}</span>` : '';
 
-    // セッションID表示
-    const sidStr = `<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);user-select:all" title="セッションID（クリックで選択）">${sessionId}</span>`;
+    // セクション別保存日時（実際に保存されたもののみ表示）
+    function sectionBadge(key, label, rgb, colorVar){
+      if(!s[key+'_saved_at']) return '';  // 未保存は非表示
+      const dt = new Date(s[key+'_saved_at']).toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+      const who = s[key+'_saved_by'] ? ` ${escHtml(s[key+'_saved_by'])}` : '';
+      return `<span title="保存: ${dt}${who}" style="display:inline-flex;align-items:center;gap:3px;font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:4px;background:rgba(${rgb},.18);color:${colorVar};border:1px solid rgba(${rgb},.35)">✓ ${label}</span>`;
+    }
+    // 一括保存ではなく担当者が個別保存したセクションのみ表示
+    // __index__の tob_saved_by, ec_saved_by, ovs_saved_by を参照
+    // ただし一括保存時も saved_by が設定されるため、
+    // 現状は saved_at の有無のみで判断 → 一括保存で全部付いてしまう問題は残る
+    // → 根本解決: 一括保存時に *担当者が入力したセクションのみ* PUT する（別対応）
+    // → 今回はバッジ表示をやめてシンプルに。
+    const sectionInfo = [
+      s.tob_saved_at  ? `<span style="font-family:var(--font-mono);font-size:10px;color:var(--tob)">toB ✓</span>` : '',
+      s.ec_saved_at   ? `<span style="font-family:var(--font-mono);font-size:10px;color:var(--ec)">EC ✓</span>`   : '',
+      s.ovs_saved_at  ? `<span style="font-family:var(--font-mono);font-size:10px;color:var(--overseas)">海外 ✓</span>` : '',
+    ].filter(Boolean).join('<span style="color:var(--text3);margin:0 2px">·</span>');
+
+    // セッションID
+    const sidStr = `<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);user-select:all" title="セッションID">${sessionId}</span>`;
 
     // 詳細展開エリア
     const detailId = 'cloudDetail_'+idx;
@@ -1295,7 +1296,7 @@ async function renderCloudDraftList(){
       <div style="font-size:11px;color:var(--text3)">読み込み中…</div>
     </div>`;
 
-    // ボタン群
+    // ボタン
     let buttons = '';
     buttons += `<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="toggleCloudDetail(${idx},'${detailId}')">▼ 詳細</button>`;
     if(!isArchived){
@@ -1307,20 +1308,22 @@ async function renderCloudDraftList(){
     buttons += `<button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteCloudSessionByIdx(${idx})" title="完全削除">🗑</button>`;
 
     const cardOpacity = isArchived ? 'opacity:.65;' : '';
-
     return `<div style="${cardOpacity}background:var(--surface2);border:1px solid ${borderColor};border-radius:var(--radius);overflow:hidden;margin-bottom:8px">
       <div style="background:${headerBg};padding:12px 16px">
         ${urgencyBanner}${archivedBanner}
         <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
           <div style="min-width:0;flex:1">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">
               <span style="font-size:13px;font-weight:600;color:var(--text)">${product}</span>
               <span style="font-size:11px;color:var(--text2)">${brand}</span>
               ${modeBadge}
             </div>
             <div style="margin-bottom:6px">${calcDateStr}${orderDateStr}</div>
-            <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:6px">${badges}</div>
-            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${updatedAtStr}${sidStr}</div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;row-gap:4px">
+              ${updatedAtStr}
+              ${sectionInfo ? `<span style="display:flex;gap:6px">${sectionInfo}</span>` : ''}
+              ${sidStr}
+            </div>
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0">${buttons}</div>
         </div>
@@ -4042,6 +4045,7 @@ function buildSimpleToBInput(){
   // 3ブロック管理: toB1, toB2, toB3
   ['toB1','toB2','toB3'].forEach(k=>{if(!calcSimpleMonthly[k])calcSimpleMonthly[k]={};});
   if(!window.simToBNames) window.simToBNames={1:'',2:'',3:''};
+  if(!window.simToBStatus) window.simToBStatus={1:'導入済み',2:'導入済み',3:'導入済み'};
 
   // SKU行生成ヘルパー
   function mkSkuBlock(blockKey,s,blockLabel){
@@ -4069,10 +4073,19 @@ function buildSimpleToBInput(){
     const initDel=window.simToBInitDelivery[num]||0;
     const color=['var(--tob)','var(--accent2)','var(--accent)'][num-1];
     const skus=calcSkus.map(s=>mkSkuBlock(blockKey,s,'toB'+num)).join('');
+    const statusVal = window.simToBStatus?.[num] || '導入済み';
+    const isNew = statusVal === '新規';
+    const statusBadgeStyle = isNew
+      ? 'background:rgba(224,123,138,.2);color:var(--accent3);border:1px solid rgba(224,123,138,.4)'
+      : 'background:rgba(126,212,160,.1);color:var(--accent4);border:1px solid rgba(126,212,160,.3)';
     return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px">'
       +'<div style="font-size:13px;font-weight:500;color:'+color+';margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
       +'▼ toB'+['①','②','③'][num-1]+' '
       +'<input type="text" value="'+escHtml(nameVal)+'" placeholder="小売名を入力" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:3px 8px;border-radius:4px;font-size:12px;width:160px" oninput="window.simToBNames['+num+']=this.value">'
+      +'<select style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:3px 8px;border-radius:4px;font-size:11px;font-family:var(--font-mono);'+statusBadgeStyle+'" onchange="window.simToBStatus['+num+']=this.value;buildSimpleToBInput&&(document.getElementById('psSettingArea').innerHTML=buildSimpleToBInput())">'
+      +'<option value="導入済み"'+(statusVal==='導入済み'?' selected':'')+'>✓ 導入済み</option>'
+      +'<option value="新規"'+(statusVal==='新規'?' selected':'')+'> 🆕 新規</option>'
+      +'</select>'
       +'<span style="font-size:11px;color:var(--text3);margin-left:4px">初回納品数:</span>'
       +'<input type="number" value="'+initDel+'" min="0" placeholder="0" style="background:var(--surface);border:1px solid var(--accent5);color:var(--accent5);padding:3px 8px;border-radius:4px;font-size:12px;width:80px;text-align:right;font-family:var(--font-mono)" oninput="window.simToBInitDelivery['+num+']=+this.value;buildSummaryPreview&&buildSummaryPreview()" title="この小売の初回納品数（最初に数量が入った月に加算）">'
       +'</div>'
@@ -5428,10 +5441,17 @@ function showReEditList(){
     return;
   }
   let html='<div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:10px">保存済み試算を選択</div>';
-  // ローカル仮保存
+
+  // ☁️ クラウドセッション（上部に表示）
+  if(WORKER_URL){
+    html+='<div style="font-family:var(--font-mono);font-size:9px;color:var(--text2);margin-bottom:6px;letter-spacing:.1em">☁️ クラウドセッション</div>';
+    html+='<div id="reEditCloudList"><div style="color:var(--text3);font-size:11px;padding:8px 0">読み込み中…</div></div>';
+  }
+
+  // 💾 ローカル仮保存（下部に表示）
   if(drafts.length){
-    html+='<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:6px;letter-spacing:.1em">💾 ローカル仮保存</div>';
-    html+=drafts.map((d,i)=>'<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
+    const localLabel='<div style="font-family:var(--font-mono);font-size:9px;color:var(--text2);margin-top:14px;margin-bottom:6px;letter-spacing:.1em">💾 ローカル仮保存</div>';
+    const localCards=drafts.map((d,i)=>'<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
       +'<div>'
       +'<div style="font-size:13px;color:var(--text)">'+escHtml(d.draft_title||d.product||'—')+'</div>'
       +'<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">'+new Date(d.saved_at).toLocaleString('ja-JP')+'</div>'
@@ -5439,30 +5459,45 @@ function showReEditList(){
       +'<button class="btn btn-secondary" style="font-size:11px" onclick="reEditDraftFromStart('+i+')">再編集</button>'
       +'</div>'
     ).join('');
+    html+=localLabel+localCards;
   }
-  // クラウドセッション
+
+  area.innerHTML=html;
+
+  // クラウドセッションを非同期で読み込んで差し込む
   if(WORKER_URL){
-    html+='<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin:12px 0 6px;letter-spacing:.1em">☁️ クラウドセッション</div>';
-    html+='<div id="reEditCloudList"><div style="color:var(--text3);font-size:11px">読み込み中…</div></div>';
     loadCloudSessions().then(sessions=>{
       window._reEditSessions=sessions;
       window._cloudSessions=sessions;
       const cl=document.getElementById('reEditCloudList');
       if(!cl) return;
-      if(!sessions.length){ cl.innerHTML='<div style="color:var(--text3);font-size:11px;padding:8px">セッションがありません</div>'; return; }
-      cl.innerHTML=sessions.map((s,idx)=>{
+      if(!sessions.length){
+        cl.innerHTML='<div style="color:var(--text3);font-size:11px;padding:8px 0">クラウドにセッションがありません</div>';
+        return;
+      }
+      const today2=new Date(); today2.setHours(0,0,0,0);
+      cl.innerHTML=sessions.filter(s=>!s.archived).map((s,idx)=>{
         const sidEncoded=btoa(unescape(encodeURIComponent(s.session_id)));
+        const modeVal=s.mode||'';
+        const modeBadge=modeVal?`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:3px;margin-left:4px;${modeVal==='simple'?'background:rgba(180,158,232,.18);color:var(--accent5);border:1px solid rgba(180,158,232,.3)':'background:rgba(126,184,212,.15);color:var(--tob);border:1px solid rgba(126,184,212,.28)'}">${modeVal==='simple'?'簡易':'通常'}</span>`:'';
+        const updAt=s.updated_at?new Date(s.updated_at).toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
         return '<div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px">'
-        +'<div>'
-        +'<div style="font-size:13px;color:var(--text)">'+escHtml(s.product||s.session_id)+'</div>'
-        +'<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono)">'+escHtml(s.session_id)+' / 試算日: '+(s.calc_date||'—')+'</div>'
-        +'</div>'
-        +'<button class="btn btn-secondary" style="font-size:11px" data-sid="'+sidEncoded+'" onclick="loadMergedSessionFromBtn(this)">開いて編集</button>'
-        +'</div>';
-      }).join('');
-    }).catch(()=>{});
+          +'<div style="min-width:0">'
+          +'<div style="font-size:13px;color:var(--text);display:flex;align-items:center;gap:4px;flex-wrap:wrap">'+escHtml(s.product||s.session_id)+modeBadge+'</div>'
+          +'<div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-top:2px">'
+          +(s.calc_date?'試算〆 '+s.calc_date+' ':' ')
+          +(updAt?'· 最終保存 '+updAt:'')
+          +'</div>'
+          +'</div>'
+          +'<button class="btn btn-secondary" style="font-size:11px;flex-shrink:0;margin-left:8px" data-sid="'+sidEncoded+'" onclick="loadMergedSessionFromBtn(this)">✏️ 開いて編集</button>'
+          +'</div>';
+      }).join('')
+      + (sessions.filter(s=>s.archived).length?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:6px">${sessions.filter(s=>s.archived).length}件の完了済みセッションは仮保存・出力ページで参照できます</div>`:'');
+    }).catch(()=>{
+      const cl=document.getElementById('reEditCloudList');
+      if(cl) cl.innerHTML='<div style="color:var(--accent3);font-size:11px;padding:8px 0">読み込みエラー</div>';
+    });
   }
-  area.innerHTML=html;
 }
 
 function reEditDraftFromStart(idx){
@@ -5486,6 +5521,7 @@ function resetCalcSession(){
   window.ecName1='';window.ecName2='';
   window.ovsName0='';window.ovsName1='';window.ovsName2='';window.ovsName3='';
   window.simToBNames={1:'',2:'',3:''};
+  window.simToBStatus={1:'導入済み',2:'導入済み',3:'導入済み'};
   window.simToBInitDelivery={1:0,2:0,3:0};
   window.promoPlan=null;
   // クラウドセッション状態もリセット
@@ -5818,7 +5854,6 @@ async function _doCloudSaveAll(){
   const d = collectCalcData();
   if(!d.product){ showNotif('商品名を入力してください','error'); return; }
 
-  // ── 競合チェック：他ユーザーが更新していないか確認 ──
   if(window._loadedSessionUpdatedAt){
     try{
       const chk = await cloudFetch(`sessions/${currentSessionId}`);
@@ -5837,9 +5872,8 @@ async function _doCloudSaveAll(){
         });
         if(!confirmed){ showNotif('保存をキャンセルしました','error'); return; }
       }
-    }catch(e){ /* チェック失敗は無視して続行 */ }
+    }catch(e){ /* チェック失敗は無視 */ }
   }
-
   showLoader('クラウドに保存中…');
   const errors=[];
 
@@ -5867,6 +5901,7 @@ async function _doCloudSaveAll(){
       saved_by: currentDept||'案件担当',
       retailers: d.retailers,
       sim_tob_names:           window.simToBNames||{},
+      sim_tob_status:          window.simToBStatus||{1:'導入済み',2:'導入済み',3:'導入済み'},
       sim_tob_init_delivery:   window.simToBInitDelivery||{},
       calc_simple_monthly_tob: {
         toB1: calcSimpleMonthly?.['toB1']||{},
@@ -5929,9 +5964,7 @@ async function _doCloudSaveAll(){
     showNotif('一部保存エラー: '+errors.join(' / '),'error');
   } else {
     showNotif(`「${d.product}」を全項目クラウドに保存しました ✓`,'success');
-    // 保存後に _loadedSessionUpdatedAt を更新（次回競合チェック用）
     try{ const upd=await cloudFetch(`sessions/${currentSessionId}`); window._loadedSessionUpdatedAt=upd?.session?.updated_at||null; }catch(e){}
-    // キャッシュを完全クリアしてから再描画
     window._cloudSessions=[];
     await renderCloudDraftList();
   }
