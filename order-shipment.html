@@ -4922,8 +4922,8 @@ async function buildWorkbook(d, overrideSheetName){
 
   // workbook.xml.relsから未使用シートのRelationshipを削除
   let relsXml = await zip.file('xl/_rels/workbook.xml.rels').async('string');
-  const dropRelTarget = isSimple ? '/xl/worksheets/sheet1.xml' : '/xl/worksheets/sheet2.xml';
-  relsXml = relsXml.replace(new RegExp(`<Relationship[^>]*Target="${dropRelTarget.replace('/','\\/')}"[^/]*\\/>`,'g'), '');
+  const dropSheetFile = isSimple ? 'sheet1.xml' : 'sheet2.xml';
+  relsXml = relsXml.replace(new RegExp(`<Relationship[^>]*Target="[^"]*${dropSheetFile}"[^/]*/>`,'g'), '');
   zip.file('xl/_rels/workbook.xml.rels', relsXml);
 
   // [Content_Types].xmlから未使用シートのOverrideを削除
@@ -4940,30 +4940,58 @@ async function buildWorkbook(d, overrideSheetName){
   zip.file('[Content_Types].xml', ctXml);
   relsXml = relsXml.replace(/<Relationship[^>]*calcChain[^>]*\/>/g, '');
   zip.file('xl/_rels/workbook.xml.rels', relsXml);
+  // bookViewsのactiveTabをリセット（簡易版でsheet2使用時のビューエラー対策）
+  wbXml = wbXml.replace(/\bactiveTab="\d+"/, '');
   wbXml = wbXml.replace(/<calcPr([^/]*)\/>/, '<calcPr$1 fullCalcOnLoad="1"/>');
   zip.file('xl/workbook.xml', wbXml);
 
   // ── シートXMLを取得して値を書き込む ──
   let sheetXml = await zip.file(useSheet).async('string');
 
-  // ── 共有数式を通常数式に展開（孤立参照によるExcel修復警告対策）──
-  // テンプレートの共有数式マスターをsetCellInline等で上書きすると
-  // 後続の参照セル(siのみ)が孤立して「削除されたレコード: 共有数式」警告が発生する
-  (function expandSharedFormulas() {
-    const masters = {};
-    sheetXml.replace(/<f [^>]*t="shared"[^>]*ref="[^"]*"[^>]*>([^<]*)<\/f>/g, (match, formula) => {
-      const siM = match.match(/\bsi="(\d+)"/);
-      if (siM) masters[siM[1]] = formula;
-      return match;
-    });
-    if (Object.keys(masters).length === 0) return;
-    sheetXml = sheetXml.replace(/<f [^>]*t="shared"[^>]*si="(\d+)"[^>]*\/>/g, (match, si) =>
-      si in masters ? `<f>${masters[si]}</f>` : match
+  // ── 共有数式の孤立参照対策（改訂版）──
+  // 問題: expandSharedFormulas で全参照セルにマスター数式をそのまま展開すると
+  //       OFFSET等の行参照が全SKUで同じになってしまう（E18=E19=...）。
+  // 新方針: 共有数式はそのまま維持し、writeSharedMastersList に記録しておく。
+  //         setCellInline/setCellNum がマスターセルを上書きした後、
+  //         そのsiの参照セル(<f t="shared" si="N"/>) の t="shared" を除去し
+  //         <f si="N"/> → <f>マスター数式</f> に変換することで孤立を防ぐ。
+  //         ただし行シフト付き数式はExcelのfullCalcOnLoadで再計算されるため
+  //         <v>の値は不問とする。
+  // 簡略版: 全ての shared formula を最後に後処理で孤立チェックして修復する。
+  (function patchSharedFormulas() {
+    // マスターセルのsi→{数式, refRange}マップ
+    const sfMasters = {};
+    sheetXml.replace(/<f [^>]*t="shared"[^>]*ref="([^"]*)"[^>]*si="([^"]*)"[^>]*>([^<]*)<\/f>/g,
+      (m, ref, si, formula) => { sfMasters[si] = {formula, ref}; return m; }
     );
-    sheetXml = sheetXml.replace(/<f [^>]*t="shared"[^>]*ref="[^"]*"[^>]*>([^<]*)<\/f>/g,
-      (match, formula) => `<f>${formula}</f>`
+    sheetXml.replace(/<f [^>]*t="shared"[^>]*si="([^"]*)"[^>]*ref="([^"]*)"[^>]*>([^<]*)<\/f>/g,
+      (m, si, ref, formula) => { sfMasters[si] = {formula, ref}; return m; }
     );
+    // 後処理: 参照セルが孤立（マスターが消えた）場合のみ修復する
+    // 実行タイミング: 全setCellInline/setCellNum完了後
+    sheetXml._sfMasters = sfMasters;
   })();
+  function repairOrphanSharedFormulas() {
+    if (!sheetXml._sfMasters) return;
+    const sfMasters = sheetXml._sfMasters;
+    // マスターがまだ存在するsiのセットを収集
+    const existingSis = new Set();
+    sheetXml.replace(/<f [^>]*t="shared"[^>]*ref="[^"]*"[^>]*/g, m => {
+      const siM = m.match(/\bsi="(\d+)"/);
+      if (siM) existingSis.add(siM[1]);
+    });
+    // 孤立した参照セル（マスターが消えたsi）に数式を注入
+    sheetXml = sheetXml.replace(/<f ([^>]*)t="shared"([^>]*)si="(\d+)"([^>]*)(\/?>)/g,
+      (match, pre, mid, si, post, close) => {
+        if (existingSis.has(si)) return match; // マスターあり → そのまま
+        const master = sfMasters[si];
+        if (!master) return match;
+        return `<f>${master.formula}</f>`; // マスターなし → 数式を直接展開
+      }
+    );
+    delete sheetXml._sfMasters;
+  }
+
 
   // ── XMLヘルパー関数 ──
   // Excelシリアル日付変換 (YYYY-MM-DD → 数値)
@@ -5270,7 +5298,7 @@ async function buildWorkbook(d, overrideSheetName){
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(s.jan,'ec',1,_bm));
         sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(s.jan,'ec',3,_bm));
-        ecMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+row, s.monthly_summary?.ec?.[m]||0); });
+        ecMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+row, s.monthly_summary?.ec?.[m]||0); });
       });
     });
     const OVS_HEADER_ROWS_S = [183,194,205,216];
@@ -5285,12 +5313,13 @@ async function buildWorkbook(d, overrideSheetName){
         const key = (s.jan||'')||s.name;
         const monthly = (blk[key]||{}).monthly || {};
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
-        ovsMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS[mi]+row, monthly[m]||0); });
+        ovsMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+row, monthly[m]||0); });
       });
     });
   }
 
   // 書き換えたシートXMLをZIPに戻す
+  repairOrphanSharedFormulas(); // 孤立した共有数式参照を修復
   zip.file(useSheet, sheetXml);
 
   // ZIPをUint8Arrayとして返す（呼び出し元でblobに変換）
