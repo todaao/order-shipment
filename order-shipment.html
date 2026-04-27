@@ -4039,6 +4039,7 @@ function recalcPsPreview(ri){
 }
 
 // ── STEP 2: EC・海外 ──
+function _rebuildSimToB(){var a=document.getElementById('psSettingArea');if(a&&typeof buildSimpleToBInput==='function')a.innerHTML=buildSimpleToBInput();}
 function buildSimpleToBInput(){
   const base=getBaseMonth()||'2026-01';
   const months=monthRange(base,8);
@@ -4082,7 +4083,7 @@ function buildSimpleToBInput(){
       +'<div style="font-size:13px;font-weight:500;color:'+color+';margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
       +'▼ toB'+['①','②','③'][num-1]+' '
       +'<input type="text" value="'+escHtml(nameVal)+'" placeholder="小売名を入力" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:3px 8px;border-radius:4px;font-size:12px;width:160px" oninput="window.simToBNames['+num+']=this.value">'
-      +'<select style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:3px 8px;border-radius:4px;font-size:11px;font-family:var(--font-mono);'+statusBadgeStyle+'" onchange="window.simToBStatus['+num+']=this.value;buildSimpleToBInput&&(document.getElementById('psSettingArea').innerHTML=buildSimpleToBInput())">'
+      +'<select style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:3px 8px;border-radius:4px;font-size:11px;font-family:var(--font-mono);'+statusBadgeStyle+'" onchange="window.simToBStatus['+num+']=this.value;window._rebuildSimToB()">'
       +'<option value="導入済み"'+(statusVal==='導入済み'?' selected':'')+'>✓ 導入済み</option>'
       +'<option value="新規"'+(statusVal==='新規'?' selected':'')+'> 🆕 新規</option>'
       +'</select>'
