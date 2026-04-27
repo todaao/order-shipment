@@ -5127,6 +5127,9 @@ async function buildWorkbook(d, overrideSheetName){
     sheetXml = setCellInline(sheetXml, 'A'+r, s.name||'');
     sheetXml = setCellInline(sheetXml, 'B'+r, s.jan ? String(s.jan) : '');
     sheetXml = setCellNum(sheetXml, 'C'+r, s.stock||0);
+    // ① D列: 入庫予定数（STEP4で自由入力した値）
+    const pendingArrivalVal = s.pendingArrival!=null ? s.pendingArrival : (s.pending_arrival||0);
+    if(pendingArrivalVal>0) sheetXml = setCellNum(sheetXml, 'D'+r, pendingArrivalVal);
     // F列（F-H統合）に推計必要数を書き込む（テンプレートの数式を上書き）
     sheetXml = setCellNum(sheetXml, 'F'+r, s.estimated_total||0);
     sheetXml = setCellNum(sheetXml, 'I'+r, s.confirmed_order!=null ? s.confirmed_order : (s.order_quantity||0));
@@ -5137,6 +5140,35 @@ async function buildWorkbook(d, overrideSheetName){
     sheetXml = setCellNum(sheetXml, 'K'+r, demandTotal||s.estimated_total||0);
     sheetXml = setCellInline(sheetXml, 'L'+r, s.note||'');
   });
+
+  // ── ② 在庫推移シミュレーション (行81〜: SKU毎に4行ずつ、D81～K81が1SKU目入庫予定行) ──
+  // 入庫予定行: 既存入庫予定（pendingArrivalMonth）と今回試算の発注入庫予定（arrivalDate）を月別に書き込む
+  {
+    const arrivalDateStr = d.arrival_date || '';  // 今回発注の入庫予定日 (YYYY-MM-DD)
+    const arrivalMonth = arrivalDateStr ? arrivalDateStr.slice(0,7) : null; // YYYY-MM形式
+    d.skus.forEach((s,si)=>{
+      if(si>=8) return;
+      const simRow = 81 + si*4; // SKU1→81, SKU2→85, SKU3→89 ...
+      const pendingArrival = s.pendingArrival!=null ? s.pendingArrival : (s.pending_arrival||0);
+      const pendingArrivalMonth = s.pendingArrivalMonth || s.pending_arrival_month || null;
+      const confirmedOrder = s.confirmed_order!=null ? s.confirmed_order : (s.order_quantity||0);
+      // allCalcMs（8ヶ月）の各月について書き込む
+      allCalcMs.forEach((m,mi)=>{
+        let cellVal = 0;
+        // 既存入庫予定: pendingArrivalMonthと一致する月にpendingArrival数を加算
+        if(pendingArrivalMonth && m === pendingArrivalMonth && pendingArrival>0){
+          cellVal += pendingArrival;
+        }
+        // 今回試算の発注分: arrivalMonthと一致する月にconfirmedOrder数を加算
+        if(arrivalMonth && m === arrivalMonth && confirmedOrder>0){
+          cellVal += confirmedOrder;
+        }
+        if(cellVal>0){
+          sheetXml = setCellNum(sheetXml, MONTH_HEADER_COLS[mi]+simRow, cellVal);
+        }
+      });
+    });
+  }
 
   // ── 販促物試算ブロック (行28〜37) ──
   const promos = window.promoPlan || [];
@@ -5252,7 +5284,8 @@ async function buildWorkbook(d, overrideSheetName){
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(jan,'ec',1,_bm));
         sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(jan,'ec',3,_bm));
-        // EC詳細 D〜K列はテンプレート数式（傾斜×PS）のため書き込み不要
+        // ④ EC詳細 D〜K列: 各月試算値を直接書き込む
+        ecMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+row, monthly[m]||0); });
       });
     });
     const OVS_HEADER_ROWS = [278,289,300,311];
@@ -5270,7 +5303,8 @@ async function buildWorkbook(d, overrideSheetName){
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(jan,'overseas',1,_bm));
         sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(jan,'overseas',3,_bm));
-        // 海外詳細 D〜K列はテンプレート数式のため書き込み不要
+        // ④ 海外詳細 D〜K列: 各月試算値を直接書き込む
+        ovsMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+row, monthly[m]||0); });
       });
     });
   } else {
@@ -5367,6 +5401,10 @@ async function buildWorkbook(d, overrideSheetName){
         const key = (s.jan||'')||s.name;
         const monthly = (blk[key]||{}).monthly || {};
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
+        // ③ 直近月販・直近3月平均を追加
+        sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(s.jan,'overseas',1,_bm));
+        sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(s.jan,'overseas',3,_bm));
+        // ③ D〜K列: 各月試算値を書き込む
         ovsMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+row, monthly[m]||0); });
       });
     });
