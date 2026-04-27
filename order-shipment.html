@@ -5279,8 +5279,8 @@ async function buildWorkbook(d, overrideSheetName){
         if(si>=8) return;
         const row = sr+si;
         const jan = s.jan||'';
-        const key = jan||s.name;
-        const monthly = (blk[key]||{}).monthly || blk[s.name]?.monthly || {};
+        // ec_detailはs.nameをキーに保存されている（collectCalcData参照）
+        const monthly = (blk[s.name]||{}).monthly || (blk[jan]||{}).monthly || {};
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(jan,'ec',1,_bm));
         sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(jan,'ec',3,_bm));
@@ -5298,8 +5298,8 @@ async function buildWorkbook(d, overrideSheetName){
         if(si>=8) return;
         const row = sr+si;
         const jan = s.jan||'';
-        const key = jan||s.name;
-        const monthly = (blk[key]||{}).monthly || blk[s.name]?.monthly || {};
+        // ovs_detailはs.nameをキーに保存されている（collectCalcData参照）
+        const monthly = (blk[s.name]||{}).monthly || (blk[jan]||{}).monthly || {};
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(jan,'overseas',1,_bm));
         sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(jan,'overseas',3,_bm));
@@ -5398,8 +5398,9 @@ async function buildWorkbook(d, overrideSheetName){
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
         const row = sr+si;
-        const key = (s.jan||'')||s.name;
-        const monthly = (blk[key]||{}).monthly || {};
+        // ovs_detailはs.nameをキーに保存されている（collectCalcData参照）
+        // JANコードでも引けるようにフォールバック
+        const monthly = (blk[s.name]||{}).monthly || (blk[s.jan||'']||{}).monthly || {};
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         // ③ 直近月販・直近3月平均を追加
         sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(s.jan,'overseas',1,_bm));
