@@ -1019,7 +1019,8 @@ async function saveSessionHeader(){
       product: d.product,
       brand: d.brand,
       calc_date: d.calc_date,
-      order_date: d.order_date,
+      order_date:  d.order_date,
+      arrival_date: d.arrival_date,
       lead_time_weeks: d.lead_time_weeks,
       container_moq: d.container_moq,
       bulk_moq: d.bulk_moq,
@@ -1091,15 +1092,23 @@ async function loadMergedSession(sid, readOnly=false){
 
     // フォーム復元
     const setV = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
+    // モード復元（通常版/簡易版）
+    if(m.mode){ calcMode=m.mode; if(typeof selectMode==='function') selectMode(calcMode); }
     setV('ci_product', m.product); setV('ci_brand', m.brand);
     setV('ci_calcDate', m.calc_date || m.order_date);
     setV('ci_orderDate', m.order_date);
+    setV('ci_arrivalDate', m.arrival_date || '');
     setV('ci_leadtime', m.lead_time_weeks || 8);
     setV('ci_containerMoq', m.container_moq || 0);
     setV('ci_bulkMoq', m.bulk_moq || 0);
 
     // SKU・小売・EC・海外復元
     calcSkus = JSON.parse(JSON.stringify(m.skus || []));
+    // pending_arrival(snakeCase) → pendingArrival(camelCase) 変換（保存時のキー名不一致を吸収）
+    calcSkus.forEach(s=>{
+      if(s.pending_arrival!=null && s.pendingArrival==null) s.pendingArrival=s.pending_arrival;
+      if(s.pending_arrival_month!=null && s.pendingArrivalMonth==null) s.pendingArrivalMonth=s.pending_arrival_month;
+    });
     calcRetailers = JSON.parse(JSON.stringify(m.retailers || []));
     calcRetailers.forEach(r=>{ if(r.initialDelivery==null) r.initialDelivery=0; });
 
@@ -1116,6 +1125,7 @@ async function loadMergedSession(sid, readOnly=false){
     calcEcMonthly={}; calcEcMonthly2={};
     if(m.ec_name1!=null) window.ecName1=m.ec_name1;
     if(m.ec_name2!=null) window.ecName2=m.ec_name2;
+    window.ecBlockCount=m.ec_block_count||((m.ec_detail||[]).length>=2?2:1);
     (m.ec_detail||[]).forEach((blk,i)=>{
       const store=i===0?calcEcMonthly:calcEcMonthly2;
       // キーはSKU名（s.name）で保存されている
@@ -1127,6 +1137,7 @@ async function loadMergedSession(sid, readOnly=false){
     if(m.ovs_name0!=null) window.ovsName0=m.ovs_name0;
     if(m.ovs_name1!=null) window.ovsName1=m.ovs_name1;
     if(m.ovs_name2!=null) window.ovsName2=m.ovs_name2;
+    window.ovsBlockCount=m.ovs_block_count||((m.ovs_detail||[]).filter(b=>Object.keys(b).length>0).length||1);
     if(m.ovs_name3!=null) window.ovsName3=m.ovs_name3;
     (m.ovs_detail||[]).forEach((blk,i)=>{
       if(i<4) Object.entries(blk).forEach(([k,v])=>{ calcOvsMonthly[i][k]=v.monthly||{}; });
@@ -5790,7 +5801,8 @@ async function _doCloudSaveAll(){
       product:    d.product,
       brand:      d.brand,
       calc_date:  d.calc_date,
-      order_date: d.order_date,
+      order_date:  d.order_date,
+      arrival_date: d.arrival_date,
       lead_time_weeks: d.lead_time_weeks,
       container_moq:   d.container_moq,
       bulk_moq:        d.bulk_moq,
@@ -5822,6 +5834,7 @@ async function _doCloudSaveAll(){
       ec_detail: d.ec_detail,
       ec_name1:  window.ecName1||'',
       ec_name2:  window.ecName2||'',
+      ec_block_count: window.ecBlockCount||1,
     });
   }catch(e){ errors.push('EC: '+e.message); }
 
@@ -5834,6 +5847,7 @@ async function _doCloudSaveAll(){
       ovs_name1:  window.ovsName1||'',
       ovs_name2:  window.ovsName2||'',
       ovs_name3:  window.ovsName3||'',
+      ovs_block_count: window.ovsBlockCount||1,
     });
   }catch(e){ errors.push('海外: '+e.message); }
 
