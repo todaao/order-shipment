@@ -4941,56 +4941,48 @@ async function buildWorkbook(d, overrideSheetName){
   relsXml = relsXml.replace(/<Relationship[^>]*calcChain[^>]*\/>/g, '');
   zip.file('xl/_rels/workbook.xml.rels', relsXml);
   // bookViewsのactiveTabをリセット（簡易版でsheet2使用時のビューエラー対策）
-  wbXml = wbXml.replace(/\bactiveTab="\d+"/, '');
+  wbXml = wbXml.replace(/<bookViews>[\s\S]*?<\/bookViews>/, '<bookViews><workbookView xWindow="-120" yWindow="-120" windowWidth="29040" windowHeight="15720"/></bookViews>');
   wbXml = wbXml.replace(/<calcPr([^/]*)\/>/, '<calcPr$1 fullCalcOnLoad="1"/>');
   zip.file('xl/workbook.xml', wbXml);
 
   // ── シートXMLを取得して値を書き込む ──
   let sheetXml = await zip.file(useSheet).async('string');
 
-  // ── 共有数式の孤立参照対策（改訂版）──
-  // 問題: expandSharedFormulas で全参照セルにマスター数式をそのまま展開すると
-  //       OFFSET等の行参照が全SKUで同じになってしまう（E18=E19=...）。
-  // 新方針: 共有数式はそのまま維持し、writeSharedMastersList に記録しておく。
-  //         setCellInline/setCellNum がマスターセルを上書きした後、
-  //         そのsiの参照セル(<f t="shared" si="N"/>) の t="shared" を除去し
-  //         <f si="N"/> → <f>マスター数式</f> に変換することで孤立を防ぐ。
-  //         ただし行シフト付き数式はExcelのfullCalcOnLoadで再計算されるため
-  //         <v>の値は不問とする。
-  // 簡略版: 全ての shared formula を最後に後処理で孤立チェックして修復する。
-  (function patchSharedFormulas() {
-    // マスターセルのsi→{数式, refRange}マップ
-    const sfMasters = {};
-    sheetXml.replace(/<f [^>]*t="shared"[^>]*ref="([^"]*)"[^>]*si="([^"]*)"[^>]*>([^<]*)<\/f>/g,
-      (m, ref, si, formula) => { sfMasters[si] = {formula, ref}; return m; }
+  // ── 共有数式を行シフット付きで展開（Excel修復警告・SKU参照ズレ対策）──
+  // 共有数式(shared formula)はExcelが行シフットしてセルごとに展開する仕組み。
+  // JSZipで直接XML操作する場合はExcelのシフット処理が働かないため、
+  // ここで事前に全共有数式を行シフット付きで通常数式に展開しておく。
+  // これにより setCellInlineがマスターを上書きしても孤立参照が生じない。
+  (function expandSharedFormulasWithShift() {
+    // セル参照を rowDelta 行シフットする（絶対参照$はシフットしない）
+    function shiftFormula(formula, rowDelta) {
+      if (!rowDelta) return formula;
+      return formula.replace(/(\$?)([A-Z]+)(\$?)([0-9]+)/g, (_, ca, col, ra, row) =>
+        ca + col + ra + (ra ? row : String(Number(row) + rowDelta))
+      );
+    }
+    // マスターセルを収集: si → {formula, baseRow}
+    const masters = {};
+    sheetXml.replace(/<c r="[A-Z]+(\d+)"[^>]*><f [^>]*t="shared"[^>]*ref="[^"]*"[^>]*si="(\d+)"[^>]*>([^<]*)<\/f>/g,
+      (_, baseRow, si, formula) => { masters[si] = { formula, baseRow: Number(baseRow) }; }
     );
-    sheetXml.replace(/<f [^>]*t="shared"[^>]*si="([^"]*)"[^>]*ref="([^"]*)"[^>]*>([^<]*)<\/f>/g,
-      (m, si, ref, formula) => { sfMasters[si] = {formula, ref}; return m; }
-    );
-    // 後処理: 参照セルが孤立（マスターが消えた）場合のみ修復する
-    // 実行タイミング: 全setCellInline/setCellNum完了後
-    sheetXml._sfMasters = sfMasters;
-  })();
-  function repairOrphanSharedFormulas() {
-    if (!sheetXml._sfMasters) return;
-    const sfMasters = sheetXml._sfMasters;
-    // マスターがまだ存在するsiのセットを収集
-    const existingSis = new Set();
-    sheetXml.replace(/<f [^>]*t="shared"[^>]*ref="[^"]*"[^>]*/g, m => {
-      const siM = m.match(/\bsi="(\d+)"/);
-      if (siM) existingSis.add(siM[1]);
-    });
-    // 孤立した参照セル（マスターが消えたsi）に数式を注入
-    sheetXml = sheetXml.replace(/<f ([^>]*)t="shared"([^>]*)si="(\d+)"([^>]*)(\/?>)/g,
-      (match, pre, mid, si, post, close) => {
-        if (existingSis.has(si)) return match; // マスターあり → そのまま
-        const master = sfMasters[si];
+    // 参照セル（自己終了）を行シフット付きで展開
+    sheetXml = sheetXml.replace(
+      /<c r="([A-Z]+)(\d+)"([^>]*)>\s*<f [^>]*t="shared"[^>]*si="(\d+)"[^>]*\/>/g,
+      (match, col, rowStr, attrs, si) => {
+        const master = masters[si];
         if (!master) return match;
-        return `<f>${master.formula}</f>`; // マスターなし → 数式を直接展開
+        const formula = shiftFormula(master.formula, Number(rowStr) - master.baseRow);
+        return `<c r="${col}${rowStr}"${attrs}><f>${formula}</f>`;
       }
     );
-    delete sheetXml._sfMasters;
-  }
+    // マスターセル自体も通常数式に変換（t="shared" ref= を除去）
+    sheetXml = sheetXml.replace(
+      /<f [^>]*t="shared"[^>]*ref="[^"]*"[^>]*>([^<]*)<\/f>/g,
+      (_, formula) => `<f>${formula}</f>`
+    );
+  })();
+  function repairOrphanSharedFormulas() { /* 旧関数 - 上記で代替済み */ }
 
 
   // ── XMLヘルパー関数 ──
@@ -5319,7 +5311,6 @@ async function buildWorkbook(d, overrideSheetName){
   }
 
   // 書き換えたシートXMLをZIPに戻す
-  repairOrphanSharedFormulas(); // 孤立した共有数式参照を修復
   zip.file(useSheet, sheetXml);
 
   // ZIPをUint8Arrayとして返す（呼び出し元でblobに変換）
