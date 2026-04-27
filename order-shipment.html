@@ -1104,7 +1104,7 @@ async function loadMergedSession(sid, readOnly=false){
 
     // SKU・小売・EC・海外復元
     calcSkus = JSON.parse(JSON.stringify(m.skus || []));
-    // pending_arrival(snakeCase) → pendingArrival(camelCase) 変換（保存時のキー名不一致を吸収）
+    // pending_arrival(snakeCase) → pendingArrival(camelCase) 変換
     calcSkus.forEach(s=>{
       if(s.pending_arrival!=null && s.pendingArrival==null) s.pendingArrival=s.pending_arrival;
       if(s.pending_arrival_month!=null && s.pendingArrivalMonth==null) s.pendingArrivalMonth=s.pending_arrival_month;
@@ -1156,6 +1156,14 @@ async function loadMergedSession(sid, readOnly=false){
 
     // メモ復元
     if(m.memo){ const memoEl=document.getElementById('ci_memo'); if(memoEl) memoEl.value=m.memo; }
+
+    // 発注終了月: DOM未生成のためグローバル変数に保持 → buildSummaryPreview で使用
+    if(m.sum_tobEnd) window._pendingSumTobEnd = m.sum_tobEnd;
+    if(m.sum_ecEnd)  window._pendingSumEcEnd  = m.sum_ecEnd;
+    if(m.sum_ovsEnd) window._pendingSumOvsEnd = m.sum_ovsEnd;
+
+    // 販促物試算: DOM未生成のためwindow.promoPlanに直接セット → renderStep5InvSim で使用
+    if(m.promo_plan && m.promo_plan.length) window.promoPlan = m.promo_plan;
 
     calcArrival(); updateMonthPreviews();
 
@@ -4170,10 +4178,13 @@ function buildSummaryPreview(){
   const base=getBaseMonth()||'2026-01';
   const all8=monthRange(base,8);
   // サマリー内の期間選択セレクトから取得（初期値は全8ヶ月）
+  // DOMが未生成の場合（ロード直後）は _pendingSumXxxEnd を初期値として使用
   const getSumMonth=(id,def)=>{const el=document.getElementById(id);return el?el.value:def;};
-  const tobEndM=getSumMonth('sum_tobEnd',all8[all8.length-1]);
-  const ecEndM=getSumMonth('sum_ecEnd',all8[all8.length-1]);
-  const ovsEndM=getSumMonth('sum_ovsEnd',all8[all8.length-1]);
+  const tobEndM=getSumMonth('sum_tobEnd', window._pendingSumTobEnd||all8[all8.length-1]);
+  const ecEndM =getSumMonth('sum_ecEnd',  window._pendingSumEcEnd ||all8[all8.length-1]);
+  const ovsEndM=getSumMonth('sum_ovsEnd', window._pendingSumOvsEnd||all8[all8.length-1]);
+  // DOMが生成されたら pending をクリア（次回以降はDOMから取得）
+  window._pendingSumTobEnd=null; window._pendingSumEcEnd=null; window._pendingSumOvsEnd=null;
   const tobMonths=all8.filter(m=>m<=tobEndM);
   const ecMonths=all8.filter(m=>m<=ecEndM);
   const ovsMonths=all8.filter(m=>m<=ovsEndM);
@@ -5870,6 +5881,7 @@ async function _doCloudSaveAll(){
       confirmed_orders: confirmed,
       skus:            d.skus,
       memo:            document.getElementById('ci_memo')?.value||'',
+      promo_plan:      (window.promoPlan||[]).map(p=>({item:p.item||'',jan:p.jan||'',qty:p.qty||'',note:p.note||''})),
     });
   }catch(e){ errors.push('サマリー: '+e.message); }
 
