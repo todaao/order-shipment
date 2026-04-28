@@ -4042,13 +4042,13 @@ function buildSimpleToBInput(){
       const val=(store[s.name]||{})[m];
       return '<div class="monthly-input-wrap">'
         +'<label class="monthly-label">'+mLabel(m)+'</label>'
-        +'<input type="text" inputmode="decimal" class="monthly-input" value="'+(val!=null&&val!==''?val:'')+'" placeholder=""'
+        +'<input type="text" inputmode="decimal" class="monthly-input" style="width:72px" value="'+(val!=null&&val!==''?val:'')+'" placeholder=""'
         +' data-key="'+blockKey+'_simple" data-sku="'+s.name+'" data-month="'+m+'" onchange="simpleStoreChange(this)"></div>';
     }).join('');
     return '<div class="sku-block" style="margin-bottom:8px">'
       +'<div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px;display:flex;align-items:center;flex-wrap:wrap">'
       +escHtml(s.name)+badge+'</div>'
-      +'<div style="display:flex;flex-wrap:wrap;gap:6px">'+inputs+'</div></div>';
+      +'<div style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding-bottom:4px">'+inputs+'</div></div>';
   }
 
   function mkBlock(blockKey,num){
@@ -4901,6 +4901,24 @@ function collectCalcData(){
     calc_date:document.getElementById('ci_calcDate')?.value||'',
     dept:currentDept||'',
     memo:document.getElementById('ci_memo')?document.getElementById('ci_memo').value:'',
+    // 簡易試算 toB 状態・月別数量（クラウド保存と同等）
+    sim_tob_status:          JSON.parse(JSON.stringify(window.simToBStatus||{1:'導入済み',2:'導入済み',3:'導入済み'})),
+    calc_simple_monthly_tob: {
+      toB1: JSON.parse(JSON.stringify(calcSimpleMonthly?.['toB1']||{})),
+      toB2: JSON.parse(JSON.stringify(calcSimpleMonthly?.['toB2']||{})),
+      toB3: JSON.parse(JSON.stringify(calcSimpleMonthly?.['toB3']||{})),
+    },
+    // EC・海外チャネル名・ブロック数
+    ec_name1:       window.ecName1||'',
+    ec_name2:       window.ecName2||'',
+    ec_block_count: window.ecBlockCount||1,
+    ovs_name0:      window.ovsName0||'',
+    ovs_name1:      window.ovsName1||'',
+    ovs_name2:      window.ovsName2||'',
+    ovs_name3:      window.ovsName3||'',
+    ovs_block_count: window.ovsBlockCount||1,
+    // プロモプラン
+    promo_plan: (window.promoPlan||[]).map(p=>({item:p.item||'',jan:p.jan||'',qty:p.qty||'',note:p.note||''})),
   };
 }
 
@@ -5647,8 +5665,28 @@ function reEditDraft(id){
   calcEcMonthly={};calcEcMonthly2={};
   calcOvsMonthly=[{},{},{},{}];
   calcSimpleMonthly={};
-  // 簡易試算の初回納品数を復元
+  // 簡易試算の初回納品数・状態・月別数量を復元
   window.simToBInitDelivery=d.simToBInitDelivery||{1:0,2:0,3:0};
+  window.simToBStatus=d.sim_tob_status||{1:'導入済み',2:'導入済み',3:'導入済み'};
+  window.simToBNames=d.simToBNames||{1:'',2:'',3:''};
+  if(d.calc_simple_monthly_tob){
+    calcSimpleMonthly['toB1']=JSON.parse(JSON.stringify(d.calc_simple_monthly_tob.toB1||{}));
+    calcSimpleMonthly['toB2']=JSON.parse(JSON.stringify(d.calc_simple_monthly_tob.toB2||{}));
+    calcSimpleMonthly['toB3']=JSON.parse(JSON.stringify(d.calc_simple_monthly_tob.toB3||{}));
+  }
+
+  // EC・海外チャネル名・ブロック数を復元
+  window.ecName1=d.ec_name1||'';
+  window.ecName2=d.ec_name2||'';
+  window.ecBlockCount=d.ec_block_count||1;
+  window.ovsName0=d.ovs_name0||'';
+  window.ovsName1=d.ovs_name1||'';
+  window.ovsName2=d.ovs_name2||'';
+  window.ovsName3=d.ovs_name3||'';
+  window.ovsBlockCount=d.ovs_block_count||1;
+
+  // プロモプランを復元
+  window.promoPlan=d.promo_plan||null;
 
   // EC・海外データ復元
   if(d.ec_detail&&d.ec_detail[0]) Object.entries(d.ec_detail[0]).forEach(([k,v])=>{calcEcMonthly[k]=v.monthly||{};});
