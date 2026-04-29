@@ -2417,9 +2417,14 @@ function renderReviewOrderDetail(orderId){
   const skuRows=order.skus.map(s=>{
     const jan=String(s.jan||'');
     const ss=SHIP_BY_JAN[jan]||null;
+    // fc: 実績月との交差分（KPI比較用）
     const fc={tob:0,ec:0,overseas:0};
     const chM={tob:tobMonths,ec:ecMonths,overseas:ovsMonths};
     ['tob','ec','overseas'].forEach(ch=>chM[ch].forEach(m=>{fc[ch]+=(s.monthly_summary?.[ch]?.[m]||0);}));
+    // fcAll: 全試算月ベース（表示・フィルタ用）
+    const fcAll={tob:0,ec:0,overseas:0};
+    const allChM={tob:allTobMonths,ec:allEcMonths,overseas:allOvsMonths};
+    ['tob','ec','overseas'].forEach(ch=>allChM[ch].forEach(m=>{fcAll[ch]+=(s.monthly_summary?.[ch]?.[m]||0);}));
     // 月別試算データ（実績月のみ → KPI用）
     const fcByMonth={};
     doneMonths.forEach(m=>{fcByMonth[m]=(s.monthly_summary?.tob?.[m]||0)+(s.monthly_summary?.ec?.[m]||0)+(s.monthly_summary?.overseas?.[m]||0);});
@@ -2428,7 +2433,10 @@ function renderReviewOrderDetail(orderId){
     allTrialMonths.forEach(m=>{fcByMonthAll[m]=(s.monthly_summary?.tob?.[m]||0)+(s.monthly_summary?.ec?.[m]||0)+(s.monthly_summary?.overseas?.[m]||0);});
     const fcByMonthCh={tob:{},ec:{},overseas:{}};
     ['tob','ec','overseas'].forEach(ch=>allTrialMonths.forEach(m=>{fcByMonthCh[ch][m]=s.monthly_summary?.[ch]?.[m]||0;}));
+    // fcTotal: 実績月との交差（KPI比較・精度計算用）
     const fcTotal=fc.tob+fc.ec+fc.overseas;
+    // fcTotalAll: 全試算月ベース（表示・フィルタ用）
+    const fcTotalAll=fcAll.tob+fcAll.ec+fcAll.overseas;
     const ac={tob:0,ec:0,overseas:0,other:0,total:0};
     const acByMonth={};const acByMonthCh={tob:{},ec:{},overseas:{}};
     if(ss) doneMonths.forEach(m=>{
@@ -2441,8 +2449,9 @@ function renderReviewOrderDetail(orderId){
     const accuracy=Math.max(fcTotal,ac.total)>0?1-Math.abs(diff)/Math.max(fcTotal,ac.total):null;
     const errRate=fcTotal>0?Math.abs(diff)/fcTotal:null;
     const dispName=(()=>{const m=masterLookup(jan);if(m)return m.display_name||(m.product_name&&m.sku_name?(m.product_name+' '+m.sku_name).trim():m.sku_name)||jan;return s.sku_name||jan||'—';})();
-    return{jan,dispName,fc,fcTotal,fcByMonth,fcByMonthAll,fcByMonthCh,ac,acByMonth,acByMonthCh,diff,accuracy,errRate,over:errRate!=null&&errRate>THRESH,s};
-  }).filter(r=>r.fcTotal>0||r.ac.total>0);
+    return{jan,dispName,fc,fcAll,fcTotal,fcTotalAll,fcByMonth,fcByMonthAll,fcByMonthCh,ac,acByMonth,acByMonthCh,diff,accuracy,errRate,over:errRate!=null&&errRate>THRESH,s};
+  // fcTotalAll>0: 試算データがある（将来月のみでも表示）
+  }).filter(r=>r.fcTotalAll>0||r.ac.total>0);
 
   // グローバル保持
   window._rvSkuRows=skuRows;
@@ -2477,7 +2486,7 @@ function renderReviewOrderDetail(orderId){
     tHtml+=`<tr class="rv-sku-row${isSelRow?' rv-sku-row-selected':''}" style="${r.over?'background:rgba(224,123,138,0.05);':''}cursor:pointer"
       onclick="selectRvSku('${escHtml(r.jan)}')" id="rvrow-${safeKey}">
       <td style="max-width:200px"><span style="font-size:12px">${escHtml(r.dispName)}</span><br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(r.jan)}</span></td>
-      <td>${fmt(r.fcTotal)}</td><td>${fmt(r.ac.total)}</td>
+      <td>${fmt(r.fcTotalAll||r.fcTotal)}</td><td>${fmt(r.ac.total)}</td>
       <td class="${r.diff>0?'num-warn':r.diff<0?'num-blue':''}">${r.diff>0?'+':''}${fmt(r.diff)}</td>
       <td style="font-family:var(--font-mono);color:${accColor}">${acc}</td>
       <td style="font-family:var(--font-mono);color:${r.over?'var(--accent3)':'var(--text2)'}">${err}</td>
@@ -2550,7 +2559,11 @@ function renderReviewKpiAndGraph(){
   const skuLabel=rvSelectedJan?(targetRows[0]?.dispName||rvSelectedJan):'全SKU';
 
   // チャネル別集計（KPIは実績月のみ）
-  const totalFc=targetRows.reduce((a,r)=>a+(ch==='all'?r.fcTotal:r.fc[ch]||0),0);
+  // KPI表示: 実績月がある場合は交差分、全て将来月の場合は全試算月ベース
+  const totalFc=targetRows.reduce((a,r)=>{
+    if(ch==='all') return a+(r.fcTotal>0?r.fcTotal:r.fcTotalAll||0);
+    return a+(r.fc[ch]>0?r.fc[ch]:r.fcAll?.[ch]||0);
+  },0);
   const totalAc=targetRows.reduce((a,r)=>a+(ch==='all'?r.ac.total:r.ac[ch]||0),0);
   const totalDiff=totalAc-totalFc;
   const validAcc=targetRows.filter(r=>r.accuracy!=null);
