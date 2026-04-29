@@ -2679,6 +2679,7 @@ async function exportOrderAsExcel(orderId){
       stock:   s.stock||0,
       posPs:   s.pos_ref?.pos_ps||0,
       posMonth:s.pos_ref?.pos_month||'',
+      posNote: s.pos_ref?.pos_note||'',
       confirmed_order: s.confirmed_order||0,
       confirmedOrder:  s.confirmed_order||0,
       estimated_total: s.demand_forecast||0,
@@ -2700,8 +2701,11 @@ async function exportOrderAsExcel(orderId){
           name:     r.name,
           posTilt:  r.po_tilt||1,
           stores:   r.stores||0,
+          status:   r.status||'導入済み',
           isNew:    r.status?.includes('新規')||false,
           monthTilts: r.month_tilts||{},
+          // initial_delivery: SKU別初回納品数の合計（sku_psの先頭SKUから取得）
+          initialDelivery: (r.sku_ps||[]).reduce((a,sp)=>a+(sp.initial_delivery||0),0),
           // sku_ps を calcSkus 風に posPs として参照できるよう SKU名→PS マップも持たせる
           _skuPs:   Object.fromEntries((r.sku_ps||[]).map(sp=>[sp.jan||sp.sku_name, sp.pos_ps||0])),
         }))
@@ -2720,6 +2724,21 @@ async function exportOrderAsExcel(orderId){
       const blk={};
       skusOut.forEach(s=>{blk[s.jan||s.name]={recent:0,monthly:s.monthly_summary?.ec||{}};});
       ec_detail.push(blk,{});
+      // 簡易版: orders.json の sim_tob_* フィールドを window 変数に復元
+      if(order.sim_tob_names)    window.simToBNames        = order.sim_tob_names;
+      if(order.sim_tob_status)   window.simToBStatus       = order.sim_tob_status;
+      if(order.sim_tob_stores)   window.simToBStores       = order.sim_tob_stores;
+      if(order.sim_tob_init_delivery) window.simToBInitDelivery = order.sim_tob_init_delivery;
+      // calcSimpleMonthly を tob_simple から復元
+      if(order.tob_simple){
+        ['toB1','toB2','toB3'].forEach((bk,bi)=>{
+          const blk2=order.tob_simple[bi]||{};
+          calcSimpleMonthly[bk]={};
+          (blk2.skus||[]).forEach(s=>{
+            calcSimpleMonthly[bk][s.sku_name||s.jan]=s.monthly||{};
+          });
+        });
+      }
     }
     while(ec_detail.length<2) ec_detail.push({});
 
@@ -2753,7 +2772,7 @@ async function exportOrderAsExcel(orderId){
       product:       order.product||'',
       brand:         order.brand||'',
       order_date:    order.order_date||'',
-      arrival_date:  '',
+      arrival_date:  order.arrival_date||'',
       lead_time_weeks: order.lead_time_weeks||8,
       container_moq: order.container_moq||0,
       bulk_moq:      order.bulk_moq||0,
