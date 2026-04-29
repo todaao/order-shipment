@@ -2685,7 +2685,8 @@ async function exportOrderAsExcel(orderId){
       estimated_total: s.demand_forecast||0,
       order_quantity:  Math.max(0,(s.demand_forecast||0)-(s.stock||0)),
       stockout_predictions:{},
-      pending_arrival:0,
+      pending_arrival: s.pending_arrival||0,
+      pendingArrival:  s.pending_arrival||0,
       pending_arrival_month:null,
       note: s.note||'',
       monthly_summary:{
@@ -2704,10 +2705,12 @@ async function exportOrderAsExcel(orderId){
           status:   r.status||'導入済み',
           isNew:    r.status?.includes('新規')||false,
           monthTilts: r.month_tilts||{},
-          // initial_delivery: SKU別初回納品数の合計（sku_psの先頭SKUから取得）
-          initialDelivery: (r.sku_ps||[]).reduce((a,sp)=>a+(sp.initial_delivery||0),0),
+          // initial_delivery: sku_ps[0]の値を代表として使用（小売単位の初回納品数）
+          initialDelivery: (r.sku_ps&&r.sku_ps[0])?r.sku_ps[0].initial_delivery||0:0,
           // sku_ps を calcSkus 風に posPs として参照できるよう SKU名→PS マップも持たせる
           _skuPs:   Object.fromEntries((r.sku_ps||[]).map(sp=>[sp.jan||sp.sku_name, sp.pos_ps||0])),
+          // SKU別初回納品数マップ
+          _skuInitDel: Object.fromEntries((r.sku_ps||[]).map(sp=>[sp.jan||sp.sku_name, sp.initial_delivery||0])),
         }))
       :[];
 
@@ -2725,14 +2728,16 @@ async function exportOrderAsExcel(orderId){
       skusOut.forEach(s=>{blk[s.jan||s.name]={recent:0,monthly:s.monthly_summary?.ec||{}};});
       ec_detail.push(blk,{});
       // 簡易版: orders.json の sim_tob_* フィールドを window 変数に復元
-      if(order.sim_tob_names)    window.simToBNames        = order.sim_tob_names;
-      if(order.sim_tob_status)   window.simToBStatus       = order.sim_tob_status;
-      if(order.sim_tob_stores)   window.simToBStores       = order.sim_tob_stores;
-      if(order.sim_tob_init_delivery) window.simToBInitDelivery = order.sim_tob_init_delivery;
-      // calcSimpleMonthly を tob_simple から復元
+      window.simToBNames        = order.sim_tob_names        || {1:'',2:'',3:''};
+      window.simToBStatus       = order.sim_tob_status       || {1:'導入済み',2:'導入済み',3:'導入済み'};
+      window.simToBStores       = order.sim_tob_stores       || {1:0,2:0,3:0};
+      window.simToBInitDelivery = order.sim_tob_init_delivery|| {1:0,2:0,3:0};
+      // calcSimpleMonthly を tob_simple から復元（全ブロック）
+      ['toB1','toB2','toB3'].forEach((bk,bi)=>{ calcSimpleMonthly[bk]={}; });
       if(order.tob_simple){
-        ['toB1','toB2','toB3'].forEach((bk,bi)=>{
-          const blk2=order.tob_simple[bi]||{};
+        order.tob_simple.forEach((blk2,bi)=>{
+          const bk=['toB1','toB2','toB3'][bi];
+          if(!bk) return;
           calcSimpleMonthly[bk]={};
           (blk2.skus||[]).forEach(s=>{
             calcSimpleMonthly[bk][s.sku_name||s.jan]=s.monthly||{};
@@ -2767,8 +2772,11 @@ async function exportOrderAsExcel(orderId){
     window.ovsName2 =ovsChNames[2]||'';
     window.ovsName3 =ovsChNames[3]||'';
 
+    // sim_tob_namesが存在する場合は簡易版として扱う（旧orders.jsonとの互換）
+    const effectiveMode = (order.sim_tob_names && Object.keys(order.sim_tob_names).length)
+      ? 'simple' : (order.mode||'normal');
     const d={
-      mode:          order.mode||'normal',
+      mode:          effectiveMode,
       product:       order.product||'',
       brand:         order.brand||'',
       order_date:    order.order_date||'',
