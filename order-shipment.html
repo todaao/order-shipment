@@ -364,8 +364,8 @@ textarea:focus{border-color:var(--accent);}
       <div class="panel-title"><span class="panel-title-dot"></span>在庫スナップショット一覧</div>
       <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
         <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">フィルター:</span>
-        <button class="drilldown-toggle" id="filterRiskBtn" onclick="toggleInvFilter('risk')" style="color:var(--accent3)">欠品リスク</button>
-        <button class="drilldown-toggle" id="filterExcessBtn" onclick="toggleInvFilter('excess')" style="color:var(--accent2)">過剰在庫</button>
+        <button class="drilldown-toggle" id="filterRiskBtn" onclick="toggleInvFilter('risk')" style="color:var(--accent3)">欠品リスク <span id="filterRiskThreshLabel" style="font-family:var(--font-mono);font-size:9px;opacity:.7"></span></button>
+        <button class="drilldown-toggle" id="filterExcessBtn" onclick="toggleInvFilter('excess')" style="color:var(--accent2)">過剰在庫 <span id="filterExcessThreshLabel" style="font-family:var(--font-mono);font-size:9px;opacity:.7"></span></button>
         <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-left:6px">並び替え:</span>
         <span id="invSortBtnsHeader"></span>
       </div>
@@ -2169,7 +2169,17 @@ function renderInventoryTable(filtMsArg){
   if(!dataLoaded||!DATA.inventory) return;
   let dispSkus=filteredInventorySkus();
   const shipSkus=DATA.shipments.skus||[];
-  const leadTimeMonths=(DATA.orders?.orders||[]).reduce((a,o)=>Math.max(a,(o.lead_time_weeks||8)/4.33),2);
+  // アラート閾値パネルの値を参照（設定されていなければデフォルト値）
+  const _invThLT=parseFloat(document.getElementById('alertThreshLT')?.value??3)||3;
+  const _invThBuffer=parseFloat(document.getElementById('alertThreshBuffer')?.value??2)||2;
+  const _invThExcess=parseFloat(document.getElementById('alertThreshExcess')?.value??12)||12;
+  const _invRiskThresh=_invThLT+_invThBuffer+1; // 監視ラインを欠品リスクフィルターの上限とする
+  // フィルターボタンのラベルに閾値を反映
+  const _riskLbl=document.getElementById('filterRiskThreshLabel');
+  const _excessLbl=document.getElementById('filterExcessThreshLabel');
+  if(_riskLbl) _riskLbl.textContent=`≤${_invRiskThresh.toFixed(1)}ヶ月`;
+  if(_excessLbl) _excessLbl.textContent=`≥${_invThExcess}ヶ月`;
+  const leadTimeMonths=_invThLT;
 
   dispSkus=dispSkus.map(s=>{
     const jan=String(s.sku_code);
@@ -2187,13 +2197,13 @@ function renderInventoryTable(filtMsArg){
     }
     return{...s,_digestMonths:dm,
       // マスタ未登録・廃盤済み・廃盤予定は欠品リスクバッジを付けない
-      _shortage:dm!=null&&dm<=leadTimeMonths+1&&dm<3&&(()=>{
+      _shortage:dm!=null&&dm<=_invRiskThresh&&(()=>{
         const mst=masterLookup(jan);
         if(!mst) return false; // マスタ未登録
         if(mst.discontinued||mst.discontinue_planned) return false; // 廃盤済み・予定
         return true;
       })(),
-      _excess:dm!=null&&dm>=12};
+      _excess:dm!=null&&dm>=_invThExcess};
   });
 
   if(invFilter==='risk') dispSkus=dispSkus.filter(s=>s._shortage);
@@ -4252,17 +4262,20 @@ function buildSummaryPreview(){
 
   // 共通ヘッダー
   // mkHdrWithStock: 現在庫あり（全販路合計用）
-  const mkHdrWithStock=(months)=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">現在庫</th>${months.map(m=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">${mLabel(m)}</th>`).join('')}<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">試算合計</th><th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--accent3);border:1px solid var(--border)">過不足(在庫-試算)</th>`;
+  const mkHdrWithStock=(months)=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">現在庫</th><th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--accent4);border:1px solid var(--border)">直近3月平均</th>${months.map(m=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">${mLabel(m)}</th>`).join('')}<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">試算合計</th><th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--accent3);border:1px solid var(--border)">過不足(在庫-試算)</th>`;
   // mkHdrToB: 現在庫なし、直近3月平均あり（toB用）
   const mkHdrToB=(months)=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--accent4);border:1px solid var(--border)">3月平均</th>${months.map(m=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">${mLabel(m)}</th>`).join('')}<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">合計</th><th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--accent3);border:1px solid var(--border)">新規内訳</th>`;
   // mkHdr: EC/海外用（直近3月平均）
   const mkHdr=(months,label='EC直近3月平均')=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--accent4);border:1px solid var(--border)">${label}</th>${months.map(m=>`<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">${mLabel(m)}</th>`).join('')}<th style="padding:6px 8px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border:1px solid var(--border)">合計</th>`;
-  // mkRowWithStock: 現在庫・試算合計・過不足表示
+  // mkRowWithStock: 現在庫・直近3月平均・試算合計・過不足表示
   const mkRowWithStock=(s,allVals,allMonths,accent)=>{
     const total=allMonths.reduce((a,m)=>a+(allVals[m]||0),0);
     const diff=(s.stock||0)-total;
+    const bm=getBaseMonth();
+    const avg3all=(recentShipForCalc(s.jan,'tob',3,bm)||0)+(recentShipForCalc(s.jan,'ec',3,bm)||0)+(recentShipForCalc(s.jan,'overseas',3,bm)||0);
     return`<tr><td style="padding:6px 8px;color:var(--text);font-size:12px">${escHtml(s.name)}<br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${s.jan||''}</span></td>
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--text2);border:1px solid var(--border)">${fmt(s.stock)}</td>
+      <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:var(--accent4);border:1px solid var(--border)">${avg3all?fmt(Math.round(avg3all)):'—'}</td>
       ${allMonths.map(m=>`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;color:${accent};border:1px solid rgba(42,45,58,.4)">${fmt(allVals[m]||0)}</td>`).join('')}
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:${accent};border:1px solid var(--border)">${fmt(total)}</td>
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;border:1px solid var(--border)" class="${diff>=0?'num-pos':'num-warn'}">${diff>=0?'+':''}${fmt(diff)}</td></tr>`;
@@ -4426,8 +4439,13 @@ function buildSummaryPreview(){
     const grand=Object.values(totals).reduce((a,b)=>a+b,0);
     const totalStock=skuData.reduce((a,d)=>a+(d.s.stock||0),0);
     const diff=totalStock-grand;
+    const bm=getBaseMonth();
+    const totalAvg3=skuData.reduce((a,d)=>{
+      return a+(recentShipForCalc(d.s.jan,'tob',3,bm)||0)+(recentShipForCalc(d.s.jan,'ec',3,bm)||0)+(recentShipForCalc(d.s.jan,'overseas',3,bm)||0);
+    },0);
     return`<tr style="background:rgba(255,255,255,.02)"><td style="padding:6px 8px;font-size:12px;font-weight:500;border:1px solid var(--border)">合計</td>
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--text2);border:1px solid var(--border)">${fmt(totalStock)}</td>
+      <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--accent4);border:1px solid var(--border)">${totalAvg3?fmt(Math.round(totalAvg3)):'—'}</td>
       ${allMonths.map(m=>`<td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--accent);border:1px solid rgba(42,45,58,.4)">${fmt(totals[m]||0)}</td>`).join('')}
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--border)">${fmt(grand)}</td>
       <td style="padding:6px 8px;text-align:right;font-family:var(--font-mono);font-size:11px;font-weight:700;border:1px solid var(--border)" class="${diff>=0?'num-pos':'num-warn'}">${diff>=0?'+':''}${fmt(diff)}</td></tr>`;
