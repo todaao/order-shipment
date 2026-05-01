@@ -5332,7 +5332,8 @@ async function buildWorkbook(d, overrideSheetName){
       sheetXml = setCellNum(sheetXml, 'B'+(h+1), r.posTilt||1);
       sheetXml = setCellNum(sheetXml, 'D'+(h+1), r.stores||0);
       sheetXml = setCellInline(sheetXml, 'F'+(h+1), r.status||'導入済み');
-      tobMs.forEach((m,mi)=>{
+      // 月別傾斜は常に8ヶ月全て書き込む（tob_months範囲外も空欄クリア）
+      allCalcMs.forEach((m,mi)=>{
         if(mi<8){
           const tv=r.monthTilts?.[m];
           const isEmpty=(tv===''||tv===undefined||tv===null);
