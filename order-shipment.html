@@ -2851,13 +2851,17 @@ function toggleRvSkuDetail(jan){ selectRvSku(jan); }
 function buildRvSkuDetailHtml(r,order,key){
   const chs=['tob','ec','overseas','other'];
   const chL={tob:'toB',ec:'EC',overseas:'海外',other:'other'};
-  const chRows=chs.filter(ch=>(r.fc[ch]||0)>0||(r.ac[ch]||0)>0).map(ch=>{
-    const d=(r.ac[ch]||0)-(r.fc[ch]||0);
+  // 試算値は全試算月ベース(fcAll)を使用。実績がなくても試算があれば表示する
+  const chRows=chs.filter(ch=>(r.fcAll?.[ch]||0)>0||(r.ac[ch]||0)>0).map(ch=>{
+    const fcVal=r.fcAll?.[ch]||0;
+    const acVal=r.ac[ch]||0;
+    const d=acVal-fcVal;
+    const hasAc=acVal>0;
     return`<tr>
       <td style="padding:4px 10px;color:var(--text2)">${chL[ch]}</td>
-      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(r.fc[ch]||0)}</td>
-      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:var(--accent4)">${fmt(r.ac[ch]||0)}</td>
-      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:${d>0?'var(--accent3)':'var(--accent2)'}">${d>0?'+':''}${fmt(d)}</td>
+      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(fcVal)}</td>
+      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:${hasAc?'var(--accent4)':'var(--text3)'}">${hasAc?fmt(acVal):'—'}</td>
+      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:${hasAc?(d>0?'var(--accent3)':'var(--accent2)'):'var(--text3)'}">${hasAc?(d>0?'+':'')+fmt(d):'—'}</td>
     </tr>`;
   }).join('');
 
@@ -2919,10 +2923,11 @@ function drawRvSkuDetailChart(r,key){
   const chs=['tob','ec','overseas','other'];
   const chL={tob:'toB',ec:'EC',overseas:'海外',other:'other'};
   const chC={tob:'rgba(126,184,212,1)',ec:'rgba(200,169,110,1)',overseas:'rgba(126,212,160,1)',other:'rgba(180,158,232,1)'};
-  const active=chs.filter(ch=>(r.fc[ch]||0)>0||(r.ac[ch]||0)>0);
+  // 試算値は全試算月ベース(fcAll)、実績がなくても試算があるチャネルを表示
+  const active=chs.filter(ch=>(r.fcAll?.[ch]||0)>0||(r.ac[ch]||0)>0);
   window._rvDetCharts[key]=new Chart(canvas.getContext('2d'),{type:'bar',
     data:{labels:active.map(ch=>chL[ch]),datasets:[
-      {label:'試算',data:active.map(ch=>r.fc[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.3)')),borderColor:active.map(ch=>chC[ch].replace('1)','0.7)')),borderWidth:1},
+      {label:'試算',data:active.map(ch=>r.fcAll?.[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.3)')),borderColor:active.map(ch=>chC[ch].replace('1)','0.7)')),borderWidth:1},
       {label:'実績',data:active.map(ch=>r.ac[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.75)')),borderColor:active.map(ch=>chC[ch]),borderWidth:1},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
@@ -5082,7 +5087,8 @@ async function buildWorkbook(d, overrideSheetName){
   zip.file('xl/_rels/workbook.xml.rels', relsXml);
   // bookViewsのactiveTabをリセット（簡易版でsheet2使用時のビューエラー対策）
   wbXml = wbXml.replace(/<bookViews>[\s\S]*?<\/bookViews>/, '<bookViews><workbookView xWindow="-120" yWindow="-120" windowWidth="29040" windowHeight="15720"/></bookViews>');
-  wbXml = wbXml.replace(/<calcPr([^/]*)\/>/, '<calcPr$1 fullCalcOnLoad="1"/>');
+  // fullCalcOnLoadが未設定の場合のみ追加（重複防止）
+  if(!wbXml.includes('fullCalcOnLoad')) wbXml = wbXml.replace(/<calcPr([^/]*)\/>/, '<calcPr$1 fullCalcOnLoad="1"/>');
   zip.file('xl/workbook.xml', wbXml);
 
   // ── シートXMLを取得して値を書き込む ──
