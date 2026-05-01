@@ -4946,6 +4946,19 @@ function collectCalcData(){
     });
     return{retailer:r.name,stores:r.stores,pos_tilt:r.posTilt,is_new:r.isNew||false,initial_delivery:initDel,skus:skuMap};
   }):[];
+  // 試算時点の出荷実績スナップショット（振り返りExcel出力時に使用）
+  const recentShipSnapshot={};
+  calcSkus.forEach(s=>{
+    const jan=s.jan||'';
+    recentShipSnapshot[jan]={
+      tob1:  recentShipForCalc(jan,'tob',1,base),
+      tob3:  recentShipForCalc(jan,'tob',3,base),
+      ec1:   recentShipForCalc(jan,'ec',1,base),
+      ec3:   recentShipForCalc(jan,'ec',3,base),
+      ovs1:  recentShipForCalc(jan,'overseas',1,base),
+      ovs3:  recentShipForCalc(jan,'overseas',3,base),
+    };
+  });
   return{
     mode:calcMode,
     product:document.getElementById('ci_product').value,
@@ -4986,6 +4999,7 @@ function collectCalcData(){
     ovs_block_count: window.ovsBlockCount||1,
     // プロモプラン
     promo_plan: (window.promoPlan||[]).map(p=>({item:p.item||'',jan:p.jan||'',qty:p.qty||'',note:p.note||''})),
+    recent_ship_snapshot: recentShipSnapshot,
   };
 }
 
@@ -5180,6 +5194,21 @@ async function buildWorkbook(d, overrideSheetName){
   const ovsMs = buildMonthRange(d.overseas_months||0);
   const _bm = base;
 
+  // 試算時点スナップショット優先ヘルパー（振り返り出力時は保存値を使用）
+  const _snap = d.recent_ship_snapshot || {};
+  function getRecent(jan, channel, n) {
+    const s = _snap[jan||''];
+    if (s) {
+      if (channel==='tob'     && n===1) return s.tob1||0;
+      if (channel==='tob'     && n===3) return s.tob3||0;
+      if (channel==='ec'      && n===1) return s.ec1||0;
+      if (channel==='ec'      && n===3) return s.ec3||0;
+      if (channel==='overseas'&& n===1) return s.ovs1||0;
+      if (channel==='overseas'&& n===3) return s.ovs3||0;
+    }
+    return recentShipForCalc(jan, channel, n, _bm);
+  }
+
   // ── SECTION A: 商品情報 ──
   sheetXml = setCellInline(sheetXml, 'B3', d.product||'');
   sheetXml = setCellInline(sheetXml, 'B4', d.brand||'');
@@ -5272,8 +5301,8 @@ async function buildWorkbook(d, overrideSheetName){
     if(i>=8) return;
     const jan = s.jan||'';
     const tobR = 42+i;
-    sheetXml = setCellNum(sheetXml, 'B'+tobR, recentShipForCalc(jan,'tob',1,_bm));
-    sheetXml = setCellNum(sheetXml, 'C'+tobR, recentShipForCalc(jan,'tob',3,_bm));
+    sheetXml = setCellNum(sheetXml, 'B'+tobR, getRecent(jan,'tob',1));
+    sheetXml = setCellNum(sheetXml, 'C'+tobR, getRecent(jan,'tob',3));
     if(!isSimple){
       // ③ 通常版: D〜K列に試算値（初回納品数込み）を直接書き込む（テンプレート数式を上書き）
       MONTH_COLS_NORMAL.forEach((col,mi)=>{
@@ -5306,12 +5335,12 @@ async function buildWorkbook(d, overrideSheetName){
       });
     }
     const ecR = 51+i;
-    sheetXml = setCellNum(sheetXml, 'B'+ecR, recentShipForCalc(jan,'ec',1,_bm));
-    sheetXml = setCellNum(sheetXml, 'C'+ecR, recentShipForCalc(jan,'ec',3,_bm));
+    sheetXml = setCellNum(sheetXml, 'B'+ecR, getRecent(jan,'ec',1));
+    sheetXml = setCellNum(sheetXml, 'C'+ecR, getRecent(jan,'ec',3));
     // EC D〜K列はテンプレート数式（EC詳細合計）のため書き込み不要
     const ovsR = 60+i;
-    sheetXml = setCellNum(sheetXml, 'B'+ovsR, recentShipForCalc(jan,'overseas',1,_bm));
-    sheetXml = setCellNum(sheetXml, 'C'+ovsR, recentShipForCalc(jan,'overseas',3,_bm));
+    sheetXml = setCellNum(sheetXml, 'B'+ovsR, getRecent(jan,'overseas',1));
+    sheetXml = setCellNum(sheetXml, 'C'+ovsR, getRecent(jan,'overseas',3));
     // 海外 D〜K列はテンプレート数式（海外詳細合計）のため書き込み不要
     if(!isSimple){
       sheetXml = setCellInline(sheetXml, 'N'+tobR, s.name||'');
@@ -5370,8 +5399,8 @@ async function buildWorkbook(d, overrideSheetName){
         // ec_detailはs.nameをキーに保存されている（collectCalcData参照）
         const monthly = (blk[s.name]||{}).monthly || (blk[jan]||{}).monthly || {};
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
-        sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(jan,'ec',1,_bm));
-        sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(jan,'ec',3,_bm));
+        sheetXml = setCellNum(sheetXml, 'B'+row, getRecent(jan,'ec',1));
+        sheetXml = setCellNum(sheetXml, 'C'+row, getRecent(jan,'ec',3));
         // ④ EC詳細 D〜K列: 各月試算値を直接書き込む
         ecMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+row, monthly[m]||0); });
       });
@@ -5389,8 +5418,8 @@ async function buildWorkbook(d, overrideSheetName){
         // ovs_detailはs.nameをキーに保存されている（collectCalcData参照）
         const monthly = (blk[s.name]||{}).monthly || (blk[jan]||{}).monthly || {};
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
-        sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(jan,'overseas',1,_bm));
-        sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(jan,'overseas',3,_bm));
+        sheetXml = setCellNum(sheetXml, 'B'+row, getRecent(jan,'overseas',1));
+        sheetXml = setCellNum(sheetXml, 'C'+row, getRecent(jan,'overseas',3));
         // ④ 海外詳細 D〜K列: 各月試算値を直接書き込む
         ovsMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+row, monthly[m]||0); });
       });
@@ -5443,8 +5472,8 @@ async function buildWorkbook(d, overrideSheetName){
         if(si>=8) return;
         const row = sr+si;
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
-        sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(s.jan,'tob',1,_bm));
-        sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(s.jan,'tob',3,_bm));
+        sheetXml = setCellNum(sheetXml, 'B'+row, getRecent(s.jan,'tob',1));
+        sheetXml = setCellNum(sheetXml, 'C'+row, getRecent(s.jan,'tob',3));
         // D列=初回納品数
         const initDel=simInitDels[bi]||0;
         if(initDel>0) sheetXml = setCellNum(sheetXml, 'D'+row, initDel);
@@ -5482,8 +5511,8 @@ async function buildWorkbook(d, overrideSheetName){
         if(si>=8) return;
         const row = sr+si;
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
-        sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(s.jan,'ec',1,_bm));
-        sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(s.jan,'ec',3,_bm));
+        sheetXml = setCellNum(sheetXml, 'B'+row, getRecent(s.jan,'ec',1));
+        sheetXml = setCellNum(sheetXml, 'C'+row, getRecent(s.jan,'ec',3));
         ecMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+row, s.monthly_summary?.ec?.[m]||0); });
       });
     });
@@ -5501,8 +5530,8 @@ async function buildWorkbook(d, overrideSheetName){
         const monthly = (blk[s.name]||{}).monthly || (blk[s.jan||'']||{}).monthly || {};
         sheetXml = setCellInline(sheetXml, 'A'+row, s.name||'');
         // ③ 直近月販・直近3月平均を追加
-        sheetXml = setCellNum(sheetXml, 'B'+row, recentShipForCalc(s.jan,'overseas',1,_bm));
-        sheetXml = setCellNum(sheetXml, 'C'+row, recentShipForCalc(s.jan,'overseas',3,_bm));
+        sheetXml = setCellNum(sheetXml, 'B'+row, getRecent(s.jan,'overseas',1));
+        sheetXml = setCellNum(sheetXml, 'C'+row, getRecent(s.jan,'overseas',3));
         // ③ D〜K列: 各月試算値を書き込む
         ovsMs.forEach((m,mi)=>{ if(mi<8) sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+row, monthly[m]||0); });
       });
