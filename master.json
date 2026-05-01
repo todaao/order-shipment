@@ -6045,7 +6045,8 @@
       "sku_name": "もくもく",
       "ip": "",
       "status": "",
-      "display_name": "ぷにっこ もくもく"
+      "display_name": "ぷにっこ もくもく",
+      "discontinue_planned": true
     },
     {
       "jan": "4580805241205",
