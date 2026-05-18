@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12",
+  "updated_at": "2026-05-17",
   "skus": [
     {
       "sku_code": "4580805240444",
@@ -42,11 +42,11 @@
           "total": 614
         },
         "2026-05": {
-          "ec": 5,
-          "tob": 174,
+          "ec": 10,
+          "tob": 180,
           "overseas": 0,
-          "other": 7,
-          "total": 186
+          "other": 24,
+          "total": 214
         }
       }
     },
@@ -119,11 +119,11 @@
           "total": 228
         },
         "2026-05": {
-          "ec": 51,
+          "ec": 53,
           "tob": 7856,
           "overseas": 0,
           "other": 6,
-          "total": 7913
+          "total": 7915
         }
       }
     },
@@ -154,11 +154,11 @@
           "total": 209
         },
         "2026-05": {
-          "ec": 46,
+          "ec": 49,
           "tob": 7904,
           "overseas": 0,
           "other": 6,
-          "total": 7956
+          "total": 7959
         }
       }
     },
@@ -189,11 +189,11 @@
           "total": 61
         },
         "2026-05": {
-          "ec": 18,
+          "ec": 19,
           "tob": 7872,
           "overseas": 0,
           "other": 5,
-          "total": 7895
+          "total": 7896
         }
       }
     },
@@ -224,18 +224,18 @@
           "total": 57
         },
         "2026-05": {
-          "ec": 18,
+          "ec": 19,
           "tob": 7344,
           "overseas": 0,
           "other": 5,
-          "total": 7367
+          "total": 7368
         }
       }
     },
     {
       "sku_code": "4580805240178",
       "sku_name": "ナルミヤ/NARUMIYA　メゾピアノ シークレットキャラチャーム",
-      "first_shipment_date": "2026-04-20",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2025-12": {
           "ec": 11615,
@@ -273,18 +273,18 @@
           "total": 14304
         },
         "2026-05": {
-          "ec": 151,
-          "tob": 2149,
+          "ec": 567,
+          "tob": 2413,
           "overseas": 0,
           "other": 1,
-          "total": 2301
+          "total": 2981
         }
       }
     },
     {
       "sku_code": "4580805240406",
       "sku_name": "ナルミヤ/NARUMIYA　メゾピアノ シークレットキャラチャーム　6箱セット",
-      "first_shipment_date": "2026-04-20",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2025-12": {
           "ec": 1068,
@@ -322,11 +322,11 @@
           "total": 62
         },
         "2026-05": {
-          "ec": 20,
-          "tob": 0,
+          "ec": 32,
+          "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 20
+          "total": 36
         }
       }
     },
@@ -385,11 +385,11 @@
           "total": 173
         },
         "2026-05": {
-          "ec": 12,
+          "ec": 33,
           "tob": 0,
           "overseas": 0,
-          "other": 13,
-          "total": 25
+          "other": 16,
+          "total": 49
         }
       }
     },
@@ -451,8 +451,8 @@
           "ec": 2,
           "tob": 0,
           "overseas": 0,
-          "other": 13,
-          "total": 15
+          "other": 14,
+          "total": 16
         }
       }
     },
@@ -581,11 +581,11 @@
           "total": 1973
         },
         "2026-05": {
-          "ec": 11,
-          "tob": 324,
+          "ec": 32,
+          "tob": 336,
           "overseas": 0,
           "other": 1,
-          "total": 336
+          "total": 369
         }
       }
     },
@@ -635,6 +635,13 @@
           "overseas": 0,
           "other": 0,
           "total": 6
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -1578,6 +1585,13 @@
           "overseas": 0,
           "other": 0,
           "total": 4
+        },
+        "2026-05": {
+          "ec": 1,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -1634,11 +1648,11 @@
           "total": 1554
         },
         "2026-05": {
-          "ec": 57,
+          "ec": 80,
           "tob": 24908,
           "overseas": 0,
           "other": 0,
-          "total": 24965
+          "total": 24988
         }
       }
     },
@@ -1683,11 +1697,11 @@
           "total": 1022
         },
         "2026-05": {
-          "ec": 36,
+          "ec": 49,
           "tob": 23548,
           "overseas": 0,
           "other": 0,
-          "total": 23584
+          "total": 23597
         }
       }
     },
@@ -1718,11 +1732,11 @@
           "total": 1161
         },
         "2026-05": {
-          "ec": 49,
+          "ec": 64,
           "tob": 23728,
           "overseas": 0,
           "other": 0,
-          "total": 23777
+          "total": 23792
         }
       }
     },
@@ -1753,11 +1767,11 @@
           "total": 1167
         },
         "2026-05": {
-          "ec": 51,
+          "ec": 65,
           "tob": 23776,
           "overseas": 0,
           "other": 0,
-          "total": 23827
+          "total": 23841
         }
       }
     },
@@ -1802,11 +1816,11 @@
           "total": 638
         },
         "2026-05": {
-          "ec": 139,
+          "ec": 181,
           "tob": 60,
           "overseas": 0,
           "other": 0,
-          "total": 199
+          "total": 241
         }
       }
     },
@@ -1844,11 +1858,11 @@
           "total": 3238
         },
         "2026-05": {
-          "ec": 14,
-          "tob": 678,
+          "ec": 114,
+          "tob": 708,
           "overseas": 0,
           "other": 0,
-          "total": 692
+          "total": 822
         }
       }
     },
@@ -2019,11 +2033,11 @@
           "total": 16
         },
         "2026-05": {
-          "ec": 8,
-          "tob": 0,
+          "ec": 9,
+          "tob": 1,
           "overseas": 0,
           "other": 0,
-          "total": 8
+          "total": 10
         }
       }
     },
@@ -2075,11 +2089,11 @@
           "total": 50
         },
         "2026-05": {
-          "ec": 15,
+          "ec": 21,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 15
+          "total": 21
         }
       }
     },
@@ -2148,8 +2162,8 @@
           "ec": 4,
           "tob": 0,
           "overseas": 0,
-          "other": 14,
-          "total": 18
+          "other": 20,
+          "total": 24
         }
       }
     },
@@ -2204,8 +2218,8 @@
           "ec": 4,
           "tob": 0,
           "overseas": 0,
-          "other": 14,
-          "total": 18
+          "other": 20,
+          "total": 24
         }
       }
     },
@@ -2253,8 +2267,8 @@
           "ec": 0,
           "tob": 0,
           "overseas": 0,
-          "other": 14,
-          "total": 14
+          "other": 20,
+          "total": 20
         }
       }
     },
@@ -2309,11 +2323,11 @@
       "first_shipment_date": "2026-05-11",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 2,
-          "tob": 0,
+          "ec": 4,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 6
         }
       }
     },
@@ -2343,11 +2357,11 @@
       "first_shipment_date": "2026-05-11",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 2,
+          "ec": 3,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -2428,10 +2442,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 2,
-          "tob": 0,
+          "tob": 1,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -2442,10 +2456,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 1,
-          "tob": 0,
+          "tob": 1,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -2455,11 +2469,11 @@
       "first_shipment_date": "2026-05-11",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 2,
-          "tob": 0,
+          "ec": 3,
+          "tob": 1,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 4
         }
       }
     },
@@ -2470,10 +2484,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 1,
-          "tob": 0,
+          "tob": 1,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -2497,11 +2511,11 @@
       "first_shipment_date": "2026-05-11",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 1,
+          "ec": 2,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -2532,11 +2546,11 @@
           "total": 10
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 5,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 5
         }
       }
     },
@@ -2595,11 +2609,11 @@
           "total": 8
         },
         "2026-05": {
-          "ec": 3,
+          "ec": 4,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 4
         }
       }
     },
@@ -2630,11 +2644,11 @@
       "first_shipment_date": "2026-05-08",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 316,
+          "ec": 377,
           "tob": 12,
           "overseas": 0,
-          "other": 0,
-          "total": 328
+          "other": 2,
+          "total": 391
         }
       }
     },
@@ -2644,11 +2658,11 @@
       "first_shipment_date": "2026-05-08",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 11,
-          "tob": 0,
+          "ec": 17,
+          "tob": 18,
           "overseas": 0,
           "other": 0,
-          "total": 11
+          "total": 35
         }
       }
     },
@@ -2658,11 +2672,11 @@
       "first_shipment_date": "2026-05-08",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 145,
+          "ec": 163,
           "tob": 12,
           "overseas": 0,
-          "other": 0,
-          "total": 157
+          "other": 2,
+          "total": 177
         }
       }
     },
@@ -2672,11 +2686,11 @@
       "first_shipment_date": "2026-05-11",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 3,
-          "tob": 0,
+          "ec": 4,
+          "tob": 18,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 22
         }
       }
     },
@@ -3561,11 +3575,11 @@
           "total": 8
         },
         "2026-05": {
-          "ec": 2,
-          "tob": 30,
+          "ec": 3,
+          "tob": 31,
           "overseas": 1,
           "other": 0,
-          "total": 33
+          "total": 35
         }
       }
     },
@@ -3813,11 +3827,11 @@
           "total": 252
         },
         "2026-05": {
-          "ec": 25,
-          "tob": 2,
+          "ec": 30,
+          "tob": 9,
           "overseas": 1,
           "other": 0,
-          "total": 28
+          "total": 40
         }
       }
     },
@@ -3877,10 +3891,10 @@
         },
         "2026-05": {
           "ec": 2,
-          "tob": 5,
+          "tob": 15,
           "overseas": 38,
           "other": 0,
-          "total": 45
+          "total": 55
         }
       }
     },
@@ -3939,11 +3953,11 @@
           "total": 194
         },
         "2026-05": {
-          "ec": 6,
-          "tob": 0,
+          "ec": 8,
+          "tob": 25,
           "overseas": 1,
           "other": 0,
-          "total": 7
+          "total": 34
         }
       }
     },
@@ -4002,11 +4016,11 @@
           "total": 760
         },
         "2026-05": {
-          "ec": 16,
-          "tob": 22,
+          "ec": 18,
+          "tob": 23,
           "overseas": 36,
           "other": 0,
-          "total": 74
+          "total": 77
         }
       }
     },
@@ -4065,11 +4079,11 @@
           "total": 679
         },
         "2026-05": {
-          "ec": 25,
+          "ec": 30,
           "tob": 20,
           "overseas": 36,
           "other": 0,
-          "total": 81
+          "total": 86
         }
       }
     },
@@ -4128,11 +4142,11 @@
           "total": 20
         },
         "2026-05": {
-          "ec": 5,
+          "ec": 7,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 5
+          "total": 7
         }
       }
     },
@@ -4834,11 +4848,11 @@
           "total": 150
         },
         "2026-05": {
-          "ec": 22,
+          "ec": 42,
           "tob": 0,
           "overseas": 56,
           "other": 0,
-          "total": 78
+          "total": 98
         }
       }
     },
@@ -4960,11 +4974,11 @@
           "total": 15
         },
         "2026-05": {
-          "ec": 20,
+          "ec": 46,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 20
+          "total": 46
         }
       }
     },
@@ -5023,11 +5037,11 @@
           "total": 13
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 8,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 8
         }
       }
     },
@@ -5086,11 +5100,11 @@
           "total": 15
         },
         "2026-05": {
-          "ec": 47,
+          "ec": 84,
           "tob": 0,
           "overseas": 39,
           "other": 0,
-          "total": 86
+          "total": 123
         }
       }
     },
@@ -5331,11 +5345,11 @@
           "total": 116
         },
         "2026-05": {
-          "ec": 7,
+          "ec": 8,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 7
+          "total": 8
         }
       }
     },
@@ -5457,11 +5471,11 @@
           "total": 112
         },
         "2026-05": {
-          "ec": 3,
+          "ec": 5,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 5
         }
       }
     },
@@ -5639,11 +5653,11 @@
           "total": 9
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 7,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 7
         }
       }
     },
@@ -5933,11 +5947,11 @@
           "total": 4
         },
         "2026-05": {
-          "ec": 7,
+          "ec": 19,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 10
+          "total": 22
         }
       }
     },
@@ -5996,11 +6010,11 @@
           "total": 97
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 5,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 8
         }
       }
     },
@@ -6059,11 +6073,11 @@
           "total": 148
         },
         "2026-05": {
-          "ec": 0,
+          "ec": 4,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 7
         }
       }
     },
@@ -6122,11 +6136,11 @@
           "total": 99
         },
         "2026-05": {
-          "ec": 6,
+          "ec": 19,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 9
+          "total": 22
         }
       }
     },
@@ -6178,11 +6192,11 @@
           "total": 4
         },
         "2026-05": {
-          "ec": 0,
+          "ec": 4,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 7
         }
       }
     },
@@ -6234,11 +6248,11 @@
           "total": 26
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 14,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 7
+          "total": 17
         }
       }
     },
@@ -6297,11 +6311,11 @@
           "total": 191
         },
         "2026-05": {
-          "ec": 13,
+          "ec": 15,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 13
+          "total": 15
         }
       }
     },
@@ -6360,11 +6374,11 @@
           "total": 48
         },
         "2026-05": {
-          "ec": 9,
+          "ec": 10,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 9
+          "total": 10
         }
       }
     },
@@ -6423,11 +6437,11 @@
           "total": 389
         },
         "2026-05": {
-          "ec": 32,
-          "tob": 3,
+          "ec": 69,
+          "tob": 9,
           "overseas": 2,
           "other": 0,
-          "total": 37
+          "total": 80
         }
       }
     },
@@ -6486,11 +6500,11 @@
           "total": 9
         },
         "2026-05": {
-          "ec": 28,
+          "ec": 41,
           "tob": 3,
           "overseas": 2,
           "other": 0,
-          "total": 33
+          "total": 46
         }
       }
     },
@@ -6549,11 +6563,11 @@
           "total": 94
         },
         "2026-05": {
-          "ec": 12,
-          "tob": 3,
+          "ec": 30,
+          "tob": 9,
           "overseas": 2,
           "other": 0,
-          "total": 17
+          "total": 41
         }
       }
     },
@@ -6647,11 +6661,11 @@
           "total": 114
         },
         "2026-05": {
-          "ec": 14,
+          "ec": 18,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 14
+          "total": 18
         }
       }
     },
@@ -6759,11 +6773,11 @@
           "total": 3
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 5,
           "tob": 0,
           "overseas": 20,
           "other": 0,
-          "total": 24
+          "total": 25
         }
       }
     },
@@ -6822,11 +6836,11 @@
           "total": 3
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 3,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -7011,11 +7025,11 @@
           "total": 10
         },
         "2026-05": {
-          "ec": 5,
+          "ec": 13,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 5
+          "total": 13
         }
       }
     },
@@ -7137,11 +7151,11 @@
           "total": 66
         },
         "2026-05": {
-          "ec": 10,
-          "tob": 29,
+          "ec": 14,
+          "tob": 44,
           "overseas": 0,
           "other": 0,
-          "total": 39
+          "total": 58
         }
       }
     },
@@ -7201,10 +7215,10 @@
         },
         "2026-05": {
           "ec": 2,
-          "tob": 16,
+          "tob": 25,
           "overseas": 0,
           "other": 0,
-          "total": 18
+          "total": 27
         }
       }
     },
@@ -7264,10 +7278,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 6,
+          "tob": 15,
           "overseas": 0,
           "other": 0,
-          "total": 6
+          "total": 15
         }
       }
     },
@@ -7326,11 +7340,11 @@
           "total": 172
         },
         "2026-05": {
-          "ec": 24,
-          "tob": 2,
+          "ec": 26,
+          "tob": 60,
           "overseas": 0,
           "other": 0,
-          "total": 26
+          "total": 86
         }
       }
     },
@@ -7389,11 +7403,11 @@
           "total": 323
         },
         "2026-05": {
-          "ec": 5,
-          "tob": 26,
+          "ec": 6,
+          "tob": 30,
           "overseas": 1,
           "other": 0,
-          "total": 32
+          "total": 37
         }
       }
     },
@@ -7452,11 +7466,11 @@
           "total": 63
         },
         "2026-05": {
-          "ec": 3,
+          "ec": 4,
           "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 9
+          "total": 10
         }
       }
     },
@@ -7515,11 +7529,11 @@
           "total": 102
         },
         "2026-05": {
-          "ec": 14,
+          "ec": 16,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 14
+          "total": 16
         }
       }
     },
@@ -7584,11 +7598,11 @@
           "total": 407
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 5,
           "tob": 24,
           "overseas": 0,
           "other": 0,
-          "total": 28
+          "total": 29
         }
       }
     },
@@ -7648,10 +7662,10 @@
         },
         "2026-05": {
           "ec": 3,
-          "tob": 13,
+          "tob": 16,
           "overseas": 0,
           "other": 0,
-          "total": 16
+          "total": 19
         }
       }
     },
@@ -7766,11 +7780,11 @@
           "total": 134
         },
         "2026-05": {
-          "ec": 24,
+          "ec": 80,
           "tob": 0,
-          "overseas": 40,
-          "other": 0,
-          "total": 64
+          "overseas": 42,
+          "other": 1,
+          "total": 123
         }
       }
     },
@@ -7892,11 +7906,11 @@
           "total": 13
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 15,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 15
         }
       }
     },
@@ -7939,6 +7953,13 @@
           "overseas": 0,
           "other": 1,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 8,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 8
         }
       }
     },
@@ -8060,11 +8081,11 @@
           "total": 372
         },
         "2026-05": {
-          "ec": 8,
+          "ec": 9,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 8
+          "total": 9
         }
       }
     },
@@ -8186,11 +8207,11 @@
           "total": 475
         },
         "2026-05": {
-          "ec": 5,
+          "ec": 25,
           "tob": 14,
           "overseas": 0,
           "other": 0,
-          "total": 19
+          "total": 39
         }
       }
     },
@@ -8249,11 +8270,11 @@
           "total": 538
         },
         "2026-05": {
-          "ec": 10,
-          "tob": 42,
+          "ec": 32,
+          "tob": 48,
           "overseas": 0,
           "other": 0,
-          "total": 52
+          "total": 80
         }
       }
     },
@@ -8312,11 +8333,11 @@
           "total": 510
         },
         "2026-05": {
-          "ec": 7,
-          "tob": 8,
+          "ec": 28,
+          "tob": 28,
           "overseas": 0,
           "other": 0,
-          "total": 15
+          "total": 56
         }
       }
     },
@@ -8375,11 +8396,11 @@
           "total": 523
         },
         "2026-05": {
-          "ec": 11,
+          "ec": 35,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 14
+          "total": 38
         }
       }
     },
@@ -8438,11 +8459,11 @@
           "total": 182
         },
         "2026-05": {
-          "ec": 11,
+          "ec": 29,
           "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 15
+          "total": 33
         }
       }
     },
@@ -8501,11 +8522,11 @@
           "total": 217
         },
         "2026-05": {
-          "ec": 10,
-          "tob": 9,
+          "ec": 61,
+          "tob": 33,
           "overseas": 0,
           "other": 0,
-          "total": 19
+          "total": 94
         }
       }
     },
@@ -8565,10 +8586,10 @@
         },
         "2026-05": {
           "ec": 2,
-          "tob": 5,
+          "tob": 11,
           "overseas": 45,
           "other": 0,
-          "total": 52
+          "total": 58
         }
       }
     },
@@ -8627,11 +8648,11 @@
           "total": 434
         },
         "2026-05": {
-          "ec": 5,
-          "tob": 91,
+          "ec": 6,
+          "tob": 116,
           "overseas": 57,
           "other": 0,
-          "total": 153
+          "total": 179
         }
       }
     },
@@ -8690,11 +8711,11 @@
           "total": 239
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 3,
           "tob": 0,
           "overseas": 29,
           "other": 0,
-          "total": 31
+          "total": 32
         }
       }
     },
@@ -8753,11 +8774,11 @@
           "total": 305
         },
         "2026-05": {
-          "ec": 5,
-          "tob": 43,
+          "ec": 7,
+          "tob": 46,
           "overseas": 28,
           "other": 0,
-          "total": 76
+          "total": 81
         }
       }
     },
@@ -8942,11 +8963,11 @@
           "total": 175
         },
         "2026-05": {
-          "ec": 4,
-          "tob": 22,
+          "ec": 9,
+          "tob": 46,
           "overseas": 42,
           "other": 0,
-          "total": 68
+          "total": 97
         }
       }
     },
@@ -9005,11 +9026,11 @@
           "total": 8
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 14,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 14
         }
       }
     },
@@ -9187,11 +9208,11 @@
           "total": 566
         },
         "2026-05": {
-          "ec": 64,
-          "tob": 114,
+          "ec": 406,
+          "tob": 129,
           "overseas": 0,
           "other": 0,
-          "total": 178
+          "total": 535
         }
       }
     },
@@ -9250,11 +9271,11 @@
           "total": 718
         },
         "2026-05": {
-          "ec": 46,
-          "tob": 99,
+          "ec": 149,
+          "tob": 116,
           "overseas": 0,
           "other": 0,
-          "total": 145
+          "total": 265
         }
       }
     },
@@ -9313,11 +9334,11 @@
           "total": 325
         },
         "2026-05": {
-          "ec": 11,
-          "tob": 62,
+          "ec": 13,
+          "tob": 85,
           "overseas": 0,
           "other": 0,
-          "total": 73
+          "total": 98
         }
       }
     },
@@ -9377,10 +9398,10 @@
         },
         "2026-05": {
           "ec": 4,
-          "tob": 46,
+          "tob": 71,
           "overseas": 0,
           "other": 0,
-          "total": 50
+          "total": 75
         }
       }
     },
@@ -9439,11 +9460,11 @@
           "total": 2124
         },
         "2026-05": {
-          "ec": 6,
-          "tob": 48,
+          "ec": 8,
+          "tob": 54,
           "overseas": 0,
           "other": 0,
-          "total": 54
+          "total": 62
         }
       }
     },
@@ -9502,11 +9523,11 @@
           "total": 690
         },
         "2026-05": {
-          "ec": 24,
+          "ec": 53,
           "tob": 7,
-          "overseas": 1,
+          "overseas": 3,
           "other": 0,
-          "total": 32
+          "total": 63
         }
       }
     },
@@ -9565,11 +9586,11 @@
           "total": 619
         },
         "2026-05": {
-          "ec": 8,
+          "ec": 56,
           "tob": 10,
-          "overseas": 30,
+          "overseas": 32,
           "other": 0,
-          "total": 48
+          "total": 98
         }
       }
     },
@@ -9628,11 +9649,11 @@
           "total": 437
         },
         "2026-05": {
-          "ec": 11,
+          "ec": 41,
           "tob": 2,
           "overseas": 29,
           "other": 0,
-          "total": 42
+          "total": 72
         }
       }
     },
@@ -9691,11 +9712,11 @@
           "total": 547
         },
         "2026-05": {
-          "ec": 27,
+          "ec": 47,
           "tob": 6,
           "overseas": 1,
           "other": 0,
-          "total": 34
+          "total": 54
         }
       }
     },
@@ -9754,11 +9775,11 @@
           "total": 437
         },
         "2026-05": {
-          "ec": 3,
+          "ec": 12,
           "tob": 1,
           "overseas": 29,
           "other": 0,
-          "total": 33
+          "total": 42
         }
       }
     },
@@ -9817,11 +9838,11 @@
           "total": 413
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 11,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 11
         }
       }
     },
@@ -9880,11 +9901,11 @@
           "total": 270
         },
         "2026-05": {
-          "ec": 28,
+          "ec": 29,
           "tob": 0,
-          "overseas": 29,
+          "overseas": 30,
           "other": 0,
-          "total": 57
+          "total": 59
         }
       }
     },
@@ -10069,11 +10090,11 @@
           "total": 596
         },
         "2026-05": {
-          "ec": 11,
+          "ec": 69,
           "tob": 3,
           "overseas": 29,
           "other": 0,
-          "total": 43
+          "total": 101
         }
       }
     },
@@ -10132,11 +10153,11 @@
           "total": 497
         },
         "2026-05": {
-          "ec": 11,
+          "ec": 53,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 11
+          "total": 53
         }
       }
     },
@@ -10251,11 +10272,11 @@
           "total": 930
         },
         "2026-05": {
-          "ec": 74,
-          "tob": 60,
+          "ec": 230,
+          "tob": 72,
           "overseas": 0,
           "other": 0,
-          "total": 134
+          "total": 302
         }
       }
     },
@@ -10314,11 +10335,11 @@
           "total": 685
         },
         "2026-05": {
-          "ec": 40,
+          "ec": 111,
           "tob": 66,
           "overseas": 0,
           "other": 0,
-          "total": 106
+          "total": 177
         }
       }
     },
@@ -10377,11 +10398,11 @@
           "total": 180
         },
         "2026-05": {
-          "ec": 32,
+          "ec": 46,
           "tob": 0,
-          "overseas": 30,
+          "overseas": 31,
           "other": 0,
-          "total": 62
+          "total": 77
         }
       }
     },
@@ -10440,11 +10461,11 @@
           "total": 218
         },
         "2026-05": {
-          "ec": 9,
+          "ec": 35,
           "tob": 0,
-          "overseas": 30,
+          "overseas": 31,
           "other": 0,
-          "total": 39
+          "total": 66
         }
       }
     },
@@ -10503,11 +10524,11 @@
           "total": 253
         },
         "2026-05": {
-          "ec": 8,
+          "ec": 38,
           "tob": 0,
-          "overseas": 1,
+          "overseas": 2,
           "other": 0,
-          "total": 9
+          "total": 40
         }
       }
     },
@@ -10566,11 +10587,11 @@
           "total": 257
         },
         "2026-05": {
-          "ec": 42,
+          "ec": 86,
           "tob": 1,
-          "overseas": 1,
+          "overseas": 2,
           "other": 0,
-          "total": 44
+          "total": 89
         }
       }
     },
@@ -10629,11 +10650,11 @@
           "total": 391
         },
         "2026-05": {
-          "ec": 2,
-          "tob": 5,
+          "ec": 23,
+          "tob": 11,
           "overseas": 66,
           "other": 0,
-          "total": 73
+          "total": 100
         }
       }
     },
@@ -10692,11 +10713,11 @@
           "total": 549
         },
         "2026-05": {
-          "ec": 4,
-          "tob": 21,
+          "ec": 5,
+          "tob": 27,
           "overseas": 66,
           "other": 0,
-          "total": 91
+          "total": 98
         }
       }
     },
@@ -10755,11 +10776,11 @@
           "total": 460
         },
         "2026-05": {
-          "ec": 17,
+          "ec": 18,
           "tob": 3,
           "overseas": 66,
           "other": 0,
-          "total": 86
+          "total": 87
         }
       }
     },
@@ -10818,11 +10839,11 @@
           "total": 181
         },
         "2026-05": {
-          "ec": 9,
+          "ec": 31,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 12
+          "total": 34
         }
       }
     },
@@ -10944,11 +10965,11 @@
           "total": 166
         },
         "2026-05": {
-          "ec": 6,
+          "ec": 8,
           "tob": 12,
           "overseas": 0,
           "other": 0,
-          "total": 18
+          "total": 20
         }
       }
     },
@@ -11007,11 +11028,11 @@
           "total": 2695
         },
         "2026-05": {
-          "ec": 13,
-          "tob": 249,
+          "ec": 18,
+          "tob": 282,
           "overseas": 27,
           "other": 0,
-          "total": 289
+          "total": 327
         }
       }
     },
@@ -11070,11 +11091,11 @@
           "total": 4209
         },
         "2026-05": {
-          "ec": 19,
-          "tob": 112,
+          "ec": 21,
+          "tob": 127,
           "overseas": 27,
           "other": 0,
-          "total": 158
+          "total": 175
         }
       }
     },
@@ -11133,11 +11154,11 @@
           "total": 2646
         },
         "2026-05": {
-          "ec": 14,
-          "tob": 265,
-          "overseas": 53,
+          "ec": 17,
+          "tob": 318,
+          "overseas": 54,
           "other": 0,
-          "total": 332
+          "total": 389
         }
       }
     },
@@ -11196,11 +11217,11 @@
           "total": 482
         },
         "2026-05": {
-          "ec": 1,
-          "tob": 0,
+          "ec": 153,
+          "tob": 5,
           "overseas": 0,
-          "other": 0,
-          "total": 1
+          "other": 1,
+          "total": 159
         }
       }
     },
@@ -11259,11 +11280,11 @@
           "total": 180
         },
         "2026-05": {
-          "ec": 0,
-          "tob": 8,
+          "ec": 31,
+          "tob": 12,
           "overseas": 0,
-          "other": 0,
-          "total": 8
+          "other": 1,
+          "total": 44
         }
       }
     },
@@ -11322,11 +11343,11 @@
           "total": 116
         },
         "2026-05": {
-          "ec": 1,
-          "tob": 9,
+          "ec": 72,
+          "tob": 16,
           "overseas": 0,
-          "other": 0,
-          "total": 10
+          "other": 1,
+          "total": 89
         }
       }
     },
@@ -11385,11 +11406,11 @@
           "total": 141
         },
         "2026-05": {
-          "ec": 4,
-          "tob": 3,
+          "ec": 46,
+          "tob": 9,
           "overseas": 0,
-          "other": 0,
-          "total": 7
+          "other": 1,
+          "total": 56
         }
       }
     },
@@ -11448,11 +11469,11 @@
           "total": 75
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 32,
           "tob": 3,
           "overseas": 0,
-          "other": 0,
-          "total": 5
+          "other": 1,
+          "total": 36
         }
       }
     },
@@ -11511,11 +11532,11 @@
           "total": 184
         },
         "2026-05": {
-          "ec": 1,
-          "tob": 8,
+          "ec": 51,
+          "tob": 9,
           "overseas": 0,
-          "other": 0,
-          "total": 9
+          "other": 1,
+          "total": 61
         }
       }
     },
@@ -11574,11 +11595,11 @@
           "total": 288
         },
         "2026-05": {
-          "ec": 1,
-          "tob": 0,
+          "ec": 17,
+          "tob": 8,
           "overseas": 0,
-          "other": 0,
-          "total": 1
+          "other": 1,
+          "total": 26
         }
       }
     },
@@ -11637,11 +11658,11 @@
           "total": 68
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 71,
           "tob": 6,
           "overseas": 0,
-          "other": 0,
-          "total": 7
+          "other": 1,
+          "total": 78
         }
       }
     },
@@ -11700,11 +11721,11 @@
           "total": 3589
         },
         "2026-05": {
-          "ec": 21,
-          "tob": 804,
+          "ec": 25,
+          "tob": 1068,
           "overseas": 552,
-          "other": 0,
-          "total": 1377
+          "other": 1,
+          "total": 1646
         }
       }
     },
@@ -11763,11 +11784,11 @@
           "total": 3142
         },
         "2026-05": {
-          "ec": 12,
-          "tob": 449,
+          "ec": 14,
+          "tob": 663,
           "overseas": 0,
-          "other": 0,
-          "total": 461
+          "other": 1,
+          "total": 678
         }
       }
     },
@@ -11826,11 +11847,11 @@
           "total": 3133
         },
         "2026-05": {
-          "ec": 16,
-          "tob": 791,
+          "ec": 17,
+          "tob": 1005,
           "overseas": 0,
-          "other": 0,
-          "total": 807
+          "other": 1,
+          "total": 1023
         }
       }
     },
@@ -11889,11 +11910,11 @@
           "total": 5843
         },
         "2026-05": {
-          "ec": 63,
-          "tob": 301,
+          "ec": 70,
+          "tob": 635,
           "overseas": 1,
-          "other": 0,
-          "total": 365
+          "other": 1,
+          "total": 707
         }
       }
     },
@@ -11953,10 +11974,10 @@
         },
         "2026-05": {
           "ec": 11,
-          "tob": 339,
+          "tob": 553,
           "overseas": 0,
-          "other": 0,
-          "total": 350
+          "other": 1,
+          "total": 565
         }
       }
     },
@@ -12015,11 +12036,11 @@
           "total": 482
         },
         "2026-05": {
-          "ec": 45,
+          "ec": 93,
           "tob": 23,
           "overseas": 0,
-          "other": 0,
-          "total": 68
+          "other": 1,
+          "total": 117
         }
       }
     },
@@ -12078,11 +12099,11 @@
           "total": 2995
         },
         "2026-05": {
-          "ec": 99,
-          "tob": 99,
+          "ec": 348,
+          "tob": 137,
           "overseas": 0,
           "other": 0,
-          "total": 198
+          "total": 485
         }
       }
     },
@@ -12141,11 +12162,11 @@
           "total": 4169
         },
         "2026-05": {
-          "ec": 90,
+          "ec": 335,
           "tob": 84,
           "overseas": 0,
           "other": 0,
-          "total": 174
+          "total": 419
         }
       }
     },
@@ -12204,11 +12225,11 @@
           "total": 2407
         },
         "2026-05": {
-          "ec": 0,
+          "ec": 8,
           "tob": 0,
           "overseas": 1,
           "other": 0,
-          "total": 1
+          "total": 9
         }
       }
     },
@@ -12267,11 +12288,11 @@
           "total": 1952
         },
         "2026-05": {
-          "ec": 64,
-          "tob": 57,
-          "overseas": 0,
+          "ec": 109,
+          "tob": 95,
+          "overseas": 1,
           "other": 0,
-          "total": 121
+          "total": 205
         }
       }
     },
@@ -12292,7 +12313,7 @@
     {
       "sku_code": "4571501178490",
       "sku_name": "MilleFee うるうるフィットグロス 01 うさぎピンク",
-      "first_shipment_date": "2025-07-17",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2025-10": {
           "ec": 418,
@@ -12344,11 +12365,11 @@
           "total": 1197
         },
         "2026-05": {
-          "ec": 20,
+          "ec": 72,
           "tob": 0,
-          "overseas": 0,
+          "overseas": 1,
           "other": 0,
-          "total": 20
+          "total": 73
         }
       }
     },
@@ -12409,9 +12430,9 @@
         "2026-05": {
           "ec": 3,
           "tob": 2,
-          "overseas": 0,
+          "overseas": 1,
           "other": 0,
-          "total": 5
+          "total": 6
         }
       }
     },
@@ -12470,18 +12491,18 @@
           "total": 567
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 3,
           "tob": 2,
-          "overseas": 0,
+          "overseas": 1,
           "other": 0,
-          "total": 4
+          "total": 6
         }
       }
     },
     {
       "sku_code": "4571501178520",
       "sku_name": "MilleFee うるうるフィットグロス 04 まろやかヌード",
-      "first_shipment_date": "2025-07-17",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2025-10": {
           "ec": 27,
@@ -12534,10 +12555,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 24,
+          "tob": 29,
           "overseas": 0,
           "other": 0,
-          "total": 24
+          "total": 29
         }
       }
     },
@@ -12596,11 +12617,11 @@
           "total": 1339
         },
         "2026-05": {
-          "ec": 16,
-          "tob": 15,
-          "overseas": 24,
+          "ec": 19,
+          "tob": 27,
+          "overseas": 25,
           "other": 0,
-          "total": 55
+          "total": 71
         }
       }
     },
@@ -12715,11 +12736,11 @@
           "total": 1117
         },
         "2026-05": {
-          "ec": 15,
+          "ec": 16,
           "tob": 37,
           "overseas": 0,
           "other": 0,
-          "total": 52
+          "total": 53
         }
       }
     },
@@ -12904,11 +12925,11 @@
           "total": 891
         },
         "2026-05": {
-          "ec": 62,
-          "tob": 98,
+          "ec": 66,
+          "tob": 107,
           "overseas": 0,
-          "other": 0,
-          "total": 160
+          "other": 2,
+          "total": 175
         }
       }
     },
@@ -12967,11 +12988,11 @@
           "total": 1448
         },
         "2026-05": {
-          "ec": 85,
-          "tob": 102,
+          "ec": 147,
+          "tob": 171,
           "overseas": 0,
-          "other": 0,
-          "total": 187
+          "other": 2,
+          "total": 320
         }
       }
     },
@@ -13030,11 +13051,11 @@
           "total": 1849
         },
         "2026-05": {
-          "ec": 113,
-          "tob": 30,
+          "ec": 179,
+          "tob": 78,
           "overseas": 0,
-          "other": 0,
-          "total": 143
+          "other": 1,
+          "total": 258
         }
       }
     },
@@ -13093,11 +13114,11 @@
           "total": 461
         },
         "2026-05": {
-          "ec": 55,
-          "tob": 83,
+          "ec": 780,
+          "tob": 130,
           "overseas": 1,
-          "other": 0,
-          "total": 139
+          "other": 1,
+          "total": 912
         }
       }
     },
@@ -13156,11 +13177,11 @@
           "total": 15
         },
         "2026-05": {
-          "ec": 6,
+          "ec": 8,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 6
+          "total": 8
         }
       }
     },
@@ -13219,11 +13240,11 @@
           "total": 31
         },
         "2026-05": {
-          "ec": 9,
+          "ec": 10,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 9
+          "total": 10
         }
       }
     },
@@ -13338,11 +13359,11 @@
           "total": 73
         },
         "2026-05": {
-          "ec": 7,
+          "ec": 19,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 10
+          "total": 22
         }
       }
     },
@@ -13401,11 +13422,11 @@
           "total": 44
         },
         "2026-05": {
-          "ec": 9,
+          "ec": 43,
           "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 13
+          "total": 47
         }
       }
     },
@@ -13464,11 +13485,11 @@
           "total": 130
         },
         "2026-05": {
-          "ec": 44,
+          "ec": 56,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 44
+          "total": 56
         }
       }
     },
@@ -13527,11 +13548,11 @@
           "total": 420
         },
         "2026-05": {
-          "ec": 11,
-          "tob": 57,
+          "ec": 23,
+          "tob": 113,
           "overseas": 0,
-          "other": 0,
-          "total": 68
+          "other": 2,
+          "total": 138
         }
       }
     },
@@ -13590,11 +13611,11 @@
           "total": 446
         },
         "2026-05": {
-          "ec": 25,
-          "tob": 125,
+          "ec": 32,
+          "tob": 197,
           "overseas": 0,
-          "other": 0,
-          "total": 150
+          "other": 2,
+          "total": 231
         }
       }
     },
@@ -13653,11 +13674,11 @@
           "total": 324
         },
         "2026-05": {
-          "ec": 26,
-          "tob": 109,
+          "ec": 57,
+          "tob": 145,
           "overseas": 0,
-          "other": 0,
-          "total": 135
+          "other": 1,
+          "total": 203
         }
       }
     },
@@ -13716,11 +13737,11 @@
           "total": 215
         },
         "2026-05": {
-          "ec": 18,
-          "tob": 97,
+          "ec": 111,
+          "tob": 160,
           "overseas": 0,
-          "other": 0,
-          "total": 115
+          "other": 2,
+          "total": 273
         }
       }
     },
@@ -13779,11 +13800,11 @@
           "total": 480
         },
         "2026-05": {
-          "ec": 15,
+          "ec": 68,
           "tob": 6,
           "overseas": 0,
           "other": 1,
-          "total": 22
+          "total": 75
         }
       }
     },
@@ -13842,11 +13863,11 @@
           "total": 519
         },
         "2026-05": {
-          "ec": 14,
+          "ec": 15,
           "tob": 10,
           "overseas": 0,
           "other": 1,
-          "total": 25
+          "total": 26
         }
       }
     },
@@ -13905,11 +13926,11 @@
           "total": 831
         },
         "2026-05": {
-          "ec": 50,
+          "ec": 85,
           "tob": 14,
           "overseas": 0,
           "other": 1,
-          "total": 65
+          "total": 100
         }
       }
     },
@@ -13968,11 +13989,11 @@
           "total": 614
         },
         "2026-05": {
-          "ec": 26,
+          "ec": 81,
           "tob": 14,
           "overseas": 0,
           "other": 1,
-          "total": 41
+          "total": 96
         }
       }
     },
@@ -14031,11 +14052,11 @@
           "total": 525
         },
         "2026-05": {
-          "ec": 8,
+          "ec": 10,
           "tob": 18,
           "overseas": 0,
           "other": 0,
-          "total": 26
+          "total": 28
         }
       }
     },
@@ -14094,11 +14115,11 @@
           "total": 476
         },
         "2026-05": {
-          "ec": 9,
+          "ec": 13,
           "tob": 28,
           "overseas": 0,
           "other": 0,
-          "total": 37
+          "total": 41
         }
       }
     },
@@ -14157,11 +14178,11 @@
           "total": 498
         },
         "2026-05": {
-          "ec": 16,
+          "ec": 19,
           "tob": 18,
           "overseas": 0,
           "other": 0,
-          "total": 34
+          "total": 37
         }
       }
     },
@@ -14325,11 +14346,11 @@
           "total": 146
         },
         "2026-05": {
-          "ec": 30,
-          "tob": 13,
+          "ec": 38,
+          "tob": 23,
           "overseas": 0,
           "other": 1,
-          "total": 44
+          "total": 62
         }
       }
     },
@@ -14360,11 +14381,11 @@
           "total": 1336
         },
         "2026-05": {
-          "ec": 17,
-          "tob": 5,
+          "ec": 19,
+          "tob": 15,
           "overseas": 0,
           "other": 0,
-          "total": 22
+          "total": 34
         }
       }
     },
@@ -14395,11 +14416,11 @@
           "total": 1178
         },
         "2026-05": {
-          "ec": 13,
-          "tob": 6,
+          "ec": 15,
+          "tob": 26,
           "overseas": 0,
           "other": 0,
-          "total": 19
+          "total": 41
         }
       }
     },
@@ -14430,11 +14451,11 @@
           "total": 1310
         },
         "2026-05": {
-          "ec": 14,
+          "ec": 16,
           "tob": 5,
           "overseas": 0,
           "other": 0,
-          "total": 19
+          "total": 21
         }
       }
     },
@@ -14465,11 +14486,11 @@
           "total": 1277
         },
         "2026-05": {
-          "ec": 13,
+          "ec": 15,
           "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 19
+          "total": 21
         }
       }
     },
@@ -14500,11 +14521,11 @@
           "total": 1155
         },
         "2026-05": {
-          "ec": 4,
-          "tob": 497,
+          "ec": 5,
+          "tob": 518,
           "overseas": 59,
-          "other": 41,
-          "total": 601
+          "other": 57,
+          "total": 639
         }
       }
     },
@@ -14535,11 +14556,11 @@
           "total": 1318
         },
         "2026-05": {
-          "ec": 7,
-          "tob": 503,
+          "ec": 9,
+          "tob": 524,
           "overseas": 59,
-          "other": 42,
-          "total": 611
+          "other": 58,
+          "total": 650
         }
       }
     },
@@ -14577,11 +14598,11 @@
           "total": 797
         },
         "2026-05": {
-          "ec": 22,
-          "tob": 561,
+          "ec": 84,
+          "tob": 661,
           "overseas": 66,
-          "other": 0,
-          "total": 649
+          "other": 1,
+          "total": 812
         }
       }
     },
@@ -14619,18 +14640,18 @@
           "total": 623
         },
         "2026-05": {
-          "ec": 21,
-          "tob": 551,
+          "ec": 31,
+          "tob": 651,
           "overseas": 66,
-          "other": 0,
-          "total": 638
+          "other": 1,
+          "total": 749
         }
       }
     },
     {
       "sku_code": "4571501179848",
       "sku_name": "MilleFee アイドル2in1リップティント 01 ピーチキャンディ",
-      "first_shipment_date": "2026-02-17",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-02": {
           "ec": 219,
@@ -14654,18 +14675,18 @@
           "total": 1642
         },
         "2026-05": {
-          "ec": 42,
-          "tob": 320,
-          "overseas": 5,
-          "other": 24,
-          "total": 391
+          "ec": 76,
+          "tob": 353,
+          "overseas": 6,
+          "other": 58,
+          "total": 493
         }
       }
     },
     {
       "sku_code": "4571501179855",
       "sku_name": "MilleFee アイドル2in1リップティント 02 ヌードピンク",
-      "first_shipment_date": "2026-02-17",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-02": {
           "ec": 218,
@@ -14689,18 +14710,18 @@
           "total": 1879
         },
         "2026-05": {
-          "ec": 43,
-          "tob": 377,
-          "overseas": 5,
-          "other": 25,
-          "total": 450
+          "ec": 98,
+          "tob": 401,
+          "overseas": 6,
+          "other": 69,
+          "total": 574
         }
       }
     },
     {
       "sku_code": "4571501179862",
       "sku_name": "MilleFee アイドル2in1リップティント 03 ミルクティー",
-      "first_shipment_date": "2026-02-17",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-02": {
           "ec": 218,
@@ -14724,18 +14745,18 @@
           "total": 1350
         },
         "2026-05": {
-          "ec": 27,
-          "tob": 288,
-          "overseas": 5,
-          "other": 24,
-          "total": 344
+          "ec": 59,
+          "tob": 331,
+          "overseas": 6,
+          "other": 58,
+          "total": 454
         }
       }
     },
     {
       "sku_code": "4571501179879",
       "sku_name": "MilleFee アイドル2in1リップティント 04 バニラローズ",
-      "first_shipment_date": "2026-02-17",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-02": {
           "ec": 216,
@@ -14759,18 +14780,18 @@
           "total": 1868
         },
         "2026-05": {
-          "ec": 30,
-          "tob": 388,
-          "overseas": 79,
-          "other": 24,
-          "total": 521
+          "ec": 37,
+          "tob": 432,
+          "overseas": 80,
+          "other": 58,
+          "total": 607
         }
       }
     },
     {
       "sku_code": "4571501179886",
       "sku_name": "MilleFee アイドル2in1リップティント 05 ベリーピンク",
-      "first_shipment_date": "2026-02-17",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-02": {
           "ec": 219,
@@ -14794,18 +14815,18 @@
           "total": 1827
         },
         "2026-05": {
-          "ec": 45,
-          "tob": 340,
-          "overseas": 79,
-          "other": 24,
-          "total": 488
+          "ec": 70,
+          "tob": 352,
+          "overseas": 80,
+          "other": 68,
+          "total": 570
         }
       }
     },
     {
       "sku_code": "4571501179893",
       "sku_name": "MilleFee アイドル2in1リップティント 06 グレープソーダ",
-      "first_shipment_date": "2026-02-17",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-02": {
           "ec": 223,
@@ -14829,11 +14850,11 @@
           "total": 1489
         },
         "2026-05": {
-          "ec": 20,
-          "tob": 385,
-          "overseas": 79,
-          "other": 24,
-          "total": 508
+          "ec": 22,
+          "tob": 411,
+          "overseas": 80,
+          "other": 58,
+          "total": 571
         }
       }
     },
@@ -14864,11 +14885,11 @@
           "total": 942
         },
         "2026-05": {
-          "ec": 5,
-          "tob": 92,
-          "overseas": 0,
+          "ec": 35,
+          "tob": 134,
+          "overseas": 1,
           "other": 1,
-          "total": 98
+          "total": 171
         }
       }
     },
@@ -14900,10 +14921,10 @@
         },
         "2026-05": {
           "ec": 6,
-          "tob": 70,
-          "overseas": 0,
+          "tob": 132,
+          "overseas": 1,
           "other": 1,
-          "total": 77
+          "total": 140
         }
       }
     },
@@ -14935,10 +14956,10 @@
         },
         "2026-05": {
           "ec": 5,
-          "tob": 84,
-          "overseas": 0,
+          "tob": 96,
+          "overseas": 1,
           "other": 1,
-          "total": 90
+          "total": 103
         }
       }
     },
@@ -14969,11 +14990,11 @@
           "total": 968
         },
         "2026-05": {
-          "ec": 8,
-          "tob": 104,
-          "overseas": 0,
+          "ec": 38,
+          "tob": 146,
+          "overseas": 1,
           "other": 1,
-          "total": 113
+          "total": 186
         }
       }
     },
@@ -15004,11 +15025,11 @@
           "total": 1011
         },
         "2026-05": {
-          "ec": 20,
-          "tob": 257,
+          "ec": 21,
+          "tob": 380,
           "overseas": 0,
           "other": 0,
-          "total": 277
+          "total": 401
         }
       }
     },
@@ -15099,84 +15120,84 @@
     {
       "sku_code": "4580805230100",
       "sku_name": "MilleFee シェイクドロップチーク M03 フィグラテ",
-      "first_shipment_date": "2026-05-07",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 937,
-          "tob": 59,
-          "overseas": 0,
+          "ec": 939,
+          "tob": 1338,
+          "overseas": 4,
           "other": 0,
-          "total": 996
+          "total": 2281
         }
       }
     },
     {
       "sku_code": "4580805230117",
       "sku_name": "MilleFee シェイクドロップチーク M05 ちょっと照れ屋なモンチッチくん",
-      "first_shipment_date": "2026-05-07",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 875,
-          "tob": 59,
-          "overseas": 0,
+          "ec": 877,
+          "tob": 1075,
+          "overseas": 4,
           "other": 0,
-          "total": 934
+          "total": 1956
         }
       }
     },
     {
       "sku_code": "4580805230124",
       "sku_name": "MilleFee シェイクドロップチーク M06 モンチッチちゃん、透明感フィルターかかってる？",
-      "first_shipment_date": "2026-05-07",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 657,
-          "tob": 59,
-          "overseas": 0,
+          "ec": 658,
+          "tob": 977,
+          "overseas": 4,
           "other": 0,
-          "total": 716
+          "total": 1639
         }
       }
     },
     {
       "sku_code": "4580805230155",
       "sku_name": "MilleFee うるうるフィットグロス M01 うさぎピンク",
-      "first_shipment_date": "2026-05-07",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-05": {
           "ec": 808,
-          "tob": 59,
-          "overseas": 0,
+          "tob": 1243,
+          "overseas": 4,
           "other": 0,
-          "total": 867
+          "total": 2055
         }
       }
     },
     {
       "sku_code": "4580805230162",
       "sku_name": "MilleFee うるうるフィットグロス M06 え、モンチッチくんのスタイ今日キラキラじゃない？",
-      "first_shipment_date": "2026-05-07",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 812,
-          "tob": 59,
-          "overseas": 0,
+          "ec": 813,
+          "tob": 977,
+          "overseas": 4,
           "other": 0,
-          "total": 871
+          "total": 1794
         }
       }
     },
     {
       "sku_code": "4580805230179",
       "sku_name": "MilleFee うるうるフィットグロス M07 モンチッチちゃんそのリボン貸して?！",
-      "first_shipment_date": "2026-05-07",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 803,
-          "tob": 59,
-          "overseas": 0,
+          "ec": 806,
+          "tob": 1338,
+          "overseas": 4,
           "other": 0,
-          "total": 862
+          "total": 2148
         }
       }
     },
@@ -15186,11 +15207,11 @@
       "first_shipment_date": "2026-05-07",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 1326,
-          "tob": 59,
-          "overseas": 0,
+          "ec": 1329,
+          "tob": 711,
+          "overseas": 4,
           "other": 0,
-          "total": 1385
+          "total": 2044
         }
       }
     },
@@ -15200,11 +15221,11 @@
       "first_shipment_date": "2026-05-07",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 1282,
-          "tob": 59,
-          "overseas": 0,
+          "ec": 1286,
+          "tob": 1888,
+          "overseas": 4,
           "other": 0,
-          "total": 1341
+          "total": 3178
         }
       }
     },
@@ -15215,10 +15236,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 215,
-          "tob": 43,
-          "overseas": 0,
+          "tob": 44,
+          "overseas": 4,
           "other": 0,
-          "total": 258
+          "total": 263
         }
       }
     },
@@ -15228,11 +15249,11 @@
       "first_shipment_date": "2026-05-07",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 232,
-          "tob": 13,
-          "overseas": 0,
+          "ec": 233,
+          "tob": 14,
+          "overseas": 4,
           "other": 0,
-          "total": 245
+          "total": 251
         }
       }
     },
@@ -15243,10 +15264,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 142,
-          "tob": 43,
-          "overseas": 0,
+          "tob": 44,
+          "overseas": 4,
           "other": 0,
-          "total": 185
+          "total": 190
         }
       }
     },
@@ -15257,10 +15278,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 222,
-          "tob": 43,
-          "overseas": 0,
+          "tob": 44,
+          "overseas": 4,
           "other": 0,
-          "total": 265
+          "total": 270
         }
       }
     },
@@ -15270,11 +15291,11 @@
       "first_shipment_date": "2026-05-01",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 1049,
-          "tob": 43,
-          "overseas": 0,
+          "ec": 1050,
+          "tob": 44,
+          "overseas": 4,
           "other": 1,
-          "total": 1093
+          "total": 1099
         }
       }
     },
@@ -15375,11 +15396,11 @@
           "total": 4
         },
         "2026-05": {
-          "ec": 0,
+          "ec": 1,
           "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 5
         }
       }
     },
@@ -15501,11 +15522,11 @@
           "total": 493
         },
         "2026-05": {
-          "ec": 70,
-          "tob": 144,
+          "ec": 85,
+          "tob": 158,
           "overseas": 0,
           "other": 0,
-          "total": 214
+          "total": 243
         }
       }
     },
@@ -15564,18 +15585,18 @@
           "total": 79
         },
         "2026-05": {
-          "ec": 25,
+          "ec": 39,
           "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 31
+          "total": 45
         }
       }
     },
     {
       "sku_code": "4571501177011",
       "sku_name": "Maison de MilleFee 絵画フレグランス 03 睡蓮",
-      "first_shipment_date": "2025-01-28",
+      "first_shipment_date": "2026-05-15",
       "monthly_shipments": {
         "2025-10": {
           "ec": 255,
@@ -15627,11 +15648,11 @@
           "total": 69
         },
         "2026-05": {
-          "ec": 29,
-          "tob": 0,
+          "ec": 31,
+          "tob": 101,
           "overseas": 0,
-          "other": 0,
-          "total": 29
+          "other": 1,
+          "total": 133
         }
       }
     },
@@ -15690,11 +15711,11 @@
           "total": 142
         },
         "2026-05": {
-          "ec": 38,
-          "tob": 97,
+          "ec": 42,
+          "tob": 110,
           "overseas": 0,
           "other": 0,
-          "total": 135
+          "total": 152
         }
       }
     },
@@ -15753,11 +15774,11 @@
           "total": 289
         },
         "2026-05": {
-          "ec": 58,
-          "tob": 17,
+          "ec": 65,
+          "tob": 32,
           "overseas": 0,
           "other": 0,
-          "total": 75
+          "total": 97
         }
       }
     },
@@ -15816,11 +15837,11 @@
           "total": 242
         },
         "2026-05": {
-          "ec": 90,
-          "tob": 59,
+          "ec": 98,
+          "tob": 71,
           "overseas": 0,
           "other": 0,
-          "total": 149
+          "total": 169
         }
       }
     },
@@ -15879,11 +15900,11 @@
           "total": 56
         },
         "2026-05": {
-          "ec": 7,
+          "ec": 8,
           "tob": 15,
           "overseas": 0,
           "other": 0,
-          "total": 22
+          "total": 23
         }
       }
     },
@@ -15942,11 +15963,11 @@
           "total": 57
         },
         "2026-05": {
-          "ec": 8,
+          "ec": 9,
           "tob": 19,
           "overseas": 0,
           "other": 0,
-          "total": 27
+          "total": 28
         }
       }
     },
@@ -16005,11 +16026,11 @@
           "total": 18
         },
         "2026-05": {
-          "ec": 5,
+          "ec": 6,
           "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 9
+          "total": 10
         }
       }
     },
@@ -16068,11 +16089,11 @@
           "total": 34
         },
         "2026-05": {
-          "ec": 3,
+          "ec": 9,
           "tob": 9,
           "overseas": 0,
           "other": 0,
-          "total": 12
+          "total": 18
         }
       }
     },
@@ -16167,11 +16188,11 @@
           "total": 62
         },
         "2026-05": {
-          "ec": 62,
+          "ec": 65,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 62
+          "total": 65
         }
       }
     },
@@ -16293,11 +16314,11 @@
           "total": 38
         },
         "2026-05": {
-          "ec": 30,
+          "ec": 32,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 30
+          "total": 32
         }
       }
     },
@@ -16384,11 +16405,11 @@
           "total": 1
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 2,
           "tob": 0,
           "overseas": 0,
           "other": 1,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -16503,11 +16524,11 @@
           "total": 6
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 3,
           "tob": 0,
           "overseas": 0,
           "other": 1,
-          "total": 3
+          "total": 4
         }
       }
     },
@@ -16629,11 +16650,11 @@
           "total": 188
         },
         "2026-05": {
-          "ec": 12,
+          "ec": 33,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 12
+          "total": 33
         }
       }
     },
@@ -16776,11 +16797,11 @@
           "total": 369
         },
         "2026-05": {
-          "ec": 35,
-          "tob": 12,
+          "ec": 41,
+          "tob": 18,
           "overseas": 2,
           "other": 0,
-          "total": 49
+          "total": 61
         }
       }
     },
@@ -16902,11 +16923,11 @@
           "total": 872
         },
         "2026-05": {
-          "ec": 39,
-          "tob": 21,
+          "ec": 43,
+          "tob": 28,
           "overseas": 2,
           "other": 0,
-          "total": 62
+          "total": 73
         }
       }
     },
@@ -16965,11 +16986,11 @@
           "total": 940
         },
         "2026-05": {
-          "ec": 41,
-          "tob": 18,
+          "ec": 52,
+          "tob": 19,
           "overseas": 2,
           "other": 0,
-          "total": 61
+          "total": 73
         }
       }
     },
@@ -17028,11 +17049,11 @@
           "total": 478
         },
         "2026-05": {
-          "ec": 27,
-          "tob": 14,
+          "ec": 33,
+          "tob": 19,
           "overseas": 2,
           "other": 0,
-          "total": 43
+          "total": 54
         }
       }
     },
@@ -17091,11 +17112,11 @@
           "total": 495
         },
         "2026-05": {
-          "ec": 44,
-          "tob": 12,
+          "ec": 51,
+          "tob": 13,
           "overseas": 2,
           "other": 0,
-          "total": 58
+          "total": 66
         }
       }
     },
@@ -17154,11 +17175,11 @@
           "total": 781
         },
         "2026-05": {
-          "ec": 39,
-          "tob": 0,
+          "ec": 43,
+          "tob": 1,
           "overseas": 2,
           "other": 3,
-          "total": 44
+          "total": 49
         }
       }
     },
@@ -17217,11 +17238,11 @@
           "total": 1086
         },
         "2026-05": {
-          "ec": 60,
-          "tob": 0,
+          "ec": 69,
+          "tob": 6,
           "overseas": 2,
           "other": 0,
-          "total": 62
+          "total": 77
         }
       }
     },
@@ -17280,11 +17301,11 @@
           "total": 211
         },
         "2026-05": {
-          "ec": 7,
+          "ec": 8,
           "tob": 18,
           "overseas": 2,
           "other": 0,
-          "total": 27
+          "total": 28
         }
       }
     },
@@ -17343,11 +17364,11 @@
           "total": 184
         },
         "2026-05": {
-          "ec": 18,
-          "tob": 0,
+          "ec": 20,
+          "tob": 1,
           "overseas": 2,
           "other": 0,
-          "total": 20
+          "total": 23
         }
       }
     },
@@ -17406,11 +17427,11 @@
           "total": 715
         },
         "2026-05": {
-          "ec": 17,
-          "tob": 0,
+          "ec": 20,
+          "tob": 1,
           "overseas": 2,
           "other": 0,
-          "total": 19
+          "total": 23
         }
       }
     },
@@ -17545,10 +17566,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 0,
+          "tob": 1,
           "overseas": 2,
           "other": 0,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -17561,7 +17582,7 @@
     {
       "sku_code": "4571501177233",
       "sku_name": "fractional CC PDRNショット リッププランパー",
-      "first_shipment_date": "2025-02-28",
+      "first_shipment_date": "2025-05-15",
       "monthly_shipments": {
         "2025-10": {
           "ec": 33,
@@ -17614,10 +17635,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 0,
+          "tob": 1,
           "overseas": 2,
           "other": 0,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -17654,19 +17675,27 @@
           "total": 297
         },
         "2026-05": {
-          "ec": 14,
-          "tob": 2,
+          "ec": 15,
+          "tob": 3,
           "overseas": 2,
-          "other": 1,
-          "total": 19
+          "other": 6,
+          "total": 26
         }
       }
     },
     {
       "sku_code": "4571501179589",
       "sku_name": "fractional CC RE:エッセンスＣ",
-      "first_shipment_date": null,
-      "monthly_shipments": {}
+      "first_shipment_date": "2026-05-14",
+      "monthly_shipments": {
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 20,
+          "total": 21
+        }
+      }
     },
     {
       "sku_code": "4571501172313",
@@ -17716,11 +17745,11 @@
           "total": 1
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 3,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -17916,6 +17945,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 1,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -17958,6 +17994,13 @@
           "overseas": 0,
           "other": 0,
           "total": 5
+        },
+        "2026-05": {
+          "ec": 3,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 3
         }
       }
     },
@@ -18042,6 +18085,13 @@
           "overseas": 0,
           "other": 0,
           "total": 5
+        },
+        "2026-05": {
+          "ec": 1,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -18462,6 +18512,13 @@
           "overseas": 0,
           "other": 0,
           "total": 2
+        },
+        "2026-05": {
+          "ec": 2,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -18485,11 +18542,11 @@
           "total": 1
         },
         "2026-05": {
-          "ec": 5,
+          "ec": 7,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 5
+          "total": 7
         }
       }
     },
@@ -18525,6 +18582,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1019
+        },
+        "2026-05": {
+          "ec": 2,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -18639,11 +18703,11 @@
           "total": 9
         },
         "2026-05": {
-          "ec": 3,
+          "ec": 11,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 11
         }
       }
     },
@@ -18702,11 +18766,11 @@
           "total": 16
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 5,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 5
         }
       }
     },
@@ -18765,11 +18829,11 @@
           "total": 11
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 12,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 12
         }
       }
     },
@@ -18821,11 +18885,11 @@
           "total": 7
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 6,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 6
         }
       }
     },
@@ -18884,11 +18948,11 @@
           "total": 16
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 6,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 6
         }
       }
     },
@@ -19018,10 +19082,10 @@
         },
         "2026-05": {
           "ec": 6,
-          "tob": 140,
+          "tob": 216,
           "overseas": 0,
           "other": 0,
-          "total": 146
+          "total": 222
         }
       }
     },
@@ -19080,11 +19144,11 @@
           "total": 1428
         },
         "2026-05": {
-          "ec": 0,
-          "tob": 254,
+          "ec": 1,
+          "tob": 329,
           "overseas": 0,
           "other": 0,
-          "total": 254
+          "total": 330
         }
       }
     },
@@ -19206,11 +19270,11 @@
           "total": 1582
         },
         "2026-05": {
-          "ec": 4,
-          "tob": 254,
+          "ec": 5,
+          "tob": 448,
           "overseas": 0,
           "other": 0,
-          "total": 258
+          "total": 453
         }
       }
     },
@@ -19267,6 +19331,13 @@
           "overseas": 0,
           "other": 0,
           "total": 3682
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -19325,11 +19396,11 @@
           "total": 9
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 8,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 8
         }
       }
     },
@@ -19444,11 +19515,11 @@
           "total": 353
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 2,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -19507,11 +19578,11 @@
           "total": 1866
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 2,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -19633,11 +19704,11 @@
           "total": 920
         },
         "2026-05": {
-          "ec": 5,
+          "ec": 6,
           "tob": 11,
           "overseas": 0,
           "other": 0,
-          "total": 16
+          "total": 17
         }
       }
     },
@@ -19696,11 +19767,11 @@
           "total": 100
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 11,
           "tob": 11,
           "overseas": 0,
           "other": 0,
-          "total": 12
+          "total": 22
         }
       }
     },
@@ -19822,11 +19893,11 @@
           "total": 316
         },
         "2026-05": {
-          "ec": 6,
+          "ec": 9,
           "tob": 16,
           "overseas": 0,
           "other": 0,
-          "total": 22
+          "total": 25
         }
       }
     },
@@ -19885,11 +19956,11 @@
           "total": 1797
         },
         "2026-05": {
-          "ec": 19,
+          "ec": 25,
           "tob": 8,
           "overseas": 0,
           "other": 0,
-          "total": 27
+          "total": 33
         }
       }
     },
@@ -19946,6 +20017,13 @@
           "overseas": 0,
           "other": 0,
           "total": 540
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -20004,11 +20082,11 @@
           "total": 44
         },
         "2026-05": {
-          "ec": 6,
+          "ec": 11,
           "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 8
+          "total": 13
         }
       }
     },
@@ -20109,11 +20187,11 @@
           "total": 1678
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 5,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 5
         }
       }
     },
@@ -20221,11 +20299,11 @@
           "total": 18
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 2,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -20284,11 +20362,11 @@
           "total": 24
         },
         "2026-05": {
-          "ec": 6,
+          "ec": 9,
           "tob": 10,
           "overseas": 0,
           "other": 0,
-          "total": 16
+          "total": 19
         }
       }
     },
@@ -20347,11 +20425,11 @@
           "total": 21
         },
         "2026-05": {
-          "ec": 3,
+          "ec": 4,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 4
         }
       }
     },
@@ -20473,11 +20551,11 @@
           "total": 19
         },
         "2026-05": {
-          "ec": 5,
+          "ec": 7,
           "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 7
+          "total": 9
         }
       }
     },
@@ -20537,10 +20615,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 8,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 8
         }
       }
     },
@@ -20599,11 +20677,11 @@
           "total": 14
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 7,
           "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 5
+          "total": 10
         }
       }
     },
@@ -20695,6 +20773,13 @@
           "overseas": 0,
           "other": 0,
           "total": 29
+        },
+        "2026-05": {
+          "ec": 23,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 23
         }
       }
     },
@@ -20753,11 +20838,11 @@
           "total": 258
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 6,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 6
         }
       }
     },
@@ -20802,6 +20887,13 @@
           "total": 244
         },
         "2026-04": {
+          "ec": 4,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 4
+        },
+        "2026-05": {
           "ec": 4,
           "tob": 0,
           "overseas": 0,
@@ -20865,11 +20957,11 @@
           "total": 60
         },
         "2026-05": {
-          "ec": 3,
+          "ec": 5,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 5
         }
       }
     },
@@ -21166,11 +21258,11 @@
           "total": 28
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 9,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 9
         }
       }
     },
@@ -21229,11 +21321,11 @@
           "total": 78
         },
         "2026-05": {
-          "ec": 5,
+          "ec": 12,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 5
+          "total": 12
         }
       }
     },
@@ -21292,11 +21384,11 @@
           "total": 24
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 18,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 18
         }
       }
     },
@@ -21355,11 +21447,11 @@
           "total": 253
         },
         "2026-05": {
-          "ec": 7,
+          "ec": 170,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 7
+          "total": 170
         }
       }
     },
@@ -21418,11 +21510,11 @@
           "total": 19
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 36,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 36
         }
       }
     },
@@ -21481,11 +21573,11 @@
           "total": 3
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 5,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 5
         }
       }
     },
@@ -21670,11 +21762,11 @@
           "total": 3
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 2,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -21733,11 +21825,11 @@
           "total": 3
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 2,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -21927,6 +22019,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 1,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -21964,11 +22063,11 @@
           "total": 3
         },
         "2026-05": {
-          "ec": 5,
+          "ec": 6,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 5
+          "total": 6
         }
       }
     },
@@ -22020,11 +22119,11 @@
           "total": 2
         },
         "2026-05": {
-          "ec": 8,
+          "ec": 9,
           "tob": 0,
           "overseas": 1,
           "other": 0,
-          "total": 9
+          "total": 10
         }
       }
     },
@@ -22593,11 +22692,11 @@
           "total": 9
         },
         "2026-05": {
-          "ec": 10,
-          "tob": 0,
+          "ec": 22,
+          "tob": 12,
           "overseas": 0,
           "other": 0,
-          "total": 10
+          "total": 34
         }
       }
     },
@@ -22656,11 +22755,11 @@
           "total": 9
         },
         "2026-05": {
-          "ec": 4,
-          "tob": 0,
+          "ec": 9,
+          "tob": 12,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 21
         }
       }
     },
@@ -22719,11 +22818,11 @@
           "total": 5
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 9,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 9
         }
       }
     },
@@ -22782,11 +22881,11 @@
           "total": 14
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 7,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 7
         }
       }
     },
@@ -22957,11 +23056,11 @@
           "total": 146
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 4,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 4
         }
       }
     },
@@ -23020,11 +23119,11 @@
           "total": 43
         },
         "2026-05": {
-          "ec": 2,
+          "ec": 6,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 6
         }
       }
     },
@@ -23144,6 +23243,13 @@
           "overseas": 0,
           "other": 0,
           "total": 2295
+        },
+        "2026-05": {
+          "ec": 1,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -23258,11 +23364,11 @@
           "total": 242
         },
         "2026-05": {
-          "ec": 1,
-          "tob": 3,
+          "ec": 15,
+          "tob": 9,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 24
         }
       }
     },
@@ -23321,11 +23427,11 @@
           "total": 221
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 5,
           "tob": 12,
           "overseas": 0,
           "other": 0,
-          "total": 13
+          "total": 17
         }
       }
     },
@@ -23384,11 +23490,11 @@
           "total": 19
         },
         "2026-05": {
-          "ec": 3,
+          "ec": 9,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 9
         }
       }
     },
@@ -23447,11 +23553,11 @@
           "total": 15
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 3,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 3
         }
       }
     },
@@ -23510,11 +23616,11 @@
           "total": 3
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 6,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 6
         }
       }
     },
@@ -23573,11 +23679,11 @@
           "total": 21
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 2,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -24012,6 +24118,13 @@
           "overseas": 0,
           "other": 0,
           "total": 97
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 7,
+          "overseas": 0,
+          "other": 0,
+          "total": 7
         }
       }
     },
@@ -24071,10 +24184,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 7,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 7
         }
       }
     },
@@ -24344,10 +24457,10 @@
         },
         "2026-05": {
           "ec": 2,
-          "tob": 488,
+          "tob": 744,
           "overseas": 0,
           "other": 0,
-          "total": 490
+          "total": 746
         }
       }
     },
@@ -24407,10 +24520,10 @@
         },
         "2026-05": {
           "ec": 4,
-          "tob": 438,
+          "tob": 682,
           "overseas": 0,
           "other": 0,
-          "total": 442
+          "total": 686
         }
       }
     },
@@ -24470,10 +24583,10 @@
         },
         "2026-05": {
           "ec": 6,
-          "tob": 348,
+          "tob": 592,
           "overseas": 0,
           "other": 0,
-          "total": 354
+          "total": 598
         }
       }
     },
@@ -24744,6 +24857,13 @@
           "overseas": 0,
           "other": 0,
           "total": 22
+        },
+        "2026-05": {
+          "ec": 3,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 3
         }
       }
     },
@@ -25472,11 +25592,11 @@
           "total": 25
         },
         "2026-05": {
-          "ec": 1,
+          "ec": 3,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 3
         }
       }
     },
@@ -25535,11 +25655,11 @@
           "total": 15
         },
         "2026-05": {
-          "ec": 8,
+          "ec": 25,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 8
+          "total": 25
         }
       }
     },
@@ -25604,11 +25724,11 @@
           "total": 10
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 7,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 7
         }
       }
     },
@@ -25667,11 +25787,11 @@
           "total": 10
         },
         "2026-05": {
-          "ec": 11,
+          "ec": 13,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 11
+          "total": 13
         }
       }
     },
@@ -25723,11 +25843,11 @@
           "total": 7
         },
         "2026-05": {
-          "ec": 4,
+          "ec": 5,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 5
         }
       }
     },
@@ -26056,11 +26176,11 @@
           "total": 812
         },
         "2026-05": {
-          "ec": 259,
+          "ec": 306,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 259
+          "total": 306
         }
       }
     },
@@ -26764,11 +26884,11 @@
           "total": 682
         },
         "2026-05": {
-          "ec": 509,
+          "ec": 526,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 509
+          "total": 526
         }
       }
     },
@@ -26833,11 +26953,11 @@
           "total": 383
         },
         "2026-05": {
-          "ec": 208,
+          "ec": 240,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 208
+          "total": 240
         }
       }
     },
@@ -26887,6 +27007,13 @@
           "overseas": 0,
           "other": 0,
           "total": 10
+        },
+        "2026-05": {
+          "ec": 50,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 50
         }
       }
     },
@@ -27150,19 +27277,27 @@
       "first_shipment_date": "2026-05-07",
       "monthly_shipments": {
         "2026-05": {
-          "ec": 1238,
+          "ec": 1240,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 1238
+          "total": 1240
         }
       }
     },
     {
       "sku_code": "mf-mo-papershreds",
       "sku_name": "モンチッチ メイクアップギフトセットボックス用紙パッキン",
-      "first_shipment_date": null,
-      "monthly_shipments": {}
+      "first_shipment_date": "2026-05-15",
+      "monthly_shipments": {
+        "2026-05": {
+          "ec": 2,
+          "tob": 0,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
+        }
+      }
     },
     {
       "sku_code": "mf-mo-giftbox02",
@@ -27203,11 +27338,11 @@
           "total": 12
         },
         "2026-05": {
-          "ec": 6,
+          "ec": 7,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 6
+          "total": 7
         }
       }
     },
@@ -27224,11 +27359,11 @@
           "total": 45
         },
         "2026-05": {
-          "ec": 14,
+          "ec": 15,
           "tob": 0,
           "overseas": 0,
           "other": 0,
-          "total": 14
+          "total": 15
         }
       }
     },
@@ -27330,10 +27465,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 4
         }
       }
     },
@@ -27493,6 +27628,13 @@
           "overseas": 40,
           "other": 0,
           "total": 42
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -27694,6 +27836,13 @@
           "overseas": 15,
           "other": 0,
           "total": 15
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -27735,6 +27884,13 @@
           "overseas": 0,
           "other": 0,
           "total": 14
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -27876,10 +28032,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 5,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 5
         }
       }
     },
@@ -28268,10 +28424,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 13,
+          "tob": 15,
           "overseas": 0,
           "other": 0,
-          "total": 13
+          "total": 15
         }
       }
     },
@@ -28678,10 +28834,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 40,
+          "tob": 49,
           "overseas": 0,
           "other": 0,
-          "total": 40
+          "total": 49
         }
       }
     },
@@ -28706,10 +28862,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 49,
+          "tob": 52,
           "overseas": 0,
           "other": 0,
-          "total": 49
+          "total": 52
         }
       }
     },
@@ -28762,10 +28918,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -28825,10 +28981,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 30,
+          "tob": 107,
           "overseas": 0,
           "other": 0,
-          "total": 30
+          "total": 107
         }
       }
     },
@@ -28888,10 +29044,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 3,
+          "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 6
         }
       }
     },
@@ -29063,10 +29219,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 8,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 8
         }
       }
     },
@@ -29231,10 +29387,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 6
         }
       }
     },
@@ -29329,10 +29485,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -29364,10 +29520,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 100,
+          "tob": 101,
           "overseas": 0,
           "other": 0,
-          "total": 100
+          "total": 101
         }
       }
     },
@@ -29399,10 +29555,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 101,
-          "overseas": 0,
+          "tob": 112,
+          "overseas": 2,
           "other": 0,
-          "total": 101
+          "total": 114
         }
       }
     },
@@ -29434,10 +29590,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 60,
+          "tob": 63,
           "overseas": 0,
           "other": 0,
-          "total": 60
+          "total": 63
         }
       }
     },
@@ -29462,10 +29618,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 6,
+          "tob": 7,
           "overseas": 0,
           "other": 0,
-          "total": 6
+          "total": 7
         }
       }
     },
@@ -29476,10 +29632,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
-          "overseas": 0,
+          "tob": 6,
+          "overseas": 3,
           "other": 0,
-          "total": 1
+          "total": 9
         }
       }
     },
@@ -29490,10 +29646,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
-          "overseas": 0,
+          "tob": 99,
+          "overseas": 3,
           "other": 0,
-          "total": 1
+          "total": 102
         }
       }
     },
@@ -29595,10 +29751,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -29956,6 +30112,13 @@
           "overseas": 20,
           "other": 0,
           "total": 20
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -30152,6 +30315,13 @@
           "overseas": 0,
           "other": 0,
           "total": 28
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -30353,10 +30523,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 111,
+          "tob": 134,
           "overseas": 0,
           "other": 0,
-          "total": 111
+          "total": 134
         }
       }
     },
@@ -30437,10 +30607,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 14,
+          "tob": 17,
           "overseas": 0,
           "other": 0,
-          "total": 14
+          "total": 17
         }
       }
     },
@@ -30847,6 +31017,13 @@
           "overseas": 0,
           "other": 0,
           "total": 4
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -31257,6 +31434,13 @@
           "overseas": 0,
           "other": 0,
           "total": 3
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -31425,6 +31609,13 @@
           "overseas": 0,
           "other": 0,
           "total": 5
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -31512,10 +31703,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 99,
+          "tob": 151,
           "overseas": 0,
           "other": 0,
-          "total": 99
+          "total": 151
         }
       }
     },
@@ -31537,6 +31728,13 @@
           "overseas": 0,
           "other": 0,
           "total": 69
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -31836,10 +32034,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -31899,10 +32097,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -31920,10 +32118,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 52,
+          "tob": 66,
           "overseas": 0,
           "other": 0,
-          "total": 52
+          "total": 66
         }
       }
     },
@@ -31941,10 +32139,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 52,
+          "tob": 66,
           "overseas": 0,
           "other": 0,
-          "total": 52
+          "total": 66
         }
       }
     },
@@ -32004,10 +32202,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 4
         }
       }
     },
@@ -32028,6 +32226,13 @@
           "overseas": 0,
           "other": 0,
           "total": 50
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -32061,6 +32266,13 @@
           "overseas": 0,
           "other": 0,
           "total": 10
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 5,
+          "overseas": 0,
+          "other": 0,
+          "total": 5
         }
       }
     },
@@ -32082,6 +32294,13 @@
           "overseas": 0,
           "other": 0,
           "total": 10
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 5,
+          "overseas": 0,
+          "other": 0,
+          "total": 5
         }
       }
     },
@@ -32103,14 +32322,29 @@
           "overseas": 0,
           "other": 0,
           "total": 10
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 5,
+          "overseas": 0,
+          "other": 0,
+          "total": 5
         }
       }
     },
     {
       "sku_code": "4580805240116_00",
       "sku_name": "[テスター]なんでもいきもの ぷにっこ やきおにぎり",
-      "first_shipment_date": null,
-      "monthly_shipments": {}
+      "first_shipment_date": "2026-05-15",
+      "monthly_shipments": {
+        "2026-05": {
+          "ec": 0,
+          "tob": 5,
+          "overseas": 0,
+          "other": 0,
+          "total": 5
+        }
+      }
     },
     {
       "sku_code": "4580805241038_00",
@@ -32186,6 +32420,13 @@
           "overseas": 3,
           "other": 0,
           "total": 18
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -32221,6 +32462,13 @@
           "overseas": 3,
           "other": 0,
           "total": 18
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -32256,6 +32504,13 @@
           "overseas": 3,
           "other": 0,
           "total": 18
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -32555,6 +32810,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -32604,6 +32866,13 @@
           "overseas": 15,
           "other": 0,
           "total": 16
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -32618,6 +32887,13 @@
           "overseas": 10,
           "other": 0,
           "total": 10
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -32639,6 +32915,13 @@
           "overseas": 0,
           "other": 0,
           "total": 6
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -32674,6 +32957,13 @@
           "overseas": 10,
           "other": 0,
           "total": 10
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -32688,6 +32978,13 @@
           "overseas": 10,
           "other": 0,
           "total": 10
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -32723,6 +33020,13 @@
           "overseas": 10,
           "other": 0,
           "total": 10
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -32737,6 +33041,13 @@
           "overseas": 0,
           "other": 0,
           "total": 6
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -32919,6 +33230,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -32947,6 +33265,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -33230,10 +33555,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 3,
+          "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 4
         }
       }
     },
@@ -33541,6 +33866,13 @@
           "overseas": 0,
           "other": 0,
           "total": 3
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 3,
+          "overseas": 0,
+          "other": 0,
+          "total": 3
         }
       }
     },
@@ -33592,6 +33924,13 @@
           "total": 9
         },
         "2026-04": {
+          "ec": 0,
+          "tob": 3,
+          "overseas": 0,
+          "other": 0,
+          "total": 3
+        },
+        "2026-05": {
           "ec": 0,
           "tob": 3,
           "overseas": 0,
@@ -33653,6 +33992,13 @@
           "overseas": 12,
           "other": 0,
           "total": 16
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 3,
+          "overseas": 0,
+          "other": 0,
+          "total": 3
         }
       }
     },
@@ -33712,10 +34058,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 5,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 5
         }
       }
     },
@@ -33775,10 +34121,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 3,
+          "tob": 7,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 7
         }
       }
     },
@@ -33838,10 +34184,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 5,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 5
         }
       }
     },
@@ -33901,10 +34247,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 5,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 5
         }
       }
     },
@@ -33936,10 +34282,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -34367,6 +34713,13 @@
           "overseas": 0,
           "other": 0,
           "total": 6
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -34409,6 +34762,13 @@
           "overseas": 20,
           "other": 0,
           "total": 21
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -34468,10 +34828,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -34502,6 +34862,13 @@
           "total": 10
         },
         "2026-04": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
+        },
+        "2026-05": {
           "ec": 0,
           "tob": 1,
           "overseas": 0,
@@ -34559,10 +34926,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -34615,10 +34982,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -34671,10 +35038,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -34727,10 +35094,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -34783,10 +35150,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -34839,10 +35206,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -34902,10 +35269,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -34958,10 +35325,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -35021,10 +35388,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 89,
+          "tob": 103,
           "overseas": 0,
           "other": 0,
-          "total": 89
+          "total": 103
         }
       }
     },
@@ -35084,10 +35451,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 90,
+          "tob": 104,
           "overseas": 0,
           "other": 0,
-          "total": 90
+          "total": 104
         }
       }
     },
@@ -35147,10 +35514,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 89,
+          "tob": 103,
           "overseas": 0,
           "other": 0,
-          "total": 89
+          "total": 103
         }
       }
     },
@@ -35361,6 +35728,13 @@
           "overseas": 22,
           "other": 0,
           "total": 23
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -35417,6 +35791,13 @@
           "overseas": 22,
           "other": 0,
           "total": 23
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -35473,6 +35854,13 @@
           "overseas": 15,
           "other": 0,
           "total": 16
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -35529,6 +35917,13 @@
           "overseas": 15,
           "other": 0,
           "total": 16
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -35826,10 +36221,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 13,
+          "tob": 16,
           "overseas": 0,
           "other": 0,
-          "total": 13
+          "total": 16
         }
       }
     },
@@ -35889,10 +36284,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 13,
+          "tob": 16,
           "overseas": 0,
           "other": 0,
-          "total": 13
+          "total": 16
         }
       }
     },
@@ -35952,10 +36347,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 13,
+          "tob": 16,
           "overseas": 0,
           "other": 0,
-          "total": 13
+          "total": 16
         }
       }
     },
@@ -36015,10 +36410,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 13,
+          "tob": 16,
           "overseas": 0,
           "other": 0,
-          "total": 13
+          "total": 16
         }
       }
     },
@@ -36089,6 +36484,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -36148,10 +36550,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 9,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 9
         }
       }
     },
@@ -36211,10 +36613,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 9,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 9
         }
       }
     },
@@ -36274,10 +36676,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 9,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 9
         }
       }
     },
@@ -36337,10 +36739,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 9,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 9
         }
       }
     },
@@ -36383,6 +36785,13 @@
           "overseas": 8,
           "other": 0,
           "total": 13
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -36439,6 +36848,13 @@
           "overseas": 3,
           "other": 0,
           "total": 9
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -36495,6 +36911,13 @@
           "overseas": 9,
           "other": 0,
           "total": 16
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -36551,6 +36974,13 @@
           "overseas": 6,
           "other": 0,
           "total": 12
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -36610,10 +37040,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 10,
+          "tob": 11,
           "overseas": 0,
           "other": 0,
-          "total": 10
+          "total": 11
         }
       }
     },
@@ -36673,10 +37103,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 10,
+          "tob": 11,
           "overseas": 0,
           "other": 0,
-          "total": 10
+          "total": 11
         }
       }
     },
@@ -36750,10 +37180,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 6
         }
       }
     },
@@ -36813,10 +37243,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 6
         }
       }
     },
@@ -36876,10 +37306,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 6
         }
       }
     },
@@ -36939,10 +37369,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 6
         }
       }
     },
@@ -36999,6 +37429,13 @@
           "overseas": 8,
           "other": 0,
           "total": 13
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37055,6 +37492,13 @@
           "overseas": 8,
           "other": 0,
           "total": 13
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37111,6 +37555,13 @@
           "overseas": 8,
           "other": 0,
           "total": 14
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37167,6 +37618,13 @@
           "overseas": 0,
           "other": 0,
           "total": 6
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37258,6 +37716,13 @@
           "overseas": 0,
           "other": 0,
           "total": 5
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37349,6 +37814,13 @@
           "overseas": 0,
           "other": 0,
           "total": 5
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37450,10 +37922,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -37513,10 +37985,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 3
         }
       }
     },
@@ -37576,10 +38048,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 4
         }
       }
     },
@@ -37765,10 +38237,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 4
         }
       }
     },
@@ -37804,6 +38276,13 @@
           "overseas": 0,
           "other": 0,
           "total": 2
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37839,6 +38318,13 @@
           "overseas": 0,
           "other": 0,
           "total": 2
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37888,6 +38374,13 @@
           "overseas": 0,
           "other": 0,
           "total": 7
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37937,6 +38430,13 @@
           "overseas": 0,
           "other": 0,
           "total": 2
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -37986,6 +38486,13 @@
           "overseas": 0,
           "other": 0,
           "total": 7
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -38035,6 +38542,13 @@
           "overseas": 0,
           "other": 0,
           "total": 7
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -38084,6 +38598,13 @@
           "overseas": 10,
           "other": 0,
           "total": 11
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -38133,6 +38654,13 @@
           "overseas": 10,
           "other": 0,
           "total": 11
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -38192,10 +38720,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 7,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 7
         }
       }
     },
@@ -38255,10 +38783,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 8,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 8
         }
       }
     },
@@ -38318,10 +38846,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 7,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 7
         }
       }
     },
@@ -38381,10 +38909,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 8,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 8
         }
       }
     },
@@ -39007,10 +39535,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 101,
+          "tob": 103,
           "overseas": 0,
           "other": 0,
-          "total": 101
+          "total": 103
         }
       }
     },
@@ -39042,10 +39570,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 101,
+          "tob": 103,
           "overseas": 0,
           "other": 0,
-          "total": 101
+          "total": 103
         }
       }
     },
@@ -39077,10 +39605,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 104,
+          "tob": 115,
           "overseas": 0,
           "other": 0,
-          "total": 104
+          "total": 115
         }
       }
     },
@@ -39112,10 +39640,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 103,
+          "tob": 114,
           "overseas": 0,
           "other": 0,
-          "total": 103
+          "total": 114
         }
       }
     },
@@ -39147,10 +39675,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 63,
+          "tob": 66,
           "overseas": 0,
           "other": 0,
-          "total": 63
+          "total": 66
         }
       }
     },
@@ -39182,10 +39710,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 63,
+          "tob": 66,
           "overseas": 0,
           "other": 0,
-          "total": 63
+          "total": 66
         }
       }
     },
@@ -39217,10 +39745,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 63,
+          "tob": 66,
           "overseas": 0,
           "other": 0,
-          "total": 63
+          "total": 66
         }
       }
     },
@@ -39252,10 +39780,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 63,
+          "tob": 67,
           "overseas": 0,
           "other": 0,
-          "total": 63
+          "total": 67
         }
       }
     },
@@ -39287,10 +39815,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 63,
+          "tob": 66,
           "overseas": 0,
           "other": 0,
-          "total": 63
+          "total": 66
         }
       }
     },
@@ -39322,10 +39850,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 63,
+          "tob": 66,
           "overseas": 0,
           "other": 0,
-          "total": 63
+          "total": 66
         }
       }
     },
@@ -39357,10 +39885,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 3,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 3
         }
       }
     },
@@ -39417,10 +39945,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 6,
+          "tob": 7,
           "overseas": 0,
           "other": 0,
-          "total": 6
+          "total": 7
         }
       }
     },
@@ -39431,10 +39959,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 99,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 99
         }
       }
     },
@@ -39445,10 +39973,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 99,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 99
         }
       }
     },
@@ -39459,10 +39987,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 99,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 99
         }
       }
     },
@@ -39473,10 +40001,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 99,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 99
         }
       }
     },
@@ -39487,10 +40015,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 99,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 99
         }
       }
     },
@@ -39501,10 +40029,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 99,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 99
         }
       }
     },
@@ -39515,10 +40043,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 99,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 99
         }
       }
     },
@@ -39529,10 +40057,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 99,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 99
         }
       }
     },
@@ -39543,10 +40071,10 @@
       "monthly_shipments": {
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 6,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 6
         }
       }
     },
@@ -39630,10 +40158,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 8,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 8
         }
       }
     },
@@ -39693,10 +40221,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 5,
+          "tob": 9,
           "overseas": 0,
           "other": 0,
-          "total": 5
+          "total": 9
         }
       }
     },
@@ -39756,10 +40284,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 4,
+          "tob": 8,
           "overseas": 0,
           "other": 0,
-          "total": 4
+          "total": 8
         }
       }
     },
@@ -39819,10 +40347,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 5,
+          "tob": 8,
           "overseas": 0,
           "other": 0,
-          "total": 5
+          "total": 8
         }
       }
     },
@@ -39945,10 +40473,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 6,
+          "tob": 12,
           "overseas": 0,
           "other": 0,
-          "total": 6
+          "total": 12
         }
       }
     },
@@ -40005,6 +40533,13 @@
           "overseas": 0,
           "other": 0,
           "total": 6
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -40064,10 +40599,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 2,
+          "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 2
+          "total": 4
         }
       }
     },
@@ -40127,10 +40662,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 5,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 5
         }
       }
     },
@@ -40187,6 +40722,13 @@
           "overseas": 0,
           "other": 0,
           "total": 8
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -40787,6 +41329,13 @@
           "overseas": 0,
           "other": 0,
           "total": 4
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -40836,6 +41385,13 @@
           "overseas": 0,
           "other": 0,
           "total": 4
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -40885,6 +41441,13 @@
           "overseas": 0,
           "other": 0,
           "total": 4
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -41362,6 +41925,13 @@
           "overseas": 0,
           "other": 0,
           "total": 3
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -41418,6 +41988,13 @@
           "overseas": 0,
           "other": 0,
           "total": 2
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -41474,6 +42051,13 @@
           "overseas": 0,
           "other": 0,
           "total": 2
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -41922,6 +42506,13 @@
           "overseas": 0,
           "other": 0,
           "total": 3
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 3,
+          "overseas": 0,
+          "other": 0,
+          "total": 3
         }
       }
     },
@@ -41978,6 +42569,13 @@
           "overseas": 0,
           "other": 0,
           "total": 3
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 3,
+          "overseas": 0,
+          "other": 0,
+          "total": 3
         }
       }
     },
@@ -42029,6 +42627,13 @@
           "total": 1
         },
         "2026-04": {
+          "ec": 0,
+          "tob": 3,
+          "overseas": 0,
+          "other": 0,
+          "total": 3
+        },
+        "2026-05": {
           "ec": 0,
           "tob": 3,
           "overseas": 0,
@@ -42188,6 +42793,13 @@
           "overseas": 0,
           "other": 0,
           "total": 5
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -42244,6 +42856,13 @@
           "overseas": 0,
           "other": 0,
           "total": 6
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -42569,10 +43188,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 99,
+          "tob": 152,
           "overseas": 0,
           "other": 0,
-          "total": 99
+          "total": 152
         }
       }
     },
@@ -42618,10 +43237,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 99,
+          "tob": 152,
           "overseas": 0,
           "other": 0,
-          "total": 99
+          "total": 152
         }
       }
     },
@@ -42667,10 +43286,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 99,
+          "tob": 152,
           "overseas": 0,
           "other": 0,
-          "total": 99
+          "total": 152
         }
       }
     },
@@ -42692,6 +43311,13 @@
           "overseas": 0,
           "other": 0,
           "total": 66
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -42713,6 +43339,13 @@
           "overseas": 0,
           "other": 0,
           "total": 66
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -42734,6 +43367,13 @@
           "overseas": 0,
           "other": 0,
           "total": 66
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -42755,6 +43395,13 @@
           "overseas": 0,
           "other": 0,
           "total": 66
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -42907,6 +43554,13 @@
           "overseas": 6,
           "other": 0,
           "total": 32
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 2,
+          "overseas": 0,
+          "other": 0,
+          "total": 2
         }
       }
     },
@@ -42951,6 +43605,13 @@
           "total": 4
         },
         "2026-04": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
+        },
+        "2026-05": {
           "ec": 0,
           "tob": 1,
           "overseas": 0,
@@ -43012,6 +43673,13 @@
           "overseas": 7,
           "other": 0,
           "total": 8
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -43068,6 +43736,13 @@
           "overseas": 0,
           "other": 0,
           "total": 26
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -43117,6 +43792,13 @@
           "overseas": 13,
           "other": 0,
           "total": 13
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -43227,6 +43909,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -43289,6 +43978,13 @@
           "overseas": 0,
           "other": 0,
           "total": 28
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -43316,6 +44012,13 @@
           "overseas": 0,
           "other": 0,
           "total": 26
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -43720,6 +44423,13 @@
           "overseas": 0,
           "other": 0,
           "total": 9
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -43762,6 +44472,13 @@
           "overseas": 0,
           "other": 0,
           "total": 9
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -44061,6 +44778,13 @@
           "overseas": 8,
           "other": 0,
           "total": 10
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -44117,6 +44841,13 @@
           "overseas": 7,
           "other": 0,
           "total": 9
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -44169,10 +44900,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -44708,6 +45439,13 @@
           "overseas": 0,
           "other": 0,
           "total": 2
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -44764,6 +45502,13 @@
           "overseas": 0,
           "other": 0,
           "total": 2
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -45082,10 +45827,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 3,
+          "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 4
         }
       }
     },
@@ -45352,10 +46097,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 3,
+          "tob": 4,
           "overseas": 0,
           "other": 0,
-          "total": 3
+          "total": 4
         }
       }
     },
@@ -45439,6 +46184,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -45483,6 +46235,13 @@
           "total": 31
         },
         "2026-04": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
+        },
+        "2026-05": {
           "ec": 0,
           "tob": 1,
           "overseas": 0,
@@ -45537,6 +46296,13 @@
           "overseas": 0,
           "other": 0,
           "total": 1
+        },
+        "2026-05": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
         }
       }
     },
@@ -45581,6 +46347,13 @@
           "total": 31
         },
         "2026-04": {
+          "ec": 0,
+          "tob": 1,
+          "overseas": 0,
+          "other": 0,
+          "total": 1
+        },
+        "2026-05": {
           "ec": 0,
           "tob": 1,
           "overseas": 0,
@@ -46114,10 +46887,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 66,
+          "tob": 77,
           "overseas": 0,
           "other": 0,
-          "total": 66
+          "total": 77
         }
       }
     },
@@ -46177,10 +46950,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 1,
+          "tob": 2,
           "overseas": 0,
           "other": 0,
-          "total": 1
+          "total": 2
         }
       }
     },
@@ -46240,10 +47013,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 70,
+          "tob": 81,
           "overseas": 0,
           "other": 0,
-          "total": 70
+          "total": 81
         }
       }
     },
@@ -46303,10 +47076,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 70,
+          "tob": 81,
           "overseas": 0,
           "other": 0,
-          "total": 70
+          "total": 81
         }
       }
     },
@@ -46384,10 +47157,10 @@
         },
         "2026-05": {
           "ec": 0,
-          "tob": 67,
+          "tob": 76,
           "overseas": 0,
           "other": 0,
-          "total": 67
+          "total": 76
         }
       }
     },

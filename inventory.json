@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-12",
+  "updated_at": "2026-05-17",
   "skus": [
     {
       "sku_code": "4580805240444",
@@ -10,11 +10,11 @@
         "2026-02": 19971,
         "2026-03": 17651,
         "2026-04": 17039,
-        "2026-05": 16853
+        "2026-05": 16825
       },
-      "latest_stock": 16853,
-      "defective_stock": 14093,
-      "defective_rate": 0.836231
+      "latest_stock": 16825,
+      "defective_stock": 14233,
+      "defective_rate": 0.845944
     },
     {
       "sku_code": "4580805240451",
@@ -28,8 +28,8 @@
         "2026-05": 22
       },
       "latest_stock": 22,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "defective_stock": 22,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4580805240567",
@@ -38,9 +38,9 @@
         "2026-02": 5600,
         "2026-03": 578,
         "2026-04": 15614,
-        "2026-05": 7701
+        "2026-05": 7699
       },
-      "latest_stock": 7701,
+      "latest_stock": 7699,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -51,9 +51,9 @@
         "2026-02": 5600,
         "2026-03": 655,
         "2026-04": 15710,
-        "2026-05": 7754
+        "2026-05": 7751
       },
-      "latest_stock": 7754,
+      "latest_stock": 7751,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -64,9 +64,9 @@
         "2026-02": 3150,
         "2026-03": 1053,
         "2026-04": 13952,
-        "2026-05": 6057
+        "2026-05": 6056
       },
-      "latest_stock": 6057,
+      "latest_stock": 6056,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -77,9 +77,9 @@
         "2026-02": 3150,
         "2026-03": 1062,
         "2026-04": 13965,
-        "2026-05": 6598
+        "2026-05": 6597
       },
-      "latest_stock": 6598,
+      "latest_stock": 6597,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -92,9 +92,9 @@
         "2026-02": 1835,
         "2026-03": 0,
         "2026-04": 42935,
-        "2026-05": 40633
+        "2026-05": 40457
       },
-      "latest_stock": 40633,
+      "latest_stock": 40457,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -107,9 +107,9 @@
         "2026-02": 107,
         "2026-03": 0,
         "2026-04": 478,
-        "2026-05": 458
+        "2026-05": 442
       },
-      "latest_stock": 458,
+      "latest_stock": 442,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -124,11 +124,11 @@
         "2026-02": 2680,
         "2026-03": 2070,
         "2026-04": 1897,
-        "2026-05": 1873
+        "2026-05": 1849
       },
-      "latest_stock": 1873,
-      "defective_stock": 1057,
-      "defective_rate": 0.564335
+      "latest_stock": 1849,
+      "defective_stock": 961,
+      "defective_rate": 0.51974
     },
     {
       "sku_code": "4580805240062",
@@ -141,11 +141,11 @@
         "2026-02": 3640,
         "2026-03": 3199,
         "2026-04": 3155,
-        "2026-05": 3141
+        "2026-05": 3140
       },
-      "latest_stock": 3141,
-      "defective_stock": 2877,
-      "defective_rate": 0.91595
+      "latest_stock": 3140,
+      "defective_stock": 2924,
+      "defective_rate": 0.93121
     },
     {
       "sku_code": "4580805240222",
@@ -160,8 +160,8 @@
         "2026-05": 38
       },
       "latest_stock": 38,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "defective_stock": 14,
+      "defective_rate": 0.368421
     },
     {
       "sku_code": "4580805240413",
@@ -186,11 +186,11 @@
         "2026-02": 21559,
         "2026-03": 20119,
         "2026-04": 18146,
-        "2026-05": 17810
+        "2026-05": 17777
       },
-      "latest_stock": 17810,
-      "defective_stock": 7994,
-      "defective_rate": 0.448849
+      "latest_stock": 17777,
+      "defective_stock": 8273,
+      "defective_rate": 0.465377
     },
     {
       "sku_code": "4580805240277",
@@ -202,10 +202,10 @@
         "2026-02": 110,
         "2026-03": 99,
         "2026-04": 93,
-        "2026-05": 93
+        "2026-05": 91
       },
-      "latest_stock": 93,
-      "defective_stock": 93,
+      "latest_stock": 91,
+      "defective_stock": 91,
       "defective_rate": 1.0
     },
     {
@@ -544,11 +544,11 @@
         "2026-02": 1963,
         "2026-03": 1952,
         "2026-04": 1948,
-        "2026-05": 1948
+        "2026-05": 1947
       },
-      "latest_stock": 1948,
-      "defective_stock": 1924,
-      "defective_rate": 0.98768
+      "latest_stock": 1947,
+      "defective_stock": 1923,
+      "defective_rate": 0.987673
     },
     {
       "sku_code": "4580805240420",
@@ -575,9 +575,9 @@
         "2026-02": 4585,
         "2026-03": 1597,
         "2026-04": 30283,
-        "2026-05": 13382
+        "2026-05": 13359
       },
-      "latest_stock": 13382,
+      "latest_stock": 13359,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -590,9 +590,9 @@
         "2026-02": 4854,
         "2026-03": 2450,
         "2026-04": 31668,
-        "2026-05": 16148
+        "2026-05": 16135
       },
-      "latest_stock": 16148,
+      "latest_stock": 16135,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -605,9 +605,9 @@
         "2026-02": 529,
         "2026-03": 0,
         "2026-04": 198,
-        "2026-05": 1439
+        "2026-05": 1397
       },
-      "latest_stock": 1439,
+      "latest_stock": 1397,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -618,9 +618,9 @@
         "2026-02": 5604,
         "2026-03": 2705,
         "2026-04": 31784,
-        "2026-05": 16071
+        "2026-05": 16056
       },
-      "latest_stock": 16071,
+      "latest_stock": 16056,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -631,9 +631,9 @@
         "2026-02": 5622,
         "2026-03": 2782,
         "2026-04": 31855,
-        "2026-05": 16092
+        "2026-05": 16078
       },
-      "latest_stock": 16092,
+      "latest_stock": 16078,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -645,11 +645,11 @@
         "2026-02": 20754,
         "2026-03": 16704,
         "2026-04": 13466,
-        "2026-05": 12774
+        "2026-05": 12644
       },
-      "latest_stock": 12774,
-      "defective_stock": 1878,
-      "defective_rate": 0.147017
+      "latest_stock": 12644,
+      "defective_stock": 1892,
+      "defective_rate": 0.149636
     },
     {
       "sku_code": "4580805240161",
@@ -662,8 +662,8 @@
         "2026-05": 4
       },
       "latest_stock": 4,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "defective_stock": 4,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4580805240093",
@@ -711,9 +711,9 @@
         "2025-12": 30,
         "2026-01": 16,
         "2026-02": 0,
-        "2026-05": 92
+        "2026-05": 90
       },
-      "latest_stock": 92,
+      "latest_stock": 90,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -727,9 +727,9 @@
         "2026-02": 248,
         "2026-03": 228,
         "2026-04": 178,
-        "2026-05": 163
+        "2026-05": 157
       },
-      "latest_stock": 163,
+      "latest_stock": 157,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -763,9 +763,9 @@
       "monthly_stock": {
         "2026-03": 15536,
         "2026-04": 12874,
-        "2026-05": 12856
+        "2026-05": 12850
       },
-      "latest_stock": 12856,
+      "latest_stock": 12850,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -787,9 +787,9 @@
       "monthly_stock": {
         "2026-03": 11652,
         "2026-04": 9638,
-        "2026-05": 9620
+        "2026-05": 9614
       },
-      "latest_stock": 9620,
+      "latest_stock": 9614,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -811,9 +811,9 @@
       "monthly_stock": {
         "2026-03": 11652,
         "2026-04": 9632,
-        "2026-05": 9618
+        "2026-05": 9612
       },
-      "latest_stock": 9618,
+      "latest_stock": 9612,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -865,9 +865,9 @@
       "sku_code": "4905610226931",
       "sku_name": "モンチッチ キーチェーン 女の子",
       "monthly_stock": {
-        "2026-05": 98
+        "2026-05": 94
       },
-      "latest_stock": 98,
+      "latest_stock": 94,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -895,9 +895,9 @@
       "sku_code": "4905610226948",
       "sku_name": "モンチッチ COLORS キーチェーンピンク",
       "monthly_stock": {
-        "2026-05": 78
+        "2026-05": 77
       },
-      "latest_stock": 78,
+      "latest_stock": 77,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -955,9 +955,9 @@
       "sku_code": "4905610243051",
       "sku_name": "トムモンチッチ 顔でかSSキーチェーン",
       "monthly_stock": {
-        "2026-05": 48
+        "2026-05": 47
       },
-      "latest_stock": 48,
+      "latest_stock": 47,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -965,16 +965,6 @@
       "sku_code": "4905610243068",
       "sku_name": "ジェリーモンチッチ 顔でかSSキーチェーン",
       "monthly_stock": {
-        "2026-05": 49
-      },
-      "latest_stock": 49,
-      "defective_stock": 0,
-      "defective_rate": 0.0
-    },
-    {
-      "sku_code": "4905610244072",
-      "sku_name": "タフィーモンチッチ 顔でかSSキーチェーン",
-      "monthly_stock": {
         "2026-05": 48
       },
       "latest_stock": 48,
@@ -982,12 +972,22 @@
       "defective_rate": 0.0
     },
     {
+      "sku_code": "4905610244072",
+      "sku_name": "タフィーモンチッチ 顔でかSSキーチェーン",
+      "monthly_stock": {
+        "2026-05": 46
+      },
+      "latest_stock": 46,
+      "defective_stock": 0,
+      "defective_rate": 0.0
+    },
+    {
       "sku_code": "4905610251087",
       "sku_name": "モンチッチ ブレミアムスタンダード Sブラウン 男の子",
       "monthly_stock": {
-        "2026-05": 99
+        "2026-05": 98
       },
-      "latest_stock": 99,
+      "latest_stock": 98,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -1005,9 +1005,9 @@
       "sku_code": "4905610205646",
       "sku_name": "ベビチッチ S男の子",
       "monthly_stock": {
-        "2026-05": 79
+        "2026-05": 78
       },
-      "latest_stock": 79,
+      "latest_stock": 78,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -1026,9 +1026,9 @@
       "sku_name": "ぷにっこ　クリーム犬メレンゲ ピンキーちゃん",
       "monthly_stock": {
         "2026-04": 90,
-        "2026-05": 86
+        "2026-05": 85
       },
-      "latest_stock": 86,
+      "latest_stock": 85,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -1059,9 +1059,9 @@
       "sku_name": "ぷにっこ　唐揚げ犬 ぴんくりぼん",
       "monthly_stock": {
         "2026-04": 91,
-        "2026-05": 88
+        "2026-05": 87
       },
-      "latest_stock": 88,
+      "latest_stock": 87,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -1080,9 +1080,9 @@
       "sku_code": "4580805241267",
       "sku_name": "ぷにっこ スイーツ　ふわふわスフレシリーズ",
       "monthly_stock": {
-        "2026-05": 1763
+        "2026-05": 1489
       },
-      "latest_stock": 1763,
+      "latest_stock": 1489,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -1090,9 +1090,9 @@
       "sku_code": "4580805241274",
       "sku_name": "ぷにっこ スイーツ　ふわふわスフレシリーズ 6箱セット",
       "monthly_stock": {
-        "2026-05": 0
+        "2026-05": 11
       },
-      "latest_stock": 0,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -1100,9 +1100,9 @@
       "sku_code": "4580805241281",
       "sku_name": "ぷにっこ スイーツ　スイスロール＆バターシリーズ",
       "monthly_stock": {
-        "2026-05": 1985
+        "2026-05": 1779
       },
-      "latest_stock": 1985,
+      "latest_stock": 1779,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -1110,9 +1110,9 @@
       "sku_code": "4580805241298",
       "sku_name": "ぷにっこ スイーツ　スイスロール＆バターシリーズ 6箱セット",
       "monthly_stock": {
-        "2026-05": 0
+        "2026-05": 12
       },
-      "latest_stock": 0,
+      "latest_stock": 12,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -1943,9 +1943,9 @@
         "2026-02": 157,
         "2026-03": 63,
         "2026-04": 49,
-        "2026-05": 45
+        "2026-05": 44
       },
-      "latest_stock": 45,
+      "latest_stock": 44,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -2011,9 +2011,9 @@
         "2026-02": 60,
         "2026-03": 62,
         "2026-04": 88,
-        "2026-05": 55
+        "2026-05": 53
       },
-      "latest_stock": 55,
+      "latest_stock": 53,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -2045,11 +2045,11 @@
         "2026-02": 276,
         "2026-03": 144,
         "2026-04": 116,
-        "2026-05": 113
+        "2026-05": 109
       },
-      "latest_stock": 113,
-      "defective_stock": 41,
-      "defective_rate": 0.362832
+      "latest_stock": 109,
+      "defective_stock": 61,
+      "defective_rate": 0.559633
     },
     {
       "sku_code": "4571501172986",
@@ -2062,10 +2062,10 @@
         "2026-02": 36,
         "2026-03": 34,
         "2026-04": 49,
-        "2026-05": 64
+        "2026-05": 67
       },
-      "latest_stock": 64,
-      "defective_stock": 64,
+      "latest_stock": 67,
+      "defective_stock": 67,
       "defective_rate": 1.0
     },
     {
@@ -2079,9 +2079,9 @@
         "2026-02": 1826,
         "2026-03": 1707,
         "2026-04": 1448,
-        "2026-05": 1420
+        "2026-05": 1408
       },
-      "latest_stock": 1420,
+      "latest_stock": 1408,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -2096,9 +2096,9 @@
         "2026-02": 764,
         "2026-03": 650,
         "2026-04": 265,
-        "2026-05": 220
+        "2026-05": 210
       },
-      "latest_stock": 220,
+      "latest_stock": 210,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -2113,11 +2113,11 @@
         "2026-02": 2234,
         "2026-03": 2138,
         "2026-04": 1894,
-        "2026-05": 1886
+        "2026-05": 1856
       },
-      "latest_stock": 1886,
-      "defective_stock": 926,
-      "defective_rate": 0.490986
+      "latest_stock": 1856,
+      "defective_stock": 992,
+      "defective_rate": 0.534483
     },
     {
       "sku_code": "4571501175024",
@@ -2130,11 +2130,11 @@
         "2026-02": 4202,
         "2026-03": 3937,
         "2026-04": 3111,
-        "2026-05": 3037
+        "2026-05": 3034
       },
-      "latest_stock": 3037,
-      "defective_stock": 1165,
-      "defective_rate": 0.383602
+      "latest_stock": 3034,
+      "defective_stock": 1474,
+      "defective_rate": 0.485827
     },
     {
       "sku_code": "4571501175031",
@@ -2147,11 +2147,11 @@
         "2026-02": 5020,
         "2026-03": 4789,
         "2026-04": 4048,
-        "2026-05": 3967
+        "2026-05": 3962
       },
-      "latest_stock": 3967,
-      "defective_stock": 2431,
-      "defective_rate": 0.612806
+      "latest_stock": 3962,
+      "defective_stock": 2426,
+      "defective_rate": 0.612317
     },
     {
       "sku_code": "4571501175789",
@@ -2164,11 +2164,11 @@
         "2026-02": 1884,
         "2026-03": 1838,
         "2026-04": 1819,
-        "2026-05": 1814
+        "2026-05": 1812
       },
-      "latest_stock": 1814,
-      "defective_stock": 1742,
-      "defective_rate": 0.960309
+      "latest_stock": 1812,
+      "defective_stock": 1740,
+      "defective_rate": 0.960265
     },
     {
       "sku_code": "4571501173419",
@@ -2414,9 +2414,9 @@
         "2026-02": 533,
         "2026-03": 471,
         "2026-04": 360,
-        "2026-05": 282
+        "2026-05": 266
       },
-      "latest_stock": 282,
+      "latest_stock": 266,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -2431,9 +2431,9 @@
         "2026-02": 96,
         "2026-03": 94,
         "2026-04": 109,
-        "2026-05": 69
+        "2026-05": 73
       },
-      "latest_stock": 69,
+      "latest_stock": 73,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -2448,11 +2448,11 @@
         "2026-02": 1065,
         "2026-03": 1046,
         "2026-04": 1031,
-        "2026-05": 1011
+        "2026-05": 987
       },
-      "latest_stock": 1011,
-      "defective_stock": 891,
-      "defective_rate": 0.881306
+      "latest_stock": 987,
+      "defective_stock": 699,
+      "defective_rate": 0.708207
     },
     {
       "sku_code": "4571501174331",
@@ -2465,11 +2465,11 @@
         "2026-02": 3571,
         "2026-03": 3562,
         "2026-04": 3569,
-        "2026-05": 3568
+        "2026-05": 3567
       },
-      "latest_stock": 3568,
-      "defective_stock": 3496,
-      "defective_rate": 0.979821
+      "latest_stock": 3567,
+      "defective_stock": 3519,
+      "defective_rate": 0.986543
     },
     {
       "sku_code": "4571501174461",
@@ -2482,11 +2482,11 @@
         "2026-02": 2284,
         "2026-03": 2184,
         "2026-04": 2176,
-        "2026-05": 2090
+        "2026-05": 2057
       },
-      "latest_stock": 2090,
-      "defective_stock": 1538,
-      "defective_rate": 0.735885
+      "latest_stock": 2057,
+      "defective_stock": 1289,
+      "defective_rate": 0.626641
     },
     {
       "sku_code": "4571501172252",
@@ -2499,10 +2499,10 @@
         "2026-02": 37,
         "2026-03": 47,
         "2026-04": 59,
-        "2026-05": 67
+        "2026-05": 70
       },
-      "latest_stock": 67,
-      "defective_stock": 67,
+      "latest_stock": 70,
+      "defective_stock": 70,
       "defective_rate": 1.0
     },
     {
@@ -2533,11 +2533,11 @@
         "2026-02": 43,
         "2026-03": 53,
         "2026-04": 64,
-        "2026-05": 69
+        "2026-05": 70
       },
-      "latest_stock": 69,
-      "defective_stock": 45,
-      "defective_rate": 0.652174
+      "latest_stock": 70,
+      "defective_stock": 46,
+      "defective_rate": 0.657143
     },
     {
       "sku_code": "4571501171606",
@@ -2550,11 +2550,11 @@
         "2026-02": 949,
         "2026-03": 932,
         "2026-04": 839,
-        "2026-05": 837
+        "2026-05": 838
       },
-      "latest_stock": 837,
-      "defective_stock": 165,
-      "defective_rate": 0.197133
+      "latest_stock": 838,
+      "defective_stock": 166,
+      "defective_rate": 0.198091
     },
     {
       "sku_code": "4571501171613",
@@ -2570,8 +2570,8 @@
         "2026-05": 54
       },
       "latest_stock": 54,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "defective_stock": 6,
+      "defective_rate": 0.111111
     },
     {
       "sku_code": "4571501173549",
@@ -2584,11 +2584,11 @@
         "2026-02": 975,
         "2026-03": 976,
         "2026-04": 866,
-        "2026-05": 863
+        "2026-05": 861
       },
-      "latest_stock": 863,
-      "defective_stock": 191,
-      "defective_rate": 0.221321
+      "latest_stock": 861,
+      "defective_stock": 189,
+      "defective_rate": 0.219512
     },
     {
       "sku_code": "4571501172665",
@@ -2618,10 +2618,10 @@
         "2026-02": 12,
         "2026-03": 26,
         "2026-04": 24,
-        "2026-05": 24
+        "2026-05": 25
       },
-      "latest_stock": 24,
-      "defective_stock": 24,
+      "latest_stock": 25,
+      "defective_stock": 25,
       "defective_rate": 1.0
     },
     {
@@ -2635,11 +2635,11 @@
         "2026-02": 1040,
         "2026-03": 1032,
         "2026-04": 1026,
-        "2026-05": 1024
+        "2026-05": 1021
       },
-      "latest_stock": 1024,
-      "defective_stock": 1000,
-      "defective_rate": 0.976562
+      "latest_stock": 1021,
+      "defective_stock": 973,
+      "defective_rate": 0.952987
     },
     {
       "sku_code": "4571501172696",
@@ -2652,10 +2652,10 @@
         "2026-02": 317,
         "2026-03": 320,
         "2026-04": 320,
-        "2026-05": 319
+        "2026-05": 321
       },
-      "latest_stock": 319,
-      "defective_stock": 319,
+      "latest_stock": 321,
+      "defective_stock": 321,
       "defective_rate": 1.0
     },
     {
@@ -2669,10 +2669,10 @@
         "2026-02": 1117,
         "2026-03": 1122,
         "2026-04": 1119,
-        "2026-05": 1119
+        "2026-05": 1122
       },
-      "latest_stock": 1119,
-      "defective_stock": 1119,
+      "latest_stock": 1122,
+      "defective_stock": 1122,
       "defective_rate": 1.0
     },
     {
@@ -2686,11 +2686,11 @@
         "2026-02": 911,
         "2026-03": 906,
         "2026-04": 898,
-        "2026-05": 898
+        "2026-05": 902
       },
-      "latest_stock": 898,
-      "defective_stock": 826,
-      "defective_rate": 0.919822
+      "latest_stock": 902,
+      "defective_stock": 902,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501173365",
@@ -2737,11 +2737,11 @@
         "2026-02": 1897,
         "2026-03": 1842,
         "2026-04": 1841,
-        "2026-05": 1831
+        "2026-05": 1819
       },
-      "latest_stock": 1831,
-      "defective_stock": 1759,
-      "defective_rate": 0.960677
+      "latest_stock": 1819,
+      "defective_stock": 1675,
+      "defective_rate": 0.920836
     },
     {
       "sku_code": "4571501173037",
@@ -2754,11 +2754,11 @@
         "2026-02": 3332,
         "2026-03": 3305,
         "2026-04": 3223,
-        "2026-05": 3219
+        "2026-05": 3215
       },
-      "latest_stock": 3219,
-      "defective_stock": 3123,
-      "defective_rate": 0.970177
+      "latest_stock": 3215,
+      "defective_stock": 3167,
+      "defective_rate": 0.98507
     },
     {
       "sku_code": "4571501173044",
@@ -2771,11 +2771,11 @@
         "2026-02": 5237,
         "2026-03": 5214,
         "2026-04": 5093,
-        "2026-05": 5090
+        "2026-05": 5086
       },
-      "latest_stock": 5090,
-      "defective_stock": 5066,
-      "defective_rate": 0.995285
+      "latest_stock": 5086,
+      "defective_stock": 5038,
+      "defective_rate": 0.990562
     },
     {
       "sku_code": "4571501173051",
@@ -2788,11 +2788,11 @@
         "2026-02": 4041,
         "2026-03": 4009,
         "2026-04": 3938,
-        "2026-05": 3929
+        "2026-05": 3916
       },
-      "latest_stock": 3929,
-      "defective_stock": 3881,
-      "defective_rate": 0.987783
+      "latest_stock": 3916,
+      "defective_stock": 3772,
+      "defective_rate": 0.963228
     },
     {
       "sku_code": "4571501173068",
@@ -2805,11 +2805,11 @@
         "2026-02": 1613,
         "2026-03": 1610,
         "2026-04": 1610,
-        "2026-05": 1607
+        "2026-05": 1603
       },
-      "latest_stock": 1607,
-      "defective_stock": 1583,
-      "defective_rate": 0.985065
+      "latest_stock": 1603,
+      "defective_stock": 1555,
+      "defective_rate": 0.970056
     },
     {
       "sku_code": "4571501173075",
@@ -2822,11 +2822,11 @@
         "2026-02": 4249,
         "2026-03": 4223,
         "2026-04": 4226,
-        "2026-05": 4219
+        "2026-05": 4209
       },
-      "latest_stock": 4219,
-      "defective_stock": 4171,
-      "defective_rate": 0.988623
+      "latest_stock": 4209,
+      "defective_stock": 4113,
+      "defective_rate": 0.977192
     },
     {
       "sku_code": "4571501173334",
@@ -2839,11 +2839,11 @@
         "2026-02": 5891,
         "2026-03": 5611,
         "2026-04": 5425,
-        "2026-05": 5412
+        "2026-05": 5410
       },
-      "latest_stock": 5412,
-      "defective_stock": 4260,
-      "defective_rate": 0.78714
+      "latest_stock": 5410,
+      "defective_stock": 4306,
+      "defective_rate": 0.795933
     },
     {
       "sku_code": "4571501173341",
@@ -2856,11 +2856,11 @@
         "2026-02": 9137,
         "2026-03": 8876,
         "2026-04": 8845,
-        "2026-05": 8836
+        "2026-05": 8835
       },
-      "latest_stock": 8836,
-      "defective_stock": 8572,
-      "defective_rate": 0.970122
+      "latest_stock": 8835,
+      "defective_stock": 8571,
+      "defective_rate": 0.970119
     },
     {
       "sku_code": "4571501173594",
@@ -2873,11 +2873,11 @@
         "2026-02": 8397,
         "2026-03": 8253,
         "2026-04": 7864,
-        "2026-05": 7827
+        "2026-05": 7784
       },
-      "latest_stock": 7827,
-      "defective_stock": 7275,
-      "defective_rate": 0.929475
+      "latest_stock": 7784,
+      "defective_stock": 7304,
+      "defective_rate": 0.938335
     },
     {
       "sku_code": "4571501173600",
@@ -2890,11 +2890,11 @@
         "2026-02": 9014,
         "2026-03": 8875,
         "2026-04": 8866,
-        "2026-05": 8833
+        "2026-05": 8820
       },
-      "latest_stock": 8833,
-      "defective_stock": 8641,
-      "defective_rate": 0.978263
+      "latest_stock": 8820,
+      "defective_stock": 8556,
+      "defective_rate": 0.970068
     },
     {
       "sku_code": "4571501173617",
@@ -2907,11 +2907,11 @@
         "2026-02": 8151,
         "2026-03": 8023,
         "2026-04": 7929,
-        "2026-05": 7912
+        "2026-05": 7888
       },
-      "latest_stock": 7912,
-      "defective_stock": 7600,
-      "defective_rate": 0.960566
+      "latest_stock": 7888,
+      "defective_stock": 7624,
+      "defective_rate": 0.966531
     },
     {
       "sku_code": "4571501173747",
@@ -2924,9 +2924,9 @@
         "2026-02": 2,
         "2026-03": 5,
         "2026-04": 7,
-        "2026-05": 2
+        "2026-05": 6
       },
-      "latest_stock": 2,
+      "latest_stock": 6,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -2941,11 +2941,11 @@
         "2026-02": 3788,
         "2026-03": 3677,
         "2026-04": 3563,
-        "2026-05": 3549
+        "2026-05": 3555
       },
-      "latest_stock": 3549,
-      "defective_stock": 2829,
-      "defective_rate": 0.797126
+      "latest_stock": 3555,
+      "defective_stock": 3315,
+      "defective_rate": 0.932489
     },
     {
       "sku_code": "4571501173792",
@@ -2975,11 +2975,11 @@
         "2026-02": 1158,
         "2026-03": 1160,
         "2026-04": 1161,
-        "2026-05": 1137
+        "2026-05": 1136
       },
-      "latest_stock": 1137,
-      "defective_stock": 969,
-      "defective_rate": 0.852243
+      "latest_stock": 1136,
+      "defective_stock": 968,
+      "defective_rate": 0.852113
     },
     {
       "sku_code": "4571501173952",
@@ -2992,11 +2992,11 @@
         "2026-02": 502,
         "2026-03": 503,
         "2026-04": 500,
-        "2026-05": 500
+        "2026-05": 499
       },
-      "latest_stock": 500,
-      "defective_stock": 476,
-      "defective_rate": 0.952
+      "latest_stock": 499,
+      "defective_stock": 475,
+      "defective_rate": 0.951904
     },
     {
       "sku_code": "4571501173969",
@@ -3012,8 +3012,8 @@
         "2026-05": 808
       },
       "latest_stock": 808,
-      "defective_stock": 760,
-      "defective_rate": 0.940594
+      "defective_stock": 784,
+      "defective_rate": 0.970297
     },
     {
       "sku_code": "4571501173976",
@@ -3043,11 +3043,11 @@
         "2026-02": 682,
         "2026-03": 666,
         "2026-04": 656,
-        "2026-05": 653
+        "2026-05": 645
       },
-      "latest_stock": 653,
-      "defective_stock": 605,
-      "defective_rate": 0.926493
+      "latest_stock": 645,
+      "defective_stock": 549,
+      "defective_rate": 0.851163
     },
     {
       "sku_code": "4571501173990",
@@ -3077,11 +3077,11 @@
         "2026-02": 1090,
         "2026-03": 810,
         "2026-04": 751,
-        "2026-05": 719
+        "2026-05": 702
       },
-      "latest_stock": 719,
-      "defective_stock": 287,
-      "defective_rate": 0.399166
+      "latest_stock": 702,
+      "defective_stock": 174,
+      "defective_rate": 0.247863
     },
     {
       "sku_code": "4571501174126",
@@ -3094,9 +3094,9 @@
         "2026-02": 145,
         "2026-03": 111,
         "2026-04": 108,
-        "2026-05": 100
+        "2026-05": 91
       },
-      "latest_stock": 100,
+      "latest_stock": 91,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3111,9 +3111,9 @@
         "2026-02": 167,
         "2026-03": 91,
         "2026-04": 68,
-        "2026-05": 62
+        "2026-05": 55
       },
-      "latest_stock": 62,
+      "latest_stock": 55,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3128,11 +3128,11 @@
         "2026-02": 4402,
         "2026-03": 4181,
         "2026-04": 4026,
-        "2026-05": 4006
+        "2026-05": 3948
       },
-      "latest_stock": 4006,
-      "defective_stock": 3790,
-      "defective_rate": 0.946081
+      "latest_stock": 3948,
+      "defective_stock": 3420,
+      "defective_rate": 0.866261
     },
     {
       "sku_code": "4571501175918",
@@ -3145,11 +3145,11 @@
         "2026-02": 5147,
         "2026-03": 4745,
         "2026-04": 4411,
-        "2026-05": 4380
+        "2026-05": 4377
       },
-      "latest_stock": 4380,
-      "defective_stock": 3084,
-      "defective_rate": 0.70411
+      "latest_stock": 4377,
+      "defective_stock": 3249,
+      "defective_rate": 0.742289
     },
     {
       "sku_code": "4571501175925",
@@ -3162,11 +3162,11 @@
         "2026-02": 1679,
         "2026-03": 1434,
         "2026-04": 1348,
-        "2026-05": 1339
+        "2026-05": 1341
       },
-      "latest_stock": 1339,
-      "defective_stock": 1003,
-      "defective_rate": 0.749066
+      "latest_stock": 1341,
+      "defective_stock": 1005,
+      "defective_rate": 0.749441
     },
     {
       "sku_code": "4571501175932",
@@ -3179,11 +3179,11 @@
         "2026-02": 6706,
         "2026-03": 6478,
         "2026-04": 6382,
-        "2026-05": 6368
+        "2026-05": 6367
       },
-      "latest_stock": 6368,
-      "defective_stock": 5912,
-      "defective_rate": 0.928392
+      "latest_stock": 6367,
+      "defective_stock": 5935,
+      "defective_rate": 0.93215
     },
     {
       "sku_code": "4580805230278",
@@ -3204,11 +3204,11 @@
         "2026-02": 2687,
         "2026-03": 2596,
         "2026-04": 2240,
-        "2026-05": 2212
+        "2026-05": 2213
       },
-      "latest_stock": 2212,
-      "defective_stock": 1564,
-      "defective_rate": 0.707052
+      "latest_stock": 2213,
+      "defective_stock": 1637,
+      "defective_rate": 0.73972
     },
     {
       "sku_code": "4571501174317",
@@ -3221,11 +3221,11 @@
         "2026-02": 574,
         "2026-03": 650,
         "2026-04": 575,
-        "2026-05": 559
+        "2026-05": 556
       },
-      "latest_stock": 559,
-      "defective_stock": 151,
-      "defective_rate": 0.270125
+      "latest_stock": 556,
+      "defective_stock": 124,
+      "defective_rate": 0.223022
     },
     {
       "sku_code": "4571501174324",
@@ -3255,9 +3255,9 @@
         "2026-02": 1184,
         "2026-03": 737,
         "2026-04": 607,
-        "2026-05": 543
+        "2026-05": 484
       },
-      "latest_stock": 543,
+      "latest_stock": 484,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3289,11 +3289,11 @@
         "2026-02": 611,
         "2026-03": 598,
         "2026-04": 585,
-        "2026-05": 584
+        "2026-05": 570
       },
-      "latest_stock": 584,
-      "defective_stock": 560,
-      "defective_rate": 0.958904
+      "latest_stock": 570,
+      "defective_stock": 474,
+      "defective_rate": 0.831579
     },
     {
       "sku_code": "4571501174874",
@@ -3306,11 +3306,11 @@
         "2026-02": 515,
         "2026-03": 515,
         "2026-04": 514,
-        "2026-05": 514
+        "2026-05": 506
       },
-      "latest_stock": 514,
-      "defective_stock": 514,
-      "defective_rate": 1.0
+      "latest_stock": 506,
+      "defective_stock": 458,
+      "defective_rate": 0.905138
     },
     {
       "sku_code": "4571501174881_99",
@@ -3326,8 +3326,8 @@
         "2026-05": 612
       },
       "latest_stock": 612,
-      "defective_stock": 132,
-      "defective_rate": 0.215686
+      "defective_stock": 156,
+      "defective_rate": 0.254902
     },
     {
       "sku_code": "4571501174898_99",
@@ -3340,9 +3340,9 @@
         "2026-02": 968,
         "2026-03": 922,
         "2026-04": 519,
-        "2026-05": 511
+        "2026-05": 518
       },
-      "latest_stock": 511,
+      "latest_stock": 518,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3374,11 +3374,11 @@
         "2026-02": 6861,
         "2026-03": 6696,
         "2026-04": 6221,
-        "2026-05": 6202
+        "2026-05": 6182
       },
-      "latest_stock": 6202,
-      "defective_stock": 5458,
-      "defective_rate": 0.880039
+      "latest_stock": 6182,
+      "defective_stock": 5510,
+      "defective_rate": 0.891297
     },
     {
       "sku_code": "4571501174898",
@@ -3391,11 +3391,11 @@
         "2026-02": 5776,
         "2026-03": 5590,
         "2026-04": 5052,
-        "2026-05": 5000
+        "2026-05": 4972
       },
-      "latest_stock": 5000,
-      "defective_stock": 3848,
-      "defective_rate": 0.7696
+      "latest_stock": 4972,
+      "defective_stock": 3892,
+      "defective_rate": 0.782784
     },
     {
       "sku_code": "4571501174904",
@@ -3408,11 +3408,11 @@
         "2026-02": 5559,
         "2026-03": 5390,
         "2026-04": 4880,
-        "2026-05": 4865
+        "2026-05": 4824
       },
-      "latest_stock": 4865,
-      "defective_stock": 4073,
-      "defective_rate": 0.837205
+      "latest_stock": 4824,
+      "defective_stock": 4080,
+      "defective_rate": 0.845771
     },
     {
       "sku_code": "4571501177530",
@@ -3425,11 +3425,11 @@
         "2026-02": 6946,
         "2026-03": 2850,
         "2026-04": 2343,
-        "2026-05": 2348
+        "2026-05": 2327
       },
-      "latest_stock": 2348,
-      "defective_stock": 1292,
-      "defective_rate": 0.550256
+      "latest_stock": 2327,
+      "defective_stock": 1295,
+      "defective_rate": 0.556511
     },
     {
       "sku_code": "4571501177547",
@@ -3442,11 +3442,11 @@
         "2026-02": 8966,
         "2026-03": 4841,
         "2026-04": 4671,
-        "2026-05": 4656
+        "2026-05": 4676
       },
-      "latest_stock": 4656,
-      "defective_stock": 3696,
-      "defective_rate": 0.793814
+      "latest_stock": 4676,
+      "defective_stock": 3740,
+      "defective_rate": 0.799829
     },
     {
       "sku_code": "4571501177554",
@@ -3459,11 +3459,11 @@
         "2026-02": 7568,
         "2026-03": 7457,
         "2026-04": 7242,
-        "2026-05": 7227
+        "2026-05": 7192
       },
-      "latest_stock": 7227,
-      "defective_stock": 6123,
-      "defective_rate": 0.84724
+      "latest_stock": 7192,
+      "defective_stock": 5728,
+      "defective_rate": 0.79644
     },
     {
       "sku_code": "4571501174676",
@@ -3476,11 +3476,11 @@
         "2026-02": 2628,
         "2026-03": 2581,
         "2026-04": 2555,
-        "2026-05": 2505
+        "2026-05": 2499
       },
-      "latest_stock": 2505,
-      "defective_stock": 1953,
-      "defective_rate": 0.779641
+      "latest_stock": 2499,
+      "defective_stock": 1995,
+      "defective_rate": 0.798319
     },
     {
       "sku_code": "4571501174683",
@@ -3493,9 +3493,9 @@
         "2026-02": 2497,
         "2026-03": 2014,
         "2026-04": 1598,
-        "2026-05": 1445
+        "2026-05": 1419
       },
-      "latest_stock": 1445,
+      "latest_stock": 1419,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3510,9 +3510,9 @@
         "2026-02": 1548,
         "2026-03": 1483,
         "2026-04": 1221,
-        "2026-05": 1190
+        "2026-05": 1189
       },
-      "latest_stock": 1190,
+      "latest_stock": 1189,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3527,11 +3527,11 @@
         "2026-02": 4760,
         "2026-03": 4488,
         "2026-04": 4207,
-        "2026-05": 4131
+        "2026-05": 4128
       },
-      "latest_stock": 4131,
-      "defective_stock": 2715,
-      "defective_rate": 0.657226
+      "latest_stock": 4128,
+      "defective_stock": 2856,
+      "defective_rate": 0.69186
     },
     {
       "sku_code": "4571501176953",
@@ -3544,9 +3544,9 @@
         "2026-02": 4588,
         "2026-03": 360,
         "2026-04": 177,
-        "2026-05": 120
+        "2026-05": 117
       },
-      "latest_stock": 120,
+      "latest_stock": 117,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3578,11 +3578,11 @@
         "2026-02": 7184,
         "2026-03": 7019,
         "2026-04": 6867,
-        "2026-05": 6811
+        "2026-05": 6785
       },
-      "latest_stock": 6811,
-      "defective_stock": 6019,
-      "defective_rate": 0.883718
+      "latest_stock": 6785,
+      "defective_stock": 5897,
+      "defective_rate": 0.869123
     },
     {
       "sku_code": "4571501174768",
@@ -3595,11 +3595,11 @@
         "2026-02": 1511,
         "2026-03": 1247,
         "2026-04": 1252,
-        "2026-05": 1250
+        "2026-05": 1246
       },
-      "latest_stock": 1250,
-      "defective_stock": 1226,
-      "defective_rate": 0.9808
+      "latest_stock": 1246,
+      "defective_stock": 1150,
+      "defective_rate": 0.922953
     },
     {
       "sku_code": "4571501174775",
@@ -3612,10 +3612,10 @@
         "2026-02": 192,
         "2026-03": 96,
         "2026-04": 104,
-        "2026-05": 104
+        "2026-05": 111
       },
-      "latest_stock": 104,
-      "defective_stock": 104,
+      "latest_stock": 111,
+      "defective_stock": 111,
       "defective_rate": 1.0
     },
     {
@@ -3629,11 +3629,11 @@
         "2026-02": 112,
         "2026-03": 111,
         "2026-04": 122,
-        "2026-05": 120
+        "2026-05": 124
       },
-      "latest_stock": 120,
-      "defective_stock": 96,
-      "defective_rate": 0.8
+      "latest_stock": 124,
+      "defective_stock": 100,
+      "defective_rate": 0.806452
     },
     {
       "sku_code": "4571501174799",
@@ -3646,11 +3646,11 @@
         "2026-02": 7332,
         "2026-03": 6865,
         "2026-04": 6306,
-        "2026-05": 6115
+        "2026-05": 5758
       },
-      "latest_stock": 6115,
-      "defective_stock": 2467,
-      "defective_rate": 0.403434
+      "latest_stock": 5758,
+      "defective_stock": 742,
+      "defective_rate": 0.128864
     },
     {
       "sku_code": "4571501174805",
@@ -3663,11 +3663,11 @@
         "2026-02": 8416,
         "2026-03": 7628,
         "2026-04": 6923,
-        "2026-05": 6766
+        "2026-05": 6648
       },
-      "latest_stock": 6766,
-      "defective_stock": 2350,
-      "defective_rate": 0.347325
+      "latest_stock": 6648,
+      "defective_stock": 3456,
+      "defective_rate": 0.519856
     },
     {
       "sku_code": "4571501178056",
@@ -3680,11 +3680,11 @@
         "2026-02": 5098,
         "2026-03": 4637,
         "2026-04": 4335,
-        "2026-05": 4254
+        "2026-05": 4229
       },
-      "latest_stock": 4254,
-      "defective_stock": 3246,
-      "defective_rate": 0.763047
+      "latest_stock": 4229,
+      "defective_stock": 3245,
+      "defective_rate": 0.767321
     },
     {
       "sku_code": "4571501178124",
@@ -3697,11 +3697,11 @@
         "2026-02": 7575,
         "2026-03": 7469,
         "2026-04": 7181,
-        "2026-05": 7122
+        "2026-05": 7097
       },
-      "latest_stock": 7122,
-      "defective_stock": 6162,
-      "defective_rate": 0.865206
+      "latest_stock": 7097,
+      "defective_stock": 6161,
+      "defective_rate": 0.868113
     },
     {
       "sku_code": "4571501175147",
@@ -3714,9 +3714,9 @@
         "2026-02": 3545,
         "2026-03": 3095,
         "2026-04": 998,
-        "2026-05": 944
+        "2026-05": 939
       },
-      "latest_stock": 944,
+      "latest_stock": 939,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3731,11 +3731,11 @@
         "2026-02": 3112,
         "2026-03": 2876,
         "2026-04": 2190,
-        "2026-05": 2158
+        "2026-05": 2127
       },
-      "latest_stock": 2158,
-      "defective_stock": 838,
-      "defective_rate": 0.388323
+      "latest_stock": 2127,
+      "defective_stock": 735,
+      "defective_rate": 0.345557
     },
     {
       "sku_code": "4571501176045",
@@ -3748,11 +3748,11 @@
         "2026-02": 2597,
         "2026-03": 2334,
         "2026-04": 1722,
-        "2026-05": 1674
+        "2026-05": 1624
       },
-      "latest_stock": 1674,
-      "defective_stock": 354,
-      "defective_rate": 0.21147
+      "latest_stock": 1624,
+      "defective_stock": 160,
+      "defective_rate": 0.098522
     },
     {
       "sku_code": "4571501176052",
@@ -3765,9 +3765,9 @@
         "2026-02": 1023,
         "2026-03": 789,
         "2026-04": 371,
-        "2026-05": 329
+        "2026-05": 299
       },
-      "latest_stock": 329,
+      "latest_stock": 299,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3782,11 +3782,11 @@
         "2026-02": 2229,
         "2026-03": 1955,
         "2026-04": 1412,
-        "2026-05": 1378
+        "2026-05": 1358
       },
-      "latest_stock": 1378,
-      "defective_stock": 202,
-      "defective_rate": 0.146589
+      "latest_stock": 1358,
+      "defective_stock": 62,
+      "defective_rate": 0.045655
     },
     {
       "sku_code": "4571501176076",
@@ -3799,11 +3799,11 @@
         "2026-02": 3678,
         "2026-03": 3361,
         "2026-04": 2943,
-        "2026-05": 2910
+        "2026-05": 2901
       },
-      "latest_stock": 2910,
-      "defective_stock": 2454,
-      "defective_rate": 0.843299
+      "latest_stock": 2901,
+      "defective_stock": 2421,
+      "defective_rate": 0.83454
     },
     {
       "sku_code": "4571501176083",
@@ -3816,11 +3816,11 @@
         "2026-02": 3908,
         "2026-03": 3645,
         "2026-04": 3236,
-        "2026-05": 3232
+        "2026-05": 3225
       },
-      "latest_stock": 3232,
-      "defective_stock": 3016,
-      "defective_rate": 0.933168
+      "latest_stock": 3225,
+      "defective_stock": 2985,
+      "defective_rate": 0.925581
     },
     {
       "sku_code": "4571501176373",
@@ -3833,9 +3833,9 @@
         "2026-02": 975,
         "2026-03": 575,
         "2026-04": 325,
-        "2026-05": 268
+        "2026-05": 266
       },
-      "latest_stock": 268,
+      "latest_stock": 266,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3867,9 +3867,9 @@
         "2026-02": 649,
         "2026-03": 659,
         "2026-04": 115,
-        "2026-05": 115
+        "2026-05": 114
       },
-      "latest_stock": 115,
+      "latest_stock": 114,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3884,11 +3884,11 @@
         "2026-02": 6701,
         "2026-03": 6506,
         "2026-04": 5955,
-        "2026-05": 5912
+        "2026-05": 5857
       },
-      "latest_stock": 5912,
-      "defective_stock": 5048,
-      "defective_rate": 0.853857
+      "latest_stock": 5857,
+      "defective_stock": 4657,
+      "defective_rate": 0.795117
     },
     {
       "sku_code": "4571501176564",
@@ -3901,11 +3901,11 @@
         "2026-02": 3013,
         "2026-03": 2815,
         "2026-04": 2373,
-        "2026-05": 2362
+        "2026-05": 2320
       },
-      "latest_stock": 2362,
-      "defective_stock": 1954,
-      "defective_rate": 0.827265
+      "latest_stock": 2320,
+      "defective_stock": 1672,
+      "defective_rate": 0.72069
     },
     {
       "sku_code": "4571501176571",
@@ -3918,9 +3918,9 @@
         "2026-02": 203,
         "2026-03": 202,
         "2026-04": 43,
-        "2026-05": 43
+        "2026-05": 46
       },
-      "latest_stock": 43,
+      "latest_stock": 46,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -3935,11 +3935,11 @@
         "2026-02": 7583,
         "2026-03": 7055,
         "2026-04": 6094,
-        "2026-05": 5960
+        "2026-05": 5792
       },
-      "latest_stock": 5960,
-      "defective_stock": 1016,
-      "defective_rate": 0.17047
+      "latest_stock": 5792,
+      "defective_stock": 1904,
+      "defective_rate": 0.328729
     },
     {
       "sku_code": "4571501176595",
@@ -3952,11 +3952,11 @@
         "2026-02": 7455,
         "2026-03": 6976,
         "2026-04": 6272,
-        "2026-05": 6166
+        "2026-05": 6095
       },
-      "latest_stock": 6166,
-      "defective_stock": 2662,
-      "defective_rate": 0.431722
+      "latest_stock": 6095,
+      "defective_stock": 3431,
+      "defective_rate": 0.56292
     },
     {
       "sku_code": "4571501176755",
@@ -3969,11 +3969,11 @@
         "2026-02": 3584,
         "2026-03": 3346,
         "2026-04": 3169,
-        "2026-05": 3111
+        "2026-05": 3099
       },
-      "latest_stock": 3111,
-      "defective_stock": 1719,
-      "defective_rate": 0.552555
+      "latest_stock": 3099,
+      "defective_stock": 1587,
+      "defective_rate": 0.512101
     },
     {
       "sku_code": "4571501176762",
@@ -3986,11 +3986,11 @@
         "2026-02": 4696,
         "2026-03": 4511,
         "2026-04": 4294,
-        "2026-05": 4258
+        "2026-05": 4231
       },
-      "latest_stock": 4258,
-      "defective_stock": 2890,
-      "defective_rate": 0.678722
+      "latest_stock": 4231,
+      "defective_stock": 2695,
+      "defective_rate": 0.636965
     },
     {
       "sku_code": "4571501176779",
@@ -4003,11 +4003,11 @@
         "2026-02": 6962,
         "2026-03": 6847,
         "2026-04": 6588,
-        "2026-05": 6583
+        "2026-05": 6559
       },
-      "latest_stock": 6583,
-      "defective_stock": 5023,
-      "defective_rate": 0.763026
+      "latest_stock": 6559,
+      "defective_stock": 4879,
+      "defective_rate": 0.743863
     },
     {
       "sku_code": "4571501176786",
@@ -4020,11 +4020,11 @@
         "2026-02": 3400,
         "2026-03": 3239,
         "2026-04": 2970,
-        "2026-05": 2929
+        "2026-05": 2884
       },
-      "latest_stock": 2929,
-      "defective_stock": 1177,
-      "defective_rate": 0.401844
+      "latest_stock": 2884,
+      "defective_stock": 868,
+      "defective_rate": 0.300971
     },
     {
       "sku_code": "4571501176830",
@@ -4037,11 +4037,11 @@
         "2026-02": 3534,
         "2026-03": 3399,
         "2026-04": 3033,
-        "2026-05": 2960
+        "2026-05": 2933
       },
-      "latest_stock": 2960,
-      "defective_stock": 1016,
-      "defective_rate": 0.343243
+      "latest_stock": 2933,
+      "defective_stock": 845,
+      "defective_rate": 0.288101
     },
     {
       "sku_code": "4571501176847",
@@ -4054,9 +4054,9 @@
         "2026-02": 2007,
         "2026-03": 1856,
         "2026-04": 1318,
-        "2026-05": 1227
+        "2026-05": 1220
       },
-      "latest_stock": 1227,
+      "latest_stock": 1220,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4071,9 +4071,9 @@
         "2026-02": 749,
         "2026-03": 727,
         "2026-04": 296,
-        "2026-05": 210
+        "2026-05": 209
       },
-      "latest_stock": 210,
+      "latest_stock": 209,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4088,11 +4088,11 @@
         "2026-02": 2960,
         "2026-03": 3039,
         "2026-04": 2894,
-        "2026-05": 2882
+        "2026-05": 2860
       },
-      "latest_stock": 2882,
-      "defective_stock": 2042,
-      "defective_rate": 0.708536
+      "latest_stock": 2860,
+      "defective_stock": 1876,
+      "defective_rate": 0.655944
     },
     {
       "sku_code": "4571501178889",
@@ -4108,8 +4108,8 @@
         "2026-05": 3840
       },
       "latest_stock": 3840,
-      "defective_stock": 3504,
-      "defective_rate": 0.9125
+      "defective_stock": 3528,
+      "defective_rate": 0.91875
     },
     {
       "sku_code": "4571501178896",
@@ -4122,11 +4122,11 @@
         "2026-02": 8724,
         "2026-03": 4479,
         "2026-04": 4263,
-        "2026-05": 4245
+        "2026-05": 4243
       },
-      "latest_stock": 4245,
-      "defective_stock": 3861,
-      "defective_rate": 0.909541
+      "latest_stock": 4243,
+      "defective_stock": 3907,
+      "defective_rate": 0.920811
     },
     {
       "sku_code": "4571501177127",
@@ -4139,9 +4139,9 @@
         "2026-02": 6069,
         "2026-03": 5256,
         "2026-04": 2260,
-        "2026-05": 1971
+        "2026-05": 1934
       },
-      "latest_stock": 1971,
+      "latest_stock": 1934,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4156,9 +4156,9 @@
         "2026-02": 1776,
         "2026-03": 893,
         "2026-04": 3187,
-        "2026-05": 3043
+        "2026-05": 3019
       },
-      "latest_stock": 3043,
+      "latest_stock": 3019,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4173,9 +4173,9 @@
         "2026-02": 5612,
         "2026-03": 4491,
         "2026-04": 7413,
-        "2026-05": 7060
+        "2026-05": 7004
       },
-      "latest_stock": 7060,
+      "latest_stock": 7004,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4190,11 +4190,11 @@
         "2026-02": 3564,
         "2026-03": 3265,
         "2026-04": 2784,
-        "2026-05": 2784
+        "2026-05": 2626
       },
-      "latest_stock": 2784,
-      "defective_stock": 552,
-      "defective_rate": 0.198276
+      "latest_stock": 2626,
+      "defective_stock": 274,
+      "defective_rate": 0.104341
     },
     {
       "sku_code": "4571501177462",
@@ -4207,11 +4207,11 @@
         "2026-02": 3586,
         "2026-03": 3435,
         "2026-04": 3256,
-        "2026-05": 3250
+        "2026-05": 3214
       },
-      "latest_stock": 3250,
-      "defective_stock": 2530,
-      "defective_rate": 0.778462
+      "latest_stock": 3214,
+      "defective_stock": 2302,
+      "defective_rate": 0.716241
     },
     {
       "sku_code": "4571501177455",
@@ -4224,11 +4224,11 @@
         "2026-02": 3383,
         "2026-03": 3186,
         "2026-04": 3070,
-        "2026-05": 3063
+        "2026-05": 2984
       },
-      "latest_stock": 3063,
-      "defective_stock": 2463,
-      "defective_rate": 0.804114
+      "latest_stock": 2984,
+      "defective_stock": 2024,
+      "defective_rate": 0.678284
     },
     {
       "sku_code": "4571501178308",
@@ -4241,11 +4241,11 @@
         "2026-02": 3188,
         "2026-03": 2933,
         "2026-04": 2792,
-        "2026-05": 2787
+        "2026-05": 2738
       },
-      "latest_stock": 2787,
-      "defective_stock": 1971,
-      "defective_rate": 0.707212
+      "latest_stock": 2738,
+      "defective_stock": 1706,
+      "defective_rate": 0.623083
     },
     {
       "sku_code": "4571501178315",
@@ -4258,11 +4258,11 @@
         "2026-02": 3453,
         "2026-03": 3286,
         "2026-04": 3211,
-        "2026-05": 3207
+        "2026-05": 3176
       },
-      "latest_stock": 3207,
-      "defective_stock": 2919,
-      "defective_rate": 0.910196
+      "latest_stock": 3176,
+      "defective_stock": 2864,
+      "defective_rate": 0.901763
     },
     {
       "sku_code": "4571501177479",
@@ -4275,11 +4275,11 @@
         "2026-02": 3133,
         "2026-03": 3008,
         "2026-04": 2828,
-        "2026-05": 2821
+        "2026-05": 2769
       },
-      "latest_stock": 2821,
-      "defective_stock": 2197,
-      "defective_rate": 0.778802
+      "latest_stock": 2769,
+      "defective_stock": 1905,
+      "defective_rate": 0.687974
     },
     {
       "sku_code": "4571501177486",
@@ -4292,11 +4292,11 @@
         "2026-02": 6736,
         "2026-03": 6577,
         "2026-04": 6290,
-        "2026-05": 6292
+        "2026-05": 6267
       },
-      "latest_stock": 6292,
-      "defective_stock": 4996,
-      "defective_rate": 0.794024
+      "latest_stock": 6267,
+      "defective_stock": 5451,
+      "defective_rate": 0.869794
     },
     {
       "sku_code": "4571501177493",
@@ -4309,11 +4309,11 @@
         "2026-02": 6780,
         "2026-03": 6590,
         "2026-04": 6524,
-        "2026-05": 6519
+        "2026-05": 6448
       },
-      "latest_stock": 6519,
-      "defective_stock": 6159,
-      "defective_rate": 0.944777
+      "latest_stock": 6448,
+      "defective_stock": 5680,
+      "defective_rate": 0.880893
     },
     {
       "sku_code": "4571501177691",
@@ -4326,9 +4326,9 @@
         "2026-02": 2504,
         "2026-03": 1338,
         "2026-04": 8249,
-        "2026-05": 6875
+        "2026-05": 6606
       },
-      "latest_stock": 6875,
+      "latest_stock": 6606,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4343,9 +4343,9 @@
         "2026-02": 2625,
         "2026-03": 1504,
         "2026-04": 6768,
-        "2026-05": 6312
+        "2026-05": 6095
       },
-      "latest_stock": 6312,
+      "latest_stock": 6095,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4360,9 +4360,9 @@
         "2026-02": 3212,
         "2026-03": 1382,
         "2026-04": 8752,
-        "2026-05": 7950
+        "2026-05": 7734
       },
-      "latest_stock": 7950,
+      "latest_stock": 7734,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4377,9 +4377,9 @@
         "2026-02": 1776,
         "2026-03": 795,
         "2026-04": 5452,
-        "2026-05": 5087
+        "2026-05": 4745
       },
-      "latest_stock": 5087,
+      "latest_stock": 4745,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4394,9 +4394,9 @@
         "2026-02": 2281,
         "2026-03": 1374,
         "2026-04": 9074,
-        "2026-05": 8738
+        "2026-05": 8523
       },
-      "latest_stock": 8738,
+      "latest_stock": 8523,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4411,11 +4411,11 @@
         "2026-02": 5861,
         "2026-03": 5331,
         "2026-04": 4849,
-        "2026-05": 4781
+        "2026-05": 4732
       },
-      "latest_stock": 4781,
-      "defective_stock": 2453,
-      "defective_rate": 0.513073
+      "latest_stock": 4732,
+      "defective_stock": 3532,
+      "defective_rate": 0.746407
     },
     {
       "sku_code": "4571501178223",
@@ -4428,9 +4428,9 @@
         "2026-02": 6200,
         "2026-03": 4161,
         "2026-04": 1064,
-        "2026-05": 873
+        "2026-05": 586
       },
-      "latest_stock": 873,
+      "latest_stock": 586,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4445,9 +4445,9 @@
         "2026-02": 7367,
         "2026-03": 5154,
         "2026-04": 872,
-        "2026-05": 704
+        "2026-05": 459
       },
-      "latest_stock": 704,
+      "latest_stock": 459,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4462,9 +4462,9 @@
         "2026-02": 5150,
         "2026-03": 2641,
         "2026-04": 130,
-        "2026-05": 132
+        "2026-05": 120
       },
-      "latest_stock": 132,
+      "latest_stock": 120,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4479,11 +4479,11 @@
         "2026-02": 5219,
         "2026-03": 3966,
         "2026-04": 4574,
-        "2026-05": 4453
+        "2026-05": 4369
       },
-      "latest_stock": 4453,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 4369,
+      "defective_stock": 1417,
+      "defective_rate": 0.324331
     },
     {
       "sku_code": "4571501178254_B",
@@ -4507,9 +4507,9 @@
         "2026-02": 2398,
         "2026-03": 2031,
         "2026-04": 838,
-        "2026-05": 826
+        "2026-05": 1788
       },
-      "latest_stock": 826,
+      "latest_stock": 1788,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4524,9 +4524,9 @@
         "2026-02": 640,
         "2026-03": 658,
         "2026-04": 172,
-        "2026-05": 180
+        "2026-05": 189
       },
-      "latest_stock": 180,
+      "latest_stock": 189,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4541,9 +4541,9 @@
         "2026-02": 436,
         "2026-03": 541,
         "2026-04": 82,
-        "2026-05": 91
+        "2026-05": 99
       },
-      "latest_stock": 91,
+      "latest_stock": 99,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4558,11 +4558,11 @@
         "2026-02": 232,
         "2026-03": 267,
         "2026-04": 49,
-        "2026-05": 34
+        "2026-05": 10029
       },
-      "latest_stock": 34,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 10029,
+      "defective_stock": 9717,
+      "defective_rate": 0.96889
     },
     {
       "sku_code": "4571501178537",
@@ -4575,11 +4575,11 @@
         "2026-02": 6738,
         "2026-03": 6543,
         "2026-04": 5222,
-        "2026-05": 5179
+        "2026-05": 5163
       },
-      "latest_stock": 5179,
-      "defective_stock": 1411,
-      "defective_rate": 0.272446
+      "latest_stock": 5163,
+      "defective_stock": 1587,
+      "defective_rate": 0.307379
     },
     {
       "sku_code": "4571501178544",
@@ -4592,11 +4592,11 @@
         "2026-02": 1464,
         "2026-03": 1477,
         "2026-04": 1165,
-        "2026-05": 1194
+        "2026-05": 1198
       },
-      "latest_stock": 1194,
-      "defective_stock": 450,
-      "defective_rate": 0.376884
+      "latest_stock": 1198,
+      "defective_stock": 454,
+      "defective_rate": 0.378965
     },
     {
       "sku_code": "4571501178551",
@@ -4609,9 +4609,9 @@
         "2026-02": 909,
         "2026-03": 1730,
         "2026-04": 685,
-        "2026-05": 689
+        "2026-05": 715
       },
-      "latest_stock": 689,
+      "latest_stock": 715,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4626,9 +4626,9 @@
         "2026-02": 1800,
         "2026-03": 2284,
         "2026-04": 1160,
-        "2026-05": 1193
+        "2026-05": 1196
       },
-      "latest_stock": 1193,
+      "latest_stock": 1196,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4660,9 +4660,9 @@
         "2026-02": 3724,
         "2026-03": 2420,
         "2026-04": 1513,
-        "2026-05": 9338
+        "2026-05": 9323
       },
-      "latest_stock": 9338,
+      "latest_stock": 9323,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4677,9 +4677,9 @@
         "2026-02": 4238,
         "2026-03": 2461,
         "2026-04": 1021,
-        "2026-05": 9591
+        "2026-05": 9458
       },
-      "latest_stock": 9591,
+      "latest_stock": 9458,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4694,9 +4694,9 @@
         "2026-02": 4532,
         "2026-03": 2797,
         "2026-04": 964,
-        "2026-05": 7398
+        "2026-05": 7283
       },
-      "latest_stock": 7398,
+      "latest_stock": 7283,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4711,9 +4711,9 @@
         "2026-02": 3241,
         "2026-03": 829,
         "2026-04": 369,
-        "2026-05": 9592
+        "2026-05": 8819
       },
-      "latest_stock": 9592,
+      "latest_stock": 8819,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4728,11 +4728,11 @@
         "2026-02": 225,
         "2026-03": 247,
         "2026-04": 246,
-        "2026-05": 253
+        "2026-05": 251
       },
-      "latest_stock": 253,
-      "defective_stock": 205,
-      "defective_rate": 0.810277
+      "latest_stock": 251,
+      "defective_stock": 179,
+      "defective_rate": 0.713147
     },
     {
       "sku_code": "4571501178179",
@@ -4745,11 +4745,11 @@
         "2026-02": 419,
         "2026-03": 438,
         "2026-04": 433,
-        "2026-05": 443
+        "2026-05": 442
       },
-      "latest_stock": 443,
-      "defective_stock": 227,
-      "defective_rate": 0.512415
+      "latest_stock": 442,
+      "defective_stock": 322,
+      "defective_rate": 0.728507
     },
     {
       "sku_code": "4571501178186",
@@ -4779,11 +4779,11 @@
         "2026-02": 3550,
         "2026-03": 3649,
         "2026-04": 3598,
-        "2026-05": 3597
+        "2026-05": 3588
       },
-      "latest_stock": 3597,
-      "defective_stock": 3165,
-      "defective_rate": 0.8799
+      "latest_stock": 3588,
+      "defective_stock": 3348,
+      "defective_rate": 0.93311
     },
     {
       "sku_code": "4571501178148",
@@ -4796,11 +4796,11 @@
         "2026-02": 2810,
         "2026-03": 2813,
         "2026-04": 2793,
-        "2026-05": 2786
+        "2026-05": 2753
       },
-      "latest_stock": 2786,
-      "defective_stock": 2522,
-      "defective_rate": 0.90524
+      "latest_stock": 2753,
+      "defective_stock": 2369,
+      "defective_rate": 0.860516
     },
     {
       "sku_code": "4571501178155",
@@ -4813,11 +4813,11 @@
         "2026-02": 1420,
         "2026-03": 1037,
         "2026-04": 907,
-        "2026-05": 863
+        "2026-05": 851
       },
-      "latest_stock": 863,
-      "defective_stock": 263,
-      "defective_rate": 0.304751
+      "latest_stock": 851,
+      "defective_stock": 299,
+      "defective_rate": 0.351351
     },
     {
       "sku_code": "4571501179114",
@@ -4830,11 +4830,11 @@
         "2026-02": 3341,
         "2026-03": 2800,
         "2026-04": 2432,
-        "2026-05": 2429
+        "2026-05": 2359
       },
-      "latest_stock": 2429,
-      "defective_stock": 533,
-      "defective_rate": 0.219432
+      "latest_stock": 2359,
+      "defective_stock": 271,
+      "defective_rate": 0.114879
     },
     {
       "sku_code": "4571501179121",
@@ -4847,9 +4847,9 @@
         "2026-02": 1666,
         "2026-03": 747,
         "2026-04": 325,
-        "2026-05": 5200
+        "2026-05": 5119
       },
-      "latest_stock": 5200,
+      "latest_stock": 5119,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4864,9 +4864,9 @@
         "2026-02": 1286,
         "2026-03": 519,
         "2026-04": 220,
-        "2026-05": 5067
+        "2026-05": 5000
       },
-      "latest_stock": 5067,
+      "latest_stock": 5000,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4881,9 +4881,9 @@
         "2026-02": 1238,
         "2026-03": 334,
         "2026-04": 130,
-        "2026-05": 5019
+        "2026-05": 4861
       },
-      "latest_stock": 5019,
+      "latest_stock": 4861,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4898,11 +4898,11 @@
         "2026-02": 4709,
         "2026-03": 3742,
         "2026-04": 3274,
-        "2026-05": 3252
+        "2026-05": 3199
       },
-      "latest_stock": 3252,
-      "defective_stock": 636,
-      "defective_rate": 0.195572
+      "latest_stock": 3199,
+      "defective_stock": 2071,
+      "defective_rate": 0.64739
     },
     {
       "sku_code": "4571501179046",
@@ -4915,11 +4915,11 @@
         "2026-02": 4326,
         "2026-03": 3680,
         "2026-04": 3176,
-        "2026-05": 3156
+        "2026-05": 3155
       },
-      "latest_stock": 3156,
-      "defective_stock": 444,
-      "defective_rate": 0.140684
+      "latest_stock": 3155,
+      "defective_stock": 2075,
+      "defective_rate": 0.657686
     },
     {
       "sku_code": "4571501179053",
@@ -4932,9 +4932,9 @@
         "2026-02": 3183,
         "2026-03": 2199,
         "2026-04": 1388,
-        "2026-05": 1324
+        "2026-05": 1289
       },
-      "latest_stock": 1324,
+      "latest_stock": 1289,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4949,9 +4949,9 @@
         "2026-02": 2920,
         "2026-03": 2142,
         "2026-04": 1540,
-        "2026-05": 1499
+        "2026-05": 1444
       },
-      "latest_stock": 1499,
+      "latest_stock": 1444,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -4966,11 +4966,11 @@
         "2026-02": 6870,
         "2026-03": 6307,
         "2026-04": 5806,
-        "2026-05": 5788
+        "2026-05": 5786
       },
-      "latest_stock": 5788,
-      "defective_stock": 2812,
-      "defective_rate": 0.485833
+      "latest_stock": 5786,
+      "defective_stock": 4994,
+      "defective_rate": 0.863118
     },
     {
       "sku_code": "4571501179015",
@@ -4983,11 +4983,11 @@
         "2026-02": 6211,
         "2026-03": 5321,
         "2026-04": 4857,
-        "2026-05": 4820
+        "2026-05": 4816
       },
-      "latest_stock": 4820,
-      "defective_stock": 2420,
-      "defective_rate": 0.502075
+      "latest_stock": 4816,
+      "defective_stock": 4072,
+      "defective_rate": 0.845515
     },
     {
       "sku_code": "4571501179022",
@@ -5000,11 +5000,11 @@
         "2026-02": 6745,
         "2026-03": 5958,
         "2026-04": 5473,
-        "2026-05": 5439
+        "2026-05": 5438
       },
-      "latest_stock": 5439,
-      "defective_stock": 2967,
-      "defective_rate": 0.545505
+      "latest_stock": 5438,
+      "defective_stock": 4694,
+      "defective_rate": 0.863185
     },
     {
       "sku_code": "4571501179077",
@@ -5020,8 +5020,8 @@
         "2026-05": 1018
       },
       "latest_stock": 1018,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "defective_stock": 370,
+      "defective_rate": 0.363458
     },
     {
       "sku_code": "4571501179084",
@@ -5037,8 +5037,8 @@
         "2026-05": 883
       },
       "latest_stock": 883,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "defective_stock": 211,
+      "defective_rate": 0.238958
     },
     {
       "sku_code": "4571501179275",
@@ -5048,11 +5048,11 @@
         "2026-02": 13490,
         "2026-03": 12327,
         "2026-04": 12181,
-        "2026-05": 12139
+        "2026-05": 12121
       },
-      "latest_stock": 12139,
-      "defective_stock": 11587,
-      "defective_rate": 0.954527
+      "latest_stock": 12121,
+      "defective_stock": 11521,
+      "defective_rate": 0.950499
     },
     {
       "sku_code": "4571501179770",
@@ -5061,9 +5061,9 @@
         "2026-02": 3293,
         "2026-03": 2610,
         "2026-04": 1326,
-        "2026-05": 2467
+        "2026-05": 2429
       },
-      "latest_stock": 2467,
+      "latest_stock": 2429,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5074,9 +5074,9 @@
         "2026-02": 5025,
         "2026-03": 4425,
         "2026-04": 3107,
-        "2026-05": 2496
+        "2026-05": 2457
       },
-      "latest_stock": 2496,
+      "latest_stock": 2457,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5088,9 +5088,9 @@
         "2026-02": 5518,
         "2026-03": 1953,
         "2026-04": 11056,
-        "2026-05": 17507
+        "2026-05": 17344
       },
-      "latest_stock": 17507,
+      "latest_stock": 17344,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5102,9 +5102,9 @@
         "2026-02": 4523,
         "2026-03": 2435,
         "2026-04": 10312,
-        "2026-05": 14174
+        "2026-05": 14062
       },
-      "latest_stock": 14174,
+      "latest_stock": 14062,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5115,11 +5115,11 @@
         "2026-02": 8798,
         "2026-03": 5515,
         "2026-04": 3873,
-        "2026-05": 3482
+        "2026-05": 8372
       },
-      "latest_stock": 3482,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 8372,
+      "defective_stock": 2012,
+      "defective_rate": 0.240325
     },
     {
       "sku_code": "4571501179855",
@@ -5128,11 +5128,11 @@
         "2026-02": 11582,
         "2026-03": 8241,
         "2026-04": 6362,
-        "2026-05": 5912
+        "2026-05": 10780
       },
-      "latest_stock": 5912,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 10780,
+      "defective_stock": 3196,
+      "defective_rate": 0.296475
     },
     {
       "sku_code": "4571501179862",
@@ -5141,11 +5141,11 @@
         "2026-02": 8387,
         "2026-03": 5199,
         "2026-04": 3849,
-        "2026-05": 3505
+        "2026-05": 8387
       },
-      "latest_stock": 3505,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 8387,
+      "defective_stock": 2219,
+      "defective_rate": 0.264576
     },
     {
       "sku_code": "4571501179879",
@@ -5154,11 +5154,11 @@
         "2026-02": 9043,
         "2026-03": 5636,
         "2026-04": 3768,
-        "2026-05": 3247
+        "2026-05": 8153
       },
-      "latest_stock": 3247,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 8153,
+      "defective_stock": 329,
+      "defective_rate": 0.040353
     },
     {
       "sku_code": "4571501179886",
@@ -5167,11 +5167,11 @@
         "2026-02": 11278,
         "2026-03": 8009,
         "2026-04": 6182,
-        "2026-05": 5694
+        "2026-05": 10604
       },
-      "latest_stock": 5694,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 10604,
+      "defective_stock": 2972,
+      "defective_rate": 0.280272
     },
     {
       "sku_code": "4571501179893",
@@ -5180,11 +5180,11 @@
         "2026-02": 8945,
         "2026-03": 5643,
         "2026-04": 4154,
-        "2026-05": 3646
+        "2026-05": 8575
       },
-      "latest_stock": 3646,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 8575,
+      "defective_stock": 1303,
+      "defective_rate": 0.151953
     },
     {
       "sku_code": "4571501179596",
@@ -5193,9 +5193,9 @@
         "2026-02": 2673,
         "2026-03": 2345,
         "2026-04": 1008,
-        "2026-05": 4396
+        "2026-05": 4384
       },
-      "latest_stock": 4396,
+      "latest_stock": 4384,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5206,9 +5206,9 @@
         "2026-02": 2690,
         "2026-03": 2411,
         "2026-04": 1233,
-        "2026-05": 3624
+        "2026-05": 3602
       },
-      "latest_stock": 3624,
+      "latest_stock": 3602,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5219,9 +5219,9 @@
         "2026-02": 2680,
         "2026-03": 2379,
         "2026-04": 1069,
-        "2026-05": 3460
+        "2026-05": 3458
       },
-      "latest_stock": 3460,
+      "latest_stock": 3458,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5232,9 +5232,9 @@
         "2026-02": 2686,
         "2026-03": 2360,
         "2026-04": 1083,
-        "2026-05": 5474
+        "2026-05": 5472
       },
-      "latest_stock": 5474,
+      "latest_stock": 5472,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5245,9 +5245,9 @@
         "2026-02": 2679,
         "2026-03": 2301,
         "2026-04": 6,
-        "2026-05": 4387
+        "2026-05": 4314
       },
-      "latest_stock": 4387,
+      "latest_stock": 4314,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5258,9 +5258,9 @@
         "2026-02": 2007,
         "2026-03": 1627,
         "2026-04": 6,
-        "2026-05": 4736
+        "2026-05": 4673
       },
-      "latest_stock": 4736,
+      "latest_stock": 4673,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5271,9 +5271,9 @@
         "2026-02": 2007,
         "2026-03": 1761,
         "2026-04": 28,
-        "2026-05": 5061
+        "2026-05": 5048
       },
-      "latest_stock": 5061,
+      "latest_stock": 5048,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5284,9 +5284,9 @@
         "2026-02": 2007,
         "2026-03": 1637,
         "2026-04": 6,
-        "2026-05": 6544
+        "2026-05": 6471
       },
-      "latest_stock": 6544,
+      "latest_stock": 6471,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5297,9 +5297,9 @@
         "2026-02": 2008,
         "2026-03": 1639,
         "2026-04": 658,
-        "2026-05": 3965
+        "2026-05": 3841
       },
-      "latest_stock": 3965,
+      "latest_stock": 3841,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5352,9 +5352,9 @@
       "sku_name": "MilleFee シェイクドロップチーク M03 フィグラテ",
       "monthly_stock": {
         "2026-04": 4800,
-        "2026-05": 3814
+        "2026-05": 10515
       },
-      "latest_stock": 3814,
+      "latest_stock": 10515,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5363,9 +5363,9 @@
       "sku_name": "MilleFee シェイクドロップチーク M05 ちょっと照れ屋なモンチッチくん",
       "monthly_stock": {
         "2026-04": 4800,
-        "2026-05": 3876
+        "2026-05": 10135
       },
-      "latest_stock": 3876,
+      "latest_stock": 10135,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5374,9 +5374,9 @@
       "sku_name": "MilleFee シェイクドロップチーク M06 モンチッチちゃん、透明感フィルターかかってる？",
       "monthly_stock": {
         "2026-04": 4800,
-        "2026-05": 4094
+        "2026-05": 12118
       },
-      "latest_stock": 4094,
+      "latest_stock": 12118,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5385,9 +5385,9 @@
       "sku_name": "MilleFee うるうるフィットグロス M01 うさぎピンク",
       "monthly_stock": {
         "2026-04": 4352,
-        "2026-05": 3505
+        "2026-05": 8382
       },
-      "latest_stock": 3505,
+      "latest_stock": 8382,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5396,9 +5396,9 @@
       "sku_name": "MilleFee うるうるフィットグロス M06 え、モンチッチくんのスタイ今日キラキラじゃない？",
       "monthly_stock": {
         "2026-04": 4352,
-        "2026-05": 3501
+        "2026-05": 8643
       },
-      "latest_stock": 3501,
+      "latest_stock": 8643,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5407,9 +5407,9 @@
       "sku_name": "MilleFee うるうるフィットグロス M07 モンチッチちゃんそのリボン貸して?！",
       "monthly_stock": {
         "2026-04": 4352,
-        "2026-05": 3510
+        "2026-05": 8789
       },
-      "latest_stock": 3510,
+      "latest_stock": 8789,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5418,9 +5418,9 @@
       "sku_name": "MilleFee ソフトムードシャドウパレット M01 モンチッチくん多幸感すごいね！",
       "monthly_stock": {
         "2026-04": 6723,
-        "2026-05": 5344
+        "2026-05": 5339
       },
-      "latest_stock": 5344,
+      "latest_stock": 5339,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5429,9 +5429,9 @@
       "sku_name": "MilleFee ソフトムードシャドウパレット M02 モンチッチちゃんの初ブルべメイク！",
       "monthly_stock": {
         "2026-04": 15134,
-        "2026-05": 13819
+        "2026-05": 12635
       },
-      "latest_stock": 13819,
+      "latest_stock": 12635,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5440,9 +5440,9 @@
       "sku_name": "MilleFee パウダーパフ M01 モンチッチちゃん",
       "monthly_stock": {
         "2026-04": 1100,
-        "2026-05": 842
+        "2026-05": 837
       },
-      "latest_stock": 842,
+      "latest_stock": 837,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5451,9 +5451,9 @@
       "sku_name": "MilleFee マシュマロパフ M02 モンチッチくん",
       "monthly_stock": {
         "2026-04": 1100,
-        "2026-05": 855
+        "2026-05": 850
       },
-      "latest_stock": 855,
+      "latest_stock": 850,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5462,9 +5462,9 @@
       "sku_name": "MilleFee ちびパフ M03 モンチッチくん・モンチッチちゃん",
       "monthly_stock": {
         "2026-04": 1100,
-        "2026-05": 915
+        "2026-05": 910
       },
-      "latest_stock": 915,
+      "latest_stock": 910,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5473,9 +5473,9 @@
       "sku_name": "MilleFee 指パフ M04 べビチッチくん・ベビチッチちゃん",
       "monthly_stock": {
         "2026-04": 1100,
-        "2026-05": 835
+        "2026-05": 830
       },
-      "latest_stock": 835,
+      "latest_stock": 830,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5484,9 +5484,9 @@
       "sku_name": "MilleFee メイクパフコンプリートボックス モンチッチ",
       "monthly_stock": {
         "2026-04": 3532,
-        "2026-05": 2439
+        "2026-05": 2433
       },
-      "latest_stock": 2439,
+      "latest_stock": 2433,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5518,11 +5518,11 @@
         "2026-02": 558,
         "2026-03": 529,
         "2026-04": 528,
-        "2026-05": 524
+        "2026-05": 523
       },
-      "latest_stock": 524,
-      "defective_stock": 500,
-      "defective_rate": 0.954198
+      "latest_stock": 523,
+      "defective_stock": 499,
+      "defective_rate": 0.954111
     },
     {
       "sku_code": "4571501175857",
@@ -5552,11 +5552,11 @@
         "2026-02": 4487,
         "2026-03": 3864,
         "2026-04": 3382,
-        "2026-05": 3196
+        "2026-05": 3169
       },
-      "latest_stock": 3196,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 3169,
+      "defective_stock": 865,
+      "defective_rate": 0.272957
     },
     {
       "sku_code": "4571501176991",
@@ -5569,9 +5569,9 @@
         "2026-02": 549,
         "2026-03": 427,
         "2026-04": 348,
-        "2026-05": 324
+        "2026-05": 311
       },
-      "latest_stock": 324,
+      "latest_stock": 311,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5586,9 +5586,9 @@
         "2026-02": 628,
         "2026-03": 313,
         "2026-04": 246,
-        "2026-05": 252
+        "2026-05": 10109
       },
-      "latest_stock": 252,
+      "latest_stock": 10109,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5603,11 +5603,11 @@
         "2026-02": 2612,
         "2026-03": 2221,
         "2026-04": 2083,
-        "2026-05": 1994
+        "2026-05": 1979
       },
-      "latest_stock": 1994,
-      "defective_stock": 578,
-      "defective_rate": 0.28987
+      "latest_stock": 1979,
+      "defective_stock": 659,
+      "defective_rate": 0.332996
     },
     {
       "sku_code": "4571501178353",
@@ -5620,11 +5620,11 @@
         "2026-02": 3671,
         "2026-03": 2819,
         "2026-04": 2548,
-        "2026-05": 2483
+        "2026-05": 2461
       },
-      "latest_stock": 2483,
-      "defective_stock": 515,
-      "defective_rate": 0.20741
+      "latest_stock": 2461,
+      "defective_stock": 1333,
+      "defective_rate": 0.54165
     },
     {
       "sku_code": "4571501178360",
@@ -5637,11 +5637,11 @@
         "2026-02": 5184,
         "2026-03": 4701,
         "2026-04": 4481,
-        "2026-05": 4365
+        "2026-05": 4345
       },
-      "latest_stock": 4365,
-      "defective_stock": 2493,
-      "defective_rate": 0.571134
+      "latest_stock": 4345,
+      "defective_stock": 2641,
+      "defective_rate": 0.607825
     },
     {
       "sku_code": "4571501178667",
@@ -5654,11 +5654,11 @@
         "2026-02": 63,
         "2026-03": 375,
         "2026-04": 657,
-        "2026-05": 775
+        "2026-05": 811
       },
-      "latest_stock": 775,
-      "defective_stock": 511,
-      "defective_rate": 0.659355
+      "latest_stock": 811,
+      "defective_stock": 547,
+      "defective_rate": 0.674476
     },
     {
       "sku_code": "4571501178674",
@@ -5671,11 +5671,11 @@
         "2026-02": 147,
         "2026-03": 243,
         "2026-04": 556,
-        "2026-05": 700
+        "2026-05": 736
       },
-      "latest_stock": 700,
-      "defective_stock": 388,
-      "defective_rate": 0.554286
+      "latest_stock": 736,
+      "defective_stock": 424,
+      "defective_rate": 0.576087
     },
     {
       "sku_code": "4571501178681",
@@ -5688,11 +5688,11 @@
         "2026-02": 2221,
         "2026-03": 2603,
         "2026-04": 3022,
-        "2026-05": 3219
+        "2026-05": 3264
       },
-      "latest_stock": 3219,
-      "defective_stock": 3147,
-      "defective_rate": 0.977633
+      "latest_stock": 3264,
+      "defective_stock": 3192,
+      "defective_rate": 0.977941
     },
     {
       "sku_code": "4571501178698",
@@ -5705,11 +5705,11 @@
         "2026-02": 81,
         "2026-03": 308,
         "2026-04": 520,
-        "2026-05": 558
+        "2026-05": 562
       },
-      "latest_stock": 558,
-      "defective_stock": 390,
-      "defective_rate": 0.698925
+      "latest_stock": 562,
+      "defective_stock": 346,
+      "defective_rate": 0.615658
     },
     {
       "sku_code": "4571501179336",
@@ -5770,9 +5770,9 @@
         "2026-02": 1230,
         "2026-03": 466,
         "2026-04": 419,
-        "2026-05": 357
+        "2026-05": 354
       },
-      "latest_stock": 357,
+      "latest_stock": 354,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5821,11 +5821,11 @@
         "2026-02": 1360,
         "2026-03": 823,
         "2026-04": 787,
-        "2026-05": 757
+        "2026-05": 758
       },
-      "latest_stock": 757,
-      "defective_stock": 541,
-      "defective_rate": 0.714663
+      "latest_stock": 758,
+      "defective_stock": 542,
+      "defective_rate": 0.71504
     },
     {
       "sku_code": "4571501172757_99",
@@ -5850,10 +5850,10 @@
         "2026-02": 926,
         "2026-03": 918,
         "2026-04": 919,
-        "2026-05": 917
+        "2026-05": 916
       },
-      "latest_stock": 917,
-      "defective_stock": 917,
+      "latest_stock": 916,
+      "defective_stock": 916,
       "defective_rate": 1.0
     },
     {
@@ -5884,11 +5884,11 @@
         "2026-02": 741,
         "2026-03": 731,
         "2026-04": 725,
-        "2026-05": 722
+        "2026-05": 721
       },
-      "latest_stock": 722,
-      "defective_stock": 698,
-      "defective_rate": 0.966759
+      "latest_stock": 721,
+      "defective_stock": 697,
+      "defective_rate": 0.966713
     },
     {
       "sku_code": "4571501174539",
@@ -5904,8 +5904,8 @@
         "2026-05": 12890
       },
       "latest_stock": 12890,
-      "defective_stock": 11978,
-      "defective_rate": 0.929247
+      "defective_stock": 12026,
+      "defective_rate": 0.932971
     },
     {
       "sku_code": "4571501173235",
@@ -5918,9 +5918,9 @@
         "2026-02": 817,
         "2026-03": 491,
         "2026-04": 303,
-        "2026-05": 291
+        "2026-05": 270
       },
-      "latest_stock": 291,
+      "latest_stock": 270,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -5969,11 +5969,11 @@
         "2026-02": 4919,
         "2026-03": 4283,
         "2026-04": 3914,
-        "2026-05": 3865
+        "2026-05": 3853
       },
-      "latest_stock": 3865,
-      "defective_stock": 3097,
-      "defective_rate": 0.801294
+      "latest_stock": 3853,
+      "defective_stock": 3085,
+      "defective_rate": 0.800675
     },
     {
       "sku_code": "4571501173938_99",
@@ -6003,11 +6003,11 @@
         "2026-02": 11654,
         "2026-03": 11406,
         "2026-04": 10590,
-        "2026-05": 10530
+        "2026-05": 10520
       },
-      "latest_stock": 10530,
-      "defective_stock": 6426,
-      "defective_rate": 0.610256
+      "latest_stock": 10520,
+      "defective_stock": 8432,
+      "defective_rate": 0.801521
     },
     {
       "sku_code": "4571501175154",
@@ -6020,11 +6020,11 @@
         "2026-02": 3391,
         "2026-03": 8820,
         "2026-04": 7862,
-        "2026-05": 7803
+        "2026-05": 7793
       },
-      "latest_stock": 7803,
-      "defective_stock": 3843,
-      "defective_rate": 0.492503
+      "latest_stock": 7793,
+      "defective_stock": 6401,
+      "defective_rate": 0.821378
     },
     {
       "sku_code": "4571501175048",
@@ -6037,11 +6037,11 @@
         "2026-02": 5134,
         "2026-03": 4820,
         "2026-04": 4386,
-        "2026-05": 4343
+        "2026-05": 4332
       },
-      "latest_stock": 4343,
-      "defective_stock": 3095,
-      "defective_rate": 0.712641
+      "latest_stock": 4332,
+      "defective_stock": 3132,
+      "defective_rate": 0.722992
     },
     {
       "sku_code": "4571501176656",
@@ -6054,11 +6054,11 @@
         "2026-02": 13924,
         "2026-03": 13316,
         "2026-04": 12871,
-        "2026-05": 12845
+        "2026-05": 12841
       },
-      "latest_stock": 12845,
-      "defective_stock": 11381,
-      "defective_rate": 0.886026
+      "latest_stock": 12841,
+      "defective_stock": 11425,
+      "defective_rate": 0.889728
     },
     {
       "sku_code": "4571501177196",
@@ -6071,11 +6071,11 @@
         "2026-02": 8408,
         "2026-03": 7918,
         "2026-04": 7189,
-        "2026-05": 7148
+        "2026-05": 7149
       },
-      "latest_stock": 7148,
-      "defective_stock": 4460,
-      "defective_rate": 0.623951
+      "latest_stock": 7149,
+      "defective_stock": 5181,
+      "defective_rate": 0.724717
     },
     {
       "sku_code": "4571501177202",
@@ -6088,11 +6088,11 @@
         "2026-02": 7037,
         "2026-03": 13250,
         "2026-04": 12166,
-        "2026-05": 12125
+        "2026-05": 12110
       },
-      "latest_stock": 12125,
-      "defective_stock": 7133,
-      "defective_rate": 0.588289
+      "latest_stock": 12110,
+      "defective_stock": 11030,
+      "defective_rate": 0.910818
     },
     {
       "sku_code": "4571501176663",
@@ -6105,9 +6105,9 @@
         "2026-02": 803,
         "2026-03": 460,
         "2026-04": 4913,
-        "2026-05": 4886
+        "2026-05": 4885
       },
-      "latest_stock": 4886,
+      "latest_stock": 4885,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -6122,11 +6122,11 @@
         "2026-02": 6391,
         "2026-03": 6104,
         "2026-04": 5927,
-        "2026-05": 5907
+        "2026-05": 5904
       },
-      "latest_stock": 5907,
-      "defective_stock": 4947,
-      "defective_rate": 0.837481
+      "latest_stock": 5904,
+      "defective_stock": 5136,
+      "defective_rate": 0.869919
     },
     {
       "sku_code": "4571501176939",
@@ -6139,11 +6139,11 @@
         "2026-02": 38,
         "2026-03": 4373,
         "2026-04": 3658,
-        "2026-05": 3639
+        "2026-05": 3635
       },
-      "latest_stock": 3639,
-      "defective_stock": 1023,
-      "defective_rate": 0.281121
+      "latest_stock": 3635,
+      "defective_stock": 2651,
+      "defective_rate": 0.729298
     },
     {
       "sku_code": "4571501176939_B",
@@ -6151,9 +6151,9 @@
       "monthly_stock": {
         "2026-03": 10,
         "2026-04": 10,
-        "2026-05": 10
+        "2026-05": 16
       },
-      "latest_stock": 10,
+      "latest_stock": 16,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -6222,11 +6222,11 @@
         "2026-02": 6,
         "2026-03": 397,
         "2026-04": 686,
-        "2026-05": 712
+        "2026-05": 10877
       },
-      "latest_stock": 712,
-      "defective_stock": 256,
-      "defective_rate": 0.359551
+      "latest_stock": 10877,
+      "defective_stock": 10421,
+      "defective_rate": 0.958077
     },
     {
       "sku_code": "4571501177233_B",
@@ -6247,17 +6247,19 @@
         "2026-02": 9969,
         "2026-03": 9318,
         "2026-04": 9021,
-        "2026-05": 9002
+        "2026-05": 8995
       },
-      "latest_stock": 9002,
+      "latest_stock": 8995,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
     {
       "sku_code": "4571501179589",
       "sku_name": "fractional CC RE:エッセンスＣ",
-      "monthly_stock": {},
-      "latest_stock": 0,
+      "monthly_stock": {
+        "2026-05": 9990
+      },
+      "latest_stock": 9990,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -6272,11 +6274,11 @@
         "2026-02": 30,
         "2026-03": 31,
         "2026-04": 30,
-        "2026-05": 28
+        "2026-05": 27
       },
-      "latest_stock": 28,
-      "defective_stock": 4,
-      "defective_rate": 0.142857
+      "latest_stock": 27,
+      "defective_stock": 3,
+      "defective_rate": 0.111111
     },
     {
       "sku_code": "4571501172320",
@@ -6403,10 +6405,10 @@
         "2026-02": 11,
         "2026-03": 12,
         "2026-04": 12,
-        "2026-05": 12
+        "2026-05": 11
       },
-      "latest_stock": 12,
-      "defective_stock": 12,
+      "latest_stock": 11,
+      "defective_stock": 11,
       "defective_rate": 1.0
     },
     {
@@ -6420,11 +6422,11 @@
         "2026-02": 17,
         "2026-03": 17,
         "2026-04": 12,
-        "2026-05": 12
+        "2026-05": 9
       },
-      "latest_stock": 12,
-      "defective_stock": 12,
-      "defective_rate": 1.0
+      "latest_stock": 9,
+      "defective_stock": 0,
+      "defective_rate": 0.0
     },
     {
       "sku_code": "4571501172535",
@@ -6479,10 +6481,10 @@
         "2026-02": 61,
         "2026-03": 59,
         "2026-04": 59,
-        "2026-05": 59
+        "2026-05": 58
       },
-      "latest_stock": 59,
-      "defective_stock": 59,
+      "latest_stock": 58,
+      "defective_stock": 58,
       "defective_rate": 1.0
     },
     {
@@ -6499,8 +6501,8 @@
         "2026-05": 80
       },
       "latest_stock": 80,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "defective_stock": 80,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501172634",
@@ -6690,11 +6692,11 @@
         "2026-02": 20,
         "2026-03": 14,
         "2026-04": 12,
-        "2026-05": 12
+        "2026-05": 10
       },
-      "latest_stock": 12,
-      "defective_stock": 12,
-      "defective_rate": 1.0
+      "latest_stock": 10,
+      "defective_stock": 0,
+      "defective_rate": 0.0
     },
     {
       "sku_code": "4571501173853",
@@ -6707,11 +6709,11 @@
         "2026-02": 46,
         "2026-03": 31,
         "2026-04": 30,
-        "2026-05": 25
+        "2026-05": 23
       },
-      "latest_stock": 25,
-      "defective_stock": 1,
-      "defective_rate": 0.04
+      "latest_stock": 23,
+      "defective_stock": 0,
+      "defective_rate": 0.0
     },
     {
       "sku_code": "4571501173860",
@@ -6724,11 +6726,11 @@
         "2026-02": 1516,
         "2026-03": 1513,
         "2026-04": 494,
-        "2026-05": 494
+        "2026-05": 492
       },
-      "latest_stock": 494,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 492,
+      "defective_stock": 468,
+      "defective_rate": 0.95122
     },
     {
       "sku_code": "4571501174027",
@@ -6741,10 +6743,10 @@
         "2026-02": 17,
         "2026-03": 9,
         "2026-04": 2,
-        "2026-05": 2
+        "2026-05": 4
       },
-      "latest_stock": 2,
-      "defective_stock": 2,
+      "latest_stock": 4,
+      "defective_stock": 4,
       "defective_rate": 1.0
     },
     {
@@ -6758,9 +6760,9 @@
         "2026-02": 57,
         "2026-03": 45,
         "2026-04": 36,
-        "2026-05": 33
+        "2026-05": 25
       },
-      "latest_stock": 33,
+      "latest_stock": 25,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -6792,9 +6794,9 @@
         "2026-02": 65,
         "2026-03": 56,
         "2026-04": 45,
-        "2026-05": 41
+        "2026-05": 36
       },
-      "latest_stock": 41,
+      "latest_stock": 36,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -6809,11 +6811,11 @@
         "2026-02": 30,
         "2026-03": 20,
         "2026-04": 32,
-        "2026-05": 31
+        "2026-05": 26
       },
-      "latest_stock": 31,
-      "defective_stock": 7,
-      "defective_rate": 0.225806
+      "latest_stock": 26,
+      "defective_stock": 0,
+      "defective_rate": 0.0
     },
     {
       "sku_code": "4571501174072",
@@ -6826,11 +6828,11 @@
         "2026-02": 818,
         "2026-03": 815,
         "2026-04": 799,
-        "2026-05": 795
+        "2026-05": 793
       },
-      "latest_stock": 795,
-      "defective_stock": 723,
-      "defective_rate": 0.909434
+      "latest_stock": 793,
+      "defective_stock": 721,
+      "defective_rate": 0.909206
     },
     {
       "sku_code": "4571501174089",
@@ -6877,11 +6879,11 @@
         "2026-02": 10028,
         "2026-03": 8221,
         "2026-04": 6550,
-        "2026-05": 6424
+        "2026-05": 6348
       },
-      "latest_stock": 6424,
-      "defective_stock": 1480,
-      "defective_rate": 0.230386
+      "latest_stock": 6348,
+      "defective_stock": 2004,
+      "defective_rate": 0.31569
     },
     {
       "sku_code": "4571501171811",
@@ -6894,11 +6896,11 @@
         "2026-02": 9909,
         "2026-03": 7978,
         "2026-04": 6436,
-        "2026-05": 6206
+        "2026-05": 6130
       },
-      "latest_stock": 6206,
-      "defective_stock": 998,
-      "defective_rate": 0.160812
+      "latest_stock": 6130,
+      "defective_stock": 1474,
+      "defective_rate": 0.240457
     },
     {
       "sku_code": "4571501172047",
@@ -6914,8 +6916,8 @@
         "2026-05": 1643
       },
       "latest_stock": 1643,
-      "defective_stock": 1403,
-      "defective_rate": 0.853926
+      "defective_stock": 1571,
+      "defective_rate": 0.956178
     },
     {
       "sku_code": "4571501173815",
@@ -6928,9 +6930,9 @@
         "2026-02": 7981,
         "2026-03": 5759,
         "2026-04": 3571,
-        "2026-05": 3339
+        "2026-05": 3150
       },
-      "latest_stock": 3339,
+      "latest_stock": 3150,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -6945,9 +6947,9 @@
         "2026-02": 7632,
         "2026-03": 5206,
         "2026-04": 916,
-        "2026-05": 940
+        "2026-05": 932
       },
-      "latest_stock": 940,
+      "latest_stock": 932,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -6962,11 +6964,11 @@
         "2026-02": 825,
         "2026-03": 733,
         "2026-04": 747,
-        "2026-05": 766
+        "2026-05": 787
       },
-      "latest_stock": 766,
-      "defective_stock": 718,
-      "defective_rate": 0.937337
+      "latest_stock": 787,
+      "defective_stock": 739,
+      "defective_rate": 0.939009
     },
     {
       "sku_code": "4571501170890",
@@ -6979,9 +6981,9 @@
         "2026-02": 15,
         "2026-03": 35,
         "2026-04": 33,
-        "2026-05": 46
+        "2026-05": 55
       },
-      "latest_stock": 46,
+      "latest_stock": 55,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -6996,11 +6998,11 @@
         "2026-02": 636,
         "2026-03": 675,
         "2026-04": 341,
-        "2026-05": 363
+        "2026-05": 389
       },
-      "latest_stock": 363,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 389,
+      "defective_stock": 365,
+      "defective_rate": 0.938303
     },
     {
       "sku_code": "4571501171545",
@@ -7013,11 +7015,11 @@
         "2026-02": 2059,
         "2026-03": 2112,
         "2026-04": 263,
-        "2026-05": 277
+        "2026-05": 305
       },
-      "latest_stock": 277,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 305,
+      "defective_stock": 281,
+      "defective_rate": 0.921311
     },
     {
       "sku_code": "4571501171538",
@@ -7030,11 +7032,11 @@
         "2026-02": 780,
         "2026-03": 833,
         "2026-04": 335,
-        "2026-05": 353
+        "2026-05": 379
       },
-      "latest_stock": 353,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 379,
+      "defective_stock": 355,
+      "defective_rate": 0.936675
     },
     {
       "sku_code": "4571501171156",
@@ -7047,11 +7049,11 @@
         "2026-02": 4415,
         "2026-03": 4378,
         "2026-04": 3451,
-        "2026-05": 3445
+        "2026-05": 3444
       },
-      "latest_stock": 3445,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 3444,
+      "defective_stock": 2892,
+      "defective_rate": 0.839721
     },
     {
       "sku_code": "4571501171774",
@@ -7064,11 +7066,11 @@
         "2026-02": 3796,
         "2026-03": 3769,
         "2026-04": 3662,
-        "2026-05": 3659
+        "2026-05": 3653
       },
-      "latest_stock": 3659,
-      "defective_stock": 3227,
-      "defective_rate": 0.881935
+      "latest_stock": 3653,
+      "defective_stock": 3173,
+      "defective_rate": 0.868601
     },
     {
       "sku_code": "4571501171170",
@@ -7081,11 +7083,11 @@
         "2026-02": 4349,
         "2026-03": 4173,
         "2026-04": 3994,
-        "2026-05": 3991
+        "2026-05": 3992
       },
-      "latest_stock": 3991,
-      "defective_stock": 3343,
-      "defective_rate": 0.837635
+      "latest_stock": 3992,
+      "defective_stock": 3560,
+      "defective_rate": 0.891784
     },
     {
       "sku_code": "4571501171750",
@@ -7098,11 +7100,11 @@
         "2026-02": 5763,
         "2026-03": 5614,
         "2026-04": 5283,
-        "2026-05": 5272
+        "2026-05": 5269
       },
-      "latest_stock": 5272,
-      "defective_stock": 3472,
-      "defective_rate": 0.658574
+      "latest_stock": 5269,
+      "defective_stock": 4669,
+      "defective_rate": 0.886126
     },
     {
       "sku_code": "4571501171767",
@@ -7115,11 +7117,11 @@
         "2026-02": 5955,
         "2026-03": 5130,
         "2026-04": 3320,
-        "2026-05": 3304
+        "2026-05": 3300
       },
-      "latest_stock": 3304,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 3300,
+      "defective_stock": 2340,
+      "defective_rate": 0.709091
     },
     {
       "sku_code": "4571501171644",
@@ -7132,11 +7134,11 @@
         "2026-02": 1048,
         "2026-03": 888,
         "2026-04": 359,
-        "2026-05": 359
+        "2026-05": 357
       },
-      "latest_stock": 359,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 357,
+      "defective_stock": 333,
+      "defective_rate": 0.932773
     },
     {
       "sku_code": "4571501171651",
@@ -7149,11 +7151,11 @@
         "2026-02": 453,
         "2026-03": 335,
         "2026-04": 300,
-        "2026-05": 292
+        "2026-05": 287
       },
-      "latest_stock": 292,
-      "defective_stock": 100,
-      "defective_rate": 0.342466
+      "latest_stock": 287,
+      "defective_stock": 143,
+      "defective_rate": 0.498258
     },
     {
       "sku_code": "4571501171668",
@@ -7183,11 +7185,11 @@
         "2026-02": 1948,
         "2026-03": 1860,
         "2026-04": 182,
-        "2026-05": 180
+        "2026-05": 177
       },
-      "latest_stock": 180,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 177,
+      "defective_stock": 105,
+      "defective_rate": 0.59322
     },
     {
       "sku_code": "4571501172351",
@@ -7217,9 +7219,9 @@
         "2026-02": 117,
         "2026-03": 33,
         "2026-04": 18,
-        "2026-05": 17
+        "2026-05": 16
       },
-      "latest_stock": 17,
+      "latest_stock": 16,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -7234,9 +7236,9 @@
         "2026-02": 426,
         "2026-03": 201,
         "2026-04": 182,
-        "2026-05": 166
+        "2026-05": 163
       },
-      "latest_stock": 166,
+      "latest_stock": 163,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -7251,11 +7253,11 @@
         "2026-02": 292,
         "2026-03": 202,
         "2026-04": 184,
-        "2026-05": 181
+        "2026-05": 180
       },
-      "latest_stock": 181,
-      "defective_stock": 109,
-      "defective_rate": 0.60221
+      "latest_stock": 180,
+      "defective_stock": 132,
+      "defective_rate": 0.733333
     },
     {
       "sku_code": "4571501174232",
@@ -7268,11 +7270,11 @@
         "2026-02": 239,
         "2026-03": 108,
         "2026-04": 97,
-        "2026-05": 93
+        "2026-05": 94
       },
-      "latest_stock": 93,
-      "defective_stock": 21,
-      "defective_rate": 0.225806
+      "latest_stock": 94,
+      "defective_stock": 22,
+      "defective_rate": 0.234043
     },
     {
       "sku_code": "4571501174249",
@@ -7285,11 +7287,11 @@
         "2026-02": 1134,
         "2026-03": 1037,
         "2026-04": 1032,
-        "2026-05": 1025
+        "2026-05": 1026
       },
-      "latest_stock": 1025,
-      "defective_stock": 905,
-      "defective_rate": 0.882927
+      "latest_stock": 1026,
+      "defective_stock": 882,
+      "defective_rate": 0.859649
     },
     {
       "sku_code": "4571501174256",
@@ -7302,11 +7304,11 @@
         "2026-02": 276,
         "2026-03": 114,
         "2026-04": 91,
-        "2026-05": 87
+        "2026-05": 86
       },
-      "latest_stock": 87,
-      "defective_stock": 39,
-      "defective_rate": 0.448276
+      "latest_stock": 86,
+      "defective_stock": 14,
+      "defective_rate": 0.162791
     },
     {
       "sku_code": "4571501174263",
@@ -7319,11 +7321,11 @@
         "2026-02": 1134,
         "2026-03": 991,
         "2026-04": 993,
-        "2026-05": 988
+        "2026-05": 987
       },
-      "latest_stock": 988,
-      "defective_stock": 892,
-      "defective_rate": 0.902834
+      "latest_stock": 987,
+      "defective_stock": 867,
+      "defective_rate": 0.878419
     },
     {
       "sku_code": "4571501174270",
@@ -7334,10 +7336,10 @@
         "2025-12": 2,
         "2026-01": 0,
         "2026-04": 4,
-        "2026-05": 6
+        "2026-05": 7
       },
-      "latest_stock": 6,
-      "defective_stock": 6,
+      "latest_stock": 7,
+      "defective_stock": 7,
       "defective_rate": 1.0
     },
     {
@@ -7351,11 +7353,11 @@
         "2026-02": 581,
         "2026-03": 355,
         "2026-04": 326,
-        "2026-05": 326
+        "2026-05": 303
       },
-      "latest_stock": 326,
-      "defective_stock": 302,
-      "defective_rate": 0.92638
+      "latest_stock": 303,
+      "defective_stock": 159,
+      "defective_rate": 0.524752
     },
     {
       "sku_code": "4571501175253",
@@ -7368,11 +7370,11 @@
         "2026-02": 921,
         "2026-03": 704,
         "2026-04": 446,
-        "2026-05": 444
+        "2026-05": 440
       },
-      "latest_stock": 444,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 440,
+      "defective_stock": 416,
+      "defective_rate": 0.945455
     },
     {
       "sku_code": "4571501175260",
@@ -7385,11 +7387,11 @@
         "2026-02": 370,
         "2026-03": 129,
         "2026-04": 125,
-        "2026-05": 128
+        "2026-05": 124
       },
-      "latest_stock": 128,
-      "defective_stock": 104,
-      "defective_rate": 0.8125
+      "latest_stock": 124,
+      "defective_stock": 100,
+      "defective_rate": 0.806452
     },
     {
       "sku_code": "4571501175277",
@@ -7402,11 +7404,11 @@
         "2026-02": 755,
         "2026-03": 507,
         "2026-04": 447,
-        "2026-05": 444
+        "2026-05": 442
       },
-      "latest_stock": 444,
-      "defective_stock": 84,
-      "defective_rate": 0.189189
+      "latest_stock": 442,
+      "defective_stock": 418,
+      "defective_rate": 0.945701
     },
     {
       "sku_code": "4571501176182",
@@ -7419,11 +7421,11 @@
         "2026-02": 955,
         "2026-03": 971,
         "2026-04": 551,
-        "2026-05": 550
+        "2026-05": 554
       },
-      "latest_stock": 550,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 554,
+      "defective_stock": 554,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501176199",
@@ -7436,10 +7438,10 @@
         "2026-02": 1002,
         "2026-03": 1019,
         "2026-04": 1025,
-        "2026-05": 1024
+        "2026-05": 1030
       },
-      "latest_stock": 1024,
-      "defective_stock": 1024,
+      "latest_stock": 1030,
+      "defective_stock": 1030,
       "defective_rate": 1.0
     },
     {
@@ -7453,10 +7455,10 @@
         "2026-02": 294,
         "2026-03": 301,
         "2026-04": 307,
-        "2026-05": 307
+        "2026-05": 313
       },
-      "latest_stock": 307,
-      "defective_stock": 307,
+      "latest_stock": 313,
+      "defective_stock": 313,
       "defective_rate": 1.0
     },
     {
@@ -7470,11 +7472,11 @@
         "2026-02": 303,
         "2026-03": 322,
         "2026-04": 157,
-        "2026-05": 157
+        "2026-05": 160
       },
-      "latest_stock": 157,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 160,
+      "defective_stock": 160,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501176229",
@@ -7487,11 +7489,11 @@
         "2026-02": 300,
         "2026-03": 302,
         "2026-04": 152,
-        "2026-05": 152
+        "2026-05": 158
       },
-      "latest_stock": 152,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 158,
+      "defective_stock": 158,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501176625",
@@ -7504,11 +7506,11 @@
         "2026-02": 787,
         "2026-03": 232,
         "2026-04": 203,
-        "2026-05": 204
+        "2026-05": 198
       },
-      "latest_stock": 204,
-      "defective_stock": 84,
-      "defective_rate": 0.411765
+      "latest_stock": 198,
+      "defective_stock": 126,
+      "defective_rate": 0.636364
     },
     {
       "sku_code": "4571501176632",
@@ -7521,9 +7523,9 @@
         "2026-02": 178,
         "2026-03": 148,
         "2026-04": 69,
-        "2026-05": 67
+        "2026-05": 61
       },
-      "latest_stock": 67,
+      "latest_stock": 61,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -7538,11 +7540,11 @@
         "2026-02": 184,
         "2026-03": 119,
         "2026-04": 96,
-        "2026-05": 97
+        "2026-05": 81
       },
-      "latest_stock": 97,
-      "defective_stock": 25,
-      "defective_rate": 0.257732
+      "latest_stock": 81,
+      "defective_stock": 0,
+      "defective_rate": 0.0
     },
     {
       "sku_code": "4571501176885",
@@ -7555,11 +7557,11 @@
         "2026-02": 3501,
         "2026-03": 3203,
         "2026-04": 2965,
-        "2026-05": 3014
+        "2026-05": 2851
       },
-      "latest_stock": 3014,
-      "defective_stock": 1622,
-      "defective_rate": 0.538155
+      "latest_stock": 2851,
+      "defective_stock": 547,
+      "defective_rate": 0.191863
     },
     {
       "sku_code": "4571501176892",
@@ -7572,11 +7574,11 @@
         "2026-02": 4544,
         "2026-03": 4384,
         "2026-04": 4397,
-        "2026-05": 4437
+        "2026-05": 4405
       },
-      "latest_stock": 4437,
-      "defective_stock": 4341,
-      "defective_rate": 0.978364
+      "latest_stock": 4405,
+      "defective_stock": 4189,
+      "defective_rate": 0.950965
     },
     {
       "sku_code": "4571501176908",
@@ -7589,11 +7591,11 @@
         "2026-02": 6824,
         "2026-03": 6671,
         "2026-04": 6692,
-        "2026-05": 6733
+        "2026-05": 6730
       },
-      "latest_stock": 6733,
-      "defective_stock": 6733,
-      "defective_rate": 1.0
+      "latest_stock": 6730,
+      "defective_stock": 6706,
+      "defective_rate": 0.996434
     },
     {
       "sku_code": "4571501171118",
@@ -7686,11 +7688,11 @@
         "2026-02": 88,
         "2026-03": 91,
         "2026-04": 88,
-        "2026-05": 87
+        "2026-05": 86
       },
-      "latest_stock": 87,
-      "defective_stock": 63,
-      "defective_rate": 0.724138
+      "latest_stock": 86,
+      "defective_stock": 62,
+      "defective_rate": 0.72093
     },
     {
       "sku_code": "4571501171972",
@@ -7703,11 +7705,11 @@
         "2026-02": 63,
         "2026-03": 67,
         "2026-04": 64,
-        "2026-05": 63
+        "2026-05": 62
       },
-      "latest_stock": 63,
-      "defective_stock": 63,
-      "defective_rate": 1.0
+      "latest_stock": 62,
+      "defective_stock": 38,
+      "defective_rate": 0.612903
     },
     {
       "sku_code": "4571501171989",
@@ -7771,10 +7773,10 @@
         "2026-02": 91,
         "2026-03": 100,
         "2026-04": 99,
-        "2026-05": 99
+        "2026-05": 98
       },
-      "latest_stock": 99,
-      "defective_stock": 99,
+      "latest_stock": 98,
+      "defective_stock": 98,
       "defective_rate": 1.0
     },
     {
@@ -7788,11 +7790,11 @@
         "2026-02": 87,
         "2026-03": 89,
         "2026-04": 86,
-        "2026-05": 81
+        "2026-05": 80
       },
-      "latest_stock": 81,
-      "defective_stock": 33,
-      "defective_rate": 0.407407
+      "latest_stock": 80,
+      "defective_stock": 32,
+      "defective_rate": 0.4
     },
     {
       "sku_code": "4571501172924",
@@ -7805,11 +7807,11 @@
         "2026-02": 118,
         "2026-03": 119,
         "2026-04": 117,
-        "2026-05": 108
+        "2026-05": 107
       },
-      "latest_stock": 108,
-      "defective_stock": 60,
-      "defective_rate": 0.555556
+      "latest_stock": 107,
+      "defective_stock": 35,
+      "defective_rate": 0.327103
     },
     {
       "sku_code": "4571501172931",
@@ -8049,11 +8051,11 @@
         "2026-02": 1806,
         "2026-03": 1416,
         "2026-04": 1407,
-        "2026-05": 1419
+        "2026-05": 1395
       },
-      "latest_stock": 1419,
-      "defective_stock": 1347,
-      "defective_rate": 0.94926
+      "latest_stock": 1395,
+      "defective_stock": 1179,
+      "defective_rate": 0.845161
     },
     {
       "sku_code": "4571501176243",
@@ -8066,11 +8068,11 @@
         "2026-02": 4046,
         "2026-03": 3827,
         "2026-04": 3818,
-        "2026-05": 3814
+        "2026-05": 3797
       },
-      "latest_stock": 3814,
-      "defective_stock": 3742,
-      "defective_rate": 0.981122
+      "latest_stock": 3797,
+      "defective_stock": 3629,
+      "defective_rate": 0.955755
     },
     {
       "sku_code": "4571501176250",
@@ -8083,11 +8085,11 @@
         "2026-02": 3783,
         "2026-03": 3753,
         "2026-04": 3748,
-        "2026-05": 3754
+        "2026-05": 3747
       },
-      "latest_stock": 3754,
-      "defective_stock": 3730,
-      "defective_rate": 0.993607
+      "latest_stock": 3747,
+      "defective_stock": 3699,
+      "defective_rate": 0.98719
     },
     {
       "sku_code": "4571501176267",
@@ -8100,11 +8102,11 @@
         "2026-02": 3644,
         "2026-03": 3592,
         "2026-04": 3580,
-        "2026-05": 3602
+        "2026-05": 3596
       },
-      "latest_stock": 3602,
-      "defective_stock": 3530,
-      "defective_rate": 0.980011
+      "latest_stock": 3596,
+      "defective_stock": 3476,
+      "defective_rate": 0.96663
     },
     {
       "sku_code": "4571501173136",
@@ -8171,8 +8173,8 @@
         "2026-05": 3252
       },
       "latest_stock": 3252,
-      "defective_stock": 3036,
-      "defective_rate": 0.933579
+      "defective_stock": 3132,
+      "defective_rate": 0.9631
     },
     {
       "sku_code": "4571501177769",
@@ -8185,11 +8187,11 @@
         "2026-02": 3294,
         "2026-03": 3267,
         "2026-04": 3121,
-        "2026-05": 3139
+        "2026-05": 3137
       },
-      "latest_stock": 3139,
-      "defective_stock": 2395,
-      "defective_rate": 0.762982
+      "latest_stock": 3137,
+      "defective_stock": 2417,
+      "defective_rate": 0.770481
     },
     {
       "sku_code": "4571501177776",
@@ -8202,11 +8204,11 @@
         "2026-02": 2232,
         "2026-03": 2066,
         "2026-04": 2023,
-        "2026-05": 2034
+        "2026-05": 2030
       },
-      "latest_stock": 2034,
-      "defective_stock": 1914,
-      "defective_rate": 0.941003
+      "latest_stock": 2030,
+      "defective_stock": 1958,
+      "defective_rate": 0.964532
     },
     {
       "sku_code": "4571501176809",
@@ -8222,8 +8224,8 @@
         "2026-05": 2761
       },
       "latest_stock": 2761,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "defective_stock": 2665,
+      "defective_rate": 0.96523
     },
     {
       "sku_code": "4571501176816",
@@ -8236,11 +8238,11 @@
         "2026-02": 6179,
         "2026-03": 6173,
         "2026-04": 3878,
-        "2026-05": 3878
+        "2026-05": 3880
       },
-      "latest_stock": 3878,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 3880,
+      "defective_stock": 3856,
+      "defective_rate": 0.993814
     },
     {
       "sku_code": "4571501176823",
@@ -8253,11 +8255,11 @@
         "2026-02": 6888,
         "2026-03": 6856,
         "2026-04": 4465,
-        "2026-05": 4465
+        "2026-05": 4467
       },
-      "latest_stock": 4465,
-      "defective_stock": 0,
-      "defective_rate": 0.0
+      "latest_stock": 4467,
+      "defective_stock": 4467,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501177141",
@@ -8270,11 +8272,11 @@
         "2026-02": 4967,
         "2026-03": 4564,
         "2026-04": 4322,
-        "2026-05": 4349
+        "2026-05": 4329
       },
-      "latest_stock": 4349,
-      "defective_stock": 2957,
-      "defective_rate": 0.679926
+      "latest_stock": 4329,
+      "defective_stock": 2937,
+      "defective_rate": 0.678448
     },
     {
       "sku_code": "4571501177158",
@@ -8287,11 +8289,11 @@
         "2026-02": 5737,
         "2026-03": 5456,
         "2026-04": 5238,
-        "2026-05": 5291
+        "2026-05": 5287
       },
-      "latest_stock": 5291,
-      "defective_stock": 4067,
-      "defective_rate": 0.768664
+      "latest_stock": 5287,
+      "defective_stock": 4183,
+      "defective_rate": 0.791186
     },
     {
       "sku_code": "4571501177165",
@@ -8304,11 +8306,11 @@
         "2026-02": 4346,
         "2026-03": 4226,
         "2026-04": 4212,
-        "2026-05": 4209
+        "2026-05": 4203
       },
-      "latest_stock": 4209,
-      "defective_stock": 4089,
-      "defective_rate": 0.97149
+      "latest_stock": 4203,
+      "defective_stock": 4059,
+      "defective_rate": 0.965739
     },
     {
       "sku_code": "4571501177172",
@@ -8321,11 +8323,11 @@
         "2026-02": 5551,
         "2026-03": 5485,
         "2026-04": 5476,
-        "2026-05": 5484
+        "2026-05": 5482
       },
-      "latest_stock": 5484,
-      "defective_stock": 5436,
-      "defective_rate": 0.991247
+      "latest_stock": 5482,
+      "defective_stock": 5410,
+      "defective_rate": 0.986866
     },
     {
       "sku_code": "4571501177189",
@@ -8338,11 +8340,11 @@
         "2026-02": 8025,
         "2026-03": 7925,
         "2026-04": 7922,
-        "2026-05": 7921
+        "2026-05": 7916
       },
-      "latest_stock": 7921,
-      "defective_stock": 7897,
-      "defective_rate": 0.99697
+      "latest_stock": 7916,
+      "defective_stock": 7868,
+      "defective_rate": 0.993936
     },
     {
       "sku_code": "4571501177240",
@@ -8355,11 +8357,11 @@
         "2026-02": 5442,
         "2026-03": 5339,
         "2026-04": 5330,
-        "2026-05": 5357
+        "2026-05": 5356
       },
-      "latest_stock": 5357,
-      "defective_stock": 5333,
-      "defective_rate": 0.99552
+      "latest_stock": 5356,
+      "defective_stock": 5356,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501177257",
@@ -8392,8 +8394,8 @@
         "2026-05": 5049
       },
       "latest_stock": 5049,
-      "defective_stock": 5025,
-      "defective_rate": 0.995247
+      "defective_stock": 5049,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501177271",
@@ -8409,8 +8411,8 @@
         "2026-05": 5090
       },
       "latest_stock": 5090,
-      "defective_stock": 5066,
-      "defective_rate": 0.995285
+      "defective_stock": 5090,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501177288",
@@ -8426,8 +8428,8 @@
         "2026-05": 5085
       },
       "latest_stock": 5085,
-      "defective_stock": 5061,
-      "defective_rate": 0.99528
+      "defective_stock": 5085,
+      "defective_rate": 1.0
     },
     {
       "sku_code": "4571501177844",
@@ -8443,8 +8445,8 @@
         "2026-05": 3386
       },
       "latest_stock": 3386,
-      "defective_stock": 2282,
-      "defective_rate": 0.673952
+      "defective_stock": 2354,
+      "defective_rate": 0.695216
     },
     {
       "sku_code": "4571501177851",
@@ -8491,11 +8493,11 @@
         "2026-02": 2230,
         "2026-03": 2113,
         "2026-04": 1999,
-        "2026-05": 2023
+        "2026-05": 2016
       },
-      "latest_stock": 2023,
-      "defective_stock": 1807,
-      "defective_rate": 0.893228
+      "latest_stock": 2016,
+      "defective_stock": 1872,
+      "defective_rate": 0.928571
     },
     {
       "sku_code": "4571501178421",
@@ -8508,11 +8510,11 @@
         "2026-02": 2951,
         "2026-03": 2891,
         "2026-04": 2846,
-        "2026-05": 2866
+        "2026-05": 2863
       },
-      "latest_stock": 2866,
-      "defective_stock": 2722,
-      "defective_rate": 0.949756
+      "latest_stock": 2863,
+      "defective_stock": 2695,
+      "defective_rate": 0.94132
     },
     {
       "sku_code": "4571501178438",
@@ -8593,9 +8595,9 @@
         "2026-02": 3,
         "2026-03": 3,
         "2026-04": 4168,
-        "2026-05": 3648
+        "2026-05": 3392
       },
-      "latest_stock": 3648,
+      "latest_stock": 3392,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -8610,9 +8612,9 @@
         "2026-02": 57,
         "2026-03": 37,
         "2026-04": 3368,
-        "2026-05": 2907
+        "2026-05": 2663
       },
-      "latest_stock": 2907,
+      "latest_stock": 2663,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -8627,9 +8629,9 @@
         "2026-02": 15,
         "2026-03": 6,
         "2026-04": 3282,
-        "2026-05": 2906
+        "2026-05": 2662
       },
-      "latest_stock": 2906,
+      "latest_stock": 2662,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -8639,9 +8641,9 @@
       "monthly_stock": {
         "2026-03": 3195,
         "2026-04": 2772,
-        "2026-05": 2744
+        "2026-05": 2723
       },
-      "latest_stock": 2744,
+      "latest_stock": 2723,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -8651,9 +8653,9 @@
       "monthly_stock": {
         "2026-03": 3195,
         "2026-04": 2785,
-        "2026-05": 2757
+        "2026-05": 2736
       },
-      "latest_stock": 2757,
+      "latest_stock": 2736,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -8663,9 +8665,9 @@
       "monthly_stock": {
         "2026-03": 2835,
         "2026-04": 2386,
-        "2026-05": 2364
+        "2026-05": 2343
       },
-      "latest_stock": 2364,
+      "latest_stock": 2343,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -8675,9 +8677,9 @@
       "monthly_stock": {
         "2026-03": 2835,
         "2026-04": 2436,
-        "2026-05": 2414
+        "2026-05": 2393
       },
-      "latest_stock": 2414,
+      "latest_stock": 2393,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -8891,11 +8893,11 @@
         "2026-02": 808,
         "2026-03": 801,
         "2026-04": 779,
-        "2026-05": 779
+        "2026-05": 776
       },
-      "latest_stock": 779,
-      "defective_stock": 659,
-      "defective_rate": 0.845956
+      "latest_stock": 776,
+      "defective_stock": 752,
+      "defective_rate": 0.969072
     },
     {
       "sku_code": "4571501171491",
@@ -9635,11 +9637,11 @@
         "2026-02": 750,
         "2026-03": 742,
         "2026-04": 717,
-        "2026-05": 725
+        "2026-05": 723
       },
-      "latest_stock": 725,
-      "defective_stock": 653,
-      "defective_rate": 0.90069
+      "latest_stock": 723,
+      "defective_stock": 651,
+      "defective_rate": 0.900415
     },
     {
       "sku_code": "6971471204409",
@@ -9652,11 +9654,11 @@
         "2026-02": 3981,
         "2026-03": 3985,
         "2026-04": 3972,
-        "2026-05": 3978
+        "2026-05": 3961
       },
-      "latest_stock": 3978,
-      "defective_stock": 3882,
-      "defective_rate": 0.975867
+      "latest_stock": 3961,
+      "defective_stock": 3769,
+      "defective_rate": 0.951527
     },
     {
       "sku_code": "6971471204423",
@@ -9677,11 +9679,11 @@
         "2026-02": 937,
         "2026-03": 929,
         "2026-04": 923,
-        "2026-05": 928
+        "2026-05": 925
       },
-      "latest_stock": 928,
-      "defective_stock": 880,
-      "defective_rate": 0.948276
+      "latest_stock": 925,
+      "defective_stock": 877,
+      "defective_rate": 0.948108
     },
     {
       "sku_code": "6927545996732",
@@ -9694,11 +9696,11 @@
         "2026-02": 3891,
         "2026-03": 3900,
         "2026-04": 3890,
-        "2026-05": 3892
+        "2026-05": 3890
       },
-      "latest_stock": 3892,
-      "defective_stock": 3772,
-      "defective_rate": 0.969168
+      "latest_stock": 3890,
+      "defective_stock": 3770,
+      "defective_rate": 0.969152
     },
     {
       "sku_code": "4571501171026",
@@ -9711,11 +9713,11 @@
         "2026-02": 5915,
         "2026-03": 5904,
         "2026-04": 5897,
-        "2026-05": 5893
+        "2026-05": 5892
       },
-      "latest_stock": 5893,
-      "defective_stock": 5845,
-      "defective_rate": 0.991855
+      "latest_stock": 5892,
+      "defective_stock": 5844,
+      "defective_rate": 0.991853
     },
     {
       "sku_code": "6935091333246",
@@ -10119,9 +10121,9 @@
         "2026-02": 12129,
         "2026-03": 7724,
         "2026-04": 6914,
-        "2026-05": 6655
+        "2026-05": 6609
       },
-      "latest_stock": 6655,
+      "latest_stock": 6609,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -10526,9 +10528,9 @@
         "2026-02": 1106,
         "2026-03": 375,
         "2026-04": 2791,
-        "2026-05": 2277
+        "2026-05": 2260
       },
-      "latest_stock": 2277,
+      "latest_stock": 2260,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -10560,9 +10562,9 @@
         "2026-02": 3675,
         "2026-03": 3158,
         "2026-04": 2774,
-        "2026-05": 2566
+        "2026-05": 2534
       },
-      "latest_stock": 2566,
+      "latest_stock": 2534,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -10594,9 +10596,9 @@
         "2026-02": 181,
         "2026-03": 181,
         "2026-04": 181,
-        "2026-05": 181
+        "2026-05": 131
       },
-      "latest_stock": 181,
+      "latest_stock": 131,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -10847,9 +10849,9 @@
       "sku_name": "モンチッチ メイクアップギフトセットボックス",
       "monthly_stock": {
         "2026-04": 1615,
-        "2026-05": 311
+        "2026-05": 309
       },
-      "latest_stock": 311,
+      "latest_stock": 309,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -10858,9 +10860,9 @@
       "sku_name": "モンチッチ メイクアップギフトセットボックス用紙パッキン",
       "monthly_stock": {
         "2026-04": 1,
-        "2026-05": 1
+        "2026-05": 299
       },
-      "latest_stock": 1,
+      "latest_stock": 299,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -10899,9 +10901,9 @@
       "sku_name": "ぷにっこ 唐揚げ犬？用 付属袋 16cm x 16cm",
       "monthly_stock": {
         "2026-04": 264,
-        "2026-05": 258
+        "2026-05": 257
       },
-      "latest_stock": 258,
+      "latest_stock": 257,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -10910,9 +10912,9 @@
       "sku_name": "ぷにっこ クリーム犬/バターサンドくま用 付属袋 17cm x 17cm",
       "monthly_stock": {
         "2026-04": 492,
-        "2026-05": 478
+        "2026-05": 477
       },
-      "latest_stock": 478,
+      "latest_stock": 477,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11028,9 +11030,9 @@
         "2026-02": 24,
         "2026-03": 22,
         "2026-04": 20,
-        "2026-05": 19
+        "2026-05": 16
       },
-      "latest_stock": 19,
+      "latest_stock": 16,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11132,9 +11134,9 @@
         "2026-02": 138,
         "2026-03": 137,
         "2026-04": 95,
-        "2026-05": 95
+        "2026-05": 94
       },
-      "latest_stock": 95,
+      "latest_stock": 94,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11244,9 +11246,9 @@
         "2026-02": 79,
         "2026-03": 79,
         "2026-04": 79,
-        "2026-05": 79
+        "2026-05": 78
       },
-      "latest_stock": 79,
+      "latest_stock": 78,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11278,9 +11280,9 @@
         "2026-02": 236,
         "2026-03": 222,
         "2026-04": 222,
-        "2026-05": 222
+        "2026-05": 220
       },
-      "latest_stock": 222,
+      "latest_stock": 220,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11362,9 +11364,9 @@
         "2026-02": 504,
         "2026-03": 490,
         "2026-04": 486,
-        "2026-05": 484
+        "2026-05": 481
       },
-      "latest_stock": 484,
+      "latest_stock": 481,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11515,9 +11517,9 @@
         "2026-02": 236,
         "2026-03": 228,
         "2026-04": 200,
-        "2026-05": 187
+        "2026-05": 185
       },
-      "latest_stock": 187,
+      "latest_stock": 185,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11680,9 +11682,9 @@
         "2026-02": 57,
         "2026-03": 20,
         "2026-04": 0,
-        "2026-05": 460
+        "2026-05": 451
       },
-      "latest_stock": 460,
+      "latest_stock": 451,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11693,9 +11695,9 @@
         "2026-02": 600,
         "2026-03": 595,
         "2026-04": 301,
-        "2026-05": 252
+        "2026-05": 249
       },
-      "latest_stock": 252,
+      "latest_stock": 249,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11710,9 +11712,9 @@
         "2026-02": 414,
         "2026-03": 414,
         "2026-04": 412,
-        "2026-05": 411
+        "2026-05": 410
       },
-      "latest_stock": 411,
+      "latest_stock": 410,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11727,9 +11729,9 @@
         "2026-02": 896,
         "2026-03": 856,
         "2026-04": 714,
-        "2026-05": 684
+        "2026-05": 607
       },
-      "latest_stock": 684,
+      "latest_stock": 607,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11744,9 +11746,9 @@
         "2026-02": 27,
         "2026-03": 27,
         "2026-04": 396,
-        "2026-05": 393
+        "2026-05": 390
       },
-      "latest_stock": 393,
+      "latest_stock": 390,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11795,9 +11797,9 @@
         "2026-02": 473,
         "2026-03": 456,
         "2026-04": 387,
-        "2026-05": 383
+        "2026-05": 379
       },
-      "latest_stock": 383,
+      "latest_stock": 379,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11846,9 +11848,9 @@
         "2026-02": 468,
         "2026-03": 463,
         "2026-04": 438,
-        "2026-05": 434
+        "2026-05": 432
       },
-      "latest_stock": 434,
+      "latest_stock": 432,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11876,9 +11878,9 @@
         "2026-02": 497,
         "2026-03": 473,
         "2026-04": 335,
-        "2026-05": 334
+        "2026-05": 333
       },
-      "latest_stock": 334,
+      "latest_stock": 333,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11889,9 +11891,9 @@
         "2026-02": 766,
         "2026-03": 698,
         "2026-04": 581,
-        "2026-05": 481
+        "2026-05": 480
       },
-      "latest_stock": 481,
+      "latest_stock": 480,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11902,9 +11904,9 @@
         "2026-02": 720,
         "2026-03": 708,
         "2026-04": 1177,
-        "2026-05": 1076
+        "2026-05": 1063
       },
-      "latest_stock": 1076,
+      "latest_stock": 1063,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11915,9 +11917,9 @@
         "2026-02": 1261,
         "2026-03": 651,
         "2026-04": 532,
-        "2026-05": 472
+        "2026-05": 469
       },
-      "latest_stock": 472,
+      "latest_stock": 469,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11928,9 +11930,9 @@
         "2026-02": 700,
         "2026-03": 696,
         "2026-04": 451,
-        "2026-05": 445
+        "2026-05": 444
       },
-      "latest_stock": 445,
+      "latest_stock": 444,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11939,9 +11941,9 @@
       "sku_name": "[什器]MilleFee モンチッチコラボパフ",
       "monthly_stock": {
         "2026-04": 987,
-        "2026-05": 986
+        "2026-05": 978
       },
-      "latest_stock": 986,
+      "latest_stock": 978,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11950,9 +11952,9 @@
       "sku_name": "[什器]MilleFee モンチッチコラボコスメ",
       "monthly_stock": {
         "2026-04": 900,
-        "2026-05": 899
+        "2026-05": 891
       },
-      "latest_stock": 899,
+      "latest_stock": 891,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -11991,9 +11993,9 @@
         "2026-02": 429,
         "2026-03": 393,
         "2026-04": 391,
-        "2026-05": 390
+        "2026-05": 389
       },
-      "latest_stock": 390,
+      "latest_stock": 389,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -12245,9 +12247,9 @@
         "2026-02": 550,
         "2026-03": 549,
         "2026-04": 529,
-        "2026-05": 529
+        "2026-05": 528
       },
-      "latest_stock": 529,
+      "latest_stock": 528,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -12342,9 +12344,9 @@
       "monthly_stock": {
         "2026-03": 646,
         "2026-04": 617,
-        "2026-05": 617
+        "2026-05": 616
       },
-      "latest_stock": 617,
+      "latest_stock": 616,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -12483,9 +12485,9 @@
         "2026-02": 1227,
         "2026-03": 1165,
         "2026-04": 669,
-        "2026-05": 558
+        "2026-05": 535
       },
-      "latest_stock": 558,
+      "latest_stock": 535,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -12525,9 +12527,9 @@
         "2026-02": 487,
         "2026-03": 290,
         "2026-04": 155,
-        "2026-05": 141
+        "2026-05": 138
       },
-      "latest_stock": 141,
+      "latest_stock": 138,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -12686,9 +12688,9 @@
         "2026-02": 224,
         "2026-03": 214,
         "2026-04": 210,
-        "2026-05": 210
+        "2026-05": 209
       },
-      "latest_stock": 210,
+      "latest_stock": 209,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -12892,9 +12894,9 @@
         "2026-02": 109,
         "2026-03": 108,
         "2026-04": 105,
-        "2026-05": 105
+        "2026-05": 103
       },
-      "latest_stock": 105,
+      "latest_stock": 103,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -12943,9 +12945,9 @@
         "2026-02": 224,
         "2026-03": 218,
         "2026-04": 213,
-        "2026-05": 213
+        "2026-05": 212
       },
-      "latest_stock": 213,
+      "latest_stock": 212,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -12977,9 +12979,9 @@
         "2026-02": 20,
         "2026-03": 20,
         "2026-04": 20,
-        "2026-05": 271
+        "2026-05": 219
       },
-      "latest_stock": 271,
+      "latest_stock": 219,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -12990,9 +12992,9 @@
         "2026-02": 700,
         "2026-03": 397,
         "2026-04": 328,
-        "2026-05": 328
+        "2026-05": 326
       },
-      "latest_stock": 328,
+      "latest_stock": 326,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13264,9 +13266,9 @@
         "2026-02": 513,
         "2026-03": 492,
         "2026-04": 483,
-        "2026-05": 481
+        "2026-05": 480
       },
-      "latest_stock": 481,
+      "latest_stock": 480,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13281,9 +13283,9 @@
         "2026-02": 793,
         "2026-03": 772,
         "2026-04": 763,
-        "2026-05": 761
+        "2026-05": 760
       },
-      "latest_stock": 761,
+      "latest_stock": 760,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13292,9 +13294,9 @@
       "sku_name": "[説明書]jill leen. (HT05,06)12色アイシャドウ定番什器",
       "monthly_stock": {
         "2026-04": 80,
-        "2026-05": 28
+        "2026-05": 14
       },
-      "latest_stock": 28,
+      "latest_stock": 14,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13303,9 +13305,9 @@
       "sku_name": "[シール]jill leen. (HT05,06)12色アイシャドウ定番什器",
       "monthly_stock": {
         "2026-04": 580,
-        "2026-05": 528
+        "2026-05": 514
       },
-      "latest_stock": 528,
+      "latest_stock": 514,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13320,9 +13322,9 @@
         "2026-02": 260,
         "2026-03": 258,
         "2026-04": 254,
-        "2026-05": 253
+        "2026-05": 250
       },
-      "latest_stock": 253,
+      "latest_stock": 250,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13339,9 +13341,9 @@
       "sku_name": "[什器]MilleFee W900アクリル VOL4",
       "monthly_stock": {
         "2026-04": 270,
-        "2026-05": 270
+        "2026-05": 269
       },
-      "latest_stock": 270,
+      "latest_stock": 269,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13370,9 +13372,9 @@
         "2026-02": 90,
         "2026-03": 80,
         "2026-04": 80,
-        "2026-05": 80
+        "2026-05": 75
       },
-      "latest_stock": 80,
+      "latest_stock": 75,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13383,9 +13385,9 @@
         "2026-02": 93,
         "2026-03": 83,
         "2026-04": 83,
-        "2026-05": 83
+        "2026-05": 78
       },
-      "latest_stock": 83,
+      "latest_stock": 78,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13396,9 +13398,9 @@
         "2026-02": 94,
         "2026-03": 76,
         "2026-04": 76,
-        "2026-05": 76
+        "2026-05": 71
       },
-      "latest_stock": 76,
+      "latest_stock": 71,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13409,9 +13411,9 @@
         "2026-02": 0,
         "2026-03": 84,
         "2026-04": 84,
-        "2026-05": 84
+        "2026-05": 79
       },
-      "latest_stock": 84,
+      "latest_stock": 79,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13482,9 +13484,9 @@
         "2026-02": 20,
         "2026-03": 22,
         "2026-04": 22,
-        "2026-05": 22
+        "2026-05": 20
       },
-      "latest_stock": 22,
+      "latest_stock": 20,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13499,9 +13501,9 @@
         "2026-02": 14,
         "2026-03": 16,
         "2026-04": 16,
-        "2026-05": 16
+        "2026-05": 14
       },
-      "latest_stock": 16,
+      "latest_stock": 14,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13516,9 +13518,9 @@
         "2026-02": 16,
         "2026-03": 18,
         "2026-04": 18,
-        "2026-05": 18
+        "2026-05": 16
       },
-      "latest_stock": 18,
+      "latest_stock": 16,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13659,9 +13661,9 @@
         "2026-02": 15,
         "2026-03": 12,
         "2026-04": 11,
-        "2026-05": 11
+        "2026-05": 10
       },
-      "latest_stock": 11,
+      "latest_stock": 10,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13676,9 +13678,9 @@
         "2026-02": 14,
         "2026-03": 11,
         "2026-04": 5,
-        "2026-05": 5
+        "2026-05": 4
       },
-      "latest_stock": 5,
+      "latest_stock": 4,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13693,9 +13695,9 @@
         "2026-02": 13,
         "2026-03": 13,
         "2026-04": 13,
-        "2026-05": 13
+        "2026-05": 12
       },
-      "latest_stock": 13,
+      "latest_stock": 12,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13710,9 +13712,9 @@
         "2026-02": 5,
         "2026-03": 5,
         "2026-04": 5,
-        "2026-05": 5
+        "2026-05": 4
       },
-      "latest_stock": 5,
+      "latest_stock": 4,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13727,9 +13729,9 @@
         "2026-02": 3,
         "2026-03": 3,
         "2026-04": 3,
-        "2026-05": 3
+        "2026-05": 2
       },
-      "latest_stock": 3,
+      "latest_stock": 2,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13744,9 +13746,9 @@
         "2026-02": 11,
         "2026-03": 11,
         "2026-04": 11,
-        "2026-05": 11
+        "2026-05": 10
       },
-      "latest_stock": 11,
+      "latest_stock": 10,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13761,9 +13763,9 @@
         "2026-02": 5,
         "2026-03": 5,
         "2026-04": 5,
-        "2026-05": 5
+        "2026-05": 4
       },
-      "latest_stock": 5,
+      "latest_stock": 4,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13778,9 +13780,9 @@
         "2026-02": 4,
         "2026-03": 4,
         "2026-04": 4,
-        "2026-05": 4
+        "2026-05": 3
       },
-      "latest_stock": 4,
+      "latest_stock": 3,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13856,9 +13858,9 @@
         "2025-12": 0,
         "2026-03": 11,
         "2026-04": 10,
-        "2026-05": 10
+        "2026-05": 6
       },
-      "latest_stock": 10,
+      "latest_stock": 6,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13869,9 +13871,9 @@
         "2025-12": 0,
         "2026-03": 18,
         "2026-04": 17,
-        "2026-05": 17
+        "2026-05": 13
       },
-      "latest_stock": 17,
+      "latest_stock": 13,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -13953,9 +13955,9 @@
         "2026-02": 27,
         "2026-03": 77,
         "2026-04": 17,
-        "2026-05": 14
+        "2026-05": 13
       },
-      "latest_stock": 14,
+      "latest_stock": 13,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14097,9 +14099,9 @@
         "2026-02": 54,
         "2026-03": 45,
         "2026-04": 35,
-        "2026-05": 35
+        "2026-05": 32
       },
-      "latest_stock": 35,
+      "latest_stock": 32,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14114,9 +14116,9 @@
         "2026-02": 45,
         "2026-03": 53,
         "2026-04": 40,
-        "2026-05": 40
+        "2026-05": 32
       },
-      "latest_stock": 40,
+      "latest_stock": 32,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14131,9 +14133,9 @@
         "2026-02": 52,
         "2026-03": 70,
         "2026-04": 44,
-        "2026-05": 44
+        "2026-05": 36
       },
-      "latest_stock": 44,
+      "latest_stock": 36,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14148,9 +14150,9 @@
         "2026-02": 38,
         "2026-03": 32,
         "2026-04": 29,
-        "2026-05": 27
+        "2026-05": 22
       },
-      "latest_stock": 27,
+      "latest_stock": 22,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14165,9 +14167,9 @@
         "2026-02": 48,
         "2026-03": 61,
         "2026-04": 36,
-        "2026-05": 33
+        "2026-05": 26
       },
-      "latest_stock": 33,
+      "latest_stock": 26,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14182,9 +14184,9 @@
         "2026-02": 26,
         "2026-03": 36,
         "2026-04": 19,
-        "2026-05": 17
+        "2026-05": 11
       },
-      "latest_stock": 17,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14199,9 +14201,9 @@
         "2026-02": 40,
         "2026-03": 46,
         "2026-04": 32,
-        "2026-05": 30
+        "2026-05": 27
       },
-      "latest_stock": 30,
+      "latest_stock": 27,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14233,9 +14235,9 @@
         "2026-02": 3,
         "2026-03": 6,
         "2026-04": 6,
-        "2026-05": 5
+        "2026-05": 4
       },
-      "latest_stock": 5,
+      "latest_stock": 4,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14352,9 +14354,9 @@
         "2026-02": 1,
         "2026-03": 4,
         "2026-04": 14,
-        "2026-05": 14
+        "2026-05": 11
       },
-      "latest_stock": 14,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14368,9 +14370,10 @@
         "2026-01": 6,
         "2026-02": 0,
         "2026-03": 3,
-        "2026-04": 0
+        "2026-04": 0,
+        "2026-05": 3
       },
-      "latest_stock": 0,
+      "latest_stock": 3,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14385,9 +14388,9 @@
         "2026-02": 14,
         "2026-03": 19,
         "2026-04": 25,
-        "2026-05": 25
+        "2026-05": 21
       },
-      "latest_stock": 25,
+      "latest_stock": 21,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14402,9 +14405,9 @@
         "2026-02": 10,
         "2026-03": 10,
         "2026-04": 29,
-        "2026-05": 29
+        "2026-05": 28
       },
-      "latest_stock": 29,
+      "latest_stock": 28,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14419,9 +14422,9 @@
         "2026-02": 13,
         "2026-03": 24,
         "2026-04": 15,
-        "2026-05": 14
+        "2026-05": 10
       },
-      "latest_stock": 14,
+      "latest_stock": 10,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14436,9 +14439,9 @@
         "2026-02": 11,
         "2026-03": 11,
         "2026-04": 10,
-        "2026-05": 10
+        "2026-05": 9
       },
-      "latest_stock": 10,
+      "latest_stock": 9,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14453,9 +14456,9 @@
         "2026-02": 292,
         "2026-03": 292,
         "2026-04": 290,
-        "2026-05": 289
+        "2026-05": 288
       },
-      "latest_stock": 289,
+      "latest_stock": 288,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14470,9 +14473,9 @@
         "2026-02": 293,
         "2026-03": 293,
         "2026-04": 291,
-        "2026-05": 290
+        "2026-05": 289
       },
-      "latest_stock": 290,
+      "latest_stock": 289,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14487,9 +14490,9 @@
         "2026-02": 187,
         "2026-03": 187,
         "2026-04": 185,
-        "2026-05": 184
+        "2026-05": 183
       },
-      "latest_stock": 184,
+      "latest_stock": 183,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14504,9 +14507,9 @@
         "2026-02": 184,
         "2026-03": 184,
         "2026-04": 182,
-        "2026-05": 181
+        "2026-05": 180
       },
-      "latest_stock": 181,
+      "latest_stock": 180,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14521,9 +14524,9 @@
         "2026-02": 182,
         "2026-03": 182,
         "2026-04": 180,
-        "2026-05": 179
+        "2026-05": 178
       },
-      "latest_stock": 179,
+      "latest_stock": 178,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14538,9 +14541,9 @@
         "2026-02": 184,
         "2026-03": 184,
         "2026-04": 182,
-        "2026-05": 181
+        "2026-05": 180
       },
-      "latest_stock": 181,
+      "latest_stock": 180,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14555,9 +14558,9 @@
         "2026-02": 182,
         "2026-03": 181,
         "2026-04": 179,
-        "2026-05": 178
+        "2026-05": 177
       },
-      "latest_stock": 178,
+      "latest_stock": 177,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14572,9 +14575,9 @@
         "2026-02": 187,
         "2026-03": 187,
         "2026-04": 185,
-        "2026-05": 184
+        "2026-05": 183
       },
-      "latest_stock": 184,
+      "latest_stock": 183,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14589,9 +14592,9 @@
         "2026-02": 36,
         "2026-03": 19,
         "2026-04": 63,
-        "2026-05": 24
+        "2026-05": 8
       },
-      "latest_stock": 24,
+      "latest_stock": 8,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14606,9 +14609,9 @@
         "2026-02": 17,
         "2026-03": 13,
         "2026-04": 57,
-        "2026-05": 9
+        "2026-05": 4
       },
-      "latest_stock": 9,
+      "latest_stock": 4,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14752,9 +14755,9 @@
         "2026-02": 23,
         "2026-03": 17,
         "2026-04": 24,
-        "2026-05": 24
+        "2026-05": 23
       },
-      "latest_stock": 24,
+      "latest_stock": 23,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14769,9 +14772,9 @@
         "2026-02": 22,
         "2026-03": 16,
         "2026-04": 23,
-        "2026-05": 23
+        "2026-05": 22
       },
-      "latest_stock": 23,
+      "latest_stock": 22,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14786,9 +14789,9 @@
         "2026-02": 23,
         "2026-03": 17,
         "2026-04": 21,
-        "2026-05": 21
+        "2026-05": 20
       },
-      "latest_stock": 21,
+      "latest_stock": 20,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14803,9 +14806,9 @@
         "2026-02": 20,
         "2026-03": 14,
         "2026-04": 8,
-        "2026-05": 8
+        "2026-05": 7
       },
-      "latest_stock": 8,
+      "latest_stock": 7,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14887,9 +14890,9 @@
         "2026-02": 15,
         "2026-03": 25,
         "2026-04": 16,
-        "2026-05": 16
+        "2026-05": 11
       },
-      "latest_stock": 16,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14904,9 +14907,9 @@
         "2026-02": 22,
         "2026-03": 33,
         "2026-04": 24,
-        "2026-05": 24
+        "2026-05": 19
       },
-      "latest_stock": 24,
+      "latest_stock": 19,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14921,9 +14924,9 @@
         "2026-02": 31,
         "2026-03": 33,
         "2026-04": 26,
-        "2026-05": 26
+        "2026-05": 20
       },
-      "latest_stock": 26,
+      "latest_stock": 20,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14938,9 +14941,9 @@
         "2026-02": 33,
         "2026-03": 33,
         "2026-04": 26,
-        "2026-05": 26
+        "2026-05": 20
       },
-      "latest_stock": 26,
+      "latest_stock": 20,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14969,9 +14972,9 @@
         "2025-11": 0,
         "2026-03": 3,
         "2026-04": 2,
-        "2026-05": 2
+        "2026-05": 1
       },
-      "latest_stock": 2,
+      "latest_stock": 1,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -14986,9 +14989,9 @@
         "2026-02": 16,
         "2026-03": 7,
         "2026-04": 2,
-        "2026-05": 18
+        "2026-05": 13
       },
-      "latest_stock": 18,
+      "latest_stock": 13,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15003,9 +15006,9 @@
         "2026-02": 16,
         "2026-03": 136,
         "2026-04": 2,
-        "2026-05": 18
+        "2026-05": 13
       },
-      "latest_stock": 18,
+      "latest_stock": 13,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15020,9 +15023,9 @@
         "2026-02": 16,
         "2026-03": 136,
         "2026-04": 0,
-        "2026-05": 16
+        "2026-05": 11
       },
-      "latest_stock": 16,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15037,9 +15040,9 @@
         "2026-02": 17,
         "2026-03": 8,
         "2026-04": 20,
-        "2026-05": 16
+        "2026-05": 11
       },
-      "latest_stock": 16,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15054,9 +15057,9 @@
         "2026-02": 21,
         "2026-03": 21,
         "2026-04": 8,
-        "2026-05": 8
+        "2026-05": 7
       },
-      "latest_stock": 8,
+      "latest_stock": 7,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15071,9 +15074,9 @@
         "2026-02": 30,
         "2026-03": 29,
         "2026-04": 20,
-        "2026-05": 20
+        "2026-05": 19
       },
-      "latest_stock": 20,
+      "latest_stock": 19,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15088,9 +15091,9 @@
         "2026-02": 20,
         "2026-03": 19,
         "2026-04": 23,
-        "2026-05": 23
+        "2026-05": 22
       },
-      "latest_stock": 23,
+      "latest_stock": 22,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15105,9 +15108,9 @@
         "2026-02": 26,
         "2026-03": 19,
         "2026-04": 7,
-        "2026-05": 7
+        "2026-05": 6
       },
-      "latest_stock": 7,
+      "latest_stock": 6,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15122,9 +15125,9 @@
         "2026-02": 29,
         "2026-03": 31,
         "2026-04": 49,
-        "2026-05": 39
+        "2026-05": 38
       },
-      "latest_stock": 39,
+      "latest_stock": 38,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15139,9 +15142,9 @@
         "2026-02": 23,
         "2026-03": 25,
         "2026-04": 50,
-        "2026-05": 40
+        "2026-05": 39
       },
-      "latest_stock": 40,
+      "latest_stock": 39,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15166,9 +15169,9 @@
         "2026-02": 65,
         "2026-03": 65,
         "2026-04": 50,
-        "2026-05": 48
+        "2026-05": 42
       },
-      "latest_stock": 48,
+      "latest_stock": 42,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15183,9 +15186,9 @@
         "2026-02": 65,
         "2026-03": 169,
         "2026-04": 1,
-        "2026-05": 1
+        "2026-05": 0
       },
-      "latest_stock": 1,
+      "latest_stock": 0,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15200,9 +15203,9 @@
         "2026-02": 63,
         "2026-03": 193,
         "2026-04": 17,
-        "2026-05": 15
+        "2026-05": 9
       },
-      "latest_stock": 15,
+      "latest_stock": 9,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15217,9 +15220,9 @@
         "2026-02": 65,
         "2026-03": 195,
         "2026-04": 12,
-        "2026-05": 10
+        "2026-05": 4
       },
-      "latest_stock": 10,
+      "latest_stock": 4,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15234,9 +15237,9 @@
         "2026-02": 43,
         "2026-03": 38,
         "2026-04": 25,
-        "2026-05": 25
+        "2026-05": 24
       },
-      "latest_stock": 25,
+      "latest_stock": 24,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15251,9 +15254,9 @@
         "2026-02": 45,
         "2026-03": 40,
         "2026-04": 27,
-        "2026-05": 27
+        "2026-05": 26
       },
-      "latest_stock": 27,
+      "latest_stock": 26,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15268,9 +15271,9 @@
         "2026-02": 45,
         "2026-03": 40,
         "2026-04": 26,
-        "2026-05": 26
+        "2026-05": 25
       },
-      "latest_stock": 26,
+      "latest_stock": 25,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15285,9 +15288,9 @@
         "2026-02": 40,
         "2026-03": 32,
         "2026-04": 23,
-        "2026-05": 23
+        "2026-05": 19
       },
-      "latest_stock": 23,
+      "latest_stock": 19,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15315,9 +15318,9 @@
         "2026-02": 43,
         "2026-03": 33,
         "2026-04": 25,
-        "2026-05": 25
+        "2026-05": 21
       },
-      "latest_stock": 25,
+      "latest_stock": 21,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15345,9 +15348,9 @@
         "2026-02": 39,
         "2026-03": 30,
         "2026-04": 22,
-        "2026-05": 22
+        "2026-05": 18
       },
-      "latest_stock": 22,
+      "latest_stock": 18,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15401,9 +15404,9 @@
         "2026-02": 0,
         "2026-03": 3,
         "2026-04": 3,
-        "2026-05": 2
+        "2026-05": 1
       },
-      "latest_stock": 2,
+      "latest_stock": 1,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15418,9 +15421,9 @@
         "2026-02": 7,
         "2026-03": 78,
         "2026-04": 17,
-        "2026-05": 15
+        "2026-05": 12
       },
-      "latest_stock": 15,
+      "latest_stock": 12,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15435,9 +15438,9 @@
         "2026-02": 19,
         "2026-03": 44,
         "2026-04": 17,
-        "2026-05": 15
+        "2026-05": 11
       },
-      "latest_stock": 15,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15486,9 +15489,9 @@
         "2026-02": 6,
         "2026-03": 76,
         "2026-04": 6,
-        "2026-05": 4
+        "2026-05": 0
       },
-      "latest_stock": 4,
+      "latest_stock": 0,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15503,9 +15506,9 @@
         "2026-02": 17,
         "2026-03": 1,
         "2026-04": 9,
-        "2026-05": 9
+        "2026-05": 8
       },
-      "latest_stock": 9,
+      "latest_stock": 8,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15520,9 +15523,9 @@
         "2026-02": 21,
         "2026-03": 5,
         "2026-04": 3,
-        "2026-05": 3
+        "2026-05": 2
       },
-      "latest_stock": 3,
+      "latest_stock": 2,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15537,9 +15540,9 @@
         "2026-02": 12,
         "2026-03": 6,
         "2026-04": 9,
-        "2026-05": 9
+        "2026-05": 8
       },
-      "latest_stock": 9,
+      "latest_stock": 8,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15554,9 +15557,9 @@
         "2026-02": 9,
         "2026-03": 5,
         "2026-04": 3,
-        "2026-05": 3
+        "2026-05": 2
       },
-      "latest_stock": 3,
+      "latest_stock": 2,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15571,9 +15574,9 @@
         "2026-02": 11,
         "2026-03": 5,
         "2026-04": 9,
-        "2026-05": 9
+        "2026-05": 8
       },
-      "latest_stock": 9,
+      "latest_stock": 8,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15588,9 +15591,9 @@
         "2026-02": 10,
         "2026-03": 4,
         "2026-04": 9,
-        "2026-05": 9
+        "2026-05": 8
       },
-      "latest_stock": 9,
+      "latest_stock": 8,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15605,9 +15608,9 @@
         "2026-02": 14,
         "2026-03": 25,
         "2026-04": 14,
-        "2026-05": 14
+        "2026-05": 13
       },
-      "latest_stock": 14,
+      "latest_stock": 13,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15622,9 +15625,9 @@
         "2026-02": 17,
         "2026-03": 22,
         "2026-04": 16,
-        "2026-05": 16
+        "2026-05": 15
       },
-      "latest_stock": 16,
+      "latest_stock": 15,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15639,9 +15642,9 @@
         "2026-02": 134,
         "2026-03": 112,
         "2026-04": 87,
-        "2026-05": 83
+        "2026-05": 80
       },
-      "latest_stock": 83,
+      "latest_stock": 80,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15656,9 +15659,9 @@
         "2026-02": 131,
         "2026-03": 109,
         "2026-04": 32,
-        "2026-05": 28
+        "2026-05": 22
       },
-      "latest_stock": 28,
+      "latest_stock": 22,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15673,9 +15676,9 @@
         "2026-02": 133,
         "2026-03": 111,
         "2026-04": 86,
-        "2026-05": 82
+        "2026-05": 79
       },
-      "latest_stock": 82,
+      "latest_stock": 79,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15690,9 +15693,9 @@
         "2026-02": 132,
         "2026-03": 110,
         "2026-04": 35,
-        "2026-05": 31
+        "2026-05": 25
       },
-      "latest_stock": 31,
+      "latest_stock": 25,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15888,9 +15891,9 @@
         "2026-02": 3,
         "2026-03": 6,
         "2026-04": 0,
-        "2026-05": 599
+        "2026-05": 597
       },
-      "latest_stock": 599,
+      "latest_stock": 597,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15901,9 +15904,9 @@
         "2026-02": 709,
         "2026-03": 638,
         "2026-04": 503,
-        "2026-05": 402
+        "2026-05": 400
       },
-      "latest_stock": 402,
+      "latest_stock": 400,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15915,9 +15918,9 @@
         "2026-02": 661,
         "2026-03": 642,
         "2026-04": 578,
-        "2026-05": 474
+        "2026-05": 463
       },
-      "latest_stock": 474,
+      "latest_stock": 463,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15929,9 +15932,9 @@
         "2026-02": 661,
         "2026-03": 642,
         "2026-04": 579,
-        "2026-05": 476
+        "2026-05": 465
       },
-      "latest_stock": 476,
+      "latest_stock": 465,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15942,9 +15945,9 @@
         "2026-02": 1313,
         "2026-03": 701,
         "2026-04": 561,
-        "2026-05": 498
+        "2026-05": 495
       },
-      "latest_stock": 498,
+      "latest_stock": 495,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15955,9 +15958,9 @@
         "2026-02": 1313,
         "2026-03": 701,
         "2026-04": 555,
-        "2026-05": 492
+        "2026-05": 489
       },
-      "latest_stock": 492,
+      "latest_stock": 489,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15968,9 +15971,9 @@
         "2026-02": 1313,
         "2026-03": 701,
         "2026-04": 561,
-        "2026-05": 498
+        "2026-05": 495
       },
-      "latest_stock": 498,
+      "latest_stock": 495,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15981,9 +15984,9 @@
         "2026-02": 1313,
         "2026-03": 701,
         "2026-04": 555,
-        "2026-05": 492
+        "2026-05": 488
       },
-      "latest_stock": 492,
+      "latest_stock": 488,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -15994,9 +15997,9 @@
         "2026-02": 1313,
         "2026-03": 701,
         "2026-04": 561,
-        "2026-05": 498
+        "2026-05": 495
       },
-      "latest_stock": 498,
+      "latest_stock": 495,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16007,9 +16010,9 @@
         "2026-02": 1313,
         "2026-03": 701,
         "2026-04": 555,
-        "2026-05": 492
+        "2026-05": 489
       },
-      "latest_stock": 492,
+      "latest_stock": 489,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16020,9 +16023,9 @@
         "2026-02": 0,
         "2026-03": 92,
         "2026-04": 302,
-        "2026-05": 301
+        "2026-05": 299
       },
-      "latest_stock": 301,
+      "latest_stock": 299,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16076,9 +16079,9 @@
       "monthly_stock": {
         "2026-03": 689,
         "2026-04": 443,
-        "2026-05": 437
+        "2026-05": 436
       },
-      "latest_stock": 437,
+      "latest_stock": 436,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16087,9 +16090,9 @@
       "sku_name": "[テスター]MilleFee シェイクドロップチーク M03 フィグラテ",
       "monthly_stock": {
         "2026-04": 816,
-        "2026-05": 815
+        "2026-05": 810
       },
-      "latest_stock": 815,
+      "latest_stock": 810,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16098,9 +16101,9 @@
       "sku_name": "[テスター]MilleFee シェイクドロップチーク M05 ちょっと照れ屋なモンチッチくん",
       "monthly_stock": {
         "2026-04": 816,
-        "2026-05": 815
+        "2026-05": 810
       },
-      "latest_stock": 815,
+      "latest_stock": 810,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16109,9 +16112,9 @@
       "sku_name": "[テスター]MilleFee シェイクドロップチーク M06 モンチッチちゃん、透明感フィルターかかってる？",
       "monthly_stock": {
         "2026-04": 768,
-        "2026-05": 767
+        "2026-05": 762
       },
-      "latest_stock": 767,
+      "latest_stock": 762,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16120,9 +16123,9 @@
       "sku_name": "[テスター]MilleFee うるうるフィットグロス M01 うさぎピンク",
       "monthly_stock": {
         "2026-04": 600,
-        "2026-05": 600
+        "2026-05": 894
       },
-      "latest_stock": 600,
+      "latest_stock": 894,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16131,9 +16134,9 @@
       "sku_name": "[テスター]MilleFee うるうるフィットグロス M06 え、モンチッチくんのスタイ今日キラキラじゃない？",
       "monthly_stock": {
         "2026-04": 600,
-        "2026-05": 600
+        "2026-05": 894
       },
-      "latest_stock": 600,
+      "latest_stock": 894,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16142,9 +16145,9 @@
       "sku_name": "[テスター]MilleFee うるうるフィットグロス M07 モンチッチちゃんそのリボン貸して?！",
       "monthly_stock": {
         "2026-04": 600,
-        "2026-05": 600
+        "2026-05": 894
       },
-      "latest_stock": 600,
+      "latest_stock": 894,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16153,9 +16156,9 @@
       "sku_name": "[テスター]MilleFee ソフトムードシャドウパレット M01 モンチッチくん多幸感すごいね！",
       "monthly_stock": {
         "2026-04": 900,
-        "2026-05": 899
+        "2026-05": 894
       },
-      "latest_stock": 899,
+      "latest_stock": 894,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16164,9 +16167,9 @@
       "sku_name": "[テスター]MilleFee ソフトムードシャドウパレット M02 モンチッチちゃんの初ブルべメイク！",
       "monthly_stock": {
         "2026-04": 900,
-        "2026-05": 899
+        "2026-05": 894
       },
-      "latest_stock": 899,
+      "latest_stock": 894,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16174,9 +16177,9 @@
       "sku_code": "4580805230223_00",
       "sku_name": "[テスターセット]MilleFee モンチッチコラボ　メイクパフ単品",
       "monthly_stock": {
-        "2026-05": 199
+        "2026-05": 194
       },
-      "latest_stock": 199,
+      "latest_stock": 194,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16223,9 +16226,9 @@
         "2026-02": 35,
         "2026-03": 24,
         "2026-04": 21,
-        "2026-05": 17
+        "2026-05": 13
       },
-      "latest_stock": 17,
+      "latest_stock": 13,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16240,9 +16243,9 @@
         "2026-02": 33,
         "2026-03": 23,
         "2026-04": 22,
-        "2026-05": 17
+        "2026-05": 13
       },
-      "latest_stock": 17,
+      "latest_stock": 13,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16257,9 +16260,9 @@
         "2026-02": 32,
         "2026-03": 19,
         "2026-04": 22,
-        "2026-05": 18
+        "2026-05": 14
       },
-      "latest_stock": 18,
+      "latest_stock": 14,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16274,9 +16277,9 @@
         "2026-02": 31,
         "2026-03": 10,
         "2026-04": 14,
-        "2026-05": 9
+        "2026-05": 6
       },
-      "latest_stock": 9,
+      "latest_stock": 6,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16308,9 +16311,9 @@
         "2026-02": 56,
         "2026-03": 22,
         "2026-04": 22,
-        "2026-05": 16
+        "2026-05": 10
       },
-      "latest_stock": 16,
+      "latest_stock": 10,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16325,9 +16328,9 @@
         "2026-02": 4,
         "2026-03": 18,
         "2026-04": 17,
-        "2026-05": 17
+        "2026-05": 16
       },
-      "latest_stock": 17,
+      "latest_stock": 16,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16342,9 +16345,9 @@
         "2026-02": 22,
         "2026-03": 12,
         "2026-04": 15,
-        "2026-05": 13
+        "2026-05": 11
       },
-      "latest_stock": 13,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16359,9 +16362,9 @@
         "2026-02": 4,
         "2026-03": 15,
         "2026-04": 17,
-        "2026-05": 16
+        "2026-05": 12
       },
-      "latest_stock": 16,
+      "latest_stock": 12,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16376,9 +16379,9 @@
         "2026-02": 4,
         "2026-03": 15,
         "2026-04": 17,
-        "2026-05": 17
+        "2026-05": 15
       },
-      "latest_stock": 17,
+      "latest_stock": 15,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -16774,7 +16777,8 @@
         "2026-01": 10,
         "2026-02": 8,
         "2026-03": 0,
-        "2026-04": 0
+        "2026-04": 0,
+        "2026-05": 0
       },
       "latest_stock": 0,
       "defective_stock": 0,
@@ -16790,7 +16794,8 @@
         "2026-01": 8,
         "2026-02": 5,
         "2026-03": 0,
-        "2026-04": 0
+        "2026-04": 0,
+        "2026-05": 0
       },
       "latest_stock": 0,
       "defective_stock": 0,
@@ -16806,7 +16811,8 @@
         "2026-01": 10,
         "2026-02": 8,
         "2026-03": 0,
-        "2026-04": 0
+        "2026-04": 0,
+        "2026-05": 0
       },
       "latest_stock": 0,
       "defective_stock": 0,
@@ -17060,9 +17066,9 @@
         "2026-02": 7,
         "2026-03": 15,
         "2026-04": 12,
-        "2026-05": 12
+        "2026-05": 11
       },
-      "latest_stock": 12,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17077,9 +17083,9 @@
         "2026-02": 6,
         "2026-03": 14,
         "2026-04": 12,
-        "2026-05": 12
+        "2026-05": 11
       },
-      "latest_stock": 12,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17094,9 +17100,9 @@
         "2026-02": 6,
         "2026-03": 14,
         "2026-04": 12,
-        "2026-05": 12
+        "2026-05": 11
       },
-      "latest_stock": 12,
+      "latest_stock": 11,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17230,9 +17236,9 @@
         "2026-02": 100,
         "2026-03": 98,
         "2026-04": 95,
-        "2026-05": 95
+        "2026-05": 92
       },
-      "latest_stock": 95,
+      "latest_stock": 92,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17247,9 +17253,9 @@
         "2026-02": 99,
         "2026-03": 97,
         "2026-04": 94,
-        "2026-05": 94
+        "2026-05": 91
       },
-      "latest_stock": 94,
+      "latest_stock": 91,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17264,9 +17270,9 @@
         "2026-02": 98,
         "2026-03": 97,
         "2026-04": 94,
-        "2026-05": 94
+        "2026-05": 91
       },
-      "latest_stock": 94,
+      "latest_stock": 91,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17315,9 +17321,9 @@
         "2026-02": 185,
         "2026-03": 179,
         "2026-04": 194,
-        "2026-05": 194
+        "2026-05": 193
       },
-      "latest_stock": 194,
+      "latest_stock": 193,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17332,9 +17338,9 @@
         "2026-02": 183,
         "2026-03": 176,
         "2026-04": 190,
-        "2026-05": 190
+        "2026-05": 189
       },
-      "latest_stock": 190,
+      "latest_stock": 189,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17434,9 +17440,9 @@
         "2026-02": 1,
         "2026-03": 1,
         "2026-04": 131,
-        "2026-05": 62
+        "2026-05": 9
       },
-      "latest_stock": 62,
+      "latest_stock": 9,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17451,9 +17457,9 @@
         "2026-02": 5,
         "2026-03": 5,
         "2026-04": 135,
-        "2026-05": 66
+        "2026-05": 13
       },
-      "latest_stock": 66,
+      "latest_stock": 13,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17468,9 +17474,9 @@
         "2026-02": 4,
         "2026-03": 4,
         "2026-04": 134,
-        "2026-05": 65
+        "2026-05": 12
       },
-      "latest_stock": 65,
+      "latest_stock": 12,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17480,9 +17486,9 @@
       "monthly_stock": {
         "2026-03": 47,
         "2026-04": 1,
-        "2026-05": 1
+        "2026-05": 20
       },
-      "latest_stock": 1,
+      "latest_stock": 20,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17492,9 +17498,9 @@
       "monthly_stock": {
         "2026-03": 47,
         "2026-04": 1,
-        "2026-05": 1
+        "2026-05": 20
       },
-      "latest_stock": 1,
+      "latest_stock": 20,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17504,9 +17510,9 @@
       "monthly_stock": {
         "2026-03": 47,
         "2026-04": 1,
-        "2026-05": 1
+        "2026-05": 20
       },
-      "latest_stock": 1,
+      "latest_stock": 20,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17516,9 +17522,9 @@
       "monthly_stock": {
         "2026-03": 47,
         "2026-04": 1,
-        "2026-05": 1
+        "2026-05": 20
       },
-      "latest_stock": 1,
+      "latest_stock": 20,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17583,9 +17589,9 @@
         "2026-02": 25,
         "2026-03": 21,
         "2026-04": 59,
-        "2026-05": 59
+        "2026-05": 57
       },
-      "latest_stock": 59,
+      "latest_stock": 57,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17600,9 +17606,9 @@
         "2026-02": 25,
         "2026-03": 21,
         "2026-04": 20,
-        "2026-05": 20
+        "2026-05": 19
       },
-      "latest_stock": 20,
+      "latest_stock": 19,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17617,9 +17623,9 @@
         "2026-02": 31,
         "2026-03": 27,
         "2026-04": 19,
-        "2026-05": 19
+        "2026-05": 18
       },
-      "latest_stock": 19,
+      "latest_stock": 18,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17634,9 +17640,9 @@
         "2026-02": 41,
         "2026-03": 40,
         "2026-04": 64,
-        "2026-05": 64
+        "2026-05": 63
       },
-      "latest_stock": 64,
+      "latest_stock": 63,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17651,9 +17657,9 @@
         "2026-02": 31,
         "2026-03": 28,
         "2026-04": 15,
-        "2026-05": 15
+        "2026-05": 14
       },
-      "latest_stock": 15,
+      "latest_stock": 14,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17721,9 +17727,9 @@
         "2026-02": 28,
         "2026-03": 28,
         "2026-04": 27,
-        "2026-05": 27
+        "2026-05": 26
       },
-      "latest_stock": 27,
+      "latest_stock": 26,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17746,9 +17752,9 @@
         "2026-02": 21,
         "2026-03": 52,
         "2026-04": 24,
-        "2026-05": 24
+        "2026-05": 23
       },
-      "latest_stock": 24,
+      "latest_stock": 23,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -17770,9 +17776,9 @@
       "monthly_stock": {
         "2026-03": 50,
         "2026-04": 24,
-        "2026-05": 24
+        "2026-05": 23
       },
-      "latest_stock": 24,
+      "latest_stock": 23,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18364,9 +18370,9 @@
         "2026-02": 6,
         "2026-03": 1,
         "2026-04": 1,
-        "2026-05": 1
+        "2026-05": 0
       },
-      "latest_stock": 1,
+      "latest_stock": 0,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18381,9 +18387,9 @@
         "2026-02": 2,
         "2026-03": 1,
         "2026-04": 1,
-        "2026-05": 1
+        "2026-05": 0
       },
-      "latest_stock": 1,
+      "latest_stock": 0,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18491,9 +18497,9 @@
         "2026-02": 1,
         "2026-03": 5,
         "2026-04": 12,
-        "2026-05": 12
+        "2026-05": 9
       },
-      "latest_stock": 12,
+      "latest_stock": 9,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18525,9 +18531,9 @@
         "2026-02": 0,
         "2026-03": 5,
         "2026-04": 9,
-        "2026-05": 9
+        "2026-05": 6
       },
-      "latest_stock": 9,
+      "latest_stock": 6,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18559,9 +18565,9 @@
         "2026-02": 6,
         "2026-03": 1,
         "2026-04": 21,
-        "2026-05": 21
+        "2026-05": 15
       },
-      "latest_stock": 21,
+      "latest_stock": 15,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18576,9 +18582,9 @@
         "2026-02": 6,
         "2026-03": 1,
         "2026-04": 19,
-        "2026-05": 19
+        "2026-05": 13
       },
-      "latest_stock": 19,
+      "latest_stock": 13,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18610,9 +18616,9 @@
         "2026-02": 3,
         "2026-03": 3,
         "2026-04": 0,
-        "2026-05": 0
+        "2026-05": 1
       },
-      "latest_stock": 0,
+      "latest_stock": 1,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18668,9 +18674,10 @@
         "2026-01": 4,
         "2026-02": 0,
         "2026-03": 0,
-        "2026-04": 0
+        "2026-04": 0,
+        "2026-05": 1
       },
-      "latest_stock": 0,
+      "latest_stock": 1,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18751,9 +18758,9 @@
         "2026-02": 15,
         "2026-03": 10,
         "2026-04": 9,
-        "2026-05": 9
+        "2026-05": 6
       },
-      "latest_stock": 9,
+      "latest_stock": 6,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18768,9 +18775,9 @@
         "2026-02": 0,
         "2026-03": 0,
         "2026-04": 2,
-        "2026-05": 2
+        "2026-05": 0
       },
-      "latest_stock": 2,
+      "latest_stock": 0,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18808,9 +18815,9 @@
         "2026-02": 59,
         "2026-03": 48,
         "2026-04": 43,
-        "2026-05": 43
+        "2026-05": 39
       },
-      "latest_stock": 43,
+      "latest_stock": 39,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -18825,9 +18832,9 @@
         "2026-02": 37,
         "2026-03": 26,
         "2026-04": 21,
-        "2026-05": 21
+        "2026-05": 17
       },
-      "latest_stock": 21,
+      "latest_stock": 17,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -19004,9 +19011,9 @@
         "2026-02": 40,
         "2026-03": 23,
         "2026-04": 30,
-        "2026-05": 27
+        "2026-05": 26
       },
-      "latest_stock": 27,
+      "latest_stock": 26,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -19096,9 +19103,9 @@
         "2026-02": 38,
         "2026-03": 21,
         "2026-04": 28,
-        "2026-05": 25
+        "2026-05": 24
       },
-      "latest_stock": 25,
+      "latest_stock": 24,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -19144,7 +19151,8 @@
         "2026-01": 12,
         "2026-02": 11,
         "2026-03": 0,
-        "2026-04": 0
+        "2026-04": 0,
+        "2026-05": 0
       },
       "latest_stock": 0,
       "defective_stock": 0,
@@ -19160,7 +19168,8 @@
         "2026-01": 11,
         "2026-02": 10,
         "2026-03": 0,
-        "2026-04": 0
+        "2026-04": 0,
+        "2026-05": 0
       },
       "latest_stock": 0,
       "defective_stock": 0,
@@ -19176,7 +19185,8 @@
         "2026-01": 11,
         "2026-02": 10,
         "2026-03": 0,
-        "2026-04": 0
+        "2026-04": 0,
+        "2026-05": 0
       },
       "latest_stock": 0,
       "defective_stock": 0,
@@ -19192,7 +19202,8 @@
         "2026-01": 12,
         "2026-02": 11,
         "2026-03": 0,
-        "2026-04": 0
+        "2026-04": 0,
+        "2026-05": 0
       },
       "latest_stock": 0,
       "defective_stock": 0,
@@ -19424,9 +19435,9 @@
         "2026-02": 36,
         "2026-03": 79,
         "2026-04": 98,
-        "2026-05": 32
+        "2026-05": 28
       },
-      "latest_stock": 32,
+      "latest_stock": 28,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -19441,9 +19452,9 @@
         "2026-02": 32,
         "2026-03": 31,
         "2026-04": 22,
-        "2026-05": 21
+        "2026-05": 20
       },
-      "latest_stock": 21,
+      "latest_stock": 20,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -19458,9 +19469,9 @@
         "2026-02": 74,
         "2026-03": 108,
         "2026-04": 134,
-        "2026-05": 64
+        "2026-05": 53
       },
-      "latest_stock": 64,
+      "latest_stock": 53,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -19475,9 +19486,9 @@
         "2026-02": 74,
         "2026-03": 108,
         "2026-04": 133,
-        "2026-05": 63
+        "2026-05": 52
       },
-      "latest_stock": 63,
+      "latest_stock": 52,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -19516,9 +19527,9 @@
         "2026-02": 34,
         "2026-03": 73,
         "2026-04": 92,
-        "2026-05": 35
+        "2026-05": 26
       },
-      "latest_stock": 35,
+      "latest_stock": 26,
       "defective_stock": 0,
       "defective_rate": 0.0
     },
@@ -19787,9 +19798,9 @@
         "2026-02": 1121731,
         "2026-03": 1018026,
         "2026-04": 1229990,
-        "2026-05": 1223655
+        "2026-05": 1319806
       },
-      "latest_stock": 1223655,
+      "latest_stock": 1319806,
       "defective_stock": 0,
       "defective_rate": 0.0
     }
