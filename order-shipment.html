@@ -1263,6 +1263,7 @@ async function renderCloudDraftList(){
     // 試算日・発注予定日表示
     const calcDateStr  = calcDate  ? `<span style="font-size:13px;font-weight:600;color:var(--accent2)">${calcDate.replace(/-/g,'/')}</span><span style="font-size:10px;color:var(--text3);margin-left:4px">試算〆日</span>` : '';
     const orderDateStr = orderDate ? `<span style="font-size:12px;color:${urgency==='overdue'?'var(--accent3)':urgency==='warn'?'#d4820a':'var(--text2)'};margin-left:12px">${orderDate.replace(/-/g,'/')} 発注予定</span>` : '';
+    const updatedAtStr = s.updated_at ? (() => { const d=new Date(s.updated_at); return `<span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-left:8px">🕐 最終編集: ${d.toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>`; })() : '';
 
     // 入力状況バッジ
     function deptBadge(key, label, rgb, colorVar){
@@ -1302,7 +1303,7 @@ async function renderCloudDraftList(){
         <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
           <div style="min-width:0">
             <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">${product} <span style="font-size:11px;font-weight:400;color:var(--text3)">${brand}</span></div>
-            <div style="margin-bottom:8px">${calcDateStr}${orderDateStr}</div>
+            <div style="margin-bottom:8px">${calcDateStr}${orderDateStr}${updatedAtStr}</div>
             <div style="display:flex;gap:5px;flex-wrap:wrap">${badges}</div>
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0">${buttons}</div>
@@ -5996,6 +5997,7 @@ async function cloudSaveDeptSection(){
 }
 async function cloudSaveCurrentStep(step){
   if(!WORKER_URL){ showNotif('Worker URLを設定してください（仮保存・出力画面）','error'); return; }
+  if(window._currentSessionReadOnly){ showNotif('完了済みのセッションは編集できません','error'); return; }
   if(!currentSessionId){
     showConfirm('セッションがありません','クラウドに保存するには先にセッションを作成する必要があります。\n今すぐ作成しますか？',
       async ()=>{ closeModal(); const sid=await saveSessionHeader(); if(sid){ currentSessionId=sid; showNotif(`セッション「${sid}」を作成しました`,'success'); await _doCloudSaveStep(step); } },
@@ -6006,6 +6008,7 @@ async function cloudSaveCurrentStep(step){
 }
 async function _doCloudSaveStep(step){
   if(!currentSessionId){ showNotif('セッションIDがありません','error'); return; }
+  if(window._currentSessionReadOnly){ showNotif('完了済みのセッションは編集できません','error'); return; }
   const d=collectCalcData();
   if(step===0){
     try{ await cloudFetch('sessions','POST',{session_id:currentSessionId,product:d.product,brand:d.brand,calc_date:d.calc_date,order_date:d.order_date,lead_time_weeks:d.lead_time_weeks,container_moq:d.container_moq,bulk_moq:d.bulk_moq,skus:d.skus,mode:d.mode,created_by:currentDept||'案件担当'});
@@ -6055,6 +6058,7 @@ async function cloudSaveAll(){
 
 async function _doCloudSaveAll(){
   if(!currentSessionId){ showNotif('セッションIDがありません','error'); return; }
+  if(window._currentSessionReadOnly){ showNotif('完了済みのセッションは編集できません','error'); return; }
   const d = collectCalcData();
   if(!d.product){ showNotif('商品名を入力してください','error'); return; }
 
