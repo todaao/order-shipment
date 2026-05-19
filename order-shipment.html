@@ -4305,9 +4305,20 @@ function buildSummaryPreview(){
     });
     ecMonths.forEach(m=>{ec[m]=((calcEcMonthly[s.name]||{})[m]||0)+((calcEcMonthly2[s.name]||{})[m]||0);});
     ovsMonths.forEach(m=>{ovs[m]=calcOvsMonthly.reduce((a,st)=>a+((st[s.name]||{})[m]||0),0);});
-    const estTotal=Object.values(tob).reduce((a,b)=>a+b,0)+Object.values(ec).reduce((a,b)=>a+b,0)+Object.values(ovs).reduce((a,b)=>a+b,0);
+    // 需要合計（欠品除外・pending減算前の月次合計。月次テーブル描画用）
+    const estTotalRaw=Object.values(tob).reduce((a,b)=>a+b,0)+Object.values(ec).reduce((a,b)=>a+b,0)+Object.values(ovs).reduce((a,b)=>a+b,0);
+    // 欠品フラグ月を除外
+    const flags=s.stockout_flags||{};
+    const estTotalExcl=allMonths.reduce((a,m)=>{
+      if(flags[m]) return a;
+      return a+(tob[m]||0)+(ec[m]||0)+(ovs[m]||0);
+    },0);
+    // pending減算済み（collectCalcData の estimated_total_net と同一ロジック）
+    const pendingArrival=s.pendingArrival||0;
+    const estTotal=Math.max(0,estTotalExcl-pendingArrival);
+    // 発注数 = 推計必要数（欠品除外・pending減算済み）− 現在庫（collectCalcData と同一ロジック）
     const orderQty=Math.max(0,estTotal-(s.stock||0));
-    return{s,tob,ec,ovs,estTotal,orderQty};
+    return{s,tob,ec,ovs,estTotalRaw,estTotal,orderQty};
   });
 
   // 共通ヘッダー
@@ -4473,7 +4484,7 @@ function buildSummaryPreview(){
       <tr><th style="background:rgba(126,212,160,.08)">海外 発注月数</th><td style="color:var(--overseas);font-weight:500">${ovsM} ヶ月 (${ovsMonths.map(mLabel).join('・')})</td><th></th><td></td></tr>
       <tr style="background:rgba(200,169,110,.05)"><th>在庫合計</th><td style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--text)">${fmt(totalStock)}</td>
           <th>推計必要数合計</th><td style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--accent2)">${fmt(totalEst)}</td></tr>
-      <tr style="background:rgba(200,169,110,.08)"><th>発注数（推計−在庫）</th><td colspan="3" style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--accent)">${fmt(totalOrd)}</td></tr>
+      <tr style="background:rgba(200,169,110,.08)"><th>発注数（推計必要数−現在庫）</th><td colspan="3" style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--accent)">${fmt(totalOrd)}</td></tr>
     </tbody>
   </table></div></div>`;
 
@@ -4919,15 +4930,14 @@ function collectCalcData(){
       if(flags[m]) return a;
       return a+(tob[m]||0)+(ec[m]||0)+(overseas[m]||0);
     },0);
-    // ⑧入庫予定数を推計必要数から減算（推計必要数の表示のみ。確定発注数には影響しない）
+    // ②入庫予定数を推計必要数から減算（表示値 = 発注数計算の出発点として一本化）
     const pendingArrival=s.pendingArrival||0;
     const estimated_total_net=Math.max(0,estimated_total-pendingArrival);
-    // 確定発注数の初期値: 欠品フラグ・入庫予定数の影響を受けない純粋な need - stock
-    const estimated_total_raw=allMonths.reduce((a,m)=>a+(tob[m]||0)+(ec[m]||0)+(overseas[m]||0),0);
-    const order_quantity_raw=Math.max(0,estimated_total_raw-(s.stock||0));
-    const order_quantity=order_quantity_raw;
-    // confirmed_order: ユーザー手動設定値があればそれを優先（入庫予定数・欠品フラグ無関係）
-    const confirmed_order=s.confirmedOrder!=null?s.confirmedOrder:order_quantity_raw;
+    // 発注数 = 推計必要数（欠品除外・pending減算済み）− 現在庫
+    // ※表示されている推計必要数と発注数の計算基準を一本化
+    const order_quantity=Math.max(0,estimated_total_net-(s.stock||0));
+    // confirmed_order: ユーザー手動設定値があればそれを優先
+    const confirmed_order=s.confirmedOrder!=null?s.confirmedOrder:order_quantity;
     return{...s,monthly_summary:{tob,ec,overseas},estimated_total:estimated_total_net,order_quantity,confirmed_order,stockout_predictions,pending_arrival:pendingArrival,pending_arrival_month:s.pendingArrivalMonth||null};
   });
   // ⑤ retailer_blocks を構築（発注サマリーの小売別タブ用）
