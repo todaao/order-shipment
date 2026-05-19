@@ -1,6 +1,33 @@
 {
   "skus": [
     {
+      "jan": "4580805230476",
+      "category": "cosme",
+      "brand": "AMORISÉ",
+      "product_name": "アニメ『呪術廻戦』5周年 オードトワレ <アクリルスタンド付>",
+      "sku_name": "01 虎杖悠仁 〜橙色〜",
+      "status": "最新仕様",
+      "display_name": "アニメ『呪術廻戦』5周年 オードトワレ <アクリルスタンド付> 01 虎杖悠仁 〜橙色〜"
+    },
+    {
+      "jan": "4580805230483",
+      "category": "cosme",
+      "brand": "AMORISÉ",
+      "product_name": "アニメ『呪術廻戦』5周年 オードトワレ <アクリルスタンド付>",
+      "sku_name": "02 五条悟 〜水色〜",
+      "status": "最新仕様",
+      "display_name": "アニメ『呪術廻戦』5周年 オードトワレ <アクリルスタンド付> 02 五条悟 〜水色〜"
+    },
+    {
+      "jan": "4580805230490",
+      "category": "cosme",
+      "brand": "AMORISÉ",
+      "product_name": "アニメ『呪術廻戦』5周年 オードトワレ <アクリルスタンド付>",
+      "sku_name": "03 乙骨憂太 〜紺色〜",
+      "status": "最新仕様",
+      "display_name": "アニメ『呪術廻戦』5周年 オードトワレ <アクリルスタンド付> 03 乙骨憂太 〜紺色〜"
+    },
+    {
       "jan": "6971716398627",
       "category": "cosme",
       "brand": "COLORKEY",
