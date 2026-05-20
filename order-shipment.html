@@ -318,6 +318,47 @@ textarea:focus{border-color:var(--accent);}
   /* フォントカラー汎用上書き */
   #pdf-print-area * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
+  /* ── ⑤確定・保存: 確定発注数テーブル（上部）をコンパクト化 ── */
+  #pdf-print-area .pdf-step5-top-table,
+  #pdf-print-area .pdf-step5-top-table th,
+  #pdf-print-area .pdf-step5-top-table td {
+    font-size: 8px !important;
+    padding: 2px 4px !important;
+    line-height: 1.3 !important;
+  }
+  /* inputはそのまま幅を縮めて表示 */
+  #pdf-print-area .pdf-step5-top-table input {
+    font-size: 8px !important;
+    padding: 1px 3px !important;
+    width: 60px !important;
+    min-width: unset !important;
+  }
+  /* KPIカードも小さく */
+  #pdf-print-area .pdf-step5-top-kpi .kpi-card {
+    padding: 8px 10px !important;
+  }
+  #pdf-print-area .pdf-step5-top-kpi .kpi-label {
+    font-size: 9px !important;
+  }
+  #pdf-print-area .pdf-step5-top-kpi .kpi-value {
+    font-size: 16px !important;
+  }
+  /* ⑤上部ブロック全体をまとめて改ページ禁止 */
+  #pdf-print-area .pdf-step5-top-block {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  /* moqバナー・初回納品数バナーも詰める */
+  #pdf-print-area .moq-banner {
+    padding: 5px 8px !important;
+    margin-bottom: 6px !important;
+    font-size: 9px !important;
+  }
+  #pdf-print-area .moq-banner strong,
+  #pdf-print-area .moq-banner span {
+    font-size: 9px !important;
+  }
+
   /* ── ヘッダー余白を詰めて1ページ目からコンテンツを表示 ── */
   #pdf-print-area > div:first-child {
     margin-bottom: 6px !important;
@@ -3857,7 +3898,23 @@ function printCalcStep(stepNum){
       }
     });
   } else if(stepNum === 4){
-    // 在庫推移シミュレーション パネルのテーブルを対象にする
+    // ── 上部ブロック（KPI + 確定発注数テーブル）にクラスを付与 ──
+    // calcPreviewContent 直下の div（KPI行 + テーブルを包むdiv）を特定
+    const previewContent = cloneEl.querySelector('#calcPreviewContent');
+    if(previewContent){
+      // KPIカード行
+      const kpiRow = previewContent.querySelector('.kpi-row');
+      if(kpiRow){
+        const kpiWrap = kpiRow.parentElement;
+        if(kpiWrap) kpiWrap.classList.add('pdf-step5-top-block');
+        kpiRow.classList.add('pdf-step5-top-kpi');
+      }
+      // 確定発注数テーブル（kpi-rowの兄弟にある table）
+      previewContent.querySelectorAll('table').forEach(t => {
+        t.classList.add('pdf-step5-top-table');
+      });
+    }
+    // ── 在庫推移シミュレーション パネルのテーブル ──
     cloneEl.querySelectorAll('.panel').forEach(panel => {
       const title = panel.querySelector('.panel-title');
       if(!title) return;
