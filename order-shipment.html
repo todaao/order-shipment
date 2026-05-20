@@ -195,6 +195,129 @@ textarea:focus{border-color:var(--accent);}
 .diff-negative-2{background:rgba(224,123,138,.28);color:var(--accent3);}
 .diff-negative-3{background:rgba(224,123,138,.50);color:#3a0a10;}
 .diff-zero{background:transparent;color:var(--text3);}
+
+/* ════════════════════════════════════
+   PDF / 印刷用スタイル
+   ════════════════════════════════════ */
+#pdf-print-area { display: none; }
+
+@media print {
+  /* ページ設定 */
+  @page { size: A4 landscape; margin: 12mm 10mm; }
+
+  /* 全体リセット */
+  :root {
+    --bg: #fff !important;
+    --surface: #fff !important;
+    --surface2: #f5f5f5 !important;
+    --surface3: #eee !important;
+    --border: #ccc !important;
+    --border2: #bbb !important;
+    --text: #111 !important;
+    --text2: #333 !important;
+    --text3: #666 !important;
+    --accent: #8a6d2f !important;
+    --accent2: #2a6e9c !important;
+    --accent3: #b03048 !important;
+    --accent4: #2a8a5a !important;
+    --accent5: #6a4eb0 !important;
+    --tob: #2a6e9c !important;
+    --ec: #8a6d2f !important;
+    --overseas: #2a8a5a !important;
+  }
+
+  /* 画面UI要素をすべて非表示 */
+  header, .sidebar, .nav-section, .filter-section,
+  #calcStepNav, .btn-row, .step-indicator,
+  .notification, .modal-overlay { display: none !important; }
+
+  /* 通常コンテンツ非表示 */
+  body > .layout { display: none !important; }
+
+  /* 印刷エリアだけ表示 */
+  #pdf-print-area {
+    display: block !important;
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 11px;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+
+  /* パネル */
+  #pdf-print-area .panel {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    page-break-inside: avoid;
+  }
+  #pdf-print-area .panel-header {
+    background: #f0f0f0 !important;
+    border-bottom: 1px solid #ccc !important;
+    padding: 6px 12px;
+  }
+  #pdf-print-area .panel-title {
+    color: #111 !important;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  #pdf-print-area .panel-body { padding: 10px 12px; }
+
+  /* テーブル全般 */
+  #pdf-print-area table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 10px;
+  }
+  #pdf-print-area th, #pdf-print-area td {
+    border: 1px solid #bbb !important;
+    padding: 4px 6px;
+    color: #111 !important;
+    background: #fff !important;
+  }
+  #pdf-print-area th {
+    background: #eee !important;
+    font-weight: 600;
+  }
+  #pdf-print-area tr:nth-child(even) td { background: #fafafa !important; }
+
+  /* 数値色の上書き */
+  #pdf-print-area .num-pos { color: #1a6e3a !important; }
+  #pdf-print-area .num-warn { color: #b03048 !important; }
+
+  /* KPIカード */
+  #pdf-print-area .kpi-card {
+    background: #f5f5f5 !important;
+    border: 1px solid #ccc !important;
+  }
+  #pdf-print-area .kpi-label { color: #555 !important; }
+  #pdf-print-area .kpi-value { color: #111 !important; }
+
+  /* セレクト（印刷時はテキスト表示されるので矢印消す） */
+  #pdf-print-area select {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    color: #111 !important;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: none !important;
+    pointer-events: none;
+  }
+
+  /* input */
+  #pdf-print-area input[type="text"],
+  #pdf-print-area input[type="number"] {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    color: #111 !important;
+  }
+
+  /* hr */
+  #pdf-print-area hr { border-color: #ccc !important; }
+
+  /* フォントカラー汎用上書き */
+  #pdf-print-area * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 </style>
 </head>
 <body>
@@ -690,6 +813,7 @@ textarea:focus{border-color:var(--accent);}
       <div id="summaryPreviewArea"></div>
       <div class="btn-row" style="margin-top:16px">
         <button class="btn btn-secondary" onclick="goStep(2)">← 戻る</button>
+        <button class="btn" style="background:rgba(180,158,232,.15);border:1px solid var(--accent5);color:var(--accent5)" onclick="printCalcStep(3)">🖨 PDF出力（サマリー）</button>
         <button class="btn btn-primary" onclick="goStep(4)">次へ: 確定・保存 →</button>
       </div>
     </div>
@@ -708,6 +832,7 @@ textarea:focus{border-color:var(--accent);}
           </div>
           <div class="btn-row">
             <button class="btn btn-secondary" onclick="goStep(3)">← 戻る</button>
+            <button class="btn" style="background:rgba(180,158,232,.15);border:1px solid var(--accent5);color:var(--accent5)" onclick="printCalcStep(4)">🖨 PDF出力（確定・保存）</button>
             <button class="btn btn-green" onclick="saveDraft()">💾 ブラウザに仮保存</button>
             <button class="btn btn-blue" onclick="cloudSaveAll()">☁️ クラウドに全項目保存（上書き）</button>
             <button class="btn btn-primary" onclick="exportCalcDirect()">📥 テンプレートExcel出力</button>
@@ -729,7 +854,7 @@ textarea:focus{border-color:var(--accent);}
       <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent2)"></span>☁️ クラウド共有設定</div>
     </div>
     <div class="panel-body">
-      <div class="form-group" style="margin-bottom:12px">
+      <div class="form-group" style="margin-bottom:12px;display:none">
         <label class="form-label">Worker URL</label>
         <input type="text" id="workerUrlInput" placeholder="https://order-shipment-api.xxxx.workers.dev"
           oninput="setWorkerUrl(this.value)" style="font-family:var(--font-mono);font-size:11px;width:100%;box-sizing:border-box">
@@ -962,7 +1087,7 @@ function onFilterProductChange(){
 // ════════════════════════════════════════════
 //  クラウド連携（Cloudflare Workers）
 // ════════════════════════════════════════════
-let WORKER_URL = localStorage.getItem('orderShipmentWorkerUrl') || '';
+let WORKER_URL = 'https://order-shipment-api.toda-a.workers.dev';
 let currentSessionId = '';
 let currentDept = localStorage.getItem('orderShipmentDept') || '';
 
@@ -3627,6 +3752,43 @@ function goStep(n){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+function printCalcStep(stepNum){
+  // 対象ステップのコンテンツを取得
+  const area = document.getElementById('pdf-print-area');
+  if(!area) return;
+
+  // 印刷タイトル
+  const product = (document.getElementById('ci_product')||{}).value || '—';
+  const brand   = (document.getElementById('ci_brand')||{}).value || '';
+  const orderDate = (document.getElementById('ci_orderDate')||{}).value || '—';
+  const stepLabel = stepNum===3 ? '④ サマリー確認' : '⑤ 確定・保存';
+  const now = new Date();
+  const ts = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  // 対象ステップのHTML（ボタン行と選択不要なUIを除いて複製）
+  const srcId = stepNum===3 ? 'calcStep3' : 'calcStep4';
+  const src = document.getElementById(srcId);
+  if(!src){ showNotif('画面が見つかりません','error'); return; }
+
+  // クローン作成
+  const clone = src.cloneNode(true);
+
+  // クローン内のボタン行を削除（.btn-row）
+  clone.querySelectorAll('.btn-row').forEach(el=>el.remove());
+
+  // display:none を解除（表示状態にする）
+  clone.style.display = '';
+
+  // ヘッダー情報
+  const header = `<div style="margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #aaa;">
+    <div style="font-size:16px;font-weight:700;color:#111;">${stepLabel} — ${product}${brand?'（'+brand+'）':''}</div>
+    <div style="font-size:11px;color:#555;margin-top:2px;">発注予定日: ${orderDate}　／　出力日時: ${ts}</div>
+  </div>`;
+
+  area.innerHTML = header + clone.outerHTML;
+  window.print();
+}
+
 function validateStep0(){
   if(!document.getElementById('ci_product').value){showNotif('商品名を入力してください','error');return false;}
   if(!document.getElementById('ci_brand').value){showNotif('ブランドを選択してください','error');return false;}
@@ -6189,7 +6351,7 @@ async function _doCloudSaveAll(){
 }
 document.getElementById('headerDate').textContent=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'})+' 更新';
 // Worker URL・部署設定をフォームに反映
-const _wUrl=localStorage.getItem('orderShipmentWorkerUrl')||'';
+const _wUrl='';
 const _wDept=localStorage.getItem('orderShipmentDept')||'';
 if(_wUrl){const el=document.getElementById('workerUrlInput');if(el)el.value=_wUrl;WORKER_URL=_wUrl;}
 if(_wDept){currentDept=_wDept;}
@@ -6217,5 +6379,7 @@ loadAllJSON();
   };
 })();
 </script>
+
+<div id="pdf-print-area"></div>
 </body>
 </html>
