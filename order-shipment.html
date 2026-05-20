@@ -596,7 +596,7 @@ textarea:focus{border-color:var(--accent);}
             <div class="form-group">
               <label class="form-label">発注試算日 <span class="req">*</span></label>
               <input type="date" id="ci_calcDate" onchange="updateMonthPreviews()" style="border-color:var(--accent5)">
-              <span style="font-size:10px;color:var(--text3)">試算の起点月（翌月から8ヶ月）</span>
+              <span style="font-size:10px;color:var(--text3)">試算の起点月（翌月から8ヶ月）。リピートは試算日を記入、新商品は入庫予定月を記入。</span>
             </div>
             <div class="form-group">
               <label class="form-label">発注予定日 <span class="req">*</span></label>
@@ -4305,18 +4305,14 @@ function buildSummaryPreview(){
     });
     ecMonths.forEach(m=>{ec[m]=((calcEcMonthly[s.name]||{})[m]||0)+((calcEcMonthly2[s.name]||{})[m]||0);});
     ovsMonths.forEach(m=>{ovs[m]=calcOvsMonthly.reduce((a,st)=>a+((st[s.name]||{})[m]||0),0);});
-    // 月次テーブルの「試算合計」列用（欠品除外前の生の需要合計）
     const estTotalRaw=Object.values(tob).reduce((a,b)=>a+b,0)+Object.values(ec).reduce((a,b)=>a+b,0)+Object.values(ovs).reduce((a,b)=>a+b,0);
-    // 欠品フラグ月を除外
     const flags=s.stockout_flags||{};
     const demandExcl=allMonths.reduce((a,m)=>{
       if(flags[m]) return a;
       return a+(tob[m]||0)+(ec[m]||0)+(ovs[m]||0);
     },0);
-    // pending減算
     const pendingArrival=s.pendingArrival||0;
     const demandNet=Math.max(0,demandExcl-pendingArrival);
-    // 推計必要数 = 需要（欠品除外・pending済み）− 現在庫（collectCalcDataと同一ロジック）
     const estTotal=Math.max(0,demandNet-(s.stock||0));
     const orderQty=estTotal;
     return{s,tob,ec,ovs,estTotalRaw,estTotal,orderQty};
@@ -4485,7 +4481,7 @@ function buildSummaryPreview(){
       <tr><th style="background:rgba(126,212,160,.08)">海外 発注月数</th><td style="color:var(--overseas);font-weight:500">${ovsM} ヶ月 (${ovsMonths.map(mLabel).join('・')})</td><th></th><td></td></tr>
       <tr style="background:rgba(200,169,110,.05)"><th style="color:var(--text3);font-weight:400">現在庫合計（参考）</th><td style="font-family:var(--font-mono);font-size:13px;color:var(--text3)">${fmt(totalStock)}</td>
           <th style="color:var(--text3);font-weight:400">需要合計（参考）</th><td style="font-family:var(--font-mono);font-size:13px;color:var(--text3)">${fmt(totalDemand)}</td></tr>
-      <tr style="background:rgba(200,169,110,.08)"><th>推計必要数合計（= 発注数初期値）</th><td colspan="3" style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--accent)">${fmt(totalEst)}</td></tr>
+      <tr style="background:rgba(200,169,110,.08)"><th>推計必要数合計</th><td colspan="3" style="font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--accent)">${fmt(totalEst)}</td></tr>
     </tbody>
   </table></div></div>`;
 
@@ -4630,7 +4626,7 @@ function buildPreview(){
   document.getElementById('calcPreviewContent').innerHTML=moqBanner+initDeliveryInfo+`
     <div style="margin-bottom:16px">
       <div class="kpi-row" style="margin-bottom:12px">
-        <div class="kpi-card blue"><div class="kpi-label">推計必要数合計（発注数初期値）</div><div class="kpi-value">${fmt(totEst)}</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">推計必要数合計</div><div class="kpi-value">${fmt(totEst)}</div></div>
       </div>
       <table style="border-collapse:collapse;width:100%;font-size:12px">
         <thead><tr>
