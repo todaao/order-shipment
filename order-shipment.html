@@ -317,6 +317,55 @@ textarea:focus{border-color:var(--accent);}
 
   /* フォントカラー汎用上書き */
   #pdf-print-area * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* ── ヘッダー余白を詰めて1ページ目からコンテンツを表示 ── */
+  #pdf-print-area > div:first-child {
+    margin-bottom: 6px !important;
+    padding-bottom: 4px !important;
+  }
+  #pdf-print-area > div:first-child div:first-child {
+    font-size: 13px !important;
+  }
+  #pdf-print-area > div:first-child div:last-child {
+    font-size: 10px !important;
+  }
+
+  /* ── パネル間余白を詰める ── */
+  #pdf-print-area .panel {
+    margin-bottom: 6px !important;
+  }
+  #pdf-print-area .panel-header {
+    padding: 4px 10px !important;
+  }
+  #pdf-print-area .panel-body {
+    padding: 6px 8px !important;
+  }
+
+  /* ── 全販路合計 / toB月別試算 / 在庫推移シミュレーション: 超小型フォント ── */
+  #pdf-print-area .pdf-table-compact,
+  #pdf-print-area .pdf-table-compact th,
+  #pdf-print-area .pdf-table-compact td {
+    font-size: 8px !important;
+    padding: 2px 3px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap;
+  }
+  #pdf-print-area .pdf-table-compact {
+    table-layout: auto;
+    width: 100% !important;
+  }
+  /* SKU名列は少し広め */
+  #pdf-print-area .pdf-table-compact td:first-child,
+  #pdf-print-area .pdf-table-compact th:first-child {
+    font-size: 8px !important;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* 印刷時はoverflow-x:autoを解除してテーブルを縮める */
+  #pdf-print-area .pdf-table-compact-wrap {
+    overflow: visible !important;
+  }
 }
 </style>
 </head>
@@ -3785,7 +3834,45 @@ function printCalcStep(stepNum){
     <div style="font-size:11px;color:#555;margin-top:2px;">発注予定日: ${orderDate}　／　出力日時: ${ts}</div>
   </div>`;
 
-  area.innerHTML = header + clone.outerHTML;
+  // クローン内の対象テーブルに pdf-table-compact クラスを付与
+  // ④: 全販路合計・toB の panel-body 内テーブル（先頭2つ）
+  // ⑤: 在庫推移シミュレーション（step5InvSim 内テーブル）
+  const cloneEl = document.createElement('div');
+  cloneEl.innerHTML = header;
+  cloneEl.appendChild(clone);
+
+  if(stepNum === 3){
+    // summaryPreviewArea内のパネル群から全販路合計(1番目)とtoB(2番目)のテーブルを特定
+    // panel-title に該当テキストを含むパネルのテーブルを対象にする
+    cloneEl.querySelectorAll('.panel').forEach(panel => {
+      const title = panel.querySelector('.panel-title');
+      if(!title) return;
+      const txt = title.textContent || '';
+      if(txt.includes('全販路合計') || txt.includes('toB 月別試算')){
+        panel.querySelectorAll('table').forEach(t => {
+          t.classList.add('pdf-table-compact');
+          const wrap = t.closest('.panel-body');
+          if(wrap) wrap.classList.add('pdf-table-compact-wrap');
+        });
+      }
+    });
+  } else if(stepNum === 4){
+    // 在庫推移シミュレーション パネルのテーブルを対象にする
+    cloneEl.querySelectorAll('.panel').forEach(panel => {
+      const title = panel.querySelector('.panel-title');
+      if(!title) return;
+      const txt = title.textContent || '';
+      if(txt.includes('在庫推移シミュレーション')){
+        panel.querySelectorAll('table').forEach(t => {
+          t.classList.add('pdf-table-compact');
+          const wrap = t.closest('.panel-body');
+          if(wrap) wrap.classList.add('pdf-table-compact-wrap');
+        });
+      }
+    });
+  }
+
+  area.innerHTML = cloneEl.innerHTML;
   window.print();
 }
 
