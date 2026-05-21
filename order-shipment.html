@@ -3958,7 +3958,22 @@ function calcArrival(){
   if(od){const d=new Date(od);d.setDate(d.getDate()+lt*7);document.getElementById('ci_arrivalDate').value=d.toISOString().slice(0,10);}
 }
 
+function refreshCalcSkuStocks(){
+  if(!calcSkus.length) return;
+  const calcDateStr=document.getElementById('ci_calcDate')?.value||'';
+  let changed=false;
+  calcSkus.forEach(s=>{
+    if(!s.jan) return;
+    const inv=INV_BY_JAN[String(s.jan)];
+    if(!inv) return;
+    const newStock=stockByCalcDate(inv,calcDateStr);
+    if(s.stock!==newStock){s.stock=newStock;changed=true;}
+  });
+  if(changed) renderCalcSkuList();
+}
+
 function updateMonthPreviews(){
+  refreshCalcSkuStocks();
   const base=getBaseMonth();
   const el=document.getElementById('monthPreviewRow');
   if(!el) return;
@@ -4062,7 +4077,7 @@ function addSelectedJans(){
     if(calcSkus.find(s=>String(s.jan)===jan)) continue;
     if(calcSkus.length>=8){showNotif('SKUは最大8件です','error');break;}
     const inv=INV_BY_JAN[jan];
-    const _ms3=Object.keys((inv&&inv.monthly_stock)||{}).sort();const _lat3=_ms3.length?inv.monthly_stock[_ms3[_ms3.length-1]]:null;const _stk3=inv?(_lat3!=null?_lat3:(inv.current_stock!=null?inv.current_stock:0)):0;calcSkus.push({jan,name:m.sku_name||m.display_name,product_name:m.product_name,brand:m.brand,display_name:m.display_name||m.sku_name,stock:_stk3,note:''});
+    const _calcDs3=document.getElementById('ci_calcDate')?.value||'';const _stk3=stockByCalcDate(inv,_calcDs3);calcSkus.push({jan,name:m.sku_name||m.display_name,product_name:m.product_name,brand:m.brand,display_name:m.display_name||m.sku_name,stock:_stk3,note:''});
     added++;
   }
   _janSelected.clear();
@@ -4078,9 +4093,8 @@ function addSkuFromMaster(jan){
   if(calcSkus.find(s=>String(s.jan)===String(jan))){showNotif('すでに追加済みです','error');return;}
   if(calcSkus.length>=8){showNotif('SKUは最大8件です','error');return;}
   const inv=INV_BY_JAN[String(jan)];
-  const _invMs=Object.keys((inv&&inv.monthly_stock)||{}).sort();
-  const _invLat=_invMs.length?inv.monthly_stock[_invMs[_invMs.length-1]]:null;
-  const _invStk=inv?(_invLat!=null?_invLat:(inv.current_stock!=null?inv.current_stock:0)):0;
+  const _calcDs=document.getElementById('ci_calcDate')?.value||'';
+  const _invStk=stockByCalcDate(inv,_calcDs);
   calcSkus.push({
     jan:String(jan),
     name:m.sku_name||m.display_name,
@@ -4160,12 +4174,37 @@ function renderCalcSkuList(){
       </div>
     </div>`).join('');
 }
+// 発注試算日（YYYY-MM-DD or YYYY-MM）を考慮して最適な月の在庫を返す共通ヘルパー
+// calcDateStr: "2026-03-15" 等。省略 or 未入力なら最新月を使う
+function stockByCalcDate(inv, calcDateStr){
+  if(!inv) return 0;
+  const ms = Object.keys(inv.monthly_stock || {}).sort(); // ["2026-01","2026-02",...]
+  if(!ms.length){
+    return inv.current_stock != null ? inv.current_stock : 0;
+  }
+  // 試算日を "YYYY-MM" に揃える
+  const limitMonth = calcDateStr ? calcDateStr.slice(0,7) : null;
+  let chosenMonth;
+  if(limitMonth){
+    // limitMonth 以下で最大の月を探す（過去方向に最近）
+    const candidates = ms.filter(m => m <= limitMonth);
+    chosenMonth = candidates.length ? candidates[candidates.length-1] : null;
+  } else {
+    chosenMonth = ms[ms.length-1];
+  }
+  if(chosenMonth == null){
+    // 試算日より前のデータが無い場合は最古月にフォールバック
+    chosenMonth = ms[0];
+  }
+  const v = inv.monthly_stock[chosenMonth];
+  return v != null ? v : (inv.current_stock != null ? inv.current_stock : 0);
+}
+
 function getStockFromJan(jan,idx){
   if(!jan||!INV_BY_JAN[String(jan)]){if(calcSkus[idx])calcSkus[idx].stock=0;return 0;}
   const inv=INV_BY_JAN[String(jan)];
-  const ms=Object.keys(inv.monthly_stock||{}).sort();
-  const lat=ms.length?inv.monthly_stock[ms[ms.length-1]]:null;
-  const st=lat!=null?lat:(inv.current_stock!=null?inv.current_stock:0);
+  const calcDateStr=document.getElementById('ci_calcDate')?.value||'';
+  const st=stockByCalcDate(inv, calcDateStr);
   if(calcSkus[idx])calcSkus[idx].stock=st;
   return st;
 }
