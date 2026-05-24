@@ -5585,7 +5585,7 @@ async function buildWorkbook(d, overrideSheetName){
     const arrivalMonth = arrivalDateStr ? arrivalDateStr.slice(0,7) : null; // YYYY-MM形式
     d.skus.forEach((s,si)=>{
       if(si>=8) return;
-      const simRow = 81 + si*4; // SKU1→81, SKU2→85, SKU3→89 ...
+      const simRow = 82 + si*4; // SKU1→82, SKU2→86, SKU3→90 ...
       const pendingArrival = s.pendingArrival!=null ? s.pendingArrival : (s.pending_arrival||0);
       const pendingArrivalMonth = s.pendingArrivalMonth || s.pending_arrival_month || null;
       const confirmedOrder = s.confirmed_order!=null ? s.confirmed_order : (s.order_quantity||0);
@@ -5607,11 +5607,11 @@ async function buildWorkbook(d, overrideSheetName){
     });
   }
 
-  // ── 販促物試算ブロック (行28〜37) ──
+  // ── 販促物試算ブロック (行29〜38) ──
   const promos = window.promoPlan || [];
   promos.forEach((p,pi)=>{
     if(pi>=10) return;
-    const r = 28+pi;
+    const r = 29+pi;
     sheetXml = setCellInline(sheetXml, 'A'+r, p.item||'');
     sheetXml = setCellInline(sheetXml, 'B'+r, p.jan||'');
     const qv = parseFloat(p.qty);
@@ -5623,7 +5623,7 @@ async function buildWorkbook(d, overrideSheetName){
   d.skus.forEach((s,i)=>{
     if(i>=8) return;
     const jan = s.jan||'';
-    const tobR = 42+i;
+    const tobR = 43+i;
     sheetXml = setCellNum(sheetXml, 'B'+tobR, getRecent(jan,'tob',1));
     sheetXml = setCellNum(sheetXml, 'C'+tobR, getRecent(jan,'tob',3));
     if(!isSimple){
@@ -5657,11 +5657,11 @@ async function buildWorkbook(d, overrideSheetName){
         sheetXml = setCellNum(sheetXml, col+tobR, v);
       });
     }
-    const ecR = 51+i;
+    const ecR = 52+i;
     sheetXml = setCellNum(sheetXml, 'B'+ecR, getRecent(jan,'ec',1));
     sheetXml = setCellNum(sheetXml, 'C'+ecR, getRecent(jan,'ec',3));
     // EC D〜K列はテンプレート数式（EC詳細合計）のため書き込み不要
-    const ovsR = 60+i;
+    const ovsR = 61+i;
     sheetXml = setCellNum(sheetXml, 'B'+ovsR, getRecent(jan,'overseas',1));
     sheetXml = setCellNum(sheetXml, 'C'+ovsR, getRecent(jan,'overseas',3));
     // 海外 D〜K列はテンプレート数式（海外詳細合計）のため書き込み不要
@@ -5827,7 +5827,7 @@ async function buildWorkbook(d, overrideSheetName){
     if(simNewBlockIndices.length>0){
       d.skus.forEach((s,si)=>{
         if(si>=8) return;
-        const summaryRow = 42+si;
+        const summaryRow = 43+si;
         const newTotal = simNewBlockIndices.reduce((acc,bi)=>{
           const blockData=simBlocks[bi];
           const skuMonthly=(blockData[s.name]||{});
