@@ -2571,6 +2571,18 @@ function renderReview(){
           ${acc!==null?`<span style="color:${diff>0?'var(--accent3)':diff<0?'var(--accent2)':'var(--text3)'}">${diff>0?'▲欠品':diff<0?'▽過剰':'±0'}</span>`:''}
           <span style="color:var(--text3);margin-left:auto">${o.skus.length} SKU</span>
         </div>
+        ${(()=>{
+          // 導入予定小売タグ（retailer_list / retailers のどちらかから取得）
+          const rl = (o.retailer_list||[]);
+          const rt = o.mode==='normal' ? (o.retailers||[]) : [];
+          let tags = [];
+          if(rl.length){
+            tags = rl.map(r=>`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:3px;${r.is_extra?'background:rgba(126,184,212,.08);color:var(--text3);border:1px solid rgba(126,184,212,.2)':'background:rgba(200,169,110,.1);color:var(--accent);border:1px solid rgba(200,169,110,.25)'}">${escHtml(r.name)}${r.stores?'（'+r.stores+'店）':''}</span>`);
+          } else if(rt.length){
+            tags = rt.map(r=>`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(200,169,110,.1);color:var(--accent);border:1px solid rgba(200,169,110,.25)">${escHtml(r.name)}${r.stores?'（'+r.stores+'店）':''}</span>`);
+          }
+          return tags.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">${tags.join('')}</div>`:'';
+        })()}
       </div>
       <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;gap:6px">
         <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;flex:1" onclick="event.stopPropagation();selectReviewOrder('${sid}')">🔍 振り返り</button>
@@ -3097,6 +3109,14 @@ function buildRvSkuDetailHtml(r,order,key){
         <td style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(tiltStr)}</td>
       </tr>`;
     }).join('');
+    // 11件目以降の小売（retailer_listのis_extra=trueの項目）
+    const extraRetailers = (order.retailer_list||[]).filter(r=>r.is_extra);
+    const extraHtml = extraRetailers.length
+      ? `<div style="margin-top:8px;padding:6px 10px;background:rgba(126,184,212,.05);border:1px solid rgba(126,184,212,.15);border-radius:4px">
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:4px">11件目以降の小売（Excelに店舗数のみ記録）</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">${extraRetailers.map(r=>`<span style="font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:3px;background:rgba(126,184,212,.1);color:var(--accent2);border:1px solid rgba(126,184,212,.2)">${escHtml(r.name)}${r.stores?'（'+r.stores+'店）':''}</span>`).join('')}</div>
+        </div>`
+      : '';
     retailerHtml=`<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px">
       <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">toB 小売別試算根拠</div>
       <div style="overflow-x:auto"><table style="font-size:11px;border-collapse:collapse;width:100%">
@@ -3108,6 +3128,7 @@ function buildRvSkuDetailHtml(r,order,key){
           <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border);text-align:left">月別傾斜</th>
         </tr></thead><tbody>${rows}</tbody>
       </table></div>
+      ${extraHtml}
     </div>`;
   }
 
