@@ -142,7 +142,7 @@ textarea:focus{border-color:var(--accent);}
 .monthly-label{font-family:var(--font-mono);font-size:9px;color:var(--text3);text-align:center;}
 .monthly-input{text-align:right;}
 .retailer-block{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px;}
-.retailer-block-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.retailer-block-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;width:100%;}
 .section-divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
 .channel-section{margin-bottom:20px;}
 .channel-section-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
@@ -1508,6 +1508,7 @@ async function renderCloudDraftList(){
       buttons += `<button class="btn btn-green" style="font-size:11px;padding:4px 10px" onclick="archiveCloudSessionByIdx(${idx})">✅ 完了</button>`;
     } else {
       buttons += `<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;opacity:.7" onclick="viewArchivedSessionByIdx(${idx})">👁 参照</button>`;
+      buttons += `<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;color:var(--accent2);border-color:var(--accent2)" onclick="unarchiveCloudSessionByIdx(${idx})" title="完了済みを解除して編集可能に戻す">🔓 編集に戻す</button>`;
     }
     buttons += `<button class="btn btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteCloudSessionByIdx(${idx})" title="完全削除">🗑</button>`;
 
@@ -1631,6 +1632,24 @@ async function archiveCloudSessionByIdx(idx){
         await renderCloudDraftList();
       } catch(e){ showNotif('エラー: '+e.message, 'error'); }
     }, '完了にする'
+  );
+}
+
+// アーカイブ解除（完了済み → 編集可能に戻す）
+async function unarchiveCloudSessionByIdx(idx){
+  const s = window._cloudSessions[idx];
+  if(!s){ showNotif('セッションが見つかりません','error'); return; }
+  showConfirm('完了解除の確認',
+    `「${s.product||s.session_id}」の完了済みステータスを解除します。\n編集可能な状態に戻します。\n\nよろしいですか？`,
+    async function(){
+      try {
+        await cloudFetch(`sessions/${s.session_id}/archive`, 'DELETE');
+        closeModal();
+        showNotif(`「${s.product||s.session_id}」を編集可能な状態に戻しました`, 'success');
+        window._cloudSessions = [];
+        await renderCloudDraftList();
+      } catch(e){ showNotif('エラー: '+e.message, 'error'); }
+    }, '編集に戻す'
   );
 }
 
@@ -2571,18 +2590,6 @@ function renderReview(){
           ${acc!==null?`<span style="color:${diff>0?'var(--accent3)':diff<0?'var(--accent2)':'var(--text3)'}">${diff>0?'▲欠品':diff<0?'▽過剰':'±0'}</span>`:''}
           <span style="color:var(--text3);margin-left:auto">${o.skus.length} SKU</span>
         </div>
-        ${(()=>{
-          // 導入予定小売タグ（retailer_list / retailers のどちらかから取得）
-          const rl = (o.retailer_list||[]);
-          const rt = o.mode==='normal' ? (o.retailers||[]) : [];
-          let tags = [];
-          if(rl.length){
-            tags = rl.map(r=>`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:3px;${r.is_extra?'background:rgba(126,184,212,.08);color:var(--text3);border:1px solid rgba(126,184,212,.2)':'background:rgba(200,169,110,.1);color:var(--accent);border:1px solid rgba(200,169,110,.25)'}">${escHtml(r.name)}${r.stores?'（'+r.stores+'店）':''}</span>`);
-          } else if(rt.length){
-            tags = rt.map(r=>`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(200,169,110,.1);color:var(--accent);border:1px solid rgba(200,169,110,.25)">${escHtml(r.name)}${r.stores?'（'+r.stores+'店）':''}</span>`);
-          }
-          return tags.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">${tags.join('')}</div>`:'';
-        })()}
       </div>
       <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;gap:6px">
         <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;flex:1" onclick="event.stopPropagation();selectReviewOrder('${sid}')">🔍 振り返り</button>
@@ -3109,14 +3116,6 @@ function buildRvSkuDetailHtml(r,order,key){
         <td style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(tiltStr)}</td>
       </tr>`;
     }).join('');
-    // 11件目以降の小売（retailer_listのis_extra=trueの項目）
-    const extraRetailers = (order.retailer_list||[]).filter(r=>r.is_extra);
-    const extraHtml = extraRetailers.length
-      ? `<div style="margin-top:8px;padding:6px 10px;background:rgba(126,184,212,.05);border:1px solid rgba(126,184,212,.15);border-radius:4px">
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:4px">11件目以降の小売（Excelに店舗数のみ記録）</div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px">${extraRetailers.map(r=>`<span style="font-family:var(--font-mono);font-size:10px;padding:2px 8px;border-radius:3px;background:rgba(126,184,212,.1);color:var(--accent2);border:1px solid rgba(126,184,212,.2)">${escHtml(r.name)}${r.stores?'（'+r.stores+'店）':''}</span>`).join('')}</div>
-        </div>`
-      : '';
     retailerHtml=`<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px">
       <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">toB 小売別試算根拠</div>
       <div style="overflow-x:auto"><table style="font-size:11px;border-collapse:collapse;width:100%">
@@ -3128,7 +3127,6 @@ function buildRvSkuDetailHtml(r,order,key){
           <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border);text-align:left">月別傾斜</th>
         </tr></thead><tbody>${rows}</tbody>
       </table></div>
-      ${extraHtml}
     </div>`;
   }
 
@@ -4261,7 +4259,11 @@ function renderPsBlocks(){
       <div class="retailer-block-header">
         <span style="font-weight:500;font-size:13px">${escHtml(r.name)||('小売 '+(ri+1))}</span>
         <span id="rBadge_${ri}" style="font-family:var(--font-mono);font-size:9px;padding:2px 8px;border-radius:3px;${r.status==='新規'?'background:rgba(224,123,138,.2);color:var(--accent3);border:1px solid rgba(224,123,138,.4)':'background:rgba(126,212,160,.1);color:var(--accent4);border:1px solid rgba(126,212,160,.3)'}">${r.status==='新規'?'🆕 新規':'✓ 導入済み'}</span>
-        ${calcRetailers.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:2px 8px" onclick="calcRetailers.splice(${ri},1);renderPsBlocks()">削除</button>`:''}
+        <div style="display:flex;gap:3px;margin-left:auto">
+          ${ri>0?`<button class="btn btn-secondary" style="font-size:11px;padding:1px 7px;line-height:1.4" title="上へ移動" onclick="calcRetailers.splice(${ri}-1,0,calcRetailers.splice(${ri},1)[0]);renderPsBlocks()">↑</button>`:'<span style="display:inline-block;width:30px"></span>'}
+          ${ri<calcRetailers.length-1?`<button class="btn btn-secondary" style="font-size:11px;padding:1px 7px;line-height:1.4" title="下へ移動" onclick="calcRetailers.splice(${ri}+1,0,calcRetailers.splice(${ri},1)[0]);renderPsBlocks()">↓</button>`:'<span style="display:inline-block;width:30px"></span>'}
+          ${calcRetailers.length>1?`<button class="btn btn-danger" style="font-size:10px;padding:2px 8px" onclick="calcRetailers.splice(${ri},1);renderPsBlocks()">削除</button>`:''}
+        </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:10px">
         <div class="form-group"><label class="form-label">小売名</label>
