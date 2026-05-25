@@ -5599,11 +5599,13 @@ async function buildWorkbook(d, overrideSheetName){
   if(ecMs.length)  sheetXml = setCellInline(sheetXml, 'C14', ecMs.map(mLabel2).join(' → '));
   if(ovsMs.length) sheetXml = setCellInline(sheetXml, 'C15', ovsMs.map(mLabel2).join(' → '));
 
-  // D40〜K40: 月ヘッダーをbase_monthから直接テキストで上書き（$B$5=発注日を参照する数式がずれるため）
+  // 月ヘッダー行: 通常版=41行目(D41〜K41)、簡易版=40行目(D40〜K40)
+  // ツールの試算月をそのまま書き込み（$B$5参照数式は使わない）
   const allCalcMs = buildMonthRange(8);
   const MONTH_HEADER_COLS = ['D','E','F','G','H','I','J','K'];
+  const MONTH_HEADER_ROW = isSimple ? '40' : '41';
   MONTH_HEADER_COLS.forEach((col,i)=>{
-    sheetXml = setCellInline(sheetXml, col+'40', allCalcMs[i] ? mLabel2(allCalcMs[i]) : '');
+    sheetXml = setCellInline(sheetXml, col+MONTH_HEADER_ROW, allCalcMs[i] ? mLabel2(allCalcMs[i]) : '');
   });
 
   // ── 確定発注数サマリー (行18〜25) ──
