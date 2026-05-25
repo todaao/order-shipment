@@ -1397,6 +1397,7 @@ async function loadMergedSession(sid, readOnly=false){
     const _css=document.getElementById('calcStartScreen'); if(_css) _css.style.display='none';
     const _cma=document.getElementById('calcMainArea');    if(_cma) _cma.style.display='';
     const _rel=document.getElementById('reEditListArea');  if(_rel) _rel.style.display='none';
+    refreshAllSkuStocks(); // 試算日基準で在庫参照月を更新
     renderCalcSkuList();
 
     const roNote = (readOnly || m.archived) ? '\n📦 完了済みのため参照のみ（編集・保存は不可）' : '';
@@ -1772,28 +1773,6 @@ let calcOvsMonthly=[{},{},{},{}];
 let calcSimpleMonthly={};
 
 function fmt(n){return (n||0).toLocaleString();}
-// 数値入力ユーティリティ: 全角数字→半角変換、カンマ除去、parseFloat
-function parseNumInput(v){
-  if(v==null) return NaN;
-  const s=String(v)
-    .replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)) // 全角→半角
-    .replace(/[、，,]/g,'')  // カンマ（全角・半角・読点）除去
-    .replace(/\s/g,'');      // 空白除去
-  return parseFloat(s);
-}
-// 数値入力フィールドの正規化（oninputで this を渡す）
-function normalizeNumInput(el){
-  const pos=el.selectionStart;
-  const raw=el.value;
-  const normalized=raw
-    .replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
-    .replace(/[、，,]/g,'')
-    .replace(/[^\d.\-]/g,''); // 数字・小数点・マイナス以外除去
-  if(normalized!==raw){
-    el.value=normalized;
-    try{el.setSelectionRange(Math.max(0,pos-(raw.length-normalized.length)),Math.max(0,pos-(raw.length-normalized.length)));}catch(e){}
-  }
-}
 function round1(n){return Math.round(n*10)/10;}
 function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function addMonths(ym,n){
@@ -4005,6 +3984,11 @@ function updateMonthPreviews(){
   const el=document.getElementById('monthPreviewRow');
   if(!el) return;
   if(!base){el.textContent='発注予定日を入力すると月が表示されます';return;}
+  // 試算日変更時：全SKUの在庫参照月を更新して再描画
+  if(calcSkus&&calcSkus.length){
+    refreshAllSkuStocks();
+    renderCalcSkuList();
+  }
   const _getM=id=>{const e=document.getElementById(id);return e?parseInt(e.value)||8:8;};
   const tob=_getM('ci_tobMonths');
   const ec=_getM('ci_ecMonths');
@@ -4103,8 +4087,8 @@ function addSelectedJans(){
     if(!m) continue;
     if(calcSkus.find(s=>String(s.jan)===jan)) continue;
     if(calcSkus.length>=8){showNotif('SKUは最大8件です','error');break;}
-    const inv=INV_BY_JAN[jan];
-    const _ms3=Object.keys((inv&&inv.monthly_stock)||{}).sort();const _lat3=_ms3.length?inv.monthly_stock[_ms3[_ms3.length-1]]:null;const _stk3=inv?(_lat3!=null?_lat3:(inv.current_stock!=null?inv.current_stock:0)):0;calcSkus.push({jan,name:m.sku_name||m.display_name,product_name:m.product_name,brand:m.brand,display_name:m.display_name||m.sku_name,stock:_stk3,note:''});
+    const {stock:_stk3,month:_stm3}=getStockForMonth(jan,getBaseMonth()||undefined);
+    calcSkus.push({jan,name:m.sku_name||m.display_name,product_name:m.product_name,brand:m.brand,display_name:m.display_name||m.sku_name,stock:_stk3,stockMonth:_stm3,note:''});
     added++;
   }
   _janSelected.clear();
@@ -4119,10 +4103,7 @@ function addSkuFromMaster(jan){
   if(!m){showNotif('マスタに存在しません','error');return;}
   if(calcSkus.find(s=>String(s.jan)===String(jan))){showNotif('すでに追加済みです','error');return;}
   if(calcSkus.length>=8){showNotif('SKUは最大8件です','error');return;}
-  const inv=INV_BY_JAN[String(jan)];
-  const _invMs=Object.keys((inv&&inv.monthly_stock)||{}).sort();
-  const _invLat=_invMs.length?inv.monthly_stock[_invMs[_invMs.length-1]]:null;
-  const _invStk=inv?(_invLat!=null?_invLat:(inv.current_stock!=null?inv.current_stock:0)):0;
+  const {stock:_invStk,month:_invStm}=getStockForMonth(String(jan),getBaseMonth()||undefined);
   calcSkus.push({
     jan:String(jan),
     name:m.sku_name||m.display_name,
@@ -4130,6 +4111,7 @@ function addSkuFromMaster(jan){
     brand:m.brand,
     display_name:m.display_name||m.sku_name,
     stock:_invStk,
+    stockMonth:_invStm,
     note:''
   });
   renderCalcSkuList();
@@ -4192,8 +4174,8 @@ function renderCalcSkuList(){
           <input type="text" value="${escHtml(s.name)}" placeholder="例：01 ピンクベージュ" oninput="calcSkus[${i}].name=this.value">
         </div>
         <div class="form-group">
-          <label class="form-label">現在庫 <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">(JAN自動)</span></label>
-          <input type="number" value="${getStockFromJan(s.jan,i)}" readonly style="color:var(--accent2);background:var(--surface)" title="JANコードから在庫データを自動取得（読み取り専用）">
+          <label class="form-label">現在庫 <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">(JAN自動)</span>${s.stockMonth?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--accent2);margin-left:4px">${s.stockMonth.slice(0,7).replace('-','/')}末</span>`:''}</label>
+          <input type="number" value="${getStockFromJan(s.jan,i)}" readonly style="color:var(--accent2);background:var(--surface)" title="${s.stockMonth?s.stockMonth.slice(0,7)+'月末時点の在庫':'JANコードから在庫データを自動取得'}（試算日以前で最直近）">
         </div>
         <div class="form-group">
           <label class="form-label">備考</label>
@@ -4202,14 +4184,36 @@ function renderCalcSkuList(){
       </div>
     </div>`).join('');
 }
+// 在庫取得: baseMonth（YYYY-MM）以前で最直近の月の在庫を返す
+// baseMonth 省略時は最新月を使用（従来動作）
+function getStockForMonth(jan, baseMonth){
+  const inv = INV_BY_JAN[String(jan)];
+  if(!inv) return {stock:0, month:null};
+  const ms = Object.keys(inv.monthly_stock||{}).sort();
+  let validMs = baseMonth ? ms.filter(m=>m<=baseMonth) : ms;
+  const lat = validMs.length ? inv.monthly_stock[validMs[validMs.length-1]] : null;
+  const latMonth = validMs.length ? validMs[validMs.length-1] : null;
+  const st = lat!=null ? lat : (inv.current_stock!=null ? inv.current_stock : 0);
+  return {stock:st, month:latMonth};
+}
 function getStockFromJan(jan,idx){
-  if(!jan||!INV_BY_JAN[String(jan)]){if(calcSkus[idx])calcSkus[idx].stock=0;return 0;}
-  const inv=INV_BY_JAN[String(jan)];
-  const ms=Object.keys(inv.monthly_stock||{}).sort();
-  const lat=ms.length?inv.monthly_stock[ms[ms.length-1]]:null;
-  const st=lat!=null?lat:(inv.current_stock!=null?inv.current_stock:0);
-  if(calcSkus[idx])calcSkus[idx].stock=st;
+  const base = getBaseMonth();
+  const {stock:st, month:stMonth} = getStockForMonth(jan, base||undefined);
+  if(calcSkus[idx]){
+    calcSkus[idx].stock = st;
+    calcSkus[idx].stockMonth = stMonth;
+  }
   return st;
+}
+// 全SKUの在庫を試算日に合わせて更新
+function refreshAllSkuStocks(){
+  const base = getBaseMonth();
+  calcSkus.forEach((s,i)=>{
+    if(!s.jan) return;
+    const {stock:st, month:stMonth} = getStockForMonth(s.jan, base||undefined);
+    s.stock = st;
+    s.stockMonth = stMonth;
+  });
 }
 
 function removeCalcSku(i){calcSkus.splice(i,1);renderCalcSkuList();}
@@ -4241,7 +4245,7 @@ function buildPosArea(){
             <input type="month" value="${s.posMonth||base}" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent2);padding:4px 8px;border-radius:4px;font-size:11px;width:130px" onchange="calcSkus[${i}].posMonth=this.value">
           </td>
           <td style="padding:6px 10px;border-bottom:1px solid rgba(42,45,58,.4)">
-            <input type="text" inputmode="decimal" value="${s.posPs!=null?s.posPs:''}" placeholder="0.0" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent3);padding:4px 8px;border-radius:4px;font-size:11px;width:72px;text-align:right" oninput="normalizeNumInput(this)" onchange="calcSkus[${i}].posPs=parseNumInput(this.value)||0;rebuildPsPreviewAll()">
+            <input type="text" inputmode="decimal" value="${s.posPs!=null?s.posPs:''}" placeholder="0.0" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent3);padding:4px 8px;border-radius:4px;font-size:11px;width:72px;text-align:right" onchange="calcSkus[${i}].posPs=parseFloat(this.value)||0;rebuildPsPreviewAll()">
           </td>
           <td style="padding:6px 10px;border-bottom:1px solid rgba(42,45,58,.4)">
             ${ss?`<span class="ref-badge">直近: ${fmt(r1tob)}</span> <span class="pos-ref-badge">3月均: ${fmt(r3avg)}</span>`:'<span style="color:var(--text3);font-size:10px">出荷データなし</span>'}
@@ -4298,7 +4302,7 @@ function renderPsBlocks(){
           </select>
         </div>
         <div class="form-group"><label class="form-label">業態POS傾斜</label>
-          <input type="text" inputmode="decimal" value="${r.posTilt}" oninput="normalizeNumInput(this);calcRetailers[${ri}].posTilt=parseNumInput(this.value)||0;recalcPsPreview(${ri})">
+          <input type="text" inputmode="decimal" value="${r.posTilt}" oninput="calcRetailers[${ri}].posTilt=parseFloat(this.value)||0;recalcPsPreview(${ri})">
         </div>
         <div class="form-group"><label class="form-label">全店舗数</label>
           <input type="number" value="${r.stores}" min="0" oninput="calcRetailers[${ri}].stores=+this.value;recalcPsPreview(${ri})">
@@ -4314,7 +4318,7 @@ function renderPsBlocks(){
         <div style="display:flex;flex-wrap:wrap;gap:8px">
         ${months.map((m,mi)=>`<div class="monthly-input-wrap">
           <label class="monthly-label">${mLabel(m)}</label>
-          <input type="text" inputmode="decimal" class="monthly-input" value="${r.monthTilts[m]!==undefined&&r.monthTilts[m]!==''?r.monthTilts[m]:''}" placeholder="—" style="width:60px" oninput="normalizeNumInput(this);calcRetailers[${ri}].monthTilts['${m}']=this.value===''?'':parseNumInput(this.value)||0;recalcPsPreview(${ri})">
+          <input type="text" inputmode="decimal" class="monthly-input" value="${r.monthTilts[m]!==undefined&&r.monthTilts[m]!==''?r.monthTilts[m]:''}" placeholder="—" style="width:60px" oninput="calcRetailers[${ri}].monthTilts['${m}']=this.value===''?'':parseFloat(this.value)||0;recalcPsPreview(${ri})">
         </div>`).join('')}
         </div>
       </div>
@@ -4514,7 +4518,7 @@ function buildEcOverseasInput(){
       const monthInputs=months.map(m=>{
         // 修正３: 初期値は空欄（自動設定なし）
         let val=(stores[s.name]||{})[m];
-        return `<div class="monthly-input-wrap"><label class="monthly-label">${mLabel(m)}</label><input type="text" inputmode="decimal" class="monthly-input" style="width:72px" value="${val!=null&&val!==''?val:''}" placeholder="" oninput="normalizeNumInput(this)" onchange="setStoreVal('${storeKey}','${escHtml(s.name)}','${m}',this.value===''?null:(parseNumInput(this.value)||0))"></div>`;
+        return `<div class="monthly-input-wrap"><label class="monthly-label">${mLabel(m)}</label><input type="text" inputmode="decimal" class="monthly-input" style="width:72px" value="${val!=null&&val!==''?val:''}" placeholder="" onchange="setStoreVal('${storeKey}','${escHtml(s.name)}','${m}',this.value===''?null:(parseFloat(this.value)||0))"></div>`;
       }).join('');
       return `<div class="sku-block" style="margin-bottom:8px"><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">${escHtml(s.name)} ${badge}</div><div style="display:flex;flex-wrap:wrap;gap:6px">${monthInputs}</div></div>`;
     }).join('');
@@ -4557,11 +4561,10 @@ function buildEcOverseasInput(){
 }
 
 function simpleStoreChange(el){
-  normalizeNumInput(el);
   const key=el.getAttribute('data-key');
   const sku=el.getAttribute('data-sku');
   const m=el.getAttribute('data-month');
-  const v=parseNumInput(el.value)||0;
+  const v=parseFloat(el.value)||0;
   setStoreVal(key,sku,m,v);
 }
 function setStoreVal(key,sku,m,v){
@@ -5133,7 +5136,7 @@ function renderStep5InvSim(){
         <tbody>${window.promoPlan.map((p,pi)=>`<tr>
           <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.item||'')}" placeholder="例：什器、POPカード" style="background:transparent;border:none;color:var(--text);font-size:12px;width:100%;outline:none" oninput="window.promoPlan[${pi}].item=this.value"></td>
           <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.jan||'')}" placeholder="什器JAN要確認、テスターJAN_00" title="例: 什器JAN要確認、テスターJAN_00" style="background:transparent;border:none;color:var(--text2);font-family:var(--font-mono);font-size:11px;width:100%;outline:none" oninput="window.promoPlan[${pi}].jan=this.value"></td>
-          <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5);text-align:right"><input type="text" inputmode="decimal" value="${escHtml(String(p.qty||''))}" placeholder="0" style="background:transparent;border:none;color:var(--accent);font-family:var(--font-mono);font-size:12px;width:80px;text-align:right;outline:none" oninput="normalizeNumInput(this);window.promoPlan[${pi}].qty=this.value"></td>
+          <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5);text-align:right"><input type="text" inputmode="decimal" value="${escHtml(String(p.qty||''))}" placeholder="0" style="background:transparent;border:none;color:var(--accent);font-family:var(--font-mono);font-size:12px;width:80px;text-align:right;outline:none" oninput="window.promoPlan[${pi}].qty=this.value"></td>
           <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.note||'')}" placeholder="備考（任意）" style="background:transparent;border:none;color:var(--text2);font-size:12px;width:100%;outline:none" oninput="window.promoPlan[${pi}].note=this.value"></td>
         </tr>`).join('')}</tbody>
       </table>
@@ -5685,16 +5688,24 @@ async function buildWorkbook(d, overrideSheetName){
   }
 
   // ── 販促物試算ブロック (行29〜38) ──
+  // item・jan・qty・noteがすべて空の行は書き込みをスキップし、セルを空欄のままにする
   const promos = window.promoPlan || [];
-  promos.forEach((p,pi)=>{
-    if(pi>=10) return;
+  for(let pi=0; pi<10; pi++){
+    const p = promos[pi] || {};
     const r = 29+pi;
-    sheetXml = setCellInline(sheetXml, 'A'+r, p.item||'');
-    sheetXml = setCellInline(sheetXml, 'B'+r, p.jan||'');
-    const qv = parseFloat(p.qty);
-    if(!isNaN(qv)) sheetXml = setCellNum(sheetXml, 'I'+r, qv);
-    sheetXml = setCellInline(sheetXml, 'J'+r, p.note||'');
-  });
+    const hasItem = (p.item||'').trim() !== '';
+    const hasJan  = (p.jan||'').trim()  !== '';
+    const hasQty  = (p.qty||'').toString().trim() !== '';
+    const hasNote = (p.note||'').trim() !== '';
+    if(hasItem) sheetXml = setCellInline(sheetXml, 'A'+r, p.item);
+    else        sheetXml = setCellEmpty(sheetXml, 'A'+r);
+    if(hasJan)  sheetXml = setCellInline(sheetXml, 'B'+r, p.jan);
+    else        sheetXml = setCellEmpty(sheetXml, 'B'+r);
+    if(hasQty){ const qv=parseFloat(p.qty); if(!isNaN(qv)) sheetXml = setCellNum(sheetXml, 'I'+r, qv); else sheetXml = setCellEmpty(sheetXml, 'I'+r); }
+    else        sheetXml = setCellEmpty(sheetXml, 'I'+r);
+    if(hasNote) sheetXml = setCellInline(sheetXml, 'J'+r, p.note);
+    else        sheetXml = setCellEmpty(sheetXml, 'J'+r);
+  }
 
   // ── 販路×月サマリー ──
   d.skus.forEach((s,i)=>{
@@ -5770,7 +5781,7 @@ async function buildWorkbook(d, overrideSheetName){
             // 空欄の場合は空セルにする（テンプレートのデフォルト値0.7を消す）
             sheetXml = setCellEmpty(sheetXml, MONTH_COLS_NORMAL[mi]+(h+2));
           } else {
-            sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+(h+2), parseNumInput(tv)||0);
+            sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+(h+2), parseFloat(tv)||0);
           }
         }
       });
