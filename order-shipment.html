@@ -5662,16 +5662,24 @@ async function buildWorkbook(d, overrideSheetName){
   }
 
   // ── 販促物試算ブロック (行29〜38) ──
+  // item・jan・qty・noteがすべて空の行は書き込みをスキップし、セルを空欄のままにする
   const promos = window.promoPlan || [];
-  promos.forEach((p,pi)=>{
-    if(pi>=10) return;
+  for(let pi=0; pi<10; pi++){
+    const p = promos[pi] || {};
     const r = 29+pi;
-    sheetXml = setCellInline(sheetXml, 'A'+r, p.item||'');
-    sheetXml = setCellInline(sheetXml, 'B'+r, p.jan||'');
-    const qv = parseFloat(p.qty);
-    if(!isNaN(qv)) sheetXml = setCellNum(sheetXml, 'I'+r, qv);
-    sheetXml = setCellInline(sheetXml, 'J'+r, p.note||'');
-  });
+    const hasItem = (p.item||'').trim() !== '';
+    const hasJan  = (p.jan||'').trim()  !== '';
+    const hasQty  = (p.qty||'').toString().trim() !== '';
+    const hasNote = (p.note||'').trim() !== '';
+    if(hasItem) sheetXml = setCellInline(sheetXml, 'A'+r, p.item);
+    else        sheetXml = setCellEmpty(sheetXml, 'A'+r);
+    if(hasJan)  sheetXml = setCellInline(sheetXml, 'B'+r, p.jan);
+    else        sheetXml = setCellEmpty(sheetXml, 'B'+r);
+    if(hasQty){ const qv=parseFloat(p.qty); if(!isNaN(qv)) sheetXml = setCellNum(sheetXml, 'I'+r, qv); else sheetXml = setCellEmpty(sheetXml, 'I'+r); }
+    else        sheetXml = setCellEmpty(sheetXml, 'I'+r);
+    if(hasNote) sheetXml = setCellInline(sheetXml, 'J'+r, p.note);
+    else        sheetXml = setCellEmpty(sheetXml, 'J'+r);
+  }
 
   // ── 販路×月サマリー ──
   d.skus.forEach((s,i)=>{
