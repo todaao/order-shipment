@@ -1772,6 +1772,28 @@ let calcOvsMonthly=[{},{},{},{}];
 let calcSimpleMonthly={};
 
 function fmt(n){return (n||0).toLocaleString();}
+// 数値入力ユーティリティ: 全角数字→半角変換、カンマ除去、parseFloat
+function parseNumInput(v){
+  if(v==null) return NaN;
+  const s=String(v)
+    .replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)) // 全角→半角
+    .replace(/[、，,]/g,'')  // カンマ（全角・半角・読点）除去
+    .replace(/\s/g,'');      // 空白除去
+  return parseFloat(s);
+}
+// 数値入力フィールドの正規化（oninputで this を渡す）
+function normalizeNumInput(el){
+  const pos=el.selectionStart;
+  const raw=el.value;
+  const normalized=raw
+    .replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0))
+    .replace(/[、，,]/g,'')
+    .replace(/[^\d.\-]/g,''); // 数字・小数点・マイナス以外除去
+  if(normalized!==raw){
+    el.value=normalized;
+    try{el.setSelectionRange(Math.max(0,pos-(raw.length-normalized.length)),Math.max(0,pos-(raw.length-normalized.length)));}catch(e){}
+  }
+}
 function round1(n){return Math.round(n*10)/10;}
 function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function addMonths(ym,n){
@@ -4219,7 +4241,7 @@ function buildPosArea(){
             <input type="month" value="${s.posMonth||base}" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent2);padding:4px 8px;border-radius:4px;font-size:11px;width:130px" onchange="calcSkus[${i}].posMonth=this.value">
           </td>
           <td style="padding:6px 10px;border-bottom:1px solid rgba(42,45,58,.4)">
-            <input type="text" inputmode="decimal" value="${s.posPs!=null?s.posPs:''}" placeholder="0.0" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent3);padding:4px 8px;border-radius:4px;font-size:11px;width:72px;text-align:right" onchange="calcSkus[${i}].posPs=parseFloat(this.value)||0;rebuildPsPreviewAll()">
+            <input type="text" inputmode="decimal" value="${s.posPs!=null?s.posPs:''}" placeholder="0.0" style="background:var(--surface2);border:1px solid var(--border);color:var(--accent3);padding:4px 8px;border-radius:4px;font-size:11px;width:72px;text-align:right" oninput="normalizeNumInput(this)" onchange="calcSkus[${i}].posPs=parseNumInput(this.value)||0;rebuildPsPreviewAll()">
           </td>
           <td style="padding:6px 10px;border-bottom:1px solid rgba(42,45,58,.4)">
             ${ss?`<span class="ref-badge">直近: ${fmt(r1tob)}</span> <span class="pos-ref-badge">3月均: ${fmt(r3avg)}</span>`:'<span style="color:var(--text3);font-size:10px">出荷データなし</span>'}
@@ -4276,7 +4298,7 @@ function renderPsBlocks(){
           </select>
         </div>
         <div class="form-group"><label class="form-label">業態POS傾斜</label>
-          <input type="text" inputmode="decimal" value="${r.posTilt}" oninput="calcRetailers[${ri}].posTilt=parseFloat(this.value)||0;recalcPsPreview(${ri})">
+          <input type="text" inputmode="decimal" value="${r.posTilt}" oninput="normalizeNumInput(this);calcRetailers[${ri}].posTilt=parseNumInput(this.value)||0;recalcPsPreview(${ri})">
         </div>
         <div class="form-group"><label class="form-label">全店舗数</label>
           <input type="number" value="${r.stores}" min="0" oninput="calcRetailers[${ri}].stores=+this.value;recalcPsPreview(${ri})">
@@ -4292,7 +4314,7 @@ function renderPsBlocks(){
         <div style="display:flex;flex-wrap:wrap;gap:8px">
         ${months.map((m,mi)=>`<div class="monthly-input-wrap">
           <label class="monthly-label">${mLabel(m)}</label>
-          <input type="text" inputmode="decimal" class="monthly-input" value="${r.monthTilts[m]!==undefined&&r.monthTilts[m]!==''?r.monthTilts[m]:''}" placeholder="—" style="width:60px" oninput="calcRetailers[${ri}].monthTilts['${m}']=this.value===''?'':parseFloat(this.value)||0;recalcPsPreview(${ri})">
+          <input type="text" inputmode="decimal" class="monthly-input" value="${r.monthTilts[m]!==undefined&&r.monthTilts[m]!==''?r.monthTilts[m]:''}" placeholder="—" style="width:60px" oninput="normalizeNumInput(this);calcRetailers[${ri}].monthTilts['${m}']=this.value===''?'':parseNumInput(this.value)||0;recalcPsPreview(${ri})">
         </div>`).join('')}
         </div>
       </div>
@@ -4492,7 +4514,7 @@ function buildEcOverseasInput(){
       const monthInputs=months.map(m=>{
         // 修正３: 初期値は空欄（自動設定なし）
         let val=(stores[s.name]||{})[m];
-        return `<div class="monthly-input-wrap"><label class="monthly-label">${mLabel(m)}</label><input type="text" inputmode="decimal" class="monthly-input" style="width:72px" value="${val!=null&&val!==''?val:''}" placeholder="" onchange="setStoreVal('${storeKey}','${escHtml(s.name)}','${m}',this.value===''?null:(parseFloat(this.value)||0))"></div>`;
+        return `<div class="monthly-input-wrap"><label class="monthly-label">${mLabel(m)}</label><input type="text" inputmode="decimal" class="monthly-input" style="width:72px" value="${val!=null&&val!==''?val:''}" placeholder="" oninput="normalizeNumInput(this)" onchange="setStoreVal('${storeKey}','${escHtml(s.name)}','${m}',this.value===''?null:(parseNumInput(this.value)||0))"></div>`;
       }).join('');
       return `<div class="sku-block" style="margin-bottom:8px"><div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">${escHtml(s.name)} ${badge}</div><div style="display:flex;flex-wrap:wrap;gap:6px">${monthInputs}</div></div>`;
     }).join('');
@@ -4535,10 +4557,11 @@ function buildEcOverseasInput(){
 }
 
 function simpleStoreChange(el){
+  normalizeNumInput(el);
   const key=el.getAttribute('data-key');
   const sku=el.getAttribute('data-sku');
   const m=el.getAttribute('data-month');
-  const v=parseFloat(el.value)||0;
+  const v=parseNumInput(el.value)||0;
   setStoreVal(key,sku,m,v);
 }
 function setStoreVal(key,sku,m,v){
@@ -5110,7 +5133,7 @@ function renderStep5InvSim(){
         <tbody>${window.promoPlan.map((p,pi)=>`<tr>
           <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.item||'')}" placeholder="例：什器、POPカード" style="background:transparent;border:none;color:var(--text);font-size:12px;width:100%;outline:none" oninput="window.promoPlan[${pi}].item=this.value"></td>
           <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.jan||'')}" placeholder="什器JAN要確認、テスターJAN_00" title="例: 什器JAN要確認、テスターJAN_00" style="background:transparent;border:none;color:var(--text2);font-family:var(--font-mono);font-size:11px;width:100%;outline:none" oninput="window.promoPlan[${pi}].jan=this.value"></td>
-          <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5);text-align:right"><input type="text" inputmode="decimal" value="${escHtml(String(p.qty||''))}" placeholder="0" style="background:transparent;border:none;color:var(--accent);font-family:var(--font-mono);font-size:12px;width:80px;text-align:right;outline:none" oninput="window.promoPlan[${pi}].qty=this.value"></td>
+          <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5);text-align:right"><input type="text" inputmode="decimal" value="${escHtml(String(p.qty||''))}" placeholder="0" style="background:transparent;border:none;color:var(--accent);font-family:var(--font-mono);font-size:12px;width:80px;text-align:right;outline:none" oninput="normalizeNumInput(this);window.promoPlan[${pi}].qty=this.value"></td>
           <td style="padding:4px 6px;border:1px solid rgba(42,45,58,.5)"><input type="text" value="${escHtml(p.note||'')}" placeholder="備考（任意）" style="background:transparent;border:none;color:var(--text2);font-size:12px;width:100%;outline:none" oninput="window.promoPlan[${pi}].note=this.value"></td>
         </tr>`).join('')}</tbody>
       </table>
@@ -5662,24 +5685,16 @@ async function buildWorkbook(d, overrideSheetName){
   }
 
   // ── 販促物試算ブロック (行29〜38) ──
-  // item・jan・qty・noteがすべて空の行は書き込みをスキップし、セルを空欄のままにする
   const promos = window.promoPlan || [];
-  for(let pi=0; pi<10; pi++){
-    const p = promos[pi] || {};
+  promos.forEach((p,pi)=>{
+    if(pi>=10) return;
     const r = 29+pi;
-    const hasItem = (p.item||'').trim() !== '';
-    const hasJan  = (p.jan||'').trim()  !== '';
-    const hasQty  = (p.qty||'').toString().trim() !== '';
-    const hasNote = (p.note||'').trim() !== '';
-    if(hasItem) sheetXml = setCellInline(sheetXml, 'A'+r, p.item);
-    else        sheetXml = setCellEmpty(sheetXml, 'A'+r);
-    if(hasJan)  sheetXml = setCellInline(sheetXml, 'B'+r, p.jan);
-    else        sheetXml = setCellEmpty(sheetXml, 'B'+r);
-    if(hasQty){ const qv=parseFloat(p.qty); if(!isNaN(qv)) sheetXml = setCellNum(sheetXml, 'I'+r, qv); else sheetXml = setCellEmpty(sheetXml, 'I'+r); }
-    else        sheetXml = setCellEmpty(sheetXml, 'I'+r);
-    if(hasNote) sheetXml = setCellInline(sheetXml, 'J'+r, p.note);
-    else        sheetXml = setCellEmpty(sheetXml, 'J'+r);
-  }
+    sheetXml = setCellInline(sheetXml, 'A'+r, p.item||'');
+    sheetXml = setCellInline(sheetXml, 'B'+r, p.jan||'');
+    const qv = parseFloat(p.qty);
+    if(!isNaN(qv)) sheetXml = setCellNum(sheetXml, 'I'+r, qv);
+    sheetXml = setCellInline(sheetXml, 'J'+r, p.note||'');
+  });
 
   // ── 販路×月サマリー ──
   d.skus.forEach((s,i)=>{
@@ -5755,7 +5770,7 @@ async function buildWorkbook(d, overrideSheetName){
             // 空欄の場合は空セルにする（テンプレートのデフォルト値0.7を消す）
             sheetXml = setCellEmpty(sheetXml, MONTH_COLS_NORMAL[mi]+(h+2));
           } else {
-            sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+(h+2), parseFloat(tv)||0);
+            sheetXml = setCellNum(sheetXml, MONTH_COLS_NORMAL[mi]+(h+2), parseNumInput(tv)||0);
           }
         }
       });
