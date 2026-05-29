@@ -1921,6 +1921,13 @@ function setShipTableChannel(ch,el){
   renderShipTable();
 }
 
+function setBarChChannel(ch,el){
+  barChChannel=ch;
+  el.closest('.tab-bar').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderShipments();
+}
+
 function setInvSort(order){
   invSortOrder=order;
   renderInventoryTable();
@@ -2037,7 +2044,7 @@ function renderShipments(){
   if(!dataLoaded||!DATA.shipments) return;
   const skus=filteredShipmentSkus();
   const months=filteredMonths();
-  const ch=shipTableChannel;
+  const ch=barChChannel;
 
   // KPI集計
   let tobT=0,ecT=0,ovsT=0,othT=0;
