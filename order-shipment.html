@@ -598,8 +598,11 @@ textarea:focus{border-color:var(--accent);}
     <select id="rvFilterBrand" onchange="renderReview()" style="width:auto;min-width:100px;font-size:11px;padding:4px 28px 4px 8px;">
       <option value="all">全ブランド</option>
     </select>
-    <select id="rvFilterYear" onchange="renderReview()" style="width:auto;min-width:90px;font-size:11px;padding:4px 28px 4px 8px;">
+    <select id="rvFilterYear" onchange="rvOnYearChange()" style="width:auto;min-width:90px;font-size:11px;padding:4px 28px 4px 8px;">
       <option value="all">全期間</option>
+    </select>
+    <select id="rvFilterMonth" onchange="renderReview()" style="width:auto;min-width:80px;font-size:11px;padding:4px 28px 4px 8px;">
+      <option value="all">全月</option>
     </select>
     <select id="rvFilterMode" onchange="renderReview()" style="width:auto;min-width:90px;font-size:11px;padding:4px 28px 4px 8px;">
       <option value="all">通常+簡易</option>
@@ -609,42 +612,8 @@ textarea:focus{border-color:var(--accent);}
     <span id="rvFilterCount" style="font-family:var(--font-mono);font-size:10px;color:var(--text3);margin-left:auto;"></span>
   </div>
 
-  <!-- 発注カード一覧 -->
-  <div id="reviewOrderCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:24px;"></div>
-
-  <!-- 選択された発注の詳細パネル -->
-  <div id="reviewDetailPanel" style="display:none;">
-    <!-- KPI行 -->
-    <div class="kpi-row" id="reviewKpis" style="margin-bottom:16px;"></div>
-
-    <!-- 月別推移グラフ -->
-    <div class="panel" style="margin-bottom:16px;">
-      <div class="panel-header">
-        <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent2)"></span>月別 試算 vs 実績</div>
-        <div style="display:flex;gap:6px;">
-          <button class="drilldown-toggle rv-ch-btn active" data-ch="all" onclick="setRvChannel('all',this)">全体</button>
-          <button class="drilldown-toggle rv-ch-btn" data-ch="tob" onclick="setRvChannel('tob',this)">toB</button>
-          <button class="drilldown-toggle rv-ch-btn" data-ch="ec" onclick="setRvChannel('ec',this)">EC</button>
-          <button class="drilldown-toggle rv-ch-btn" data-ch="overseas" onclick="setRvChannel('overseas',this)">海外</button>
-        </div>
-      </div>
-      <div class="panel-body"><div style="height:260px;position:relative"><canvas id="chartReview"></canvas></div></div>
-    </div>
-
-    <!-- SKU別精度テーブル -->
-    <div class="panel" style="margin-bottom:16px;">
-      <div class="panel-header">
-        <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent3)"></span>SKU別精度</div>
-        <span style="font-size:11px;color:var(--text3)">行をクリックでチャネル詳細 / toB小売内訳を表示</span>
-      </div>
-      <div class="panel-body">
-        <div class="sku-table-wrap"><table id="reviewTable"></table></div>
-      </div>
-    </div>
-
-    <!-- SKU詳細ドリルダウン -->
-    <div id="reviewDetailArea"></div>
-  </div>
+  <!-- 発注リスト（縦並び） -->
+  <div id="reviewOrderCards" style="margin-bottom:24px;display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;"></div>
 </div>
 
 <!-- ⑥ アラート -->
@@ -2516,24 +2485,29 @@ function renderReview(){
   const orders = DATA.orders.orders||[];
 
   // ── フィルター選択肢を構築（初回のみ）──
-  const brandSel = document.getElementById('rvFilterBrand');
-  const yearSel  = document.getElementById('rvFilterYear');
+  const brandSel  = document.getElementById('rvFilterBrand');
+  const yearSel   = document.getElementById('rvFilterYear');
   if(brandSel&&brandSel.options.length<=1){
     const brands=[...new Set(orders.map(o=>o.brand).filter(Boolean))].sort();
     brands.forEach(b=>{const op=document.createElement('option');op.value=b;op.textContent=b;brandSel.appendChild(op);});
   }
   if(yearSel&&yearSel.options.length<=1){
     const years=[...new Set(orders.map(o=>(o.order_date||'').slice(0,4)).filter(Boolean))].sort().reverse();
-    years.forEach(y=>{const op=document.createElement('option');op.value=y;op.textContent=y+'年度';yearSel.appendChild(op);});
+    years.forEach(y=>{const op=document.createElement('option');op.value=y;op.textContent=y+'年';yearSel.appendChild(op);});
   }
 
   // ── フィルター適用 ──
   const fBrand = brandSel?brandSel.value:'all';
   const fYear  = yearSel?yearSel.value:'all';
+  const fMonth = document.getElementById('rvFilterMonth')?.value||'all';
   const fMode  = document.getElementById('rvFilterMode')?.value||'all';
   let filtered = orders.filter(o=>{
     if(fBrand!=='all'&&o.brand!==fBrand) return false;
     if(fYear!=='all'&&!(o.order_date||'').startsWith(fYear)) return false;
+    if(fMonth!=='all'){
+      const ym=fYear!=='all'?fYear+'-'+fMonth:(o.order_date||'').slice(0,4)+'-'+fMonth;
+      if(!(o.order_date||'').startsWith(fYear!=='all'?ym:(o.order_date||'').slice(0,4)+'-'+fMonth)) return false;
+    }
     if(fMode!=='all'&&o.mode!==fMode) return false;
     return true;
   });
@@ -2546,10 +2520,18 @@ function renderReview(){
     ?[...new Set((DATA.shipments.skus||[]).flatMap(s=>Object.keys(s.monthly_shipments||{})))].sort()
     :[];
 
-  // ── 発注カード描画 ──
-  const cardArea=document.getElementById('reviewOrderCards');
-  if(!cardArea) return;
-  cardArea.innerHTML=filtered.length?filtered.map(o=>{
+  // ── リスト描画 ──
+  const listArea=document.getElementById('reviewOrderCards');
+  if(!listArea) return;
+
+  if(!filtered.length){
+    listArea.innerHTML='<div style="color:var(--text3);font-size:12px;padding:20px">条件に一致する発注がありません</div>';
+    return;
+  }
+
+  // 年月グループで区切り線を入れる
+  let lastYM='';
+  const rows=filtered.map((o,idx)=>{
     const base=o.base_month||'';
     const maxM=Math.max(o.tob_months||0,o.ec_months||0,o.overseas_months||0);
     const trialMonths=Array.from({length:maxM},(_,i)=>addMonths(base,i));
@@ -2567,53 +2549,137 @@ function renderReview(){
     const diff=acSum-fcSum;
     const accColor=acc===null?'var(--text3)':acc>=85?'var(--accent4)':acc>=70?'var(--accent)':'var(--accent3)';
     const isSelected=rvSelectedOrderId===o.order_id;
-    const modeTag=o.mode==='simple'
-      ?`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(126,184,212,.15);color:var(--accent2);border:1px solid rgba(126,184,212,.3)">簡易</span>`
-      :`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 6px;border-radius:3px;background:rgba(200,169,110,.15);color:var(--accent);border:1px solid rgba(200,169,110,.3)">通常</span>`;
     const sid=escHtml(o.order_id);
-    return `<div style="background:var(--surface);border:2px solid ${isSelected?'var(--accent)':'var(--border)'};border-radius:var(--radius);padding:14px;transition:border .15s${isSelected?';background:rgba(200,169,110,.06)':''}">
-      <div onclick="selectReviewOrder('${sid}')" style="cursor:pointer">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:8px">
-          <div>
-            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">${escHtml(o.product||o.sheet_name||'—')}</div>
-            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${escHtml(o.brand||'')}　${o.order_date||'—'}</div>
-          </div>
-          ${modeTag}
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-          <div style="flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:${pct===100?'var(--accent4)':'var(--accent2)'};border-radius:2px;transition:width .4s"></div>
-          </div>
-          <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);white-space:nowrap">${doneMonths.length}/${trialMonths.length}ヶ月 実績あり</span>
-        </div>
-        <div style="display:flex;gap:12px;font-family:var(--font-mono);font-size:11px;margin-bottom:10px">
-          <span style="color:${accColor}">${acc!==null?'精度 '+acc.toFixed(0)+'%':'実績待ち'}</span>
-          ${acc!==null?`<span style="color:${diff>0?'var(--accent3)':diff<0?'var(--accent2)':'var(--text3)'}">${diff>0?'▲欠品':diff<0?'▽過剰':'±0'}</span>`:''}
-          <span style="color:var(--text3);margin-left:auto">${o.skus.length} SKU</span>
-        </div>
-      </div>
-      <div style="border-top:1px solid var(--border);padding-top:8px;display:flex;gap:6px">
-        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;flex:1" onclick="event.stopPropagation();selectReviewOrder('${sid}')">🔍 振り返り</button>
-        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;flex:1" onclick="event.stopPropagation();exportOrderAsExcel('${sid}')">📊 Excel出力</button>
-      </div>
-    </div>`;
-  }).join(''):`<div style="color:var(--text3);font-size:12px;padding:16px">条件に一致する発注がありません</div>`;
 
-  // 選択済みが絞り込みで外れた場合はパネルを隠す
-  if(rvSelectedOrderId&&!filtered.find(o=>o.order_id===rvSelectedOrderId)){
-    rvSelectedOrderId=null;
-    const dp=document.getElementById('reviewDetailPanel');
-    if(dp) dp.style.display='none';
-  }
+    const modeTag=o.mode==='simple'
+      ?`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(126,184,212,.15);color:var(--accent2);border:1px solid rgba(126,184,212,.3)">簡易</span>`
+      :`<span style="font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(200,169,110,.15);color:var(--accent);border:1px solid rgba(200,169,110,.3)">通常</span>`;
+
+    // 年月グループ区切り
+    const ym=(o.order_date||'').slice(0,7);
+    let groupHeader='';
+    if(ym!==lastYM){
+      lastYM=ym;
+      const [y,m]=ym.split('-');
+      groupHeader=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);padding:8px 16px 4px;background:var(--bg);border-bottom:1px solid var(--border)">${y}年 ${parseInt(m)}月</div>`;
+    }
+
+    // 精度バー・ステータスバッジ
+    const statusBadge=acc===null
+      ?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">実績待ち</span>`
+      :`<span style="font-family:var(--font-mono);font-size:10px;color:${accColor}">精度 ${acc.toFixed(0)}%</span>
+        <span style="font-family:var(--font-mono);font-size:9px;color:${diff>0?'var(--accent3)':diff<0?'var(--accent2)':'var(--text3)'};">${diff>0?'▲欠品':diff<0?'▽過剰':'±0'}</span>`;
+
+    // 詳細パネル（選択時のみ展開）
+    const detailPanel=isSelected?`<div id="rvInlineDetail-${sid}" style="background:var(--bg);border-top:1px solid var(--border);padding:20px;">
+      <div class="kpi-row" id="reviewKpis" style="margin-bottom:16px;"></div>
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent2)"></span>月別 試算 vs 実績</div>
+          <div style="display:flex;gap:6px;">
+            <button class="drilldown-toggle rv-ch-btn active" data-ch="all" onclick="setRvChannel('all',this)">全体</button>
+            <button class="drilldown-toggle rv-ch-btn" data-ch="tob" onclick="setRvChannel('tob',this)">toB</button>
+            <button class="drilldown-toggle rv-ch-btn" data-ch="ec" onclick="setRvChannel('ec',this)">EC</button>
+            <button class="drilldown-toggle rv-ch-btn" data-ch="overseas" onclick="setRvChannel('overseas',this)">海外</button>
+          </div>
+        </div>
+        <div class="panel-body"><div style="height:260px;position:relative"><canvas id="chartReview"></canvas></div></div>
+      </div>
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-header">
+          <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent3)"></span>SKU別精度</div>
+          <span style="font-size:11px;color:var(--text3)">行をクリックでチャネル詳細 / toB小売内訳を表示</span>
+        </div>
+        <div class="panel-body"><div class="sku-table-wrap"><table id="reviewTable"></table></div></div>
+      </div>
+      <div id="reviewDetailArea"></div>
+    </div>`:'';
+
+    return `${groupHeader}<div style="border-bottom:1px solid var(--border)${isSelected?';background:rgba(200,169,110,.04)':''}">
+      <div onclick="selectReviewOrder('${sid}')" style="cursor:pointer;padding:12px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;transition:background .1s${isSelected?'':';'}"
+        onmouseenter="if(!${isSelected})this.style.background='rgba(255,255,255,.02)'" onmouseleave="if(!${isSelected})this.style.background=''">
+        <div style="display:flex;align-items:center;gap:16px;min-width:0;">
+          <!-- 展開インジケーター -->
+          <span style="font-family:var(--font-mono);font-size:11px;color:${isSelected?'var(--accent)':'var(--text3)'};flex-shrink:0;width:12px;text-align:center">${isSelected?'▼':'▶'}</span>
+          <!-- 発注日 -->
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);flex-shrink:0;min-width:80px">${o.order_date||'—'}</span>
+          <!-- ブランド・品名 -->
+          <div style="min-width:0;">
+            <div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(o.product||o.sheet_name||'—')}</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${escHtml(o.brand||'')}</div>
+          </div>
+          <!-- モードバッジ -->
+          ${modeTag}
+          <!-- SKU数 -->
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);flex-shrink:0">${o.skus.length} SKU</span>
+          <!-- 進捗バー -->
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;min-width:120px">
+            <div style="flex:1;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;min-width:60px">
+              <div style="height:100%;width:${pct}%;background:${pct===100?'var(--accent4)':'var(--accent2)'};border-radius:2px"></div>
+            </div>
+            <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);white-space:nowrap">${doneMonths.length}/${trialMonths.length}M</span>
+          </div>
+        </div>
+        <!-- 右側: 精度 + Excel -->
+        <div style="display:flex;align-items:center;gap:14px;flex-shrink:0">
+          <div style="text-align:right;display:flex;flex-direction:column;gap:2px">${statusBadge}</div>
+          <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;white-space:nowrap" onclick="event.stopPropagation();exportOrderAsExcel('${sid}')">📊 Excel</button>
+        </div>
+      </div>
+      ${detailPanel}
+    </div>`;
+  });
+
+  listArea.innerHTML=rows.join('');
 }
 
-// 発注カード選択
+// 年セレクト変更時に月セレクトの選択肢を更新してから再描画
+function rvOnYearChange(){
+  const orders=DATA.orders?.orders||[];
+  const yearSel=document.getElementById('rvFilterYear');
+  const monthSel=document.getElementById('rvFilterMonth');
+  if(!yearSel||!monthSel) return;
+  const fYear=yearSel.value;
+  // 選択年に存在する月だけを絞り込む
+  const months=fYear==='all'
+    ?[...new Set(orders.map(o=>(o.order_date||'').slice(5,7)).filter(Boolean))].sort()
+    :[...new Set(orders.filter(o=>(o.order_date||'').startsWith(fYear)).map(o=>(o.order_date||'').slice(5,7)).filter(Boolean))].sort();
+  const prev=monthSel.value;
+  monthSel.innerHTML='<option value="all">全月</option>';
+  months.forEach(m=>{
+    const op=document.createElement('option');
+    op.value=m;
+    op.textContent=parseInt(m)+'月';
+    monthSel.appendChild(op);
+  });
+  // 以前選んでいた月が残っていれば維持
+  if(months.includes(prev)) monthSel.value=prev;
+  renderReview();
+}
+
+// 発注行選択：同じ行を再クリックで折りたたみ、別行なら切り替え
 function selectReviewOrder(orderId){
+  // 同じ行をクリックしたら閉じる
+  if(rvSelectedOrderId===orderId){
+    rvSelectedOrderId=null;
+    rvSelectedJan=null;
+    rvChannel='all';
+    if(chartReview){chartReview.destroy();chartReview=null;}
+    renderReview();
+    return;
+  }
+  // 切り替え前に古いチャートを破棄
+  if(chartReview){chartReview.destroy();chartReview=null;}
   rvSelectedOrderId=orderId;
+  rvSelectedJan=null;
+  rvChannel='all';
   renderReview();
   renderReviewOrderDetail(orderId);
-  const dp=document.getElementById('reviewDetailPanel');
-  if(dp){ dp.style.display='block'; setTimeout(()=>dp.scrollIntoView({behavior:'smooth',block:'start'}),50); }
+  // 展開した行が見えるよう少しスクロール
+  setTimeout(()=>{
+    const el=document.getElementById('rvInlineDetail-'+escHtml(orderId));
+    if(el) el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  },80);
 }
 
 // チャネル切り替え（ボタン色はCSSクラスで制御）
