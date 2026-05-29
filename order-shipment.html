@@ -2712,7 +2712,9 @@ function renderReviewOrderDetail(orderId){
   const sorted=[...skuRows].sort((a,b)=>(b.errRate||0)-(a.errRate||0));
   let tHtml=`<thead><tr>
     <th style="text-align:left">SKU <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);font-weight:normal">（行クリックでグラフ連動）</span></th>
-    <th>試算合計</th><th>実績合計</th><th>差異</th><th>予測精度</th><th>誤差率</th><th>状況</th>
+    <th>試算<br><span style="font-family:var(--font-mono);font-size:8px;color:var(--text3);font-weight:normal">実績月分</span></th>
+    <th>試算<br><span style="font-family:var(--font-mono);font-size:8px;color:var(--text3);font-weight:normal">全月合計</span></th>
+    <th>実績合計</th><th>差異</th><th>予測精度</th><th>誤差率</th><th>状況</th>
   </tr></thead><tbody>`;
   sorted.forEach(r=>{
     const acc=r.accuracy!=null?(r.accuracy*100).toFixed(1)+'%':'—';
@@ -2720,16 +2722,25 @@ function renderReviewOrderDetail(orderId){
     const accColor=r.accuracy!=null&&r.accuracy>=0.8?'var(--accent4)':'var(--accent3)';
     const safeKey=r.jan.replace(/\W/g,'_');
     const isSelRow=rvSelectedJan===r.jan;
+    // 実績月分の試算（精度計算と揃える）。実績が0件なら「—」表示
+    const fcActualMonths=r.fcTotal>0?fmt(r.fcTotal):'<span style="color:var(--text3)">実績待ち</span>';
+    // 全月合計との差分月数表示
+    const remainMonths=r.fcTotalAll-r.fcTotal;
+    const remainNote=remainMonths>0
+      ?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-left:2px">+${fmt(remainMonths)}</span>`
+      :'';
     tHtml+=`<tr class="rv-sku-row${isSelRow?' rv-sku-row-selected':''}" style="${r.over?'background:rgba(224,123,138,0.05);':''}cursor:pointer"
       onclick="selectRvSku('${escHtml(r.jan)}')" id="rvrow-${safeKey}">
       <td style="max-width:200px"><span style="font-size:12px">${escHtml(r.dispName)}</span><br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(r.jan)}</span></td>
-      <td>${fmt(r.fcTotalAll||r.fcTotal)}</td><td>${fmt(r.ac.total)}</td>
+      <td style="font-family:var(--font-mono)">${fcActualMonths}</td>
+      <td style="font-family:var(--font-mono);color:var(--text3)">${fmt(r.fcTotalAll)}${remainNote}</td>
+      <td>${fmt(r.ac.total)}</td>
       <td class="${r.diff>0?'num-warn':r.diff<0?'num-blue':''}">${r.diff>0?'+':''}${fmt(r.diff)}</td>
       <td style="font-family:var(--font-mono);color:${accColor}">${acc}</td>
       <td style="font-family:var(--font-mono);color:${r.over?'var(--accent3)':'var(--text2)'}">${err}</td>
       <td>${r.over?'<span class="badge" style="background:rgba(224,123,138,.15);color:var(--accent3);border:1px solid rgba(224,123,138,.3)">誤差超過</span>':r.diff>0?'<span class="badge badge-accent" style="background:rgba(224,123,138,.1)">欠品リスク</span>':r.diff<0?'<span class="badge badge-blue">過剰傾向</span>':'—'}</td>
     </tr>
-    <tr id="rvskudet-${safeKey}" style="display:none"><td colspan="7" style="padding:0"></td></tr>`;
+    <tr id="rvskudet-${safeKey}" style="display:none"><td colspan="8" style="padding:0"></td></tr>`;
   });
   document.getElementById('reviewTable').innerHTML=tHtml+'</tbody>';
   document.getElementById('reviewDetailArea').innerHTML='';
@@ -3088,17 +3099,22 @@ function toggleRvSkuDetail(jan){ selectRvSku(jan); }
 function buildRvSkuDetailHtml(r,order,key){
   const chs=['tob','ec','overseas','other'];
   const chL={tob:'toB',ec:'EC',overseas:'海外',other:'other'};
-  // 試算値は全試算月ベース(fcAll)を使用。実績がなくても試算があれば表示する
+  // 試算値: 実績月分(fc)と全月合計(fcAll)を両方表示して比較精度を正確に示す
   const chRows=chs.filter(ch=>(r.fcAll?.[ch]||0)>0||(r.ac[ch]||0)>0).map(ch=>{
-    const fcVal=r.fcAll?.[ch]||0;
+    const fcActual=r.fc?.[ch]||0;   // 実績月との交差分（精度計算と揃える）
+    const fcAllVal=r.fcAll?.[ch]||0; // 全試算月合計（参考）
     const acVal=r.ac[ch]||0;
-    const d=acVal-fcVal;
+    const d=acVal-fcActual; // 差異は実績月分の試算と比較
     const hasAc=acVal>0;
+    const hasFcActual=fcActual>0;
+    const remainFc=fcAllVal-fcActual;
+    const remainNote=remainFc>0?`<span style="color:var(--text3);font-size:9px"> +${fmt(remainFc)}</span>`:'';
     return`<tr>
       <td style="padding:4px 10px;color:var(--text2)">${chL[ch]}</td>
-      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:var(--accent2)">${fmt(fcVal)}</td>
+      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:${hasFcActual?'var(--accent2)':'var(--text3)'}">${hasFcActual?fmt(fcActual):'実績待ち'}</td>
+      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:var(--text3)">${fmt(fcAllVal)}${remainNote}</td>
       <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:${hasAc?'var(--accent4)':'var(--text3)'}">${hasAc?fmt(acVal):'—'}</td>
-      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:${hasAc?(d>0?'var(--accent3)':'var(--accent2)'):'var(--text3)'}">${hasAc?(d>0?'+':'')+fmt(d):'—'}</td>
+      <td style="padding:4px 10px;text-align:right;font-family:var(--font-mono);color:${hasAc?(d>0?'var(--accent3)':'var(--accent2)'):'var(--text3)'}">${hasAc&&hasFcActual?(d>0?'+':'')+fmt(d):'—'}</td>
     </tr>`;
   }).join('');
 
@@ -3138,7 +3154,8 @@ function buildRvSkuDetailHtml(r,order,key){
         <div style="overflow-x:auto"><table style="font-size:11px;border-collapse:collapse">
           <thead><tr>
             <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border);text-align:left">チャネル</th>
-            <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--accent2);border-bottom:1px solid var(--border)">試算</th>
+            <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--accent2);border-bottom:1px solid var(--border)">試算<br><span style="color:var(--text3);font-size:8px">実績月分</span></th>
+            <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">試算<br><span style="font-size:8px">全月合計</span></th>
             <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--accent4);border-bottom:1px solid var(--border)">実績</th>
             <th style="padding:4px 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3);border-bottom:1px solid var(--border)">差異</th>
           </tr></thead><tbody>${chRows}</tbody>
@@ -3160,12 +3177,13 @@ function drawRvSkuDetailChart(r,key){
   const chs=['tob','ec','overseas','other'];
   const chL={tob:'toB',ec:'EC',overseas:'海外',other:'other'};
   const chC={tob:'rgba(126,184,212,1)',ec:'rgba(200,169,110,1)',overseas:'rgba(126,212,160,1)',other:'rgba(180,158,232,1)'};
-  // 試算値は全試算月ベース(fcAll)、実績がなくても試算があるチャネルを表示
+  // 試算値: 実績月分(fc)を主軸、全月合計(fcAll)を薄色で参考表示
   const active=chs.filter(ch=>(r.fcAll?.[ch]||0)>0||(r.ac[ch]||0)>0);
   window._rvDetCharts[key]=new Chart(canvas.getContext('2d'),{type:'bar',
     data:{labels:active.map(ch=>chL[ch]),datasets:[
-      {label:'試算',data:active.map(ch=>r.fcAll?.[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.3)')),borderColor:active.map(ch=>chC[ch].replace('1)','0.7)')),borderWidth:1},
-      {label:'実績',data:active.map(ch=>r.ac[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.75)')),borderColor:active.map(ch=>chC[ch]),borderWidth:1},
+      {label:'試算(全月)',data:active.map(ch=>r.fcAll?.[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.15)')),borderColor:active.map(ch=>chC[ch].replace('1)','0.4)')),borderWidth:1,order:3},
+      {label:'試算(実績月)',data:active.map(ch=>r.fc?.[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.35)')),borderColor:active.map(ch=>chC[ch].replace('1)','0.8)')),borderWidth:1,order:2},
+      {label:'実績',data:active.map(ch=>r.ac[ch]||0),backgroundColor:active.map(ch=>chC[ch].replace('1)','0.75)')),borderColor:active.map(ch=>chC[ch]),borderWidth:1,order:1},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{position:'top',labels:{color:'#9a9590',font:{family:'DM Mono',size:9},boxWidth:8,padding:4}}},
