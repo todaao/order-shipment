@@ -3379,25 +3379,59 @@ function renderAlerts(){
   excessAlerts.sort((a,b)=>(b.dm-a.dm));
 
   // accuracy アラート
+  // ── JANごとに最新発注を1件だけ選出 ──
+  const allShipMonthsForAcc=[...new Set((DATA.shipments.skus||[]).flatMap(s=>Object.keys(s.monthly_shipments||{})))].sort();
+  const latestOrderBySku={};
+  (DATA.orders.orders||[]).forEach(order=>{
+    (order.skus||[]).forEach(s=>{
+      const jan=String(s.jan||'');
+      if(!jan) return;
+      const cur=latestOrderBySku[jan];
+      if(!cur||(order.order_date||'')>(cur.order.order_date||'')){
+        latestOrderBySku[jan]={order, sku:s};
+      }
+    });
+  });
   const accuracyAlerts=[];
-  orderSkus.forEach(os=>{
-    const jan=String(os.jan||'');
+  Object.entries(latestOrderBySku).forEach(([jan,{order,sku:os}])=>{
     const ss=SHIP_BY_JAN[jan]||null;
     if(!ss) return;
-    const fc=Object.values(os.monthly_summary?.tob||{}).reduce((a,b)=>a+b,0)
-      +Object.values(os.monthly_summary?.ec||{}).reduce((a,b)=>a+b,0)
-      +Object.values(os.monthly_summary?.overseas||{}).reduce((a,b)=>a+b,0);
-    const ac=months.reduce((a,m)=>a+((ss.monthly_shipments||{})[m]?.total||0),0);
-    if(fc>0){
-      const err=Math.abs(ac-fc)/fc;
-      if(err>THRESH){
-        const dir=ac>fc?'▲欠品方向（実績超過）':'▽過剰方向（実績不足）';
-        accuracyAlerts.push({
-          level:err>0.5?'danger':'warn',
-          name:masterSkuName(jan)||os.sku_name||jan,
-          jan, err, fc, ac, dir
-        });
-      }
+    const base=order.base_month||'';
+    // 振り返りと同じ: 各チャネルの試算月×実績月の交差のみで集計
+    const tobAll=Array.from({length:order.tob_months||0},(_,i)=>addMonths(base,i));
+    const ecAll =Array.from({length:order.ec_months||0}, (_,i)=>addMonths(base,i));
+    const ovsAll=Array.from({length:order.overseas_months||0},(_,i)=>addMonths(base,i));
+    const tobDone=tobAll.filter(m=>allShipMonthsForAcc.includes(m));
+    const ecDone =ecAll.filter(m=>allShipMonthsForAcc.includes(m));
+    const ovsDone=ovsAll.filter(m=>allShipMonthsForAcc.includes(m));
+    const doneMonths=[...new Set([...tobDone,...ecDone,...ovsDone])].sort();
+    if(!doneMonths.length) return; // 実績月がまだない → スキップ
+    // 試算: 実績月分のみ合計
+    let fc=0;
+    tobDone.forEach(m=>{fc+=(os.monthly_summary?.tob?.[m]||0);});
+    ecDone.forEach(m=>{fc+=(os.monthly_summary?.ec?.[m]||0);});
+    ovsDone.forEach(m=>{fc+=(os.monthly_summary?.overseas?.[m]||0);});
+    if(fc<=0) return;
+    // 実績: 同じ月のみ合計
+    const ac=doneMonths.reduce((a,m)=>a+((ss.monthly_shipments||{})[m]?.total||0),0);
+    const err=Math.abs(ac-fc)/fc;
+    if(err>THRESH){
+      const dir=ac>fc?'▲欠品方向（実績超過）':'▽過剰方向（実績不足）';
+      // 商品名+SKU名（マスタ優先）
+      const mInfo=masterLookup(jan);
+      const dispName=mInfo
+        ?(mInfo.product_name&&mInfo.sku_name?(mInfo.product_name+' '+mInfo.sku_name).trim():mInfo.display_name||mInfo.sku_name||jan)
+        :(os.sku_name||jan);
+      const skuInfo=alertSkuInfo(jan, os.sku_name||jan);
+      accuracyAlerts.push({
+        level:err>0.5?'danger':'warn',
+        name:dispName, skuInfo,
+        jan, err, fc, ac, dir,
+        doneMonths, totalMonths:[...new Set([...tobAll,...ecAll,...ovsAll])].sort(),
+        orderId:order.order_id||'',
+        orderDate:order.order_date||'',
+        orderProduct:order.product||order.sheet_name||''
+      });
     }
   });
   accuracyAlerts.sort((a,b)=>b.err-a.err);
@@ -3726,24 +3760,33 @@ function alertCard(a, type){
     }
     // accuracy
     const errPct=(a.err*100).toFixed(1);
+    const doneNote=a.doneMonths&&a.totalMonths
+      ?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">実績 ${a.doneMonths.length}/${a.totalMonths.length}ヶ月</span>`
+      :'';
     return `<div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid ${a.level==='danger'?'var(--accent3)':'var(--accent)'};border-radius:0 var(--radius) var(--radius) 0;padding:13px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:14px">
       <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">
           <span style="font-family:var(--font-mono);font-size:9px;padding:2px 7px;border-radius:3px;background:${a.level==='danger'?'rgba(224,123,138,.15)':'rgba(200,169,110,.15)'};color:${a.level==='danger'?'var(--accent3)':'var(--accent)'};border:1px solid ${a.level==='danger'?'rgba(224,123,138,.3)':'rgba(200,169,110,.3)'}">予測誤差 ${errPct}%</span>
           <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${escHtml(a.dir)}</span>
+          ${doneNote}
         </div>
+        ${a.skuInfo&&a.skuInfo.brand?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px">${escHtml(a.skuInfo.brand)}</div>`:''}
         <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px">${escHtml(a.name)}</div>
-        <div style="display:flex;gap:16px;flex-wrap:wrap">
-          <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">試算 </span><span style="color:var(--text2)">${fmt(Math.round(a.fc))}個</span></span>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:${a.orderDate?'6':'0'}px">
+          <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">試算(実績月分) </span><span style="color:var(--text2)">${fmt(Math.round(a.fc))}個</span></span>
           <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">実績 </span><span style="color:var(--text2)">${fmt(Math.round(a.ac))}個</span></span>
           <span style="font-family:var(--font-mono);font-size:11px"><span style="color:var(--text3)">差分 </span><span style="color:${a.ac>a.fc?'var(--accent3)':'var(--accent2)'}">${a.ac>a.fc?'+':''}${fmt(Math.round(a.ac-a.fc))}個</span></span>
         </div>
+        ${a.orderDate?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(a.orderProduct)} / 発注日: ${escHtml(a.orderDate)}</div>`:''}
       </div>
-      <div style="flex-shrink:0;width:80px">
-        <div style="background:var(--surface2);border-radius:2px;height:6px;overflow:hidden;margin-bottom:3px">
-          <div style="width:${Math.min(100,Math.round(a.err*100))}%;height:100%;background:${a.level==='danger'?'var(--accent3)':'var(--accent)'};border-radius:2px"></div>
+      <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+        <div style="width:80px">
+          <div style="background:var(--surface2);border-radius:2px;height:6px;overflow:hidden;margin-bottom:3px">
+            <div style="width:${Math.min(100,Math.round(a.err*100))}%;height:100%;background:${a.level==='danger'?'var(--accent3)':'var(--accent)'};border-radius:2px"></div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);text-align:right">誤差 ${errPct}%</div>
         </div>
-        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3);text-align:right">誤差 ${errPct}%</div>
+        ${a.orderId?`<button onclick="jumpToReviewFromAlert('${escHtml(a.orderId)}')" style="font-family:var(--font-mono);font-size:10px;padding:4px 10px;border:1px solid rgba(126,212,160,.4);border-radius:var(--radius);background:rgba(126,212,160,.08);color:var(--accent4);cursor:pointer;white-space:nowrap">発注試算振り返りへ ↗</button>`:''}
       </div>
     </div>`;
   }
@@ -3780,7 +3823,7 @@ function alertCard(a, type){
     if(!accuracyAlerts.length){
       return '<div style="color:var(--text3);font-size:13px;text-align:center;padding:32px">予測誤差超過のSKUはありません ✓</div>';
     }
-    let h=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3);margin-bottom:8px;text-transform:uppercase">予測誤差 20%超 (${accuracyAlerts.length}件) — 次回発注時の参考に</div>`;
+    let h=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text3);margin-bottom:8px;text-transform:uppercase">予測誤差 ${Math.round(THRESH*100)}%超 (${accuracyAlerts.length}件) — 試算(実績月分)と実績の比較 / JANごと最新発注を参照</div>`;
     accuracyAlerts.forEach(a=>{ h+=alertCard(a,'accuracy'); });
     return h;
   }
