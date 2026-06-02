@@ -2722,9 +2722,21 @@ function renderReviewOrderDetail(orderId){
 
   // ── SKU別集計 ──
   const THRESH=0.2;
+  const STOCKOUT_THRESH=500; // 欠品疑い閾値（個）
   const skuRows=order.skus.map(s=>{
     const jan=String(s.jan||'');
     const ss=SHIP_BY_JAN[jan]||null;
+    const inv=invByJan(jan);
+
+    // ── 欠品疑い月の特定（在庫500個以下の月）──
+    const stockoutMonths=new Set();
+    if(inv&&inv.monthly_stock){
+      doneMonths.forEach(m=>{
+        const stock=(inv.monthly_stock||{})[m];
+        if(stock!=null&&stock<=STOCKOUT_THRESH) stockoutMonths.add(m);
+      });
+    }
+
     // fc: 実績月との交差分（KPI比較用）
     const fc={tob:0,ec:0,overseas:0};
     const chM={tob:tobMonths,ec:ecMonths,overseas:ovsMonths};
@@ -2753,11 +2765,23 @@ function renderReviewOrderDetail(orderId){
       acByMonth[m]=(ms.total||0);
       acByMonthCh.tob[m]=ms.tob||0;acByMonthCh.ec[m]=ms.ec||0;acByMonthCh.overseas[m]=ms.overseas||0;
     });
-    const diff=ac.total-fcTotal;
-    const accuracy=Math.max(fcTotal,ac.total)>0?1-Math.abs(diff)/Math.max(fcTotal,ac.total):null;
-    const errRate=fcTotal>0?Math.abs(diff)/fcTotal:null;
+
+    // ── 欠品疑い月を除外した調整後精度計算 ──
+    const adjMonths=doneMonths.filter(m=>!stockoutMonths.has(m));
+    let fcAdj=0,acAdj=0;
+    adjMonths.forEach(m=>{
+      fcAdj+=(s.monthly_summary?.tob?.[m]||0)+(s.monthly_summary?.ec?.[m]||0)+(s.monthly_summary?.overseas?.[m]||0);
+      if(ss){const ms=(ss.monthly_shipments||{})[m]||{};acAdj+=ms.total||0;}
+    });
+    const diff=ac.total-fcTotal; // 表示用差異（生実績）
+    // 精度スコアは欠品疑い月を除外して計算
+    const accuracy=Math.max(fcAdj,acAdj)>0?1-Math.abs(acAdj-fcAdj)/Math.max(fcAdj,acAdj):null;
+    const errRate=fcAdj>0?Math.abs(acAdj-fcAdj)/fcAdj:null;
     const dispName=(()=>{const m=masterLookup(jan);if(m)return m.display_name||(m.product_name&&m.sku_name?(m.product_name+' '+m.sku_name).trim():m.sku_name)||jan;return s.sku_name||jan||'—';})();
-    return{jan,dispName,fc,fcAll,fcTotal,fcTotalAll,fcByMonth,fcByMonthAll,fcByMonthCh,ac,acByMonth,acByMonthCh,diff,accuracy,errRate,over:errRate!=null&&errRate>THRESH,s};
+    return{jan,dispName,fc,fcAll,fcTotal,fcTotalAll,fcAdj,acAdj,fcByMonth,fcByMonthAll,fcByMonthCh,ac,acByMonth,acByMonthCh,diff,accuracy,errRate,
+      stockoutMonths:[...stockoutMonths], // 欠品疑い月リスト（グラフ・表示用）
+      adjMonths, // 精度計算対象月
+      over:errRate!=null&&errRate>THRESH,s};
   // fcTotalAll>0: 試算データがある（将来月のみでも表示）
   }).filter(r=>r.fcTotalAll>0||r.ac.total>0);
 
@@ -2772,6 +2796,8 @@ function renderReviewOrderDetail(orderId){
   window._rvAllTobMonths=allTobMonths;
   window._rvAllEcMonths=allEcMonths;
   window._rvAllOvsMonths=allOvsMonths;
+  // 全SKUの欠品疑い月の和集合（全体グラフ用）
+  window._rvAllStockoutMonths=new Set(skuRows.flatMap(r=>r.stockoutMonths));
 
   // SKU選択を全体にリセット
   rvSelectedJan=null;
@@ -2800,16 +2826,40 @@ function renderReviewOrderDetail(orderId){
     const remainNote=remainMonths>0
       ?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-left:2px">+${fmt(remainMonths)}</span>`
       :'';
-    tHtml+=`<tr class="rv-sku-row${isSelRow?' rv-sku-row-selected':''}" style="${r.over?'background:rgba(224,123,138,0.05);':''}cursor:pointer"
+    // 欠品疑い月バッジ
+    const soCount=r.stockoutMonths.length;
+    const soBadge=soCount>0
+      ?`<span title="在庫500個以下の月（精度計算から除外）" style="font-family:var(--font-mono);font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(180,158,232,.15);color:var(--accent5,#b49ee8);border:1px solid rgba(180,158,232,.3);margin-left:4px;cursor:help">⚠ 欠品疑 ${soCount}M</span>`
+      :'';
+    // 精度注記（欠品除外ベース）
+    const accNote=soCount>0?`<span style="font-family:var(--font-mono);font-size:8px;color:var(--text3)"> *除外${soCount}M</span>`:'';
+    // 状況バッジ
+    let statusBadge;
+    if(r.stockoutMonths.length>0&&r.diff<0){
+      // 差異がマイナスで欠品疑い月がある → 欠品疑い優先表示
+      statusBadge=`<span class="badge" style="background:rgba(180,158,232,.15);color:var(--accent5,#b49ee8);border:1px solid rgba(180,158,232,.3)">欠品疑い</span>`;
+    } else if(r.over){
+      statusBadge=`<span class="badge" style="background:rgba(224,123,138,.15);color:var(--accent3);border:1px solid rgba(224,123,138,.3)">誤差超過</span>`;
+    } else if(r.diff>0){
+      statusBadge=`<span class="badge badge-accent" style="background:rgba(224,123,138,.1)">欠品リスク</span>`;
+    } else if(r.diff<0){
+      statusBadge=`<span class="badge badge-blue">過剰傾向</span>`;
+    } else {
+      statusBadge='—';
+    }
+    tHtml+=`<tr class="rv-sku-row${isSelRow?' rv-sku-row-selected':''}" style="${r.over?'background:rgba(224,123,138,0.05);':r.stockoutMonths.length>0&&r.diff<0?'background:rgba(180,158,232,0.04);':''}cursor:pointer"
       onclick="selectRvSku('${escHtml(r.jan)}')" id="rvrow-${safeKey}">
-      <td style="max-width:200px"><span style="font-size:12px">${escHtml(r.dispName)}</span><br><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(r.jan)}</span></td>
+      <td style="max-width:220px">
+        <span style="font-size:12px">${escHtml(r.dispName)}</span>${soBadge}<br>
+        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">${escHtml(r.jan)}</span>
+      </td>
       <td style="font-family:var(--font-mono)">${fcActualMonths}</td>
       <td style="font-family:var(--font-mono);color:var(--text3)">${fmt(r.fcTotalAll)}${remainNote}</td>
       <td>${fmt(r.ac.total)}</td>
       <td class="${r.diff>0?'num-warn':r.diff<0?'num-blue':''}">${r.diff>0?'+':''}${fmt(r.diff)}</td>
-      <td style="font-family:var(--font-mono);color:${accColor}">${acc}</td>
+      <td style="font-family:var(--font-mono);color:${accColor}">${acc}${accNote}</td>
       <td style="font-family:var(--font-mono);color:${r.over?'var(--accent3)':'var(--text2)'}">${err}</td>
-      <td>${r.over?'<span class="badge" style="background:rgba(224,123,138,.15);color:var(--accent3);border:1px solid rgba(224,123,138,.3)">誤差超過</span>':r.diff>0?'<span class="badge badge-accent" style="background:rgba(224,123,138,.1)">欠品リスク</span>':r.diff<0?'<span class="badge badge-blue">過剰傾向</span>':'—'}</td>
+      <td>${statusBadge}</td>
     </tr>
     <tr id="rvskudet-${safeKey}" style="display:none"><td colspan="8" style="padding:0"></td></tr>`;
   });
@@ -2918,12 +2968,49 @@ function renderReviewKpiAndGraph(){
     ctx.fillStyle='#5a5750';ctx.font='12px sans-serif';ctx.textAlign='center';
     ctx.fillText('試算データがありません',ctx.canvas.width/2,ctx.canvas.height/2);
   } else {
+    // 欠品疑い月のインデックスセット（グラフラベルとの対応）
+    const stockoutSrc=rvSelectedJan
+      ?(skuRows.find(r=>r.jan===rvSelectedJan)?.stockoutMonths||[])
+      :[...(window._rvAllStockoutMonths||[])];
+    const stockoutIdxSet=new Set(
+      allTrialByChMonths.map((m,i)=>stockoutSrc.includes(m)?i:-1).filter(i=>i>=0)
+    );
+    // 欠品疑い月ハイライト用カスタムプラグイン（背景塗り + サブタイトル描画）
+    const stockoutPlugin={
+      id:'rvStockoutHighlight',
+      beforeDraw(chart){
+        if(!stockoutIdxSet.size) return;
+        const {ctx:c,chartArea:{left,top,right,bottom},scales:{x}}=chart;
+        if(!x) return;
+        c.save();
+        stockoutIdxSet.forEach(i=>{
+          const barW=x.getPixelForTick(1)-x.getPixelForTick(0);
+          const cx=x.getPixelForTick(i);
+          c.fillStyle='rgba(180,158,232,0.10)';
+          c.fillRect(cx-barW/2,top,barW,bottom-top);
+          c.fillStyle='rgba(180,158,232,0.4)';
+          c.fillRect(cx-barW/2,top,barW,2);
+        });
+        c.restore();
+      },
+      afterDraw(chart){
+        if(!stockoutIdxSet.size) return;
+        const {ctx:c,chartArea:{left,top}}=chart;
+        c.save();
+        c.font='9px DM Mono, monospace';
+        c.fillStyle='rgba(180,158,232,0.75)';
+        c.textAlign='left';
+        c.fillText('⚠ 紫背景: 欠品疑い月（在庫500個以下 / 精度計算から除外）',left,top-4);
+        c.restore();
+      }
+    };
     const titleText=rvSelectedJan?`${skuLabel} の月別推移`:`全SKU合計 の月別推移`;
     chartReview=new Chart(ctx,{type:'bar',
       data:{labels:glabels,datasets:[
         {label:'試算',data:fcByMonth,backgroundColor:'rgba(200,169,110,.3)',borderColor:'rgba(200,169,110,.8)',borderWidth:1,order:2},
         {label:'実績',data:acByMonth,backgroundColor:'rgba(126,184,212,.7)',borderColor:'rgba(126,184,212,1)',borderWidth:1,order:1,skipNull:true},
       ]},
+      plugins:[stockoutPlugin],
       options:{responsive:true,maintainAspectRatio:false,
         plugins:{
           legend:{labels:{color:'#9a9590',font:{family:'DM Mono',size:10}}},
