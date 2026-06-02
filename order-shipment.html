@@ -2691,8 +2691,6 @@ function selectReviewOrder(orderId){
 
 // チャネル切り替え（ボタン色はCSSクラスで制御）
 function setRvChannel(ch,el){
-  // SKU選択中は全体のみ有効
-  if(rvSelectedJan && ch!=='all') return;
   rvChannel=ch;
   document.querySelectorAll('.rv-ch-btn').forEach(b=>b.classList.remove('active'));
   if(el) el.classList.add('active');
@@ -2853,26 +2851,14 @@ function renderReviewKpiAndGraph(){
   const ovsMonths=window._rvOvsMonths||[];
   const THRESH=0.2;
 
-  // SKU選択中は全体のみ → ボタン制御
-  if(rvSelectedJan){
-    rvChannel='all';
-    document.querySelectorAll('.rv-ch-btn').forEach(b=>{
-      const isAll=b.dataset.ch==='all';
-      b.classList.toggle('active',isAll);
-      b.disabled=!isAll;
-      b.style.opacity=isAll?'':'0.3';
-      b.style.cursor=isAll?'':'not-allowed';
-      b.title=isAll?'':'SKU選択中は全体のみ表示できます';
-    });
-  } else {
-    document.querySelectorAll('.rv-ch-btn').forEach(b=>{
-      b.disabled=false;
-      b.style.opacity='';
-      b.style.cursor='';
-      b.title='';
-      b.classList.toggle('active',b.dataset.ch===rvChannel);
-    });
-  }
+  // SKU選択中・全体共通：ボタンを有効化して現在のチャネルをアクティブに
+  document.querySelectorAll('.rv-ch-btn').forEach(b=>{
+    b.disabled=false;
+    b.style.opacity='';
+    b.style.cursor='';
+    b.title='';
+    b.classList.toggle('active',b.dataset.ch===rvChannel);
+  });
   const ch=rvChannel;
 
   // 対象行を絞る（SKU選択中ならその1行、全体なら全行）
