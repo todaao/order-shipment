@@ -2537,6 +2537,21 @@ function renderReview(){
   }
 
   // 年月グループで区切り線を入れる
+  // ── 日割り補正ヘルパー ──────────────────────────────────────
+  // shipments.updated_at（またはtoday）から直近実績月の経過日数を算出し
+  // その月の試算値を日割り補正して精度比較に使う
+  const shipmentsUpdatedAt = DATA.shipments?.updated_at ? new Date(DATA.shipments.updated_at) : new Date();
+  function dayRatio(ym){
+    // ym: 'YYYY-MM'。その月の経過日数 / 月の総日数 を返す（上限1.0）
+    if(!ym) return 1;
+    const [y,m]=ym.split('-').map(Number);
+    const totalDays=new Date(y,m,0).getDate(); // 月末日
+    const refDate=shipmentsUpdatedAt;
+    const refY=refDate.getFullYear(), refM=refDate.getMonth()+1, refD=refDate.getDate();
+    if(refY!==y||refM!==m) return 1; // 完了月は日割りなし
+    return Math.min(1, refD/totalDays);
+  }
+
   let lastYM='';
   const rows=filtered.map((o,idx)=>{
     const base=o.base_month||'';
@@ -2544,17 +2559,48 @@ function renderReview(){
     const trialMonths=Array.from({length:maxM},(_,i)=>addMonths(base,i));
     const doneMonths=trialMonths.filter(m=>allShipMonths.includes(m));
     const pct=trialMonths.length?Math.round(doneMonths.length/trialMonths.length*100):0;
-    let fcSum=0,acSum=0;
+
+    // 直近実績月（日割り補正対象）
+    const lastDoneMonth=doneMonths.length?doneMonths[doneMonths.length-1]:null;
+    const lastDoneRatio=lastDoneMonth?dayRatio(lastDoneMonth):1;
+    const isPartialMonth=lastDoneMonth&&lastDoneRatio<0.999;
+
+    // ── 販路別 + 全体の試算/実績集計（日割り補正あり）──
+    const channels=['tob','ec','overseas'];
+    const fcCh={tob:0,ec:0,overseas:0}, acCh={tob:0,ec:0,overseas:0};
+    let fcSum=0, acSum=0;
+
     if(doneMonths.length){
       o.skus.forEach(s=>{
-        doneMonths.forEach(m=>{fcSum+=((s.monthly_summary?.tob?.[m]||0)+(s.monthly_summary?.ec?.[m]||0)+(s.monthly_summary?.overseas?.[m]||0));});
         const ss=SHIP_BY_JAN[String(s.jan||'')]||null;
-        if(ss) doneMonths.forEach(m=>{const ms=(ss.monthly_shipments||{})[m]||{};acSum+=ms.total||0;});
+        doneMonths.forEach(m=>{
+          const ratio=m===lastDoneMonth?lastDoneRatio:1;
+          channels.forEach(ch=>{
+            const fv=(s.monthly_summary?.[ch]?.[m]||0)*ratio;
+            fcCh[ch]+=fv; fcSum+=fv;
+          });
+          if(ss){
+            const ms=(ss.monthly_shipments||{})[m]||{};
+            channels.forEach(ch=>{acCh[ch]+=ms[ch]||0;});
+            acSum+=ms.total||0;
+          }
+        });
       });
     }
+
+    // 全体精度
     const acc=(fcSum>0&&acSum>0)?((1-Math.abs(acSum-fcSum)/Math.max(fcSum,acSum))*100):null;
     const diff=acSum-fcSum;
     const accColor=acc===null?'var(--text3)':acc>=85?'var(--accent4)':acc>=70?'var(--accent)':'var(--accent3)';
+
+    // 販路別精度
+    const chAcc={}; const chDiff={};
+    channels.forEach(ch=>{
+      const f=fcCh[ch], a=acCh[ch];
+      chAcc[ch]=(f>0&&a>0)?(1-Math.abs(a-f)/Math.max(a,f))*100:null;
+      chDiff[ch]=a-f;
+    });
+
     const isSelected=rvSelectedOrderId===o.order_id;
     const sid=escHtml(o.order_id);
 
@@ -2571,11 +2617,31 @@ function renderReview(){
       groupHeader=`<div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);padding:8px 16px 4px;background:var(--bg);border-bottom:1px solid var(--border)">${y}年 ${parseInt(m)}月</div>`;
     }
 
-    // 精度バー・ステータスバッジ
+    // ── 全体精度バッジ ──
+    const partialNote=isPartialMonth
+      ?`<span style="font-family:var(--font-mono);font-size:8px;color:var(--text3)"> 日割</span>`:'';
     const statusBadge=acc===null
       ?`<span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">実績待ち</span>`
-      :`<span style="font-family:var(--font-mono);font-size:10px;color:${accColor}">精度 ${acc.toFixed(0)}%</span>
-        <span style="font-family:var(--font-mono);font-size:9px;color:${diff>0?'var(--accent3)':diff<0?'var(--accent2)':'var(--text3)'};">${diff>0?'▲欠品':diff<0?'▽過剰':'±0'}</span>`;
+      :`<span style="font-family:var(--font-mono);font-size:10px;color:${accColor}">精度 ${acc.toFixed(0)}%${partialNote.replace(/<[^>]+>/g,'').trim()?'*':''}</span>
+        <span style="font-family:var(--font-mono);font-size:9px;color:${diff>0?'var(--accent3)':diff<0?'var(--accent2)':'var(--text3)'};">${diff>0?'▲欠品':diff<0?'▽過剰':'±0'}${isPartialMonth?' (日割補正)':''}</span>`;
+
+    // ── 販路別精度ミニ表示 ──
+    const chLabels={tob:'toB',ec:'EC',overseas:'海外'};
+    const chColors={tob:'rgba(126,184,212,1)',ec:'rgba(200,169,110,1)',overseas:'rgba(126,212,160,1)'};
+    const chMiniCells=channels.map(ch=>{
+      const a=chAcc[ch]; const d=chDiff[ch];
+      if(a===null) return `<div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);text-align:center;min-width:52px"><div style="font-size:8px;color:var(--text3);margin-bottom:1px">${chLabels[ch]}</div><div>—</div></div>`;
+      const color=a>=85?'var(--accent4)':a>=70?'var(--accent)':'var(--accent3)';
+      const diffStr=d>0?`<span style="color:var(--accent3)">▲</span>`:d<0?`<span style="color:var(--accent2)">▽</span>`:'';
+      // 精度バー（幅=精度%、40px基準）
+      const barW=Math.round(a*0.4);
+      const barColor=a>=85?'rgba(126,212,160,.7)':a>=70?'rgba(200,169,110,.7)':'rgba(224,123,138,.7)';
+      return `<div style="min-width:52px;text-align:center">
+        <div style="font-family:var(--font-mono);font-size:8px;color:${chColors[ch]};margin-bottom:2px">${chLabels[ch]}</div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:${color};line-height:1">${a.toFixed(0)}%${diffStr}</div>
+        <div style="height:2px;background:var(--surface2);border-radius:1px;margin-top:2px;overflow:hidden"><div style="height:100%;width:${barW}px;background:${barColor};border-radius:1px"></div></div>
+      </div>`;
+    }).join('<div style="width:1px;background:var(--border);margin:0 4px;align-self:stretch"></div>');
 
     // 詳細パネル（選択時のみ展開）
     const detailPanel=isSelected?`<div id="rvInlineDetail-${sid}" style="background:var(--bg);border-top:1px solid var(--border);padding:20px;">
@@ -2603,33 +2669,31 @@ function renderReview(){
     </div>`:'';
 
     return `${groupHeader}<div style="border-bottom:1px solid var(--border)${isSelected?';background:rgba(200,169,110,.04)':''}">
-      <div onclick="selectReviewOrder('${sid}')" style="cursor:pointer;padding:12px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;transition:background .1s${isSelected?'':';'}"
+      <div onclick="selectReviewOrder('${sid}')" style="cursor:pointer;padding:10px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;transition:background .1s${isSelected?'':';'}"
         onmouseenter="if(!${isSelected})this.style.background='rgba(255,255,255,.02)'" onmouseleave="if(!${isSelected})this.style.background=''">
-        <div style="display:flex;align-items:center;gap:16px;min-width:0;">
-          <!-- 展開インジケーター -->
+        <div style="display:flex;align-items:center;gap:14px;min-width:0;">
           <span style="font-family:var(--font-mono);font-size:11px;color:${isSelected?'var(--accent)':'var(--text3)'};flex-shrink:0;width:12px;text-align:center">${isSelected?'▼':'▶'}</span>
-          <!-- 発注日 -->
           <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);flex-shrink:0;min-width:80px">${o.order_date||'—'}</span>
-          <!-- ブランド・品名 -->
-          <div style="min-width:0;">
+          <div style="min-width:0;flex:1">
             <div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(o.product||o.sheet_name||'—')}</div>
             <div style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">${escHtml(o.brand||'')}</div>
           </div>
-          <!-- モードバッジ -->
           ${modeTag}
-          <!-- SKU数 -->
           <span style="font-family:var(--font-mono);font-size:10px;color:var(--text3);flex-shrink:0">${o.skus.length} SKU</span>
-          <!-- 進捗バー -->
-          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;min-width:120px">
-            <div style="flex:1;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;min-width:60px">
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;min-width:100px">
+            <div style="flex:1;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;min-width:50px">
               <div style="height:100%;width:${pct}%;background:${pct===100?'var(--accent4)':'var(--accent2)'};border-radius:2px"></div>
             </div>
             <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);white-space:nowrap">${doneMonths.length}/${trialMonths.length}M</span>
           </div>
         </div>
-        <!-- 右側: 精度 + Excel -->
-        <div style="display:flex;align-items:center;gap:14px;flex-shrink:0">
-          <div style="text-align:right;display:flex;flex-direction:column;gap:2px">${statusBadge}</div>
+        <div style="display:flex;align-items:center;gap:16px;flex-shrink:0">
+          <!-- 販路別精度ミニ -->
+          ${acc!==null?`<div style="display:flex;align-items:center;gap:0">${chMiniCells}</div>`:''}
+          <!-- 区切り -->
+          ${acc!==null?`<div style="width:1px;height:28px;background:var(--border)"></div>`:''}
+          <!-- 全体精度 -->
+          <div style="text-align:right;min-width:90px;display:flex;flex-direction:column;gap:2px">${statusBadge}</div>
           <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;white-space:nowrap" onclick="event.stopPropagation();exportOrderAsExcel('${sid}')">📊 Excel</button>
         </div>
       </div>
