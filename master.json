@@ -2380,36 +2380,36 @@
       "category": "cosme",
       "brand": "MilleFée",
       "product_name": "アイドル2in1リップティント",
-      "sku_name": "P07 【おぱんちゅ】おぱんちゅうさぎの唇ちゅるっちゅる（仮）",
+      "sku_name": "P07 【おぱんちゅうさぎ】ちゅるっちゅるの唇",
       "status": "最新仕様",
-      "display_name": "アイドル2in1リップティント P07 【おぱんちゅ】おぱんちゅうさぎの唇ちゅるっちゅる（仮）"
+      "display_name": "アイドル2in1リップティント P07 【おぱんちゅうさぎ】ちゅるっちゅるの唇"
     },
     {
       "jan": "4580805230797",
       "category": "cosme",
       "brand": "MilleFée",
       "product_name": "アイドル2in1リップティント",
-      "sku_name": "P08 【ギャルおぱんちゅ】ゥチ等盛れすぎアゲ⤴︎（仮）",
+      "sku_name": "P08 【ギャルおぱんちゅ】「盛れすぎてアゲ⤴︎」",
       "status": "最新仕様",
-      "display_name": "アイドル2in1リップティント P08 【ギャルおぱんちゅ】ゥチ等盛れすぎアゲ⤴︎（仮）"
+      "display_name": "アイドル2in1リップティント P08 【ギャルおぱんちゅ】「盛れすぎてアゲ⤴︎」"
     },
     {
       "jan": "4580805230803",
       "category": "cosme",
       "brand": "MilleFée",
       "product_name": "アイドル2in1リップティント",
-      "sku_name": "P09 【んぽちゃむ】ベリーミルク大好きちゃむ〜（仮）",
+      "sku_name": "P09 【んぽちゃむ】「ベリーミルク大好きちゃむ〜」",
       "status": "最新仕様",
-      "display_name": "アイドル2in1リップティント P09 【んぽちゃむ】ベリーミルク大好きちゃむ〜（仮）"
+      "display_name": "アイドル2in1リップティント P09 【んぽちゃむ】「ベリーミルク大好きちゃむ〜」"
     },
     {
       "jan": "4580805230810",
       "category": "cosme",
       "brand": "MilleFée",
       "product_name": "アイドル2in1リップティント",
-      "sku_name": "P10 【きみまろ】ミルクティーなら文句ないだろ（仮）",
+      "sku_name": "P10 【きみまろ】「ほら、結局ミルクティーだろ」",
       "status": "最新仕様",
-      "display_name": "アイドル2in1リップティント P10 【きみまろ】ミルクティーなら文句ないだろ（仮）"
+      "display_name": "アイドル2in1リップティント P10 【きみまろ】「ほら、結局ミルクティーだろ」"
     },
     {
       "jan": "4571501179749",
@@ -2434,18 +2434,18 @@
       "category": "cosme",
       "brand": "MilleFée",
       "product_name": "アイドルハイライターパレット",
-      "sku_name": "P03 おぱんちゅうさぎの涙（仮）",
+      "sku_name": "P03 【おぱんちゅうさぎ】おぱんちゅうさぎの涙",
       "status": "最新仕様",
-      "display_name": "アイドルハイライターパレット P03 おぱんちゅうさぎの涙（仮）"
+      "display_name": "アイドルハイライターパレット P03 【おぱんちゅうさぎ】おぱんちゅうさぎの涙"
     },
     {
       "jan": "4580805230773",
       "category": "cosme",
       "brand": "MilleFée",
       "product_name": "アイドルハイライターパレット",
-      "sku_name": "P04 うるうるすぎちゃむ〜（仮）",
+      "sku_name": "P04 【んぽちゃむ・きみまろ】「うるうるすぎちゃむ〜」",
       "status": "最新仕様",
-      "display_name": "アイドルハイライターパレット P04 うるうるすぎちゃむ〜（仮）"
+      "display_name": "アイドルハイライターパレット P04 【んぽちゃむ・きみまろ】「うるうるすぎちゃむ〜」"
     },
     {
       "jan": "4571501179770",
@@ -2690,6 +2690,33 @@
       "display_name": "シェイクドロップチーク 04 ブルーベリーミルク"
     },
     {
+      "jan": "4580805230889",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "シェイクドロップチーク",
+      "sku_name": "05 シナモンベージュ",
+      "status": "最新仕様",
+      "display_name": "シェイクドロップチーク 05 シナモンベージュ"
+    },
+    {
+      "jan": "4580805230896",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "シェイクドロップチーク",
+      "sku_name": "06 ラベンダーホイップ",
+      "status": "最新仕様",
+      "display_name": "シェイクドロップチーク 06 ラベンダーホイップ"
+    },
+    {
+      "jan": "4580805230902",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "シェイクドロップチーク",
+      "sku_name": "07 マシュマロピンク",
+      "status": "最新仕様",
+      "display_name": "シェイクドロップチーク 07 マシュマロピンク"
+    },
+    {
       "jan": "4580805230100",
       "category": "cosme",
       "brand": "MilleFée",
@@ -2801,7 +2828,7 @@
       "sku_name": "キープ＋",
       "status": "最新仕様",
       "display_name": "シンデレラパウダリーミスト キープ＋",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501178759",
@@ -3276,7 +3303,7 @@
       "sku_name": "05 サイベリアン",
       "status": "最新仕様",
       "display_name": "マイキティアイパレット 05 サイベリアン",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501176960",
@@ -3286,7 +3313,7 @@
       "sku_name": "06 スコティッシュフォールド",
       "status": "最新仕様",
       "display_name": "マイキティアイパレット 06 スコティッシュフォールド",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501176977",
@@ -3372,7 +3399,7 @@
       "sku_name": "",
       "status": "最新仕様",
       "display_name": "マシュマロフィットパフ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501177691",
@@ -3401,7 +3428,7 @@
       "sku_name": "01 甘えんぼ",
       "status": "最新仕様",
       "display_name": "ミャオパウズアイシャドウパレット 01 甘えんぼ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501174126",
@@ -3411,7 +3438,7 @@
       "sku_name": "02 わがまま",
       "status": "最新仕様",
       "display_name": "ミャオパウズアイシャドウパレット 02 わがまま",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501174133",
@@ -3421,7 +3448,7 @@
       "sku_name": "03 ツンデレ",
       "status": "最新仕様",
       "display_name": "ミャオパウズアイシャドウパレット 03 ツンデレ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501174140",
@@ -4283,7 +4310,7 @@
       "sku_name": "101 ホワイトシュガー",
       "status": "最新仕様",
       "display_name": "シングルムースアイシャドウ 101 ホワイトシュガー",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501171651",
@@ -4293,7 +4320,7 @@
       "sku_name": "102 ポッピングキャンディ",
       "status": "最新仕様",
       "display_name": "シングルムースアイシャドウ 102 ポッピングキャンディ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501171668",
@@ -4303,7 +4330,7 @@
       "sku_name": "103 クランチチョコレート",
       "status": "最新仕様",
       "display_name": "シングルムースアイシャドウ 103 クランチチョコレート",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501171675",
@@ -4312,7 +4339,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "104 クリームラテ",
       "status": "完全終売",
-      "display_name": "シングルムースアイシャドウ 104 クリームラテ"
+      "display_name": "シングルムースアイシャドウ 104 クリームラテ",
+      "discontinued": true
     },
     {
       "jan": "4571501171682",
@@ -4322,7 +4350,7 @@
       "sku_name": "105 キャラメルナッツ",
       "status": "最新仕様",
       "display_name": "シングルムースアイシャドウ 105 キャラメルナッツ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501171699",
@@ -4331,7 +4359,8 @@
       "product_name": "シングルムースアイシャドウ",
       "sku_name": "106 ローズマカロン",
       "status": "完全終売",
-      "display_name": "シングルムースアイシャドウ 106 ローズマカロン"
+      "display_name": "シングルムースアイシャドウ 106 ローズマカロン",
+      "discontinued": true
     },
     {
       "jan": "4571501172351",
@@ -4341,7 +4370,7 @@
       "sku_name": "107 ストロベリーミルク",
       "status": "最新仕様",
       "display_name": "シングルムースアイシャドウ 107 ストロベリーミルク",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501172368",
@@ -4351,7 +4380,7 @@
       "sku_name": "108 プラムソルベ",
       "status": "最新仕様",
       "display_name": "シングルムースアイシャドウ 108 プラムソルベ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501175000",
@@ -4361,7 +4390,7 @@
       "sku_name": "109 ミルキーバニラ",
       "status": "最新仕様",
       "display_name": "シングルムースアイシャドウ 109 ミルキーバニラ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501175017",
@@ -4371,7 +4400,7 @@
       "sku_name": "110 ピーチフラッぺ",
       "status": "最新仕様",
       "display_name": "シングルムースアイシャドウ 110 ピーチフラッぺ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501170906",
@@ -4548,7 +4577,7 @@
       "sku_name": "101 ナッツベージュ",
       "status": "最新仕様",
       "display_name": "ニュアンスムースチーク 101 ナッツベージュ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501175253",
@@ -4558,7 +4587,7 @@
       "sku_name": "102 サクラピンク",
       "status": "最新仕様",
       "display_name": "ニュアンスムースチーク 102 サクラピンク",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501175260",
@@ -4568,7 +4597,7 @@
       "sku_name": "103 マカロンピンク",
       "status": "最新仕様",
       "display_name": "ニュアンスムースチーク 103 マカロンピンク",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501175277",
@@ -4578,7 +4607,7 @@
       "sku_name": "104 コーラルピーチ",
       "status": "最新仕様",
       "display_name": "ニュアンスムースチーク 104 コーラルピーチ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501176182",
@@ -4688,7 +4717,7 @@
       "sku_name": "101 チェリーピンク",
       "status": "最新仕様",
       "display_name": "微笑唇リップペンシル 101 チェリーピンク",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501174249",
@@ -4698,7 +4727,7 @@
       "sku_name": "102 ヌーディコーラル",
       "status": "最新仕様",
       "display_name": "微笑唇リップペンシル 102 ヌーディコーラル",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501174256",
@@ -4708,7 +4737,7 @@
       "sku_name": "103 ダスティローズ",
       "status": "最新仕様",
       "display_name": "微笑唇リップペンシル 103 ダスティローズ",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501174263",
@@ -4718,7 +4747,7 @@
       "sku_name": "104 アンバーブラウン",
       "status": "最新仕様",
       "display_name": "微笑唇リップペンシル 104 アンバーブラウン",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501174270",
@@ -4728,7 +4757,7 @@
       "sku_name": "105 ピンクブラウン",
       "status": "最新仕様",
       "display_name": "微笑唇リップペンシル 105 ピンクブラウン",
-      "discontinue_planned": true
+      "discontinued": true
     },
     {
       "jan": "4571501171170",
