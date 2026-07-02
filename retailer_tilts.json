@@ -1,0 +1,115 @@
+{
+  "updated_at": "2026-07-02",
+  "retailers": [
+    {
+      "name": "ロフト",
+      "pos_tilt": 1.0,
+      "tilts": [
+        1.0,
+        0.7,
+        0.7,
+        0.5
+      ],
+      "tilt_after": 0.7
+    },
+    {
+      "name": "PLAZA",
+      "pos_tilt": 1.0,
+      "tilts": [
+        1.0,
+        0.5,
+        0.3,
+        0.3
+      ],
+      "tilt_after": 0.3
+    },
+    {
+      "name": "ハンズ",
+      "pos_tilt": 0.6,
+      "tilts": [
+        1.0,
+        0.7,
+        0.7,
+        0.5
+      ],
+      "tilt_after": 0.7
+    },
+    {
+      "name": "アインズ",
+      "pos_tilt": 0.6,
+      "tilts": [
+        1.0,
+        0.7,
+        0.7,
+        0.5
+      ],
+      "tilt_after": 0.7
+    },
+    {
+      "name": "アットコスメ",
+      "pos_tilt": 0.6,
+      "tilts": [
+        1.0,
+        0.7,
+        0.7,
+        0.5
+      ],
+      "tilt_after": 0.7
+    },
+    {
+      "name": "ドン・キホーテ",
+      "pos_tilt": 0.2,
+      "tilts": [
+        1.0,
+        0.8,
+        0.8,
+        0.5
+      ],
+      "tilt_after": 0.8
+    },
+    {
+      "name": "バラエティ",
+      "pos_tilt": 0.4,
+      "tilts": [
+        1.0,
+        0.7,
+        0.7,
+        0.5
+      ],
+      "tilt_after": 0.7
+    },
+    {
+      "name": "GMS",
+      "pos_tilt": 0.3,
+      "tilts": [
+        1.0,
+        0.7,
+        0.7,
+        0.5
+      ],
+      "tilt_after": 0.7
+    },
+    {
+      "name": "DG",
+      "pos_tilt": 0.2,
+      "tilts": [
+        1.0,
+        0.7,
+        0.7,
+        0.5
+      ],
+      "tilt_after": 0.7
+    },
+    {
+      "name": "アクリル",
+      "pos_tilt": 0.2,
+      "tilts": [
+        1.0,
+        0.7,
+        0.7,
+        0.5
+      ],
+      "tilt_after": 0.7
+    }
+  ]
+}

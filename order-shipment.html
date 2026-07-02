@@ -36,6 +36,17 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .filter-section{padding:12px 16px;border-top:1px solid var(--border);margin-top:8px;}
 .filter-group{margin-bottom:10px;}
 .filter-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;display:block;}
+/* 検索可能セレクト（combobox） */
+.ssel{position:relative;}
+.ssel-input{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 24px 6px 10px;border-radius:var(--radius);font-family:var(--font-body);font-size:12px;outline:none;cursor:pointer;box-sizing:border-box;}
+.ssel-input:focus{border-color:var(--accent);cursor:text;}
+.ssel-caret{position:absolute;right:9px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:8px;color:var(--text3);}
+.ssel-drop{position:absolute;top:calc(100% + 3px);left:0;right:0;z-index:80;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);max-height:230px;overflow-y:auto;display:none;box-shadow:0 6px 20px rgba(0,0,0,.45);}
+.ssel-drop.open{display:block;}
+.ssel-opt{padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ssel-opt:hover,.ssel-opt.hl{background:rgba(255,255,255,.06);color:var(--text);}
+.ssel-opt.sel{color:var(--accent);}
+.ssel-empty{padding:8px 10px;font-size:11px;color:var(--text3);}
 select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:var(--radius);font-family:var(--font-body);font-size:12px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235a5750'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
 select:focus{border-color:var(--accent);}
 .main{flex:1;padding:24px;overflow-x:hidden;min-width:0;}
@@ -473,9 +484,19 @@ textarea:focus{border-color:var(--accent);}
     <div class="filter-group"><label class="filter-label">ブランド</label>
       <select id="filterBrand" onchange="onFilterBrandChange()"><option value="all">すべて</option></select></div>
     <div class="filter-group"><label class="filter-label">商品名</label>
-      <select id="filterProduct" onchange="onFilterProductChange()"><option value="all">すべて</option></select></div>
+      <div class="ssel" id="ssel_filterProduct">
+        <input type="hidden" id="filterProduct" value="all">
+        <input type="text" class="ssel-input" id="sselInput_filterProduct" value="すべて" placeholder="検索…" autocomplete="off">
+        <span class="ssel-caret">▼</span>
+        <div class="ssel-drop" id="sselDrop_filterProduct"></div>
+      </div></div>
     <div class="filter-group"><label class="filter-label">SKU名</label>
-      <select id="filterSku" onchange="applyFilters()"><option value="all">すべて</option></select></div>
+      <div class="ssel" id="ssel_filterSku">
+        <input type="hidden" id="filterSku" value="all">
+        <input type="text" class="ssel-input" id="sselInput_filterSku" value="すべて" placeholder="検索…" autocomplete="off">
+        <span class="ssel-caret">▼</span>
+        <div class="ssel-drop" id="sselDrop_filterSku"></div>
+      </div></div>
     <div class="filter-group"><label class="filter-label">開始月</label>
       <select id="filterPeriodStart" onchange="applyFilters()"><option value="all">すべて</option></select></div>
     <div class="filter-group"><label class="filter-label">終了月</label>
@@ -986,7 +1007,19 @@ const JSON_FILES = {
   inventory:'./inventory.json', master:'./master.json'
 };
 
-let DATA = {orders:null,shipments:null,inventory:null,master:null};
+let DATA = {orders:null,shipments:null,inventory:null,master:null,retailerTilts:null};
+// 小売傾斜プリセット（retailer_tilts.json 由来）
+let RETAILER_TILTS=[];
+let RETAILER_TILT_BY_NAME={};
+function buildRetailerPresetDatalist(){
+  let dl=document.getElementById('retailerPresetList');
+  if(!dl){
+    dl=document.createElement('datalist');
+    dl.id='retailerPresetList';
+    document.body.appendChild(dl);
+  }
+  dl.innerHTML=RETAILER_TILTS.map(r=>`<option value="${escHtml(r.name)}"></option>`).join('');
+}
 let dataLoaded = false;
 window.MASTER_BY_JAN = {};
 window.SHIP_BY_JAN = {};
@@ -1014,14 +1047,23 @@ async function loadAllJSON(){
   const ts=`?t=${Date.now()}`;
   const base=location.href.replace(/\/[^/]*$/,'/');
   try{
-    const [orders,shipments,inventory,master]=await Promise.all([
+    const [orders,shipments,inventory,master,retailerTilts]=await Promise.all([
       fetch(base+'orders.json'+ts).then(r=>{if(!r.ok)throw new Error(`orders.json HTTP ${r.status}`);return r.json();}),
       fetch(base+'shipments.json'+ts).then(r=>{if(!r.ok)throw new Error(`shipments.json HTTP ${r.status}`);return r.json();}),
       fetch(base+'inventory.json'+ts).then(r=>{if(!r.ok)throw new Error(`inventory.json HTTP ${r.status}`);return r.json();}),
-      fetch(base+'master.json'+ts).then(r=>{if(!r.ok)return{skus:[]};return r.json();}).catch(()=>({skus:[]}))
+      fetch(base+'master.json'+ts).then(r=>{if(!r.ok)return{skus:[]};return r.json();}).catch(()=>({skus:[]})),
+      // 小売傾斜対応表（任意ファイル: 無くてもツールは動作する）
+      fetch(base+'retailer_tilts.json'+ts).then(r=>{if(!r.ok)return{retailers:[]};return r.json();}).catch(()=>({retailers:[]}))
     ]);
     DATA.orders=orders; DATA.shipments=shipments;
     DATA.inventory=inventory; DATA.master=master;
+    DATA.retailerTilts=retailerTilts;
+
+    // 小売傾斜プリセット辞書（小売名→傾斜情報）
+    RETAILER_TILTS=retailerTilts.retailers||[];
+    RETAILER_TILT_BY_NAME={};
+    RETAILER_TILTS.forEach(r=>{if(r.name)RETAILER_TILT_BY_NAME[r.name]=r;});
+    buildRetailerPresetDatalist();
 
     // マスタ辞書（JAN→SKU情報）
     MASTER_BY_JAN={};
@@ -1099,22 +1141,99 @@ function initCalcBrandSelect(){
     +brands.map(b=>`<option value="${escHtml(b)}"${b===cur?' selected':''}>${escHtml(b)}</option>`).join('');
 }
 
+// ─── 検索可能セレクト（combobox）コンポーネント ───
+const SSEL={};
+function initSsel(key,onSelect){
+  SSEL[key]={options:[],value:'all',onSelect};
+  const input=document.getElementById('sselInput_'+key);
+  const drop=document.getElementById('sselDrop_'+key);
+  if(!input||!drop) return;
+  input.addEventListener('focus',()=>{input.select();renderSselDrop(key,'');});
+  input.addEventListener('input',()=>{renderSselDrop(key,input.value.trim());});
+  input.addEventListener('keydown',e=>{
+    const opts=[...drop.querySelectorAll('.ssel-opt')];
+    let hl=opts.findIndex(o=>o.classList.contains('hl'));
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+      e.preventDefault();
+      if(!drop.classList.contains('open')){renderSselDrop(key,input.value.trim());return;}
+      hl=e.key==='ArrowDown'?Math.min(hl+1,opts.length-1):Math.max(hl-1,0);
+      opts.forEach((o,i)=>o.classList.toggle('hl',i===hl));
+      if(opts[hl]) opts[hl].scrollIntoView({block:'nearest'});
+    }else if(e.key==='Enter'){
+      e.preventDefault();
+      const target=hl>=0?opts[hl]:opts[0];
+      if(target) commitSsel(key,target.dataset.val);
+    }else if(e.key==='Escape'){
+      closeSsel(key);input.blur();
+    }
+  });
+  input.addEventListener('blur',()=>{setTimeout(()=>{closeSsel(key);syncSselDisplay(key);},150);});
+}
+function setSselOptions(key,options){
+  const s=SSEL[key]; if(!s) return;
+  s.options=options;
+  if(s.value!=='all'&&!options.includes(s.value)) s.value='all';
+  document.getElementById(key).value=s.value;
+  syncSselDisplay(key);
+}
+function setSselValue(key,val){
+  const s=SSEL[key]; if(!s) return;
+  s.value=val;
+  document.getElementById(key).value=val;
+  syncSselDisplay(key);
+}
+function syncSselDisplay(key){
+  const s=SSEL[key]; if(!s) return;
+  const input=document.getElementById('sselInput_'+key);
+  if(input) input.value=s.value==='all'?'すべて':s.value;
+}
+function renderSselDrop(key,query){
+  const s=SSEL[key]; if(!s) return;
+  const drop=document.getElementById('sselDrop_'+key);
+  const q=query.toLowerCase();
+  // 「すべて」表示中の全文選択状態から検索させるため、現在値と同一文字列はフィルタ扱いしない
+  const isCurrent=(query===(s.value==='all'?'すべて':s.value));
+  const list=(q===''||isCurrent)?s.options:s.options.filter(o=>o.toLowerCase().includes(q));
+  let html=`<div class="ssel-opt${s.value==='all'?' sel':''}" data-val="all">すべて</div>`;
+  html+=list.slice(0,300).map(o=>`<div class="ssel-opt${o===s.value?' sel':''}" data-val="${escHtml(o)}" title="${escHtml(o)}">${escHtml(o)}</div>`).join('');
+  if(!list.length) html+=`<div class="ssel-empty">該当なし</div>`;
+  if(list.length>300) html+=`<div class="ssel-empty">…他 ${list.length-300} 件（絞り込んでください）</div>`;
+  drop.innerHTML=html;
+  drop.classList.add('open');
+  drop.querySelectorAll('.ssel-opt').forEach(el=>{
+    el.addEventListener('mousedown',e=>{e.preventDefault();commitSsel(key,el.dataset.val);});
+  });
+}
+function commitSsel(key,val){
+  const s=SSEL[key]; if(!s) return;
+  s.value=val;
+  document.getElementById(key).value=val;
+  syncSselDisplay(key);
+  closeSsel(key);
+  document.getElementById('sselInput_'+key).blur();
+  if(s.onSelect) s.onSelect(val);
+}
+function closeSsel(key){
+  const drop=document.getElementById('sselDrop_'+key);
+  if(drop) drop.classList.remove('open');
+}
+initSsel('filterProduct',()=>onFilterProductChange());
+initSsel('filterSku',()=>applyFilters());
+
 function refreshProductFilter(brand){
-  const sel=document.getElementById('filterProduct');
-  const cur=sel.value;
+  const cur=(SSEL.filterProduct||{}).value||'all';
   let products=[];
   if(brand==='all'){
     products=[...new Set(Object.values(MASTER_TREE||{}).flatMap(pt=>Object.keys(pt)))].sort();
   } else {
     products=Object.keys((MASTER_TREE||{})[brand]||{}).sort();
   }
-  sel.innerHTML='<option value="all">すべて</option>'+products.map(p=>`<option value="${escHtml(p)}">${escHtml(p)}</option>`).join('');
-  if(products.includes(cur)) sel.value=cur;
+  setSselOptions('filterProduct',products);
+  if(products.includes(cur)) setSselValue('filterProduct',cur);
 }
 
 function refreshSkuFilter(brand,product){
-  const sel=document.getElementById('filterSku');
-  const cur=sel.value;
+  const cur=(SSEL.filterSku||{}).value||'all';
   let skus=[];
   if(brand==='all'&&product==='all'){
     skus=[...new Set(Object.values(MASTER_TREE||{}).flatMap(pt=>Object.values(pt).flat()))].filter(Boolean).sort();
@@ -1123,8 +1242,8 @@ function refreshSkuFilter(brand,product){
   } else {
     skus=((MASTER_TREE||{})[brand]||{})[product]||[];
   }
-  sel.innerHTML='<option value="all">すべて</option>'+skus.map(s=>`<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('');
-  if(skus.includes(cur)) sel.value=cur;
+  setSselOptions('filterSku',skus);
+  if(skus.includes(cur)) setSselValue('filterSku',cur);
 }
 
 function onFilterBrandChange(){
@@ -2225,6 +2344,7 @@ function renderShipTable(){
   }).filter(s=>s._total>0).sort((a,b)=>b._total-a._total);
 
   let tHtml=`<thead><tr>
+    <th style="width:32px;text-align:center"></th>
     <th style="text-align:left">SKU名</th><th style="text-align:left">JAN</th>
     ${months.map(m=>`<th>${m}</th>`).join('')}<th>合計</th>
   </tr></thead><tbody>`;
@@ -2242,7 +2362,7 @@ function renderShipTable(){
       <td class="num-pos" style="font-weight:500">${fmt(s._total)}</td>
     </tr>`;
   });
-  if(skuTotals.length>200) tHtml+=`<tr><td colspan="${months.length+3}" style="color:var(--text3);text-align:center;font-size:11px;padding:12px">残り ${skuTotals.length-200} SKU（フィルターで絞り込んでください）</td></tr>`;
+  if(skuTotals.length>200) tHtml+=`<tr><td colspan="${months.length+4}" style="color:var(--text3);text-align:center;font-size:11px;padding:12px">残り ${skuTotals.length-200} SKU（フィルターで絞り込んでください）</td></tr>`;
   tHtml+='</tbody>';
   document.getElementById('shipTable').innerHTML=tHtml;
 }
@@ -4563,13 +4683,18 @@ function renderPsBlocks(){
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:10px">
-        <div class="form-group"><label class="form-label">小売名</label>
-          <input type="text" value="${escHtml(r.name)}" oninput="calcRetailers[${ri}].name=this.value;this.closest('.retailer-block').querySelector('span').textContent=this.value">
+        <div class="form-group"><label class="form-label">小売名 ${RETAILER_TILT_BY_NAME[(r.name||'').trim()]?'<span style="font-family:var(--font-mono);font-size:8px;color:var(--accent2);border:1px solid rgba(122,162,247,.4);border-radius:3px;padding:1px 5px;margin-left:4px">傾斜表</span>':''}</label>
+          <input type="text" list="retailerPresetList" value="${escHtml(r.name)}" placeholder="選択 または 自由入力" oninput="onRetailerNameInput(${ri},this)">
         </div>
         <div class="form-group"><label class="form-label">導入状況</label>
           <select onchange="calcRetailers[${ri}].status=this.value;updateRBadge(${ri},this.value)">
             <option value="導入済み" ${r.status!=='新規'?'selected':''}>導入済み</option>
             <option value="新規" ${r.status==='新規'?'selected':''}>🆕 新規</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">導入月 <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">(傾斜開始月)</span></label>
+          <select onchange="onRetailerIntroMonthChange(${ri},this.value)">
+            ${months.map(m=>`<option value="${m}" ${((r.introMonth&&months.includes(r.introMonth))?r.introMonth:months[0])===m?'selected':''}>${mLabel(m)}</option>`).join('')}
           </select>
         </div>
         <div class="form-group"><label class="form-label">業態POS傾斜</label>
@@ -4626,6 +4751,48 @@ function renderPsBlocks(){
     </div>`).join('')
   +`<button class="btn btn-secondary" style="margin-top:8px;font-size:11px" onclick="if(calcRetailers.length>=20){showNotif('小売は最大20件です（エクセル詳細は上位10件まで）','error');return;}calcRetailers.push({name:'',posTilt:1,stores:0,monthTilts:{},status:'導入済み',initialDelivery:0});renderPsBlocks()">+ 小売追加</button>`;
   calcRetailers.forEach((_,ri)=>recalcPsPreview(ri));
+}
+
+// ── 小売傾斜プリセット適用（retailer_tilts.json） ──
+// 導入月を起点に「導入月→1ヶ月後→…→以降」の傾斜を8ヶ月分に展開する
+function applyRetailerPreset(ri){
+  const r=calcRetailers[ri];
+  const p=RETAILER_TILT_BY_NAME[(r.name||'').trim()];
+  if(!p) return false;
+  const base=getBaseMonth()||'2026-01';
+  const months=monthRange(base,8);
+  if(!r.introMonth||!months.includes(r.introMonth)) r.introMonth=months[0];
+  if(p.pos_tilt!=null) r.posTilt=p.pos_tilt;
+  const tilts=p.tilts||[];
+  const after=(p.tilt_after!=null)?p.tilt_after:(tilts.length?tilts[tilts.length-1]:1);
+  const introIdx=months.indexOf(r.introMonth);
+  const mt={};
+  months.forEach((m,mi)=>{
+    if(mi<introIdx){mt[m]='';return;} // 導入前の月は空欄（計算対象外）
+    const k=mi-introIdx;
+    mt[m]=(k<tilts.length)?tilts[k]:after;
+  });
+  r.monthTilts=mt;
+  return true;
+}
+function onRetailerNameInput(ri,el){
+  calcRetailers[ri].name=el.value;
+  const sp=el.closest('.retailer-block').querySelector('span');
+  if(sp) sp.textContent=el.value||('小売 '+(ri+1));
+  // プリセット名と完全一致したら業態POS傾斜・月別傾斜を自動反映
+  if(RETAILER_TILT_BY_NAME[el.value.trim()]){
+    applyRetailerPreset(ri);
+    renderPsBlocks();
+    showNotif('「'+el.value.trim()+'」の傾斜表を適用しました','success');
+  }
+}
+function onRetailerIntroMonthChange(ri,val){
+  calcRetailers[ri].introMonth=val;
+  if(applyRetailerPreset(ri)){
+    renderPsBlocks();
+  }else{
+    recalcPsPreview(ri);
+  }
 }
 
 function updateRBadge(ri,status){
@@ -4751,7 +4918,7 @@ function buildSimpleToBInput(){
     return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px">'
       +'<div style="font-size:13px;font-weight:500;color:'+color+';margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
       +'▼ toB'+['①','②','③'][num-1]+' '
-      +'<input type="text" value="'+escHtml(nameVal)+'" placeholder="小売名を入力" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:3px 8px;border-radius:4px;font-size:12px;width:160px" oninput="window.simToBNames['+num+']=this.value">'
+      +'<input type="text" list="retailerPresetList" value="'+escHtml(nameVal)+'" placeholder="小売名を入力" style="background:var(--surface);border:1px solid var(--border2);color:var(--text);padding:3px 8px;border-radius:4px;font-size:12px;width:160px" oninput="window.simToBNames['+num+']=this.value">'
       +'<select data-tobnum="'+num+'" style="background:var(--surface);padding:3px 8px;border-radius:4px;font-size:11px;font-family:var(--font-mono);'+statusSelStyle+'" onchange="window.simToBStatus[this.dataset.tobnum]=this.value;_rebuildSimToB()">'+statusSelOpts+'</select>'
       +'<span style="font-size:11px;color:var(--text3);margin-left:4px">店舗数:</span>'
       +'<input type="number" value="'+(window.simToBStores&&window.simToBStores[num]!=null?window.simToBStores[num]:0)+'" min="0" placeholder="0" style="background:var(--surface);border:1px solid var(--border2);color:var(--text2);padding:3px 8px;border-radius:4px;font-size:12px;width:72px;text-align:right;font-family:var(--font-mono)" oninput="if(!window.simToBStores)window.simToBStores={};window.simToBStores['+num+']=+this.value" title="この小売の全店舗数">'
