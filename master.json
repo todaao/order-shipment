@@ -1,6 +1,42 @@
 {
   "skus": [
     {
+      "jan": "4580805231060",
+      "category": "cosme",
+      "brand": "AMORISÉ",
+      "product_name": "アイデンティティⅤ ミッドナイト・コレクション・キャビネット ハンドクリーム",
+      "sku_name": "01 調香師 ～ガーデン・レヴェリー～",
+      "status": "最新仕様",
+      "display_name": "アイデンティティⅤ ミッドナイト・コレクション・キャビネット ハンドクリーム 01 調香師 ～ガーデン・レヴェリー～"
+    },
+    {
+      "jan": "4580805231077",
+      "category": "cosme",
+      "brand": "AMORISÉ",
+      "product_name": "アイデンティティⅤ ミッドナイト・コレクション・キャビネット ハンドクリーム",
+      "sku_name": "02 占い師 ～ナラティ・メドウ～",
+      "status": "最新仕様",
+      "display_name": "アイデンティティⅤ ミッドナイト・コレクション・キャビネット ハンドクリーム 02 占い師 ～ナラティ・メドウ～"
+    },
+    {
+      "jan": "4580805231084",
+      "category": "cosme",
+      "brand": "AMORISÉ",
+      "product_name": "アイデンティティⅤ ミッドナイト・コレクション・キャビネット ハンドクリーム",
+      "sku_name": "03 「少女」 ～コットン・ヴェール～",
+      "status": "最新仕様",
+      "display_name": "アイデンティティⅤ ミッドナイト・コレクション・キャビネット ハンドクリーム 03 「少女」 ～コットン・ヴェール～"
+    },
+    {
+      "jan": "4580805231091",
+      "category": "cosme",
+      "brand": "AMORISÉ",
+      "product_name": "アイデンティティⅤ ミッドナイト・コレクション・キャビネット ハンドクリーム",
+      "sku_name": "04 写真家 ～エボニー・ウィスパー～",
+      "status": "最新仕様",
+      "display_name": "アイデンティティⅤ ミッドナイト・コレクション・キャビネット ハンドクリーム 04 写真家 ～エボニー・ウィスパー～"
+    },
+    {
       "jan": "4580805230476",
       "category": "cosme",
       "brand": "AMORISÉ",
@@ -1356,6 +1392,33 @@
       "discontinue_planned": true
     },
     {
+      "jan": "4580805231008",
+      "category": "cosme",
+      "brand": "GOGO TALES",
+      "product_name": "スウィートバレエアイシャドウ",
+      "sku_name": "04 スワンレース",
+      "status": "最新仕様",
+      "display_name": "スウィートバレエアイシャドウ 04 スワンレース"
+    },
+    {
+      "jan": "4580805231015",
+      "category": "cosme",
+      "brand": "GOGO TALES",
+      "product_name": "スウィートバレエアイシャドウ",
+      "sku_name": "05 リボンショコラ",
+      "status": "最新仕様",
+      "display_name": "スウィートバレエアイシャドウ 05 リボンショコラ"
+    },
+    {
+      "jan": "4580805231022",
+      "category": "cosme",
+      "brand": "GOGO TALES",
+      "product_name": "スウィートバレエアイシャドウ",
+      "sku_name": "06 チュチュピンク",
+      "status": "最新仕様",
+      "display_name": "スウィートバレエアイシャドウ 06 チュチュピンク"
+    },
+    {
       "jan": "4571501176809",
       "category": "cosme",
       "brand": "GOGO TALES",
@@ -2697,27 +2760,27 @@
       "category": "cosme",
       "brand": "MilleFée",
       "product_name": "シェイクドロップチーク",
-      "sku_name": "05 シナモンベージュ",
+      "sku_name": "07 シナモンベージュ",
       "status": "最新仕様",
-      "display_name": "シェイクドロップチーク 05 シナモンベージュ"
+      "display_name": "シェイクドロップチーク 07 シナモンベージュ"
     },
     {
       "jan": "4580805230896",
       "category": "cosme",
       "brand": "MilleFée",
       "product_name": "シェイクドロップチーク",
-      "sku_name": "06 ラベンダーホイップ",
+      "sku_name": "08 ラベンダーホイップ",
       "status": "最新仕様",
-      "display_name": "シェイクドロップチーク 06 ラベンダーホイップ"
+      "display_name": "シェイクドロップチーク 08 ラベンダーホイップ"
     },
     {
       "jan": "4580805230902",
       "category": "cosme",
       "brand": "MilleFée",
       "product_name": "シェイクドロップチーク",
-      "sku_name": "07 マシュマロピンク",
+      "sku_name": "09 マシュマロピンク",
       "status": "最新仕様",
-      "display_name": "シェイクドロップチーク 07 マシュマロピンク"
+      "display_name": "シェイクドロップチーク 09 マシュマロピンク"
     },
     {
       "jan": "4580805230100",
@@ -4209,6 +4272,15 @@
       "sku_name": "",
       "status": "最新仕様",
       "display_name": "ＲＥ：エッセンスＣ"
+    },
+    {
+      "jan": "4580805230841",
+      "category": "cosme",
+      "brand": "fractional CC",
+      "product_name": "ＲＥ：クリーム",
+      "sku_name": "",
+      "status": "最新仕様",
+      "display_name": "ＲＥ：クリーム"
     },
     {
       "jan": "4571501179572",
