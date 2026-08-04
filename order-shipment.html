@@ -570,12 +570,15 @@ textarea:focus{border-color:var(--accent);}
   <!-- 出荷実績テーブル -->
   <div class="panel">
     <div class="panel-header">
-      <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent4)"></span>出荷実績テーブル（出荷数多い順）</div>
-      <div class="tab-bar" style="margin:0;border:none;gap:4px">
-        <button class="tab-btn active" style="padding:4px 10px;font-size:11px" onclick="setShipTableChannel('all',this)">全て</button>
-        <button class="tab-btn" style="padding:4px 10px;font-size:11px" onclick="setShipTableChannel('tob',this)">toB</button>
-        <button class="tab-btn" style="padding:4px 10px;font-size:11px" onclick="setShipTableChannel('ec',this)">EC</button>
-        <button class="tab-btn" style="padding:4px 10px;font-size:11px" onclick="setShipTableChannel('overseas',this)">海外</button>
+      <div class="panel-title"><span class="panel-title-dot" style="background:var(--accent4)"></span>出荷実績テーブル<span style="font-size:10px;color:var(--text3);font-weight:400;margin-left:4px">（列見出しクリックで並び替え）</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <div class="tab-bar" style="margin:0;border:none;gap:4px">
+          <button class="tab-btn active" style="padding:4px 10px;font-size:11px" onclick="setShipTableChannel('all',this)">全て</button>
+          <button class="tab-btn" style="padding:4px 10px;font-size:11px" onclick="setShipTableChannel('tob',this)">toB</button>
+          <button class="tab-btn" style="padding:4px 10px;font-size:11px" onclick="setShipTableChannel('ec',this)">EC</button>
+          <button class="tab-btn" style="padding:4px 10px;font-size:11px" onclick="setShipTableChannel('overseas',this)">海外</button>
+        </div>
+        <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="exportShipTableCsv()">📥 CSV出力</button>
       </div>
     </div>
     <div class="panel-body">
@@ -1840,6 +1843,7 @@ async function deleteCloudSession(sid){
 
 let currentChannel='tob';
 let shipTableChannel='all';
+let shipTableSort={key:'total',dir:'desc'}; // key: 'name' | 'total' | 'YYYY-MM'
 let barChChannel='all';
 let compareChannel='all';
 let compareSort='name_asc';
@@ -2037,6 +2041,16 @@ function setShipTableChannel(ch,el){
   shipTableChannel=ch;
   el.closest('.tab-bar').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
+  renderShipTable();
+}
+
+// 出荷実績テーブルの並び替え（同じ列を再クリックで昇順/降順を反転）
+function setShipTableSort(key){
+  if(shipTableSort.key===key){
+    shipTableSort.dir = shipTableSort.dir==='desc' ? 'asc' : 'desc';
+  }else{
+    shipTableSort = {key, dir: key==='name' ? 'asc' : 'desc'};
+  }
   renderShipTable();
 }
 
@@ -2329,42 +2343,93 @@ function renderCompareHeatmap(){
   document.getElementById('compareHeatmapPanel').innerHTML=legend+table+'</tbody></table>';
 }
 
-function renderShipTable(){
-  if(!dataLoaded||!DATA.shipments) return;
+// 出荷実績テーブルの行データを構築（表示・CSV出力の両方で共有）
+function getShipTableRows(){
   const skus=filteredShipmentSkus();
   const months=filteredMonths();
   const ch=shipTableChannel;
-  const skuTotals=skus.map(s=>{
-    const total=months.reduce((a,m)=>{
-      const ms=(s.monthly_shipments||{})[m]||{};
-      if(ch==='all') return a+(ms.total||0);
-      return a+(ms[ch]||0);
-    },0);
-    return {...s,_total:total};
-  }).filter(s=>s._total>0).sort((a,b)=>b._total-a._total);
+  let rows=skus.map(s=>{
+    const mVals=months.map(m=>{const ms=(s.monthly_shipments||{})[m]||{};if(ch==='all')return ms.total||0;return ms[ch]||0;});
+    const total=mVals.reduce((a,v)=>a+v,0);
+    return {sku_code:s.sku_code,sku_name:s.sku_name,dispName:skuDisplayName(s.sku_code,s.sku_name),mVals,total};
+  }).filter(r=>r.total>0);
+
+  const {key,dir}=shipTableSort;
+  const sign=dir==='asc'?1:-1;
+  if(key==='name'){
+    rows.sort((a,b)=>sign*a.dispName.localeCompare(b.dispName));
+  }else if(key==='total'){
+    rows.sort((a,b)=>sign*(a.total-b.total));
+  }else{
+    const idx=months.indexOf(key);
+    rows.sort((a,b)=>sign*((a.mVals[idx]||0)-(b.mVals[idx]||0)));
+  }
+  return {months,ch,rows};
+}
+
+function shipSortArrow(key){
+  if(shipTableSort.key!==key) return '';
+  return shipTableSort.dir==='desc' ? ' ▼' : ' ▲';
+}
+
+function renderShipTable(){
+  if(!dataLoaded||!DATA.shipments) return;
+  const {months,rows}=getShipTableRows();
 
   let tHtml=`<thead><tr>
     <th style="width:32px;text-align:center"></th>
-    <th style="text-align:left">SKU名</th><th style="text-align:left">JAN</th>
-    ${months.map(m=>`<th>${m}</th>`).join('')}<th>合計</th>
+    <th style="text-align:left;cursor:pointer" onclick="setShipTableSort('name')" title="クリックで並び替え">SKU名${shipSortArrow('name')}</th>
+    <th style="text-align:left">JAN</th>
+    ${months.map(m=>`<th style="cursor:pointer" onclick="setShipTableSort('${m}')" title="クリックで並び替え">${m}${shipSortArrow(m)}</th>`).join('')}
+    <th style="cursor:pointer" onclick="setShipTableSort('total')" title="クリックで並び替え">合計${shipSortArrow('total')}</th>
   </tr></thead><tbody>`;
-  skuTotals.slice(0,200).forEach(s=>{
-    const mVals=months.map(m=>{const ms=(s.monthly_shipments||{})[m]||{};if(ch==='all')return ms.total||0;return ms[ch]||0;});
-    const dispName=skuDisplayName(s.sku_code,s.sku_name);
+  rows.slice(0,200).forEach(s=>{
     const isChecked=selectedInvSkus.has(String(s.sku_code));
     tHtml+=`<tr>
       <td style="text-align:center;padding:4px">
         <input type="checkbox" ${isChecked?'checked':''} style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer" onchange="onInvSkuCheck('${s.sku_code}')">
       </td>
-      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis" title="${s.sku_name}">${escHtml(dispName)}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis" title="${s.sku_name}">${escHtml(s.dispName)}</td>
       <td style="font-family:var(--font-mono);color:var(--text3)">${s.sku_code||'—'}</td>
-      ${mVals.map(v=>`<td class="${v?'num-accent':''}">${v?fmt(v):'—'}</td>`).join('')}
-      <td class="num-pos" style="font-weight:500">${fmt(s._total)}</td>
+      ${s.mVals.map(v=>`<td class="${v?'num-accent':''}">${v?fmt(v):'—'}</td>`).join('')}
+      <td class="num-pos" style="font-weight:500">${fmt(s.total)}</td>
     </tr>`;
   });
-  if(skuTotals.length>200) tHtml+=`<tr><td colspan="${months.length+4}" style="color:var(--text3);text-align:center;font-size:11px;padding:12px">残り ${skuTotals.length-200} SKU（フィルターで絞り込んでください）</td></tr>`;
+  if(rows.length>200) tHtml+=`<tr><td colspan="${months.length+4}" style="color:var(--text3);text-align:center;font-size:11px;padding:12px">残り ${rows.length-200} SKU（フィルターで絞り込んでください）</td></tr>`;
   tHtml+='</tbody>';
   document.getElementById('shipTable').innerHTML=tHtml;
+}
+
+// 出荷実績テーブルを現在の表示条件（フィルター・チャネル・並び順）のままCSV出力
+function exportShipTableCsv(){
+  if(!dataLoaded||!DATA.shipments){showNotif('データが読み込まれていません','error');return;}
+  const {months,ch,rows}=getShipTableRows();
+  if(!rows.length){showNotif('出力対象のデータがありません','error');return;}
+  const chLabel={all:'全チャネル',tob:'toB',ec:'EC',overseas:'海外'}[ch]||ch;
+
+  const csvEscape=v=>{
+    const s=String(v==null?'':v);
+    return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+  };
+  const header=['SKU名','JAN',...months,'合計'];
+  const lines=[header.map(csvEscape).join(',')];
+  rows.forEach(r=>{
+    lines.push([r.dispName, r.sku_code||'', ...r.mVals, r.total].map(csvEscape).join(','));
+  });
+  const csvContent='﻿'+lines.join('\r\n'); // BOM付与でExcelでの日本語文字化けを防止
+
+  const blob=new Blob([csvContent],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const now=new Date();
+  const dateStr=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`出荷実績_${chLabel}_${dateStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  if(typeof showNotif==='function') showNotif('CSVを出力しました','success');
 }
 
 // ════════════════════════════════════════════
