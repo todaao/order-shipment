@@ -3077,7 +3077,7 @@
       "brand": "MilleFée",
       "product_name": "ダブルトーン涙袋ペンシル（仮称）",
       "sku_name": "01 未定",
-      "status": "",
+      "status": "最新仕様",
       "display_name": "ダブルトーン涙袋ペンシル（仮称） 01 未定"
     },
     {
@@ -3086,7 +3086,7 @@
       "brand": "MilleFée",
       "product_name": "ダブルトーン涙袋ペンシル（仮称）",
       "sku_name": "02 未定",
-      "status": "",
+      "status": "最新仕様",
       "display_name": "ダブルトーン涙袋ペンシル（仮称） 02 未定"
     },
     {
@@ -3095,7 +3095,7 @@
       "brand": "MilleFée",
       "product_name": "ダブルトーン涙袋ペンシル（仮称）",
       "sku_name": "03 未定",
-      "status": "",
+      "status": "最新仕様",
       "display_name": "ダブルトーン涙袋ペンシル（仮称） 03 未定"
     },
     {
@@ -3104,26 +3104,8 @@
       "brand": "MilleFée",
       "product_name": "ダブルトーン涙袋ペンシル（仮称）",
       "sku_name": "04 未定",
-      "status": "",
+      "status": "最新仕様",
       "display_name": "ダブルトーン涙袋ペンシル（仮称） 04 未定"
-    },
-    {
-      "jan": "4580805231237",
-      "category": "cosme",
-      "brand": "MilleFée",
-      "product_name": "ダブルトーン涙袋ペンシル（仮称）",
-      "sku_name": "05 未定",
-      "status": "",
-      "display_name": "ダブルトーン涙袋ペンシル（仮称） 05 未定"
-    },
-    {
-      "jan": "4580805231244",
-      "category": "cosme",
-      "brand": "MilleFée",
-      "product_name": "ダブルトーン涙袋ペンシル（仮称）",
-      "sku_name": "06 未定",
-      "status": "",
-      "display_name": "ダブルトーン涙袋ペンシル（仮称） 06 未定"
     },
     {
       "jan": "4571501174799",
@@ -3375,7 +3357,7 @@
       "brand": "MilleFée",
       "product_name": "フラッフィータッチメイクブラシセット",
       "sku_name": "リラックマ",
-      "status": "",
+      "status": "最新仕様",
       "display_name": "フラッフィータッチメイクブラシセット リラックマ"
     },
     {
@@ -3654,7 +3636,7 @@
       "brand": "MilleFée",
       "product_name": "メイクブラシスタンド",
       "sku_name": "R01 リラックマ",
-      "status": "",
+      "status": "最新仕様",
       "display_name": "メイクブラシスタンド R01 リラックマ"
     },
     {
@@ -3663,7 +3645,7 @@
       "brand": "MilleFée",
       "product_name": "メイクブラシスタンド",
       "sku_name": "R02 コリラックマ",
-      "status": "",
+      "status": "最新仕様",
       "display_name": "メイクブラシスタンド R02 コリラックマ"
     },
     {
@@ -8299,6 +8281,26 @@
       "display_name": "シークレットキャラチャーム 葬送のフリーレン ○○シリーズ 6箱セット"
     },
     {
+      "jan": "4580805243407",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "スポンジ・ボブ フードフィッシュマスコットチャーム",
+      "sku_name": "",
+      "ip": "SpongeBob",
+      "status": "",
+      "display_name": "スポンジ・ボブ フードフィッシュマスコットチャーム"
+    },
+    {
+      "jan": "4580805243414",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "スポンジ・ボブ フードフィッシュマスコットチャーム",
+      "sku_name": "6箱セット",
+      "ip": "SpongeBob",
+      "status": "",
+      "display_name": "スポンジ・ボブ フードフィッシュマスコットチャーム 6箱セット"
+    },
+    {
       "jan": "4580805240079",
       "category": "hobby",
       "brand": "TOKOTOYZ",
@@ -8427,6 +8429,36 @@
       "ip": "ナルミヤ/NARUMIYA",
       "status": "",
       "display_name": "メゾピアノ 絵変わりトイカメラ ベリエちゃん"
+    },
+    {
+      "jan": "4580805243391",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "リラックマ カラビナ",
+      "sku_name": "キイロイトリ",
+      "ip": "リラックマ/轻松熊",
+      "status": "",
+      "display_name": "リラックマ カラビナ キイロイトリ"
+    },
+    {
+      "jan": "4580805243384",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "リラックマ カラビナ",
+      "sku_name": "コリラックマ",
+      "ip": "リラックマ/轻松熊",
+      "status": "",
+      "display_name": "リラックマ カラビナ コリラックマ"
+    },
+    {
+      "jan": "4580805243377",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "リラックマ カラビナ",
+      "sku_name": "リラックマ",
+      "ip": "リラックマ/轻松熊",
+      "status": "",
+      "display_name": "リラックマ カラビナ リラックマ"
     },
     {
       "jan": "4580805242967",
