@@ -1595,7 +1595,8 @@
       "product_name": "ラブポップグロス",
       "sku_name": "01 ピーチローズ",
       "status": "最新仕様",
-      "display_name": "ラブポップグロス 01 ピーチローズ"
+      "display_name": "ラブポップグロス 01 ピーチローズ",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179305",
@@ -1604,7 +1605,8 @@
       "product_name": "ラブポップグロス",
       "sku_name": "02 ストロベリードリーム",
       "status": "最新仕様",
-      "display_name": "ラブポップグロス 02 ストロベリードリーム"
+      "display_name": "ラブポップグロス 02 ストロベリードリーム",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179312",
@@ -1613,7 +1615,8 @@
       "product_name": "ラブポップグロス",
       "sku_name": "03 ナチュラルアイスティー",
       "status": "最新仕様",
-      "display_name": "ラブポップグロス 03 ナチュラルアイスティー"
+      "display_name": "ラブポップグロス 03 ナチュラルアイスティー",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501179329",
@@ -1622,7 +1625,8 @@
       "product_name": "ラブポップグロス",
       "sku_name": "04 ラズベリーミスト",
       "status": "最新仕様",
-      "display_name": "ラブポップグロス 04 ラズベリーミスト"
+      "display_name": "ラブポップグロス 04 ラズベリーミスト",
+      "discontinue_planned": true
     },
     {
       "jan": "4571501177844",
@@ -2496,6 +2500,24 @@
       "display_name": "アイドルハイライターパレット 02 ローズピンク"
     },
     {
+      "jan": "4580805231374",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "アイドルハイライターパレット",
+      "sku_name": "05 （仮）",
+      "status": "最新仕様",
+      "display_name": "アイドルハイライターパレット 05 （仮）"
+    },
+    {
+      "jan": "4580805231381",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "アイドルハイライターパレット",
+      "sku_name": "06 （仮）",
+      "status": "最新仕様",
+      "display_name": "アイドルハイライターパレット 06 （仮）"
+    },
+    {
       "jan": "4580805230766",
       "category": "cosme",
       "brand": "MilleFée",
@@ -2649,6 +2671,15 @@
       "sku_name": "《プー／ピグレット》",
       "status": "最新仕様",
       "display_name": "クッションファンデパフ 《プー／ピグレット》"
+    },
+    {
+      "jan": "4580805231329",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "クッションファンデパフ（仮）",
+      "sku_name": "U03 ピングー（仮）",
+      "status": "最新仕様",
+      "display_name": "クッションファンデパフ（仮） U03 ピングー（仮）"
     },
     {
       "jan": "4571501174881",
@@ -3075,37 +3106,37 @@
       "jan": "4580805231190",
       "category": "cosme",
       "brand": "MilleFée",
-      "product_name": "ダブルトーン涙袋ペンシル（仮称）",
-      "sku_name": "01 未定",
+      "product_name": "ダブルカラー涙袋メーカー",
+      "sku_name": "01 バニラ＆クッキー",
       "status": "最新仕様",
-      "display_name": "ダブルトーン涙袋ペンシル（仮称） 01 未定"
+      "display_name": "ダブルカラー涙袋メーカー 01 バニラ＆クッキー"
     },
     {
       "jan": "4580805231206",
       "category": "cosme",
       "brand": "MilleFée",
-      "product_name": "ダブルトーン涙袋ペンシル（仮称）",
-      "sku_name": "02 未定",
+      "product_name": "ダブルカラー涙袋メーカー",
+      "sku_name": "02 イチゴ＆チョコ",
       "status": "最新仕様",
-      "display_name": "ダブルトーン涙袋ペンシル（仮称） 02 未定"
+      "display_name": "ダブルカラー涙袋メーカー 02 イチゴ＆チョコ"
     },
     {
       "jan": "4580805231213",
       "category": "cosme",
       "brand": "MilleFée",
-      "product_name": "ダブルトーン涙袋ペンシル（仮称）",
-      "sku_name": "03 未定",
+      "product_name": "ダブルカラー涙袋メーカー",
+      "sku_name": "03 ピーチ＆アーモンド",
       "status": "最新仕様",
-      "display_name": "ダブルトーン涙袋ペンシル（仮称） 03 未定"
+      "display_name": "ダブルカラー涙袋メーカー 03 ピーチ＆アーモンド"
     },
     {
       "jan": "4580805231220",
       "category": "cosme",
       "brand": "MilleFée",
-      "product_name": "ダブルトーン涙袋ペンシル（仮称）",
-      "sku_name": "04 未定",
+      "product_name": "ダブルカラー涙袋メーカー",
+      "sku_name": "04 ローズ＆ショコラ",
       "status": "最新仕様",
-      "display_name": "ダブルトーン涙袋ペンシル（仮称） 04 未定"
+      "display_name": "ダブルカラー涙袋メーカー 04 ローズ＆ショコラ"
     },
     {
       "jan": "4571501174799",
@@ -3278,6 +3309,24 @@
       "sku_name": "《プー》",
       "status": "最新仕様",
       "display_name": "パウダーパフ 《プー》"
+    },
+    {
+      "jan": "4580805231305",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "パウダーパフ（仮）",
+      "sku_name": "U01 ピングー（仮）",
+      "status": "最新仕様",
+      "display_name": "パウダーパフ（仮） U01 ピングー（仮）"
+    },
+    {
+      "jan": "4580805231343",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "ピングー メイクパフコンプリートボックス （仮）",
+      "sku_name": "（商品セット）",
+      "status": "最新仕様",
+      "display_name": "ピングー メイクパフコンプリートボックス （仮） （商品セット）"
     },
     {
       "jan": "4571501177448",
@@ -3495,6 +3544,15 @@
       "sku_name": "R01 リラックマ（ギャル）",
       "status": "最新仕様",
       "display_name": "マシュマロパフ R01 リラックマ（ギャル）"
+    },
+    {
+      "jan": "4580805231312",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "マシュマロパフ（仮）",
+      "sku_name": "U02 ピングー（仮）",
+      "status": "最新仕様",
+      "display_name": "マシュマロパフ（仮） U02 ピングー（仮）"
     },
     {
       "jan": "4571501173792",
@@ -3836,6 +3894,15 @@
       "sku_name": "リラックマ・キイロイトリ",
       "status": "最新仕様",
       "display_name": "指パフ リラックマ・キイロイトリ"
+    },
+    {
+      "jan": "4580805231336",
+      "category": "cosme",
+      "brand": "MilleFée",
+      "product_name": "指パフ（仮）",
+      "sku_name": "U04 ピングー・ピンガー（仮）",
+      "status": "最新仕様",
+      "display_name": "指パフ（仮） U04 ピングー・ピンガー（仮）"
     },
     {
       "jan": "4571501171279",
@@ -5767,6 +5834,36 @@
       "display_name": "PUNIKKO ボックス 6個入サイズ"
     },
     {
+      "jan": "4580805243346",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "RARELICA TVアニメ『進撃の巨人』 セリフジオラマアクリルスタンド",
+      "sku_name": "エレン",
+      "ip": "進撃の巨人",
+      "status": "",
+      "display_name": "RARELICA TVアニメ『進撃の巨人』 セリフジオラマアクリルスタンド エレン"
+    },
+    {
+      "jan": "4580805243353",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "RARELICA TVアニメ『進撃の巨人』 セリフジオラマアクリルスタンド",
+      "sku_name": "ミカサ",
+      "ip": "進撃の巨人",
+      "status": "",
+      "display_name": "RARELICA TVアニメ『進撃の巨人』 セリフジオラマアクリルスタンド ミカサ"
+    },
+    {
+      "jan": "4580805243360",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "RARELICA TVアニメ『進撃の巨人』 セリフジオラマアクリルスタンド",
+      "sku_name": "リヴァイ",
+      "ip": "進撃の巨人",
+      "status": "",
+      "display_name": "RARELICA TVアニメ『進撃の巨人』 セリフジオラマアクリルスタンド リヴァイ"
+    },
+    {
       "jan": "4580805243124",
       "category": "hobby",
       "brand": "TOKOTOYZ",
@@ -5941,20 +6038,20 @@
       "category": "hobby",
       "brand": "TOKOTOYZ",
       "product_name": "RARELICA 葬送のフリーレン メモリアルフィルム",
-      "sku_name": "SDキャラ",
+      "sku_name": "ミニキャラ",
       "ip": "葬送のフリーレン/葬送的芙莉莲",
       "status": "",
-      "display_name": "RARELICA 葬送のフリーレン メモリアルフィルム SDキャラ"
+      "display_name": "RARELICA 葬送のフリーレン メモリアルフィルム ミニキャラ"
     },
     {
       "jan": "4580805240895",
       "category": "hobby",
       "brand": "TOKOTOYZ",
       "product_name": "RARELICA 葬送のフリーレン メモリアルフィルム",
-      "sku_name": "SDキャラ 4枚セット",
+      "sku_name": "ミニキャラ 4枚セット",
       "ip": "葬送のフリーレン/葬送的芙莉莲",
       "status": "",
-      "display_name": "RARELICA 葬送のフリーレン メモリアルフィルム SDキャラ 4枚セット"
+      "display_name": "RARELICA 葬送のフリーレン メモリアルフィルム ミニキャラ 4枚セット"
     },
     {
       "jan": "4580805240901",
@@ -5985,36 +6082,6 @@
       "ip": "自社オリジナル",
       "status": "",
       "display_name": "TOKOTOYZ ショッパー"
-    },
-    {
-      "jan": "4580805243346",
-      "category": "hobby",
-      "brand": "TOKOTOYZ",
-      "product_name": "「TVアニメ『進撃の巨人』　セリフジオラマアクリルスタンド」",
-      "sku_name": "エレン",
-      "ip": "進撃の巨人",
-      "status": "",
-      "display_name": "「TVアニメ『進撃の巨人』　セリフジオラマアクリルスタンド」 エレン"
-    },
-    {
-      "jan": "4580805243353",
-      "category": "hobby",
-      "brand": "TOKOTOYZ",
-      "product_name": "「TVアニメ『進撃の巨人』　セリフジオラマアクリルスタンド」",
-      "sku_name": "ミカサ",
-      "ip": "進撃の巨人",
-      "status": "",
-      "display_name": "「TVアニメ『進撃の巨人』　セリフジオラマアクリルスタンド」 ミカサ"
-    },
-    {
-      "jan": "4580805243360",
-      "category": "hobby",
-      "brand": "TOKOTOYZ",
-      "product_name": "「TVアニメ『進撃の巨人』　セリフジオラマアクリルスタンド」",
-      "sku_name": "リヴァイ",
-      "ip": "進撃の巨人",
-      "status": "",
-      "display_name": "「TVアニメ『進撃の巨人』　セリフジオラマアクリルスタンド」 リヴァイ"
     },
     {
       "jan": "4580805240031",
@@ -7271,6 +7338,26 @@
       "display_name": "ぷにっこ リボンのミントクリームケーキ"
     },
     {
+      "jan": "4580805243469",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "ぷにっこ",
+      "sku_name": "リボンチャームコレクション",
+      "ip": "自社オリジナル",
+      "status": "",
+      "display_name": "ぷにっこ リボンチャームコレクション"
+    },
+    {
+      "jan": "4580805243476",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "ぷにっこ",
+      "sku_name": "リボンチャームコレクション 6箱セット",
+      "ip": "自社オリジナル",
+      "status": "",
+      "display_name": "ぷにっこ リボンチャームコレクション 6箱セット"
+    },
+    {
       "jan": "4580805242851",
       "category": "hobby",
       "brand": "TOKOTOYZ",
@@ -7701,6 +7788,26 @@
       "display_name": "ぷにっこ mojojojo 6箱セット"
     },
     {
+      "jan": "4580805243421",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "ぷにっこ ご当地シリーズ",
+      "sku_name": "広島限定 もみじ饅頭",
+      "ip": "自社オリジナル",
+      "status": "",
+      "display_name": "ぷにっこ ご当地シリーズ 広島限定 もみじ饅頭"
+    },
+    {
+      "jan": "4580805243452",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "ぷにっこ ご当地シリーズ",
+      "sku_name": "福岡限定 大粒いちご",
+      "ip": "自社オリジナル",
+      "status": "",
+      "display_name": "ぷにっこ ご当地シリーズ 福岡限定 大粒いちご"
+    },
+    {
       "jan": "JAN：4580805243193\n倉庫：pn-powder01",
       "category": "hobby",
       "brand": "TOKOTOYZ",
@@ -7709,6 +7816,26 @@
       "ip": "自社オリジナル",
       "status": "",
       "display_name": "ぷにっこ ふわふわパウダー"
+    },
+    {
+      "jan": "4580805243506",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "ぷにっこ まめゴマ ベビーシリーズ",
+      "sku_name": "",
+      "ip": "San-X Universe",
+      "status": "",
+      "display_name": "ぷにっこ まめゴマ ベビーシリーズ"
+    },
+    {
+      "jan": "4580805243513",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "ぷにっこ まめゴマ ベビーシリーズ",
+      "sku_name": "6箱セット",
+      "ip": "San-X Universe",
+      "status": "",
+      "display_name": "ぷにっこ まめゴマ ベビーシリーズ 6箱セット"
     },
     {
       "jan": "4580805241304",
@@ -7851,6 +7978,26 @@
       "display_name": "ぷにっこ スイーツ 夢色ふわもこケーキシリーズ"
     },
     {
+      "jan": "4580805243438",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "ぷにっこ スイーツ",
+      "sku_name": "夢色ふわもこケーキシリーズ",
+      "ip": "自社オリジナル",
+      "status": "",
+      "display_name": "ぷにっこ スイーツ 夢色ふわもこケーキシリーズ"
+    },
+    {
+      "jan": "4580805243445",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "ぷにっこ スイーツ",
+      "sku_name": "夢色ふわもこケーキシリーズ",
+      "ip": "自社オリジナル",
+      "status": "",
+      "display_name": "ぷにっこ スイーツ 夢色ふわもこケーキシリーズ"
+    },
+    {
       "jan": "4580805242011",
       "category": "hobby",
       "brand": "TOKOTOYZ",
@@ -7929,16 +8076,6 @@
       "ip": "自社オリジナル",
       "status": "",
       "display_name": "ぷにっこ ミルフィー シェイクドロップチーク"
-    },
-    {
-      "jan": "4580805242226",
-      "category": "hobby",
-      "brand": "TOKOTOYZ",
-      "product_name": "ぷにっこ ミルフィー",
-      "sku_name": "ジューシーグロウバーム",
-      "ip": "自社オリジナル",
-      "status": "",
-      "display_name": "ぷにっこ ミルフィー ジューシーグロウバーム"
     },
     {
       "jan": "4580805241052",
@@ -8029,6 +8166,26 @@
       "ip": "自社オリジナル",
       "status": "",
       "display_name": "ぷにっこ ロゴ入り予備袋"
+    },
+    {
+      "jan": "4580805243483",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "まめゴマ アイロンビーズチャーム",
+      "sku_name": "",
+      "ip": "San-X Universe",
+      "status": "",
+      "display_name": "まめゴマ アイロンビーズチャーム"
+    },
+    {
+      "jan": "4580805243490",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "まめゴマ アイロンビーズチャーム",
+      "sku_name": "6箱セット",
+      "ip": "San-X Universe",
+      "status": "",
+      "display_name": "まめゴマ アイロンビーズチャーム 6箱セット"
     },
     {
       "jan": "4580805240437",
@@ -8221,6 +8378,16 @@
       "display_name": "シークレットキャラチャーム ナルミヤキャラクターズ 6箱セット"
     },
     {
+      "jan": "（仮）",
+      "category": "hobby",
+      "brand": "TOKOTOYZ",
+      "product_name": "シークレットキャラチャーム ベビチッチ（仮）",
+      "sku_name": "6箱セット",
+      "ip": "モンチッチ/蒙奇奇",
+      "status": "",
+      "display_name": "シークレットキャラチャーム ベビチッチ（仮） 6箱セット"
+    },
+    {
       "jan": "4580805242028",
       "category": "hobby",
       "brand": "TOKOTOYZ",
@@ -8265,20 +8432,20 @@
       "category": "hobby",
       "brand": "TOKOTOYZ",
       "product_name": "シークレットキャラチャーム 葬送のフリーレン",
-      "sku_name": "○○シリーズ",
+      "sku_name": "",
       "ip": "葬送のフリーレン/葬送的芙莉莲",
       "status": "",
-      "display_name": "シークレットキャラチャーム 葬送のフリーレン ○○シリーズ"
+      "display_name": "シークレットキャラチャーム 葬送のフリーレン"
     },
     {
       "jan": "4580805240970",
       "category": "hobby",
       "brand": "TOKOTOYZ",
       "product_name": "シークレットキャラチャーム 葬送のフリーレン",
-      "sku_name": "○○シリーズ 6箱セット",
+      "sku_name": "6箱セット",
       "ip": "葬送のフリーレン/葬送的芙莉莲",
       "status": "",
-      "display_name": "シークレットキャラチャーム 葬送のフリーレン ○○シリーズ 6箱セット"
+      "display_name": "シークレットキャラチャーム 葬送のフリーレン 6箱セット"
     },
     {
       "jan": "4580805243407",
@@ -8434,31 +8601,31 @@
       "jan": "4580805243391",
       "category": "hobby",
       "brand": "TOKOTOYZ",
-      "product_name": "リラックマ カラビナ",
+      "product_name": "リラックマ シルエットカラビナ",
       "sku_name": "キイロイトリ",
       "ip": "リラックマ/轻松熊",
       "status": "",
-      "display_name": "リラックマ カラビナ キイロイトリ"
+      "display_name": "リラックマ シルエットカラビナ キイロイトリ"
     },
     {
       "jan": "4580805243384",
       "category": "hobby",
       "brand": "TOKOTOYZ",
-      "product_name": "リラックマ カラビナ",
+      "product_name": "リラックマ シルエットカラビナ",
       "sku_name": "コリラックマ",
       "ip": "リラックマ/轻松熊",
       "status": "",
-      "display_name": "リラックマ カラビナ コリラックマ"
+      "display_name": "リラックマ シルエットカラビナ コリラックマ"
     },
     {
       "jan": "4580805243377",
       "category": "hobby",
       "brand": "TOKOTOYZ",
-      "product_name": "リラックマ カラビナ",
+      "product_name": "リラックマ シルエットカラビナ",
       "sku_name": "リラックマ",
       "ip": "リラックマ/轻松熊",
       "status": "",
-      "display_name": "リラックマ カラビナ リラックマ"
+      "display_name": "リラックマ シルエットカラビナ リラックマ"
     },
     {
       "jan": "4580805242967",
